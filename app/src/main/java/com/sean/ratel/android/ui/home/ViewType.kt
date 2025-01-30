@@ -1,0 +1,27 @@
+package com.sean.ratel.android.ui.home
+
+enum class ViewType {
+    ImageFlow,
+    RecentlyWatch,
+    PopularSearchShortForm,
+    PopularSearchShortFormMore,
+    PopularLikeShortForm,
+    PopularLikeShortFormMore,
+    PopularCommentShortForm,
+    PopularCommentShortFormMore,
+    EditorPick,
+    EditorPickMore,
+    ChannelSearchRanking,
+    ChannelSearchRankingMore,
+    ChannelLikeRanking,
+    ChannelLikeRankingMore,
+    SubscriptionRanking,
+    SubscriptionRankingMore,
+    SubscriptionRankingUp,
+    SubscriptionRankingUpMore,
+    RecentlyWatchMore,
+    Recommend,
+    RecommendMore,
+    ShortFormVideo,
+    UNKWNONTYPE,
+}

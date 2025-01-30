@@ -1,0 +1,205 @@
+<com.google.android.gms.ads.nativead.NativeAdView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:id="@+id/ad_view"
+    android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/MediaPlayArea"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:orientation="vertical">
+                <com.google.android.gms.ads.nativead.MediaView
+                    android:id="@+id/ad_media"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:clickable="false"
+                    android:duplicateParentState="true"
+                    android:scaleType="centerCrop"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintDimensionRatio="H,16:9"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    android:background="@drawable/clip_lg_default"/>
+                <ImageView
+                    android:id="@+id/GAM_Ad_Badge"
+                    android:layout_width="30dp"
+                    android:layout_height="19dp"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginLeft="12dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ladm_bdg_ad" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/ad_text_Area"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/MediaPlayArea"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                android:orientation="vertical">
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                    android:id="@+id/ad_app_icon"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginStart="8dp"
+                app:layout_goneMarginLeft="15dp"
+                    app:layout_constraintLeft_toLeftOf="@id/MediaPlayArea"
+                    app:layout_constraintTop_toBottomOf="@id/MediaPlayArea" />
+
+            <LinearLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/ad_headline"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#252525"
+                    android:lineSpacingExtra="3dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_marginTop="13dp"
+                    app:layout_goneMarginLeft="15dp"
+                    android:duplicateParentState="true"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="headline"/>
+                <TextView
+                android:id="@+id/ad_body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:textColor="#000000"
+                android:lineSpacingExtra="3dp"
+                android:duplicateParentState="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="5dp"
+                android:maxLines="2"
+                android:ellipsize="end"
+                android:layout_marginEnd="15dp"
+                android:textSize="12sp"
+                android:layout_marginStart="10dp"
+                app:layout_goneMarginBottom="30dp"
+                app:layout_goneMarginLeft="15dp"
+                app:layout_goneMarginTop="6dp"
+               tools:text="To assist with upcoming travels, we recommend a skin care routine tailored for both the in…"/>/>
+                <RatingBar
+                    android:id="@+id/ad_stars"
+                    style="?android:attr/ratingBarStyleSmall"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="3dp"
+                    android:paddingBottom="3dp"
+                    android:isIndicator="true"
+                    android:numStars="5"
+                    android:stepSize="0.5" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+           >
+
+            <TextView
+                android:id="@+id/ad_advertiser"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:gravity="center|left"
+                android:textSize="13dp"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:textColor="#989a9f"
+                android:duplicateParentState="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="50dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                tools:text="Aesop Travel skin care"/>
+            <TextView
+                android:id="@+id/ad_price"
+                android:layout_width="50dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textSize="13dp"
+                android:layout_marginStart="10dp"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:textColor="#989a9f"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:duplicateParentState="true"
+                android:layout_toLeftOf="@+id/ad_store"
+                tools:text="100000000"/>
+
+            <TextView
+                android:id="@+id/ad_store"
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginStart="10dp"
+                android:textSize="13dp"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:textColor="#989a9f"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_toLeftOf="@+id/ad_call_to_action"
+                android:duplicateParentState="true"
+                tools:text="Google Play"/>
+
+                <TextView
+                    android:id="@+id/ad_call_to_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:fontFamily="sans-serif"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:textColor="#589aeb"
+                    android:textSize="14sp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginEnd="15dp"
+                    android:textStyle="normal"
+                    android:visibility="visible"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    tools:text="Call to Action" />
+
+        </RelativeLayout>
+
+       </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.gms.ads.nativead.NativeAdView>

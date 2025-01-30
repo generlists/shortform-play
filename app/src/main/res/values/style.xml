@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 스플래시 테마 정의 -->
+    <style name="Theme.MyApp.Splash" parent="Theme.MyApp">
+<!--        <item name="android:windowBackground">@drawable/ic_launcher_background</item>-->
+    </style>
+
+    <!-- 기본 앱 테마 -->
+    <style name="Theme.MyApp" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- 앱의 기본 테마 속성들 -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+        <item name="colorOnPrimary">@android:color/white</item>
+    </style>
+    <style name="Theme.MyApp.AdAttribution">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">left</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:text">AD</item>
+        <item name="android:background">#FFCC66</item>
+        <item name="android:width">15dp</item>
+        <item name="android:height">15dp</item>
+    </style>
+
+    <!-- 기본 앱 테마 -->
+<!--    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
+<!--        &lt;!&ndash; 앱의 기본 테마 속성들 &ndash;&gt;-->
+<!--        <item name="colorPrimary">@color/purple_500</item>-->
+<!--        <item name="colorPrimaryVariant">@color/purple_700</item>-->
+<!--        <item name="colorOnPrimary">@android:color/white</item>-->
+<!--    </style>-->
+</resources>

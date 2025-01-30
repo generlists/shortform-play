@@ -1,0 +1,123 @@
+<resources>
+    <string name="app_name">숏폼 플레이</string>
+    <string name="title">숏폼 플레이</string>
+    <string name="home">HOME</string>
+    <string name="video">숏폼</string>
+    <string name="main">메인</string>
+    <string name="setting">설정</string>
+    <string name="my">마이</string>
+    <string name="search">SEARCH</string>
+    <string name="popular_shortform">인기숏폼</string>
+    <string name="base_date">기준일 %s</string>
+
+<!-- Permisson-->
+    <string name="alert_phone_permission">폰 권한은 필수라 승인이 필요합니다.</string>
+
+    <string name="shorts">Shorts</string>
+    <string name="lils">릴스</string>
+    <string name="X">X</string>
+    <string name="naver_clip">NaverClip</string>
+    <string name="daum_shorts">DaumShorts</string>
+
+<!-- DebugView -->
+    <string name="baisc_info">기본정보</string>
+    <string name="multi_view">Multi View</string>
+    <string name="viewer_example">Viewer 예제</string>
+    <string name="extra_example">기타 영상</string>
+    <string name="hls_title_1" translatable="false">Apple 4x3 basic stream (TS)</string>
+    <string name="hls_sample">HLS</string>
+    <string name="hls_title_2">Akamai Sample HLS</string>
+    <string name="view_count">View Count</string>
+    <string name="ahto_play_setting">Auto Play Setting</string>
+    <string name="etc">기타</string>
+    <!-- 설정 -->
+    <string name="setting_service">서비스 관리</string>
+    <string name="setting_notice">공지사항</string>
+    <string name="setting_qna">문의하기</string>
+    <string name="setting_private_policy">약관 및 개인정보 처리 방침</string>
+    <string name="setting_play">동영상 기능</string>
+    <string name="setting_play_continue">연속 재생</string>
+    <string name="setting_play_clipping_dscription">한 영상이 끝난 후 현재 영상을 반복합니다.</string>
+    <string name="setting_play_auto_play">자동 재생</string>
+    <string name="setting_play_auto_play_description">영상 재생 시작 시에 자동으로 재생 시작을 합니다.</string>
+    <string name="setting_play_clipping_play">반복 재생</string>
+    <string name="setting_play_wifi_play">Wi fi 상태에서만 재생</string>
+    <string name="setting_play_wifi_play_discription">Wi fi 상태에서만 재생하며 다른 네트워크 알림 정보를 보여줍니다.</string>
+    <string name="setting_pip_play">PIP 플레이어 사용</string>
+    <string name="setting_pip_play_discription">재생화면 PIP 버튼을 누르거나\n 홈 버튼(OS 12 이상)을 누르면 PIP 모드로 실행 됩니다.</string>
+    <string name="setting_pip_go">설정에 PIP 모드를 활성화 하여 주세요.</string>
+    <string name="setting_sound">사운드 설정</string>
+    <string name="setting_sound_description">재생 시 소리를 켜거나 끌 수 있습니다.</string>
+    <string name="setting_app_manager">앱 관리</string>
+    <string name="setting_app_detail_info">앱 매니저</string>
+    <string name="setting_app_info">앱 정보</string>
+    <string name="setting_app_version">앱 버전</string>
+    <string name="setting_app_openSource">오픈소스 라이센스</string>
+    <string name="setting_app_rate">평점주기</string>
+    <string name="setting_app_present">기부하기</string>
+    <string name="setting_app_email_not_found">이메일 클라이언트를 찾을 수 없습니다.</string>
+    <string name="setting_app_opensource_not_produce">앱에 사용된 오픈소스 라이선스 내용은 실배포 버전에만 제공됩니다.</string>
+    <string name="pip_memory_error">메모리 부족 오류</string>
+
+    <!--App Manager -->
+    <string name="app_manager">앱 매니저</string>
+    <string name="app_manager_detail">내 디바이스 내의 앱 정보를 보여주고 관리합니다.</string>
+    <string name="network_manager">네트워크 관리</string>
+    <string name="network_manager_detail">내 디바이스 환경에서 현재 네트워크 상태에 대해서 보여줍니다.</string>
+    <string name="device_care">디바이스 케어</string>
+    <string name="device_care_detail">내 디바이스 내에 불필요하게 실행된 앱을 정리합니다.</string>
+    <string name="device_manager_title">디바이스 관리</string>
+    <string name="device_manager_apk_size">%s MB</string>
+    <string name="device_manager_update_time">업데이트날짜 %s</string>
+    <string name="device_manager_app_detail">앱 상세정보로 이동</string>
+    <string name="device_manager_app_delete">앱 삭제</string>
+    <string name="device_manager_comming_soon">기능 준비중 입니다!!</string>
+    <string name="device_browser_select">브라우저 선택</string>
+    <string name="device_update_sort">업데이트순</string>
+    <string name="device_name_sort">이름순</string>
+    <string name="device_size_sort">용량순</string>
+
+
+
+    <string name="short_form_end">숏폼 플레이</string>
+    <string name="short_form_app_share">친구들에게 ShortFrom-Play(숏폼 플레이) App 을 널리 알려 주세요!!</string>
+
+
+    <string name="end_lkie">5600</string>
+    <string name="end_dislike">싫어요</string>
+    <string name="end_comment">183</string>
+    <string name="end_share">공유</string>
+    <string name="end_sound_off">소리끔</string>
+    <string name="end_sound_on">소리켬</string>
+    <string name="end_video_view_count">조회수  %s</string>
+
+    <!--alert -->
+    <string name="alert_wifi_body">wi fi 상태가 아닙니다.\n 그래도 재생하시겠습니까?</string>
+    <string name="alert_no_network">네트워크 접속상태가 아닙니다.\n 앱을 종료하시겠습니까?</string>
+    <string name="alert_ok">확인</string>
+    <string name="alert_cancel">취소</string>
+
+    <string name="subscription_count">구독자 수 : %s</string>
+    <string name="search_count">조회 수 : %s</string>
+    <string name="start_date">시작 일자 : %s</string>
+    <string name="main_more">더보기</string>
+
+    <string name="main_more_search">조회순</string>
+    <string name="main_more_like">좋아요순</string>
+    <string name="main_more_comment">댓글순</string>
+    <string name="main_ranking_label">일간 랭킹</string>
+    <string name="main_go_channel">채널 홈 방문</string>
+    <string name="main_rank_order">순위</string>
+    <string name="main_rank_channel">채널</string>
+    <string name="main_rank_subscription">구독자수</string>
+    <string name="main_rank_search">조회수</string>
+    <string name="main_rank_new">신규</string>
+
+    <string name="main_recent_watch_video">최근본 영상</string>
+    <string name="main_recent_watch_video_max_1">최근본 영상은 최대 500개까지 저장됩니다.</string>
+    <string name="main_recent_watch_video_max_2">이후 오래된 순서 부터 삭제 됩니다.</string>
+
+    <string name="pip_frist_video_message">처음 영상 입니다.</string>
+    <string name="pip_last_video_message">마지막 영상 입니다."</string>
+
+</resources>
