@@ -1,15 +1,80 @@
+# ===============================
+# Android Studio / IntelliJ
+# ===============================
+# Ignore everything in .idea
+.idea/*
+# Except these files/folders you want to keep
+!.idea/modules.xml
+!.idea/vcs.xml
+!.idea/runConfigurations/
+!.idea/codeStyles/
+!.idea/misc.xml
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
+*.ipr
+*.iws
+# ===============================
+# Gradle
+# ===============================
+.gradle/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin
+*.kotlin_module
+.kotlinc/
+
+# ===============================
+# OS / 사용자 환경 파일
+# ===============================
 .DS_Store
+Thumbs.db
+*.swp
+*.swo
+# ===============================
+# Signing / Local Configuration
+# ===============================
+local.properties
+*.jks
+*.keystore
+key.properties
+# ===============================
+# Firebase / Google Services
+# ===============================
+google-services.json
+app/google-services.json
+crashlytics-build.properties
+fabric.properties
+
+# ===============================
+# CMake / NDK Build Files
+# ===============================
+.cxx/
+
+# ===============================
+# Test Captures / Output
+# ===============================
+captures/
+output.json
+
+# ===============================
+# Logs / Temp / Misc
+# ===============================
+*.log
+*.tmp
+*.bak
+*.orig
+*.rej
+# ===============================
+# Jetpack Compose Compiler Cache
+# ===============================
+compose-compiler/
+# ===============================
+# Dependency Resolution Files (Optional)
+# ===============================
+*.lock
+/gradle.properties
 /build
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+
