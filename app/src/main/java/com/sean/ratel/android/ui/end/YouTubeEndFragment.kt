@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,8 +45,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
@@ -94,7 +97,6 @@ class YouTubeEndFragment(
 
     private val binding get() = _binding!!
 
-    @Inject
     lateinit var youTubePlayerView: YouTubePlayerView
     private lateinit var youTubeStreamPlayer: YouTubeStreamPlayer
     private lateinit var youtubeStreamPlayerAdapter: YouTubeStreamPlayerAdapter
@@ -150,15 +152,6 @@ class YouTubeEndFragment(
             }
         }
 
-        repeatOnStart {
-            youTubeStreamPlayer.playbackError.collect { state ->
-                mainViewModel.currentSelection.collect { selection ->
-                    if (selection == createPosition && state != YouTubeStreamPlayerError.UNKNOWN) {
-                        Toast.makeText(requireActivity(), "$state", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        }
         repeatOnStart {
 
             youTubeStreamPlayer.currentTime.collect { currentTime ->
@@ -291,7 +284,9 @@ class YouTubeEndFragment(
     }
 
     override fun onDestroyView() {
+        binding.playContainer.removeAllViews()
         super.onDestroyView()
+
         RLog.d(TAG, "onDestroyView $createPosition ,  $youTubeStreamPlayer")
     }
 
@@ -313,12 +308,21 @@ class YouTubeEndFragment(
 
         _binding = YoutubeVideoEndBinding.inflate(inflater, container, false)
 
+        youTubePlayerView =
+            YouTubePlayerView(requireActivity()).apply {
+                layoutParams =
+                    FrameLayout.LayoutParams(
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        FrameLayout.LayoutParams.MATCH_PARENT,
+                    )
+                enableAutomaticInitialization = false
+            }
         val view = youTubePlayerView
-        _binding?.playContainer?.removeAllViews()
-        _binding?.playContainer?.addView(view)
-        youTubePlayerView = view
 
-        youTubePlayerView.enableAutomaticInitialization = false
+        // 기존 부모가 있는 경우 제거 후 재추가
+        _binding?.playContainer?.removeAllViews()
+
+        _binding?.playContainer?.addView(view)
 
         youtubeStreamPlayerAdapter = YouTubeStreamPlayerAdapterImpl(youTubePlayerView)
 
@@ -361,7 +365,7 @@ class YouTubeEndFragment(
                 }
             }
             RLog.d(
-                "hbungshin",
+                TAG,
                 "pipButtonClick : ${pipButtonClick.value} , createPosition : $createPosition",
             )
 
@@ -372,6 +376,23 @@ class YouTubeEndFragment(
                 }
                 IsNetWorkAvailAble()
                 WifiAlertDiaLog()
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                youTubeStreamPlayer.playbackError
+                    .combine(mainViewModel.currentSelection) { error, selection ->
+                        error to selection
+                    }.collect { (error, selection) ->
+                        RLog.d(
+                            TAG,
+                            "Error received: $error , selection : $selection , createPosition : $createPosition",
+                        )
+                        if (selection == createPosition && error != YouTubeStreamPlayerError.UNKNOWN) {
+                            Toast.makeText(requireActivity(), "$error", Toast.LENGTH_LONG).show()
+                        }
+                    }
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.sean.ratel.android.di
 
 import android.content.Context
-import android.widget.FrameLayout
 import androidx.annotation.OptIn
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -12,7 +11,6 @@ import com.google.firebase.analytics.analytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 import com.sean.ratel.android.data.android.permission.PermissionManager
 import com.sean.ratel.android.data.android.permission.PermissionProvider
 import com.sean.ratel.android.di.qualifier.RemoteIntervalTime
@@ -35,12 +33,11 @@ object ApplicationModule {
     @Provides
     @Singleton
     @OptIn(UnstableApi::class)
-    fun provideUserAgent(): UserAgentProvider {
-        return object : UserAgentProvider {
+    fun provideUserAgent(): UserAgentProvider =
+        object : UserAgentProvider {
             override val userAgent: String
                 get() = ""
         }
-    }
 
     @Provides
     @Singleton
@@ -65,19 +62,19 @@ object ApplicationModule {
     fun providerAppOpenAdManager(googleMobileAdsConsentManager: GoogleMobileAdsConsentManager): AppOpenAdManager =
         AppOpenAdManager(googleMobileAdsConsentManager)
 
-    @Provides
-    @OptIn(UnstableApi::class)
-    fun providerInitPlayerView(
-        @ApplicationContext context: Context,
-    ): YouTubePlayerView =
-        YouTubePlayerView(context).apply {
-            layoutParams =
-                FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                )
-            enableAutomaticInitialization = false
-        }
+//    @Provides
+//    @OptIn(UnstableApi::class)
+//    fun providerInitPlayerView(
+//        @ApplicationContext context: Context,
+//    ): YouTubePlayerView =
+//        YouTubePlayerView(context).apply {
+//            layoutParams =
+//                FrameLayout.LayoutParams(
+//                    FrameLayout.LayoutParams.MATCH_PARENT,
+//                    FrameLayout.LayoutParams.MATCH_PARENT,
+//                )
+//            enableAutomaticInitialization = false
+//        }
 
     @Provides
     @Singleton

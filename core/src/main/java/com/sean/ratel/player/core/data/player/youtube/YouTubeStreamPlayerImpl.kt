@@ -14,8 +14,11 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrC
 import com.sean.ratel.player.core.domain.YouTubeStreamPlayer
 import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlaybackState
 import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlayerError
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -35,11 +38,8 @@ class YouTubeStreamPlayerImpl(
         )
     override val playbackState: StateFlow<YouTubeStreamPlaybackState> = _playbackState.asStateFlow()
 
-    private val _playbackError =
-        MutableStateFlow<YouTubeStreamPlayerError>(
-            YouTubeStreamPlayerError.UNKNOWN,
-        )
-    override val playbackError: StateFlow<YouTubeStreamPlayerError> = _playbackError.asStateFlow()
+    private val _playbackError = MutableSharedFlow<YouTubeStreamPlayerError>(replay = 1)
+    override val playbackError: SharedFlow<YouTubeStreamPlayerError> = _playbackError.asSharedFlow()
 
     private val _isMute = MutableStateFlow(true)
 
@@ -51,13 +51,14 @@ class YouTubeStreamPlayerImpl(
 
     override fun getYouTubePlayerView(): View = youtubeStreamPlayerAdapter.getYouTubePlayerView()
 
-    override fun initPlayer(networkHandle: Boolean?) {
+    override fun initPlayer(networkHandle: Boolean?,videoId: String?) {
         if (initialPlayer) return
 
         youtubeStreamPlayerAdapter.initialize(
             this,
             networkHandle ?: false,
             iFramePlayerOptions,
+            videoId
         )
         initialPlayer = true
     }
@@ -165,7 +166,7 @@ class YouTubeStreamPlayerImpl(
         youTubePlayer: YouTubePlayer,
         error: PlayerConstants.PlayerError,
     ) {
-        _playbackError.update { getConvertPlayerErrorToYouTubeStreamPlayerError(error) }
+        _playbackError.tryEmit(getConvertPlayerErrorToYouTubeStreamPlayerError(error))
     }
 
     override fun onApiChange(youTubePlayer: YouTubePlayer) {
