@@ -1,7 +1,6 @@
 package com.sean.ratel.player.core.data.player.youtube
 
 import android.annotation.SuppressLint
-import android.util.Log
 import android.util.Size
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -167,21 +166,7 @@ class YouTubeStreamPlayerImpl(
         youTubePlayer: YouTubePlayer,
         error: PlayerConstants.PlayerError,
     ) {
-//        Log.d("FLOW_DEBUG","!!!!! error state : ${getConvertPlayerErrorToYouTubeStreamPlayerError(error)} , youTubePlayer : ${youTubePlayer}")
-//        //_playbackError.update { getConvertPlayerErrorToYouTubeStreamPlayerError(error) }
-//        _playbackError.value = getConvertPlayerErrorToYouTubeStreamPlayerError(error)
-
-        // onError() 내부
-        val convertedError = getConvertPlayerErrorToYouTubeStreamPlayerError(error)
-        Log.d("FLOW_DEBUG", "onError() called - convertedError = $convertedError")
-        _playbackError.tryEmit(convertedError)
-    //        if (_playbackError.value != convertedError) {
-//            _playbackError.tryEmit(convertedError)
-//            Log.d("FLOW_DEBUG", "playbackError updated to $convertedError")
-//        } else {
-//            Log.d("FLOW_DEBUG", "playbackError unchanged — not emitted")
-//        }
-
+        _playbackError.tryEmit(getConvertPlayerErrorToYouTubeStreamPlayerError(error))
     }
 
     override fun onApiChange(youTubePlayer: YouTubePlayer) {
