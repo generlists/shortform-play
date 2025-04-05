@@ -3,9 +3,11 @@ package com.sean.ratel.android.ui.end
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -44,8 +46,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
@@ -94,7 +98,7 @@ class YouTubeEndFragment(
 
     private val binding get() = _binding!!
 
-    @Inject
+    //@Inject
     lateinit var youTubePlayerView: YouTubePlayerView
     private lateinit var youTubeStreamPlayer: YouTubeStreamPlayer
     private lateinit var youtubeStreamPlayerAdapter: YouTubeStreamPlayerAdapter
@@ -140,7 +144,9 @@ class YouTubeEndFragment(
                             state,
                         )
 
-                    YouTubeStreamPlaybackState.UnStarted -> handleUnstartedState(currentSelection)
+                    YouTubeStreamPlaybackState.UnStarted -> {
+                        handleUnstartedState(currentSelection)
+                    }
                     YouTubeStreamPlaybackState.Buffering -> handleBufferingState(currentSelection)
                     YouTubeStreamPlaybackState.Paused -> handlePausedState(currentSelection)
                     YouTubeStreamPlaybackState.Playing -> handlePlayingState(currentSelection)
@@ -150,15 +156,30 @@ class YouTubeEndFragment(
             }
         }
 
-        repeatOnStart {
-            youTubeStreamPlayer.playbackError.collect { state ->
-                mainViewModel.currentSelection.collect { selection ->
-                    if (selection == createPosition && state != YouTubeStreamPlayerError.UNKNOWN) {
-                        Toast.makeText(requireActivity(), "$state", Toast.LENGTH_LONG).show()
-                    }
-                }
-            }
-        }
+//        repeatOnStart {
+//            youTubeStreamPlayer.playbackError
+//                .combine(mainViewModel.currentSelection) { error, selection ->
+//                    error to selection
+//                }
+//                .collect { (error, selection) ->
+//                    Log.d("OKJSPPPPPP","playbackError ::::::::: $error, selection: $selection")
+//                    if (selection == createPosition && error != YouTubeStreamPlayerError.UNKNOWN) {
+//                        Toast.makeText(requireActivity(), "$error", Toast.LENGTH_LONG).show()
+//                    }
+//                }
+//        }
+//        repeatOnStart {
+////            launch {
+////                youTubeStreamPlayer.playbackError.collect {
+////                    Log.d("FLOW_DEBUG", "receive playbackError updated: $it")
+////                }
+////            }
+//            launch {
+//                mainViewModel.currentSelection.collect {
+//                    //Log.d("FLOW_DEBUG", "currentSelection updated: $it")
+//                }
+//            }
+        //}
         repeatOnStart {
 
             youTubeStreamPlayer.currentTime.collect { currentTime ->
@@ -205,40 +226,40 @@ class YouTubeEndFragment(
     override fun onPause() {
         super.onPause()
 
-        launch {
-            val pipClick = mainViewModel.pipClick.last()
-            if (!pipClick.first) {
-                youTubeStreamPlayer.pause()
-            }
-        }
+//        launch {
+//            val pipClick = mainViewModel.pipClick.last()
+//            if (!pipClick.first) {
+//                youTubeStreamPlayer.pause()
+//            }
+//        }
 
-        RLog.d(TAG, "onPause $createPosition , $youTubeStreamPlayer")
+        RLog.d("FLOW_DEBUG", "onPause $createPosition , $youTubeStreamPlayer")
     }
 
     override fun onResume() {
         super.onResume()
-        mainShortsModel?.shortsVideoModel?.videoId?.let {
-            launch {
-                mainViewModel.pipClick.collect {
-                    if (!it.first) {
-                        adRequest()
-                    }
-                }
-            }
-            launch {
-                if (!youtubeContentEndViewModel.getAutoPlay()) {
-                    youTubeStreamPlayer.pause()
-                }
-            }
-        }
+//        mainShortsModel?.shortsVideoModel?.videoId?.let {
+//            launch {
+//                mainViewModel.pipClick.collect {
+//                    if (!it.first) {
+//                        adRequest()
+//                    }
+//                }
+//            }
+//            launch {
+//                if (!youtubeContentEndViewModel.getAutoPlay()) {
+//                    youTubeStreamPlayer.pause()
+//                }
+//            }
+//        }
 
-        RLog.d(TAG, "onResume $createPosition")
+        RLog.d("FLOW_DEBUG", "onResume $createPosition")
     }
 
     override fun onStop() {
         super.onStop()
         lifecycleScope.launch {
-            mainViewModel.setRecentVideo()
+           // mainViewModel.setRecentVideo()
         }
     }
 
@@ -286,13 +307,13 @@ class YouTubeEndFragment(
 
     override fun onDestroy() {
         super.onDestroy()
-        RLog.d(TAG, "onDestroy $createPosition ,  $youTubeStreamPlayer")
-        youTubeStreamPlayer.release()
+        RLog.d("FLOW_DEBUG", "onDestroy $createPosition ,  $youTubeStreamPlayer")
+        //youTubeStreamPlayer.release()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        RLog.d(TAG, "onDestroyView $createPosition ,  $youTubeStreamPlayer")
+        RLog.d("FLOW_DEBUG", "onDestroyView $createPosition ,  $youTubeStreamPlayer")
     }
 
     override fun onCreateView(
@@ -313,12 +334,24 @@ class YouTubeEndFragment(
 
         _binding = YoutubeVideoEndBinding.inflate(inflater, container, false)
 
-        val view = youTubePlayerView
-        _binding?.playContainer?.removeAllViews()
-        _binding?.playContainer?.addView(view)
-        youTubePlayerView = view
+        youTubePlayerView =   YouTubePlayerView(requireActivity()).apply {
+            layoutParams =
+                FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                    FrameLayout.LayoutParams.MATCH_PARENT,
+                )
+            enableAutomaticInitialization = false
+        }
+        val view  = youTubePlayerView
 
-        youTubePlayerView.enableAutomaticInitialization = false
+
+
+        // 기존 부모가 있는 경우 제거 후 재추가
+        _binding?.playContainer?.removeView(view)
+        //_binding?.playContainer?.removeAllViews()
+
+        _binding?.playContainer?.addView(view)
+
 
         youtubeStreamPlayerAdapter = YouTubeStreamPlayerAdapterImpl(youTubePlayerView)
 
@@ -331,7 +364,8 @@ class YouTubeEndFragment(
             )
 
         lifecycle.addObserver(youTubePlayerView)
-
+        val videoId = mainShortsModel?.shortsVideoModel?.videoId
+        Log.d("FLOW_DEBUG","oncreateView init createPosition : $createPosition")
         youTubeStreamPlayer.initPlayer(networkHandle = false)
         youTubePlayerView.matchParent()
 
@@ -361,7 +395,7 @@ class YouTubeEndFragment(
                 }
             }
             RLog.d(
-                "hbungshin",
+                TAG,
                 "pipButtonClick : ${pipButtonClick.value} , createPosition : $createPosition",
             )
 
@@ -374,6 +408,46 @@ class YouTubeEndFragment(
                 WifiAlertDiaLog()
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                ///안전하게 view에 접근 가능
+//                youTubeStreamPlayer.playbackError
+//                    .collect { error ->
+//                        Log.d("FLOW_DEBUG", "Error received: $error")
+//                        youTubeStreamPlayer.loadOrCueVideo(mainShortsModel?.shortsVideoModel?.videoId?:"")
+//
+//                    }
+
+                youTubeStreamPlayer.playbackError
+                    .combine(mainViewModel.currentSelection) { error, selection ->
+                        error to selection
+                    }
+                    .collect { (error, selection) ->
+                        Log.d("FLOW_DEBUG", "Error received: $error , selection : $selection , createPosition : ${createPosition}")
+                        if (selection == createPosition && error != YouTubeStreamPlayerError.UNKNOWN) {
+                            Toast.makeText(requireActivity(), "$error", Toast.LENGTH_LONG).show()
+                        }
+                    }
+            }
+        }
+
+
+        //        repeatOnStart {
+//            youTubeStreamPlayer.playbackError
+//                .combine(mainViewModel.currentSelection) { error, selection ->
+//                    error to selection
+//                }
+//                .collect { (error, selection) ->
+//                    Log.d("OKJSPPPPPP","playbackError ::::::::: $error, selection: $selection")
+//                    if (selection == createPosition && error != YouTubeStreamPlayerError.UNKNOWN) {
+//                        Toast.makeText(requireActivity(), "$error", Toast.LENGTH_LONG).show()
+//                    }
+//                }
+//        }
+
+
+
     }
 
     fun pipButtonState() {
@@ -468,6 +542,7 @@ class YouTubeEndFragment(
         mainShortsModel?.shortsVideoModel?.videoId?.let { videoId ->
             youTubeStreamPlayer.loadVideo(videoId, 0f)
             if (selectPosition == createPosition) {
+                Log.d("FLOW_DEBUG","state : $selectPosition , youTubePlayer : handlePreparedState")
                 if (!youtubeContentEndViewModel.getAutoPlay()) {
                     youTubeStreamPlayer.pause()
                 }
@@ -478,13 +553,15 @@ class YouTubeEndFragment(
     }
 
     private fun handleUnstartedState(selectPosition: Int) {
-        if (selectPosition == createPosition && !youTubeStreamPlayer.isPlaying()) {
+        if (!youTubeStreamPlayer.isPlaying() && selectPosition == createPosition) {
+            Log.d("FLOW_DEBUG","handleUnstartedState $selectPosition")
             youTubeStreamPlayer.start()
         }
     }
 
     private fun handleBufferingState(selectedPosition: Int) {
         if (selectedPosition == createPosition) {
+            Log.d("FLOW_DEBUG","handleBufferingState")
             // Log.d("anatol","handleBufferingState loading = true")
             youtubeContentEndViewModel.setLoading(loading = true)
         }
@@ -492,6 +569,7 @@ class YouTubeEndFragment(
 
     private fun handlePausedState(selectPosition: Int) {
         if (selectPosition == createPosition) {
+            Log.d("FLOW_DEBUG","handlePausedState $selectPosition")
             youtubeContentEndViewModel.setPlaying(isPlaying = false)
             mainViewModel.setPIPButtonClickState(true)
         }
@@ -499,6 +577,7 @@ class YouTubeEndFragment(
 
     private suspend fun handlePlayingState(selectPosition: Int) {
         if (selectPosition == createPosition) {
+            Log.d("FLOW_DEBUG","handlePlayingState $selectPosition")
             youtubeContentEndViewModel.setLoading(loading = false)
             youtubeContentEndViewModel.setPlaying(isPlaying = true)
             mainViewModel.setPIPButtonClickState(true)
@@ -513,6 +592,7 @@ class YouTubeEndFragment(
 
     private suspend fun handleEndedState(selectPosition: Int) {
         if (selectPosition == createPosition && youtubeContentEndViewModel.getLoopPlay()) {
+            Log.d("FLOW_DEBUG","handleEndedState $selectPosition")
             youTubeStreamPlayer.seekTo(0f)
             youTubeStreamPlayer.start()
         }
@@ -537,7 +617,8 @@ class YouTubeEndFragment(
                     .padding(top = topBarHeight.value.dp)
                     .clickable {
                         if (youTubeStreamPlayer.isPlaying()) youTubeStreamPlayer.pause() else youTubeStreamPlayer.start()
-                    }.padding(innerPadding),
+                    }
+                    .padding(innerPadding),
             ) {
                 // 채널, 영상타이틀 오른쪽 좋아요,싫어요,댓글,공유
                 // 맨하단 시크바

@@ -65,19 +65,19 @@ object ApplicationModule {
     fun providerAppOpenAdManager(googleMobileAdsConsentManager: GoogleMobileAdsConsentManager): AppOpenAdManager =
         AppOpenAdManager(googleMobileAdsConsentManager)
 
-    @Provides
-    @OptIn(UnstableApi::class)
-    fun providerInitPlayerView(
-        @ApplicationContext context: Context,
-    ): YouTubePlayerView =
-        YouTubePlayerView(context).apply {
-            layoutParams =
-                FrameLayout.LayoutParams(
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                    FrameLayout.LayoutParams.MATCH_PARENT,
-                )
-            enableAutomaticInitialization = false
-        }
+//    @Provides
+//    @OptIn(UnstableApi::class)
+//    fun providerInitPlayerView(
+//        @ApplicationContext context: Context,
+//    ): YouTubePlayerView =
+//        YouTubePlayerView(context).apply {
+//            layoutParams =
+//                FrameLayout.LayoutParams(
+//                    FrameLayout.LayoutParams.MATCH_PARENT,
+//                    FrameLayout.LayoutParams.MATCH_PARENT,
+//                )
+//            enableAutomaticInitialization = false
+//        }
 
     @Provides
     @Singleton

@@ -1,6 +1,7 @@
 package com.sean.ratel.player.core.data.player.youtube
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.util.Size
 import android.view.View
 import androidx.lifecycle.Lifecycle
@@ -14,8 +15,11 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrC
 import com.sean.ratel.player.core.domain.YouTubeStreamPlayer
 import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlaybackState
 import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlayerError
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -35,11 +39,8 @@ class YouTubeStreamPlayerImpl(
         )
     override val playbackState: StateFlow<YouTubeStreamPlaybackState> = _playbackState.asStateFlow()
 
-    private val _playbackError =
-        MutableStateFlow<YouTubeStreamPlayerError>(
-            YouTubeStreamPlayerError.UNKNOWN,
-        )
-    override val playbackError: StateFlow<YouTubeStreamPlayerError> = _playbackError.asStateFlow()
+    private val _playbackError = MutableSharedFlow<YouTubeStreamPlayerError>(replay = 1)
+    override val playbackError: SharedFlow<YouTubeStreamPlayerError> = _playbackError.asSharedFlow()
 
     private val _isMute = MutableStateFlow(true)
 
@@ -51,13 +52,14 @@ class YouTubeStreamPlayerImpl(
 
     override fun getYouTubePlayerView(): View = youtubeStreamPlayerAdapter.getYouTubePlayerView()
 
-    override fun initPlayer(networkHandle: Boolean?) {
+    override fun initPlayer(networkHandle: Boolean?,videoId: String?) {
         if (initialPlayer) return
 
         youtubeStreamPlayerAdapter.initialize(
             this,
             networkHandle ?: false,
             iFramePlayerOptions,
+            videoId
         )
         initialPlayer = true
     }
@@ -165,7 +167,21 @@ class YouTubeStreamPlayerImpl(
         youTubePlayer: YouTubePlayer,
         error: PlayerConstants.PlayerError,
     ) {
-        _playbackError.update { getConvertPlayerErrorToYouTubeStreamPlayerError(error) }
+//        Log.d("FLOW_DEBUG","!!!!! error state : ${getConvertPlayerErrorToYouTubeStreamPlayerError(error)} , youTubePlayer : ${youTubePlayer}")
+//        //_playbackError.update { getConvertPlayerErrorToYouTubeStreamPlayerError(error) }
+//        _playbackError.value = getConvertPlayerErrorToYouTubeStreamPlayerError(error)
+
+        // onError() 내부
+        val convertedError = getConvertPlayerErrorToYouTubeStreamPlayerError(error)
+        Log.d("FLOW_DEBUG", "onError() called - convertedError = $convertedError")
+        _playbackError.tryEmit(convertedError)
+    //        if (_playbackError.value != convertedError) {
+//            _playbackError.tryEmit(convertedError)
+//            Log.d("FLOW_DEBUG", "playbackError updated to $convertedError")
+//        } else {
+//            Log.d("FLOW_DEBUG", "playbackError unchanged — not emitted")
+//        }
+
     }
 
     override fun onApiChange(youTubePlayer: YouTubePlayer) {

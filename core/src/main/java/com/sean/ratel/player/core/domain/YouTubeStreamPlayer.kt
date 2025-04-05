@@ -18,7 +18,7 @@ interface YouTubeStreamPlayer {
 
     fun getYouTubePlayerView(): View
 
-    fun initPlayer(networkHandle: Boolean? = false)
+    fun initPlayer(networkHandle: Boolean? = false,videoId: String? = null)
 
     fun loadOrCueVideo(
         videoId: String,
