@@ -64,8 +64,8 @@ import com.sean.ratel.android.ui.progress.YouTubeLoader
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
-import com.sean.ratel.ui.theme.Red
 import kotlinx.coroutines.launch
 import java.util.Locale
 

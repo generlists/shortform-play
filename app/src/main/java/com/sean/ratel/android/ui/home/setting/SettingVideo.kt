@@ -37,8 +37,8 @@ import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
-import com.sean.ratel.ui.theme.Red
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 

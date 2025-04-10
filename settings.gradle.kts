@@ -1,10 +1,18 @@
-include(":app")
+
 
 pluginManagement {
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
+    }
+}
+val localProperties = java.util.Properties()
+val localFile = File(rootDir, "local.properties")
+
+if (localFile.exists()) {
+    localFile.inputStream().buffered().use { stream ->
+        localProperties.load(stream)
     }
 }
 dependencyResolutionManagement {
@@ -14,6 +22,13 @@ dependencyResolutionManagement {
         mavenCentral()
         maven {
             url = uri("https://jitpack.io")
+        }
+        maven {
+            url = uri("https://maven.pkg.github.com/generlists/sdk-ratel-player-android")
+            credentials {
+                username = localProperties.getProperty("gpr.user")  ?: System.getenv("GPR_USER")
+                password = localProperties.getProperty("gpr.key")  ?: System.getenv("GPR_TOKEN")
+            }
         }
     }
 }
@@ -31,8 +46,4 @@ buildscript {
 }
 
 rootProject.name = "shortform-play"
-include(":android-youtube-player")
 include(":app")
-include(":core")
-include(":utils")
-include(":ui")

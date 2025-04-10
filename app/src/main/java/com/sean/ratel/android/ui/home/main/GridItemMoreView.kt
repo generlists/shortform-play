@@ -71,8 +71,8 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.Background
 import com.sean.ratel.android.ui.theme.Background_op_20
+import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
-import com.sean.ratel.ui.theme.Red
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

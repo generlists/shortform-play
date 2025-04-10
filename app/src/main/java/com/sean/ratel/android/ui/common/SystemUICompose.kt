@@ -5,7 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.ui.theme.Red
+import com.sean.ratel.android.ui.theme.Red
 
 @Suppress("ktlint:standard:function-naming")
 @Composable

@@ -70,14 +70,14 @@ import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.NetworkUtil
 import com.sean.ratel.android.utils.TimeUtil.formatTimeFromFloat
-import com.sean.ratel.player.core.data.player.youtube.YouTubeStreamPlayerAdapter
+import com.sean.ratel.player.core.data.player.youtube.YouTubeStreamPlayerAdapterImpl
 import com.sean.ratel.player.core.data.player.youtube.YouTubeStreamPlayerImpl
+import com.sean.ratel.player.core.data.player.youtube.adaptor.YouTubeStreamPlayerAdapter
 import com.sean.ratel.player.core.domain.YouTubeStreamPlayer
 import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlaybackState
 import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlayerError
 import com.sean.ratel.player.core.util.launch
 import com.sean.ratel.player.core.util.repeatOnStart
-import com.sean.ratel.ui.youtube.adapter.YouTubeStreamPlayerAdapterImpl
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.last
@@ -329,6 +329,7 @@ class YouTubeEndFragment(
         youTubeStreamPlayer =
             YouTubeStreamPlayerImpl(
                 lifecycle,
+                autoPlay = false,
                 youtubeStreamPlayerAdapter,
                 iFramePlayerOptions,
                 youtubeStreamPlayerTracker,
@@ -348,7 +349,7 @@ class YouTubeEndFragment(
     ) {
         super.onViewCreated(view, savedInstanceState)
         val composeView =
-            youTubePlayerView.rootView?.findViewById<ComposeView>(com.sean.ratel.ui.R.id.player_controller)
+            youTubePlayerView.rootView?.findViewById<ComposeView>(R.id.player_controller)
         // controller
         composeView?.setContent {
             val pipButtonClick = remember { mutableStateOf(false) }
