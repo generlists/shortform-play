@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.home
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
@@ -43,7 +42,6 @@ import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.ui.theme.Red
-import com.sean.ratel.core.BuildConfig
 
 @Keep
 enum class HomeTab(
@@ -89,7 +87,6 @@ fun HomeBottomBar(
     val currentRoute = navBackStackEntry?.destination?.route ?: Destination.Splash.route
     val pipClick = viewModel.pipClick.collectAsState(null)
 
-
     viewModel.topViewVisibility(
         currentRoute != Destination.Splash.route &&
             currentRoute != Destination.Search.route &&
@@ -104,7 +101,7 @@ fun HomeBottomBar(
             currentRoute != Destination.Home.Main.RankingSubscriptionUpMore.route &&
             currentRoute != Destination.Home.Main.RecommendMore.route &&
             currentRoute != Destination.Home.Main.RecentlyWatchMore.route &&
-            pipClick.value?.first == false
+            pipClick.value?.first == false,
     )
 
     HomeBottomBarView(
