@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -85,8 +87,8 @@ fun HomeBottomBar(
     val routes = remember { HomeTab.entries.map { it.route } }
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: Destination.Splash.route
+    val pipClick = viewModel.pipClick.collectAsState(null)
 
-    viewModel.debugVisibility(currentRoute != Destination.Splash.route && currentRoute != Destination.YouTube.route && BuildConfig.DEBUG)
 
     viewModel.topViewVisibility(
         currentRoute != Destination.Splash.route &&
@@ -101,7 +103,8 @@ fun HomeBottomBar(
             currentRoute != Destination.Home.Main.RankingSubscriptionMore.route &&
             currentRoute != Destination.Home.Main.RankingSubscriptionUpMore.route &&
             currentRoute != Destination.Home.Main.RecommendMore.route &&
-            currentRoute != Destination.Home.Main.RecentlyWatchMore.route,
+            currentRoute != Destination.Home.Main.RecentlyWatchMore.route &&
+            pipClick.value?.first == false
     )
 
     HomeBottomBarView(

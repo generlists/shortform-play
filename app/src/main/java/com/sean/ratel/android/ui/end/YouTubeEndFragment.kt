@@ -615,7 +615,6 @@ class YouTubeEndFragment(
                     youtubeContentEndViewModel,
                     mainShortsModel,
                     onSoundChange = { sound ->
-                        Log.d("KKKKKKKK", "aaaaaa : $sound")
                         youTubeStreamPlayer.setMute(!sound)
                     },
                 )

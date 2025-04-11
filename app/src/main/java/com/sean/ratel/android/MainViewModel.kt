@@ -44,7 +44,7 @@ class MainViewModel
         val isDebugVisible: StateFlow<Boolean> = _isDebugVisible
 
         // Top bar 가시성을 관리하는 상태
-        private val _isTopViewVisible = MutableStateFlow(false)
+        private val _isTopViewVisible = MutableStateFlow(true)
         val isTopViewVisible: StateFlow<Boolean> = _isTopViewVisible
 
         // shortform video
