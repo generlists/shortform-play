@@ -17,17 +17,7 @@ ktlint {
     outputToConsole.set(true)
     enableExperimentalRules.set(true)
 }
-configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
-    enableExperimentalRules.set(true)
-    filter {
-        exclude { element ->
-            val path = element.file.path.replace("\\", "/")
-            val excludedFiles =
-                listOf("MainVideoList.kt", "MainSearchList.kt", "MainChannelList.kt")
-            excludedFiles.any { path.endsWith(it) }
-        }
-    }
-}
+
 configure<org.jlleitschuh.gradle.ktlint.KtlintExtension> {
     debug.set(true)
 }
@@ -74,11 +64,11 @@ android {
 
             buildConfigField("String", "FIREBASE_BASE_URL", "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"")
             // admob
-            buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("NATIVE_AD_UNIT_ID")}\"")
-            buildConfigField("String", "ADAPTIVE_BANNER_UNIT_ID", "\"${localProperties.getProperty("ADAPTIVE_BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "INTERSTITIALAd_UNIT_ID", "\"${localProperties.getProperty("INTERSTITIALAd_UNIT_ID")}\"")
-            buildConfigField("String", "Ad_OPEN_UNIT_ID", "\"${localProperties.getProperty("Ad_OPEN_UNIT_ID")}\"")
+            buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("DEBUG_BANNER_UNIT_ID")}\"")
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("DEBUG_NATIVE_AD_UNIT_ID")}\"")
+            buildConfigField("String", "ADAPTIVE_BANNER_UNIT_ID", "\"${localProperties.getProperty("DEBUG_ADAPTIVE_BANNER_UNIT_ID")}\"")
+            buildConfigField("String", "INTERSTITIALAd_UNIT_ID", "\"${localProperties.getProperty("DEBUG_INTERSTITIALAd_UNIT_ID")}\"")
+            buildConfigField("String", "Ad_OPEN_UNIT_ID", "\"${localProperties.getProperty("DEBUG_Ad_OPEN_UNIT_ID")}\"")
 
             buildConfigField("String", "MY_EMAIL_ACCOUNT", "\"${localProperties.getProperty("MY_EMAIL_ACCOUNT")}\"")
             buildConfigField("String", "NOTICES_URL", "\"${localProperties.getProperty("NOTICES_URL")}\"")
@@ -87,18 +77,18 @@ android {
             buildConfigField("String", "REGAL_URL_EN", "\"${localProperties.getProperty("REGAL_URL_EN")}\"")
 
             manifestPlaceholders["validator"] = "false"
-            manifestPlaceholders["admobAppId"] = localProperties.getProperty("admobAppId")
+            manifestPlaceholders["admobAppId"] = localProperties.getProperty("debug_admobAppId")
             signingConfig = signingConfigs.getByName("debug")
         }
         release {
 
             buildConfigField("String", "FIREBASE_BASE_URL", "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"")
             // admob
-            buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("NATIVE_AD_UNIT_ID")}\"")
-            buildConfigField("String", "ADAPTIVE_BANNER_UNIT_ID", "\"${localProperties.getProperty("ADAPTIVE_BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "INTERSTITIALAd_UNIT_ID", "\"${localProperties.getProperty("INTERSTITIALAd_UNIT_ID")}\"")
-            buildConfigField("String", "Ad_OPEN_UNIT_ID", "\"${localProperties.getProperty("Ad_OPEN_UNIT_ID")}\"")
+            buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("RELEASE_BANNER_UNIT_ID")}\"")
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("RELEASE_NATIVE_AD_UNIT_ID")}\"")
+            buildConfigField("String", "ADAPTIVE_BANNER_UNIT_ID", "\"${localProperties.getProperty("RELEASE_ADAPTIVE_BANNER_UNIT_ID")}\"")
+            buildConfigField("String", "INTERSTITIALAd_UNIT_ID", "\"${localProperties.getProperty("RELEASE_INTERSTITIALAd_UNIT_ID")}\"")
+            buildConfigField("String", "Ad_OPEN_UNIT_ID", "\"${localProperties.getProperty("RELEASE_Ad_OPEN_UNIT_ID")}\"")
 
             buildConfigField("String", "MY_EMAIL_ACCOUNT", "\"${localProperties.getProperty("MY_EMAIL_ACCOUNT")}\"")
             buildConfigField("String", "NOTICES_URL", "\"${localProperties.getProperty("NOTICES_URL")}\"")
@@ -111,6 +101,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            manifestPlaceholders["validator"] = "false"
+            manifestPlaceholders["admobAppId"] = localProperties.getProperty("release_admobAppId")
             signingConfig = signingConfigs.getByName("release")
         }
     }
