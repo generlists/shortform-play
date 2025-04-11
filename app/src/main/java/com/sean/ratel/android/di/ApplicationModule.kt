@@ -11,6 +11,8 @@ import com.google.firebase.analytics.analytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.sean.ratel.android.data.android.permission.PermissionManager
 import com.sean.ratel.android.data.android.permission.PermissionProvider
 import com.sean.ratel.android.di.qualifier.RemoteIntervalTime
@@ -62,20 +64,6 @@ object ApplicationModule {
     fun providerAppOpenAdManager(googleMobileAdsConsentManager: GoogleMobileAdsConsentManager): AppOpenAdManager =
         AppOpenAdManager(googleMobileAdsConsentManager)
 
-//    @Provides
-//    @OptIn(UnstableApi::class)
-//    fun providerInitPlayerView(
-//        @ApplicationContext context: Context,
-//    ): YouTubePlayerView =
-//        YouTubePlayerView(context).apply {
-//            layoutParams =
-//                FrameLayout.LayoutParams(
-//                    FrameLayout.LayoutParams.MATCH_PARENT,
-//                    FrameLayout.LayoutParams.MATCH_PARENT,
-//                )
-//            enableAutomaticInitialization = false
-//        }
-
     @Provides
     @Singleton
     @OptIn(UnstableApi::class)
@@ -94,5 +82,17 @@ object ApplicationModule {
             }
         remoteConfig.setConfigSettingsAsync(configSettings)
         return remoteConfig
+    }
+    @Provides
+    @Singleton
+    fun provideWidthIFramePlayerOption(): IFramePlayerOptions {
+        return IFramePlayerOptions.Builder().controls(0)
+            .fullscreen(1) // enable full screen button
+            .build()
+    }
+
+    @Provides
+    fun provideYouTubePlayerTracker(): YouTubePlayerTracker {
+        return YouTubePlayerTracker()
     }
 }

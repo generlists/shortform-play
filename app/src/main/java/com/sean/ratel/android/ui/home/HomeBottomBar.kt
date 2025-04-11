@@ -40,8 +40,8 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.core.BuildConfig
-import com.sean.ratel.ui.theme.Red
 
 @Keep
 enum class HomeTab(

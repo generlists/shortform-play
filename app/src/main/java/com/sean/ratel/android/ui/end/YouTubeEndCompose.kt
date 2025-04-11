@@ -1,6 +1,7 @@
 package com.sean.ratel.android.ui.end
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -54,7 +55,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.YouTubeUtils
 import com.sean.ratel.android.data.dto.MainShortsModel
@@ -64,8 +64,8 @@ import com.sean.ratel.android.ui.progress.YouTubeLoader
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
-import com.sean.ratel.ui.theme.Red
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -325,13 +325,14 @@ fun RightContentArea(
                                                 disLike,
                                                 sound,
                                                 onChanged = { pLike, pDisLike, pSound ->
-                                                    RLog.d(
-                                                        "hbungshin",
-                                                        "pLike : $pLike , pDisLike : $pDisLike $pSound",
+                                                    Log.d(
+                                                        "KKKKKKKK",
+                                                        "pLike : $pLike , pDisLike : $pDisLike pSound : $pSound , sound : $sound",
                                                     )
                                                     like = pLike
                                                     disLike = pDisLike
                                                     sound = pSound
+                                                    onSoundChange(sound)
                                                 },
                                             )
                                         }
@@ -367,8 +368,6 @@ fun RightContentArea(
                         .wrapContentWidth(),
                 )
             }
-
-            onSoundChange(sound)
         }
     }
 }

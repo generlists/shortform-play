@@ -3,6 +3,7 @@ package com.sean.ratel.android.ui.end
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -70,17 +71,19 @@ import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.NetworkUtil
 import com.sean.ratel.android.utils.TimeUtil.formatTimeFromFloat
-import com.sean.ratel.player.core.data.player.youtube.YouTubeStreamPlayerAdapter
+import com.sean.ratel.player.core.data.player.youtube.YouTubeStreamPlayerAdapterImpl
 import com.sean.ratel.player.core.data.player.youtube.YouTubeStreamPlayerImpl
+import com.sean.ratel.player.core.data.player.youtube.adaptor.YouTubeStreamPlayerAdapter
 import com.sean.ratel.player.core.domain.YouTubeStreamPlayer
 import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlaybackState
 import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlayerError
 import com.sean.ratel.player.core.util.launch
 import com.sean.ratel.player.core.util.repeatOnStart
-import com.sean.ratel.ui.youtube.adapter.YouTubeStreamPlayerAdapterImpl
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.last
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -199,9 +202,11 @@ class YouTubeEndFragment(
         super.onPause()
 
         launch {
-            val pipClick = mainViewModel.pipClick.last()
-            if (!pipClick.first) {
-                youTubeStreamPlayer.pause()
+            mainViewModel.pipClick.collect { pipClick ->
+                if (!pipClick.first) {
+                    youTubeStreamPlayer.pause()
+                    youTubeStreamPlayer.setMute(true)
+                }
             }
         }
 
@@ -237,43 +242,44 @@ class YouTubeEndFragment(
 
     private fun adRequest() {
         launch {
-            mainViewModel.currentSelection.collect { selection ->
-                if (selection > 0 &&
-                    totalSize > getRemoteConfigIntValue(END_AD_POSITION) &&
-                    selection % getRemoteConfigIntValue(END_AD_POSITION) == 0
-                ) {
-                    youTubeStreamPlayer.pause()
+            mainViewModel.currentSelection.distinctUntilChanged().filter { it == createPosition }
+                .collect { selection ->
+                    if (selection > 0 &&
+                        totalSize > getRemoteConfigIntValue(END_AD_POSITION) &&
+                        selection % getRemoteConfigIntValue(END_AD_POSITION) == 0
+                    ) {
+                        youTubeStreamPlayer.pause()
 
-                    if (selection == createPosition) {
-                        // Ad 시작 로직
-                        youtubeContentEndViewModel.setAdLoading(loading = true)
-                        interstitialAd(requireActivity(), adViewModel = adViewModel)
-                        // Interstitial Ad 실행 및 상태 관찰
-                        combine(
-                            adViewModel.interstitialAdComplete,
-                            adViewModel.interstitialAdFail,
-                        ) { interstitialAdComplete, interstitialAdFail ->
-                            Pair(interstitialAdComplete, interstitialAdFail)
-                        }.collect { combinedResult ->
-                            combinedResult.first?.let {
-                                if (!it) {
-                                    adViewModel.showInterstitialAds(context = requireActivity())
-                                } else {
+                        if (selection == createPosition) {
+                            // Ad 시작 로직
+                            youtubeContentEndViewModel.setAdLoading(loading = true)
+                            interstitialAd(requireActivity(), adViewModel = adViewModel)
+                            // Interstitial Ad 실행 및 상태 관찰
+                            combine(
+                                adViewModel.interstitialAdComplete,
+                                adViewModel.interstitialAdFail,
+                            ) { interstitialAdComplete, interstitialAdFail ->
+                                Pair(interstitialAdComplete, interstitialAdFail)
+                            }.collect { combinedResult ->
+                                combinedResult.first?.let {
+                                    if (!it) {
+                                        adViewModel.showInterstitialAds(context = requireActivity())
+                                    } else {
+                                        youtubeContentEndViewModel.setAdLoading(loading = false)
+                                        youTubeStreamPlayer.start()
+                                    }
+                                } ?: run {
+                                    // 광고 실패
                                     youtubeContentEndViewModel.setAdLoading(loading = false)
                                     youTubeStreamPlayer.start()
                                 }
-                            } ?: run {
-                                // 광고 실패
-                                youtubeContentEndViewModel.setAdLoading(loading = false)
-                                youTubeStreamPlayer.start()
                             }
                         }
+                    } else {
+                        youTubeStreamPlayer.seekTo(0f)
+                        youTubeStreamPlayer.start()
                     }
-                } else {
-                    youTubeStreamPlayer.seekTo(0f)
-                    youTubeStreamPlayer.start()
                 }
-            }
         }
     }
 
@@ -329,6 +335,7 @@ class YouTubeEndFragment(
         youTubeStreamPlayer =
             YouTubeStreamPlayerImpl(
                 lifecycle,
+                autoPlay = false,
                 youtubeStreamPlayerAdapter,
                 iFramePlayerOptions,
                 youtubeStreamPlayerTracker,
@@ -348,7 +355,7 @@ class YouTubeEndFragment(
     ) {
         super.onViewCreated(view, savedInstanceState)
         val composeView =
-            youTubePlayerView.rootView?.findViewById<ComposeView>(com.sean.ratel.ui.R.id.player_controller)
+            youTubePlayerView.rootView?.findViewById<ComposeView>(R.id.player_controller)
         // controller
         composeView?.setContent {
             val pipButtonClick = remember { mutableStateOf(false) }
@@ -527,8 +534,19 @@ class YouTubeEndFragment(
             if (NetworkUtil.getNetworkInfo(requireContext()).networkType != "wifi" && youtubeContentEndViewModel.getWifiOnlyPlay()) {
                 youTubeStreamPlayer.pause()
             }
-        } else {
-            // youTubeStreamPlayer.pause()
+        }
+
+        launch {
+            mainViewModel.currentSelection.filter { it == createPosition }.distinctUntilChanged()
+                .collect { selection ->
+                    val isSoundOff = youtubeContentEndViewModel.getSoundOff()
+
+                    if (selection == createPosition) {
+                        RLog.d("hbungshin", "selection : $selection , isSoundOff  $isSoundOff")
+                        delay(500)
+                        youTubeStreamPlayer.setMute(!isSoundOff)
+                    }
+                }
         }
     }
 
@@ -558,7 +576,8 @@ class YouTubeEndFragment(
                     .padding(top = topBarHeight.value.dp)
                     .clickable {
                         if (youTubeStreamPlayer.isPlaying()) youTubeStreamPlayer.pause() else youTubeStreamPlayer.start()
-                    }.padding(innerPadding),
+                    }
+                    .padding(innerPadding),
             ) {
                 // 채널, 영상타이틀 오른쪽 좋아요,싫어요,댓글,공유
                 // 맨하단 시크바
@@ -596,6 +615,7 @@ class YouTubeEndFragment(
                     youtubeContentEndViewModel,
                     mainShortsModel,
                     onSoundChange = { sound ->
+                        Log.d("KKKKKKKK", "aaaaaa : $sound")
                         youTubeStreamPlayer.setMute(!sound)
                     },
                 )

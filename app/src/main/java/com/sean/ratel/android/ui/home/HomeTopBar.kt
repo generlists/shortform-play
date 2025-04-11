@@ -42,9 +42,9 @@ import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.PhoneUtil.shareAppLinkButton
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
-import com.sean.ratel.ui.theme.Red
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
