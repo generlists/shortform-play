@@ -26,8 +26,8 @@ dependencyResolutionManagement {
         maven {
             url = uri("https://maven.pkg.github.com/generlists/sdk-ratel-player-android")
             credentials {
-                username = localProperties.getProperty("gpr.user")  ?: System.getenv("GPR_USER")
-                password = localProperties.getProperty("gpr.key")  ?: System.getenv("GPR_TOKEN")
+                username = localProperties.getProperty("gpr.user") ?: System.getenv("GPR_USER")
+                password = localProperties.getProperty("gpr.key") ?: System.getenv("GPR_TOKEN")
             }
         }
     }

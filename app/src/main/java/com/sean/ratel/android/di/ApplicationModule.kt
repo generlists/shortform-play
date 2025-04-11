@@ -85,15 +85,14 @@ object ApplicationModule {
     }
     @Provides
     @Singleton
-    fun provideWidthIFramePlayerOption(
-    ): IFramePlayerOptions {
-        return IFramePlayerOptions.Builder().controls(1)
+    fun provideWidthIFramePlayerOption(): IFramePlayerOptions {
+        return IFramePlayerOptions.Builder().controls(0)
             .fullscreen(1) // enable full screen button
             .build()
     }
+
     @Provides
-    fun provideYouTubePlayerTracker(
-    ): YouTubePlayerTracker {
+    fun provideYouTubePlayerTracker(): YouTubePlayerTracker {
         return YouTubePlayerTracker()
     }
 }
