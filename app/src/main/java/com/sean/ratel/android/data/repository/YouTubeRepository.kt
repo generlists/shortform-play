@@ -30,7 +30,17 @@ class YouTubeRepository
                     mainShortsVideosCache?.let { emit(it) }
                 } else {
                     // 새로운 API 호출
-                    val countryCode = Locale.getDefault().country
+                    val countryCode =
+                        if (Locale
+                                .getDefault()
+                                .country
+                                .toString()
+                                .isNotEmpty()
+                        ) {
+                            Locale.getDefault().country
+                        } else {
+                            "KR"
+                        }
                     val currentDate = getCurrentDate()
 
                     val key =

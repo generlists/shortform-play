@@ -83,16 +83,16 @@ object ApplicationModule {
         remoteConfig.setConfigSettingsAsync(configSettings)
         return remoteConfig
     }
-    @Provides
-    @Singleton
-    fun provideWidthIFramePlayerOption(): IFramePlayerOptions {
-        return IFramePlayerOptions.Builder().controls(0)
-            .fullscreen(1) // enable full screen button
-            .build()
-    }
 
     @Provides
-    fun provideYouTubePlayerTracker(): YouTubePlayerTracker {
-        return YouTubePlayerTracker()
-    }
+    @Singleton
+    fun provideWidthIFramePlayerOption(): IFramePlayerOptions =
+        IFramePlayerOptions
+            .Builder()
+            .controls(0)
+            .fullscreen(1) // enable full screen button
+            .build()
+
+    @Provides
+    fun provideYouTubePlayerTracker(): YouTubePlayerTracker = YouTubePlayerTracker()
 }
