@@ -87,7 +87,17 @@ class SplashViewModel
             storage: FirebaseStorage,
         ) {
             if (!isNetWorkAvailable(storage.app.applicationContext)) return
-            val countryCode = Locale.getDefault().country
+            val countryCode =
+                if (Locale
+                        .getDefault()
+                        .country
+                        .toString()
+                        .isNotEmpty()
+                ) {
+                    Locale.getDefault().country
+                } else {
+                    "KR"
+                }
             val currentDate = getCurrentDate()
             val startTime = System.currentTimeMillis()
             val downloadKey =
