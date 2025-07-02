@@ -342,7 +342,7 @@ class YouTubeEndFragment(
 
         lifecycle.addObserver(youTubePlayerView)
 
-        youTubeStreamPlayer.initPlayer(networkHandle = false)
+        youTubeStreamPlayer.initPlayer(networkHandle = false, videoId = mainShortsModel?.shortsVideoModel?.videoId)
         youTubePlayerView.matchParent()
 
         return binding.root
