@@ -15,14 +15,14 @@ enum class ToolBox(
         R.string.app_manager,
         R.string.app_manager_detail,
     ),
-    NETWORK_MANAGER(
-        R.drawable.ic_network_manager,
-        R.string.network_manager,
-        R.string.network_manager_detail,
-    ),
-    PHONE_CARE(
-        R.drawable.ic_phone_care,
-        R.string.device_care,
-        R.string.device_care_detail,
-    ),
+//    NETWORK_MANAGER(
+//        R.drawable.ic_network_manager,
+//        R.string.network_manager,
+//        R.string.network_manager_detail,
+//    ),
+//    PHONE_CARE(
+//        R.drawable.ic_phone_care,
+//        R.string.device_care,
+//        R.string.device_care_detail,
+//    ),
 }

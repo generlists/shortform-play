@@ -79,7 +79,7 @@ private fun PhoneManagerItem(
     viewModel: SettingViewModel?,
     item: ToolBox,
 ) {
-    val context = LocalContext.current
+
     Column(
         Modifier
             .wrapContentHeight()
@@ -92,7 +92,7 @@ private fun PhoneManagerItem(
             Modifier
                 .wrapContentSize()
                 .background(Color.White)
-                .clickable(onClick = { runDetailPage(context, item, viewModel) }),
+                .clickable(onClick = { runDetailPage(item, viewModel) }),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -152,7 +152,6 @@ private fun PhoneManagerItem(
 }
 
 fun runDetailPage(
-    context: Context,
     toolBox: ToolBox,
     viewModel: SettingViewModel?,
 ) {
@@ -165,21 +164,21 @@ fun runDetailPage(
             )
         }
 
-        R.drawable.ic_network_manager -> {
-            Toast.makeText(context, R.string.device_manager_comming_soon, Toast.LENGTH_LONG).show()
-            viewModel?.sendGALog(
-                Event.SCREEN_VIEW,
-                Destination.SettingDeviceNetwork.route,
-            )
-        }
+//        R.drawable.ic_network_manager -> {
+//            Toast.makeText(context, R.string.device_manager_comming_soon, Toast.LENGTH_LONG).show()
+//            viewModel?.sendGALog(
+//                Event.SCREEN_VIEW,
+//                Destination.SettingDeviceNetwork.route,
+//            )
+//        }
 
-        R.drawable.ic_phone_care -> {
-            Toast.makeText(context, R.string.device_manager_comming_soon, Toast.LENGTH_LONG).show()
-            viewModel?.sendGALog(
-                Event.SCREEN_VIEW,
-                Destination.SettingPhoneCare.route,
-            )
-        }
+//        R.drawable.ic_phone_care -> {
+//            Toast.makeText(context, R.string.device_manager_comming_soon, Toast.LENGTH_LONG).show()
+//            viewModel?.sendGALog(
+//                Event.SCREEN_VIEW,
+//                Destination.SettingPhoneCare.route,
+//            )
+//        }
 
         else -> Unit
     }
