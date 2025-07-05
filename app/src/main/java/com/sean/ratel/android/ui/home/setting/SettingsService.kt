@@ -32,7 +32,7 @@ import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background_op_10
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import java.util.Locale
 
@@ -43,7 +43,7 @@ fun SettingsService(viewModel: SettingViewModel?) {
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .background(Color.White),
+            .background(APP_BACKGROUND),
     ) {
         ServiceTitle()
         Spacer(Modifier.height(3.dp))
@@ -82,7 +82,7 @@ private fun SettingsService(
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Normal,
                 fontFamily = FontFamily.SansSerif,
-                color = Color.Black,
+                color = Color.White,
                 modifier = Modifier.padding(start = 5.dp, top = 15.dp, bottom = 15.dp),
             )
             Box(
@@ -113,7 +113,7 @@ private fun ServiceTitle() {
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(Background_op_10)
+            .background(APP_BACKGROUND)
             .alpha(0.9f)
             .padding(start = 5.dp, top = 3.dp, bottom = 3.dp),
     ) {
@@ -122,7 +122,7 @@ private fun ServiceTitle() {
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal,
-            color = Color.Black,
+            color = Color.White,
         )
     }
 }

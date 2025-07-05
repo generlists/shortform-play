@@ -18,9 +18,9 @@ fun NetworkImage(
     contentDescription: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
-    @DrawableRes errorRes: Int = R.drawable.clip_lg_default,
-    @DrawableRes fallbackRes: Int = R.drawable.clip_lg_default,
-    @DrawableRes placeholderRes: Int = R.drawable.clip_lg_default,
+    @DrawableRes errorRes: Int = R.drawable.ad_native_default_background,
+    @DrawableRes fallbackRes: Int = R.drawable.ad_native_default_background,
+    @DrawableRes placeholderRes: Int = R.drawable.ad_native_default_background,
 ) {
     val context = LocalContext.current
     val errorDrawable = AppCompatResources.getDrawable(context, errorRes)

@@ -53,7 +53,9 @@ import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.DropDownMenuComposable
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
-import com.sean.ratel.android.ui.theme.Background
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_80
 import com.sean.ratel.android.utils.ComposeUtil.ViewBottomMargin
 
@@ -94,7 +96,7 @@ fun AppManagerView(
             modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .background(Background),
+                .background(APP_BACKGROUND),
         ) {
             ItemList(data, viewModel)
         }
@@ -182,7 +184,7 @@ private fun AppListItem(
                         title ?: "",
                     )
                 })
-                .background(Color.White),
+                .background(APP_BACKGROUND),
         // Box 내에서 정렬
         contentAlignment = Alignment.CenterStart,
     ) {
@@ -233,7 +235,7 @@ private fun AppListItem(
                             .padding(bottom = 5.dp),
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
+                    color = Color.White,
                 )
                 Row(Modifier) {
                     Text(
@@ -242,7 +244,8 @@ private fun AppListItem(
                                 appManagerInfo?.apkSize ?: "",
                             ),
                         fontSize = 10.sp,
-                        color = Color.Black,
+                        fontWeight = FontWeight.Bold,
+                        color = APP_TEXT_COLOR,
                     )
 
                     Text(
@@ -252,7 +255,7 @@ private fun AppListItem(
                             ),
                         modifier = Modifier.padding(start = 20.dp),
                         fontSize = 10.sp,
-                        color = Color.Black,
+                        color = APP_SUBTITLE_TEXT_COLOR,
                     )
                 }
             }

@@ -65,10 +65,10 @@ import com.sean.ratel.android.data.dto.TopFiveList
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background_op_20
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_WHITE_10
+import com.sean.ratel.android.ui.theme.IMAGE_FLOW_DOT_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.PhoneUtil.goYoutubeApp
 import com.sean.ratel.android.utils.TimeUtil.formatLocalizedDate
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
@@ -219,7 +219,7 @@ fun AutoScrollImagePager(
             repeat(topItemSize) { index ->
                 // 무한 스크롤에 맞춰 현재 페이지를 인디케이터에 매핑
                 val color =
-                    if (pagerState.currentPage % topItemSize == index) Red else Background_op_20
+                    if (pagerState.currentPage % topItemSize == index) APP_TEXT_COLOR else IMAGE_FLOW_DOT_BACKGROUND
                 Box(
                     modifier =
                         Modifier
@@ -227,7 +227,7 @@ fun AutoScrollImagePager(
                             .padding(4.dp)
                             .background(
                                 color = color,
-                                shape = androidx.compose.foundation.shape.CircleShape,
+                                shape = CircleShape,
                             ),
                 )
             }
@@ -429,7 +429,8 @@ private fun annotionString(
             withStyle(
                 style =
                     SpanStyle(
-                        color = Color.Blue,
+                        color = APP_TEXT_COLOR,
+                        fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline,
                     ),
             ) {

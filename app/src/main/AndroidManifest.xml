@@ -30,7 +30,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApp"
         android:largeHeap="true"
-        tools:targetApi="34">
+        tools:targetApi="35">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${admobAppId}" />
@@ -47,7 +47,7 @@
             android:supportsPictureInPicture="true"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.MyApp.Splash"
+            android:theme="@style/Theme.MyApp"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -57,9 +57,8 @@
         </activity>
         <activity
             android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/Theme.MyApp" />
+            android:theme="@style/OssLicenseDarkBarsTheme" />
 
-        <activity android:name=".ui.debug.PlayerActivity"/>
     </application>
 
 </manifest>

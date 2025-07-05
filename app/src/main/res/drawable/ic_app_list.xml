@@ -8,71 +8,71 @@
     <!-- 노트의 외곽 (표지) -->
     <path
         android:fillColor="@android:color/transparent"
-        android:strokeColor="#000000"
+        android:strokeColor="#ABFF43"
         android:strokeWidth="0.5"
         android:pathData="M3,2h18v20h-18z" />
 
     <!-- 상단 줄 1 (글씨를 상징) -->
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M6,6h12v1H6z" />
 
     <!-- 상단 줄 2 (글씨를 상징) -->
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M6,9h12v1H6z" />
 
     <!-- 상단 줄 3 (글씨를 상징) -->
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M6,12h8v1H6z" />
 
     <!-- 스프링 바인딩 -->
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M4,2v20h1v-20z" />
 
     <!-- 스프링 구멍들 -->
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M4.5,5a0.5,0.5 0 1,0 0,1a0.5,0.5 0 1,0 0,-1z" />
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M4.5,8a0.5,0.5 0 1,0 0,1a0.5,0.5 0 1,0 0,-1z" />
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M4.5,11a0.5,0.5 0 1,0 0,1a0.5,0.5 0 1,0 0,-1z" />
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M4.5,14a0.5,0.5 0 1,0 0,1a0.5,0.5 0 1,0 0,-1z" />
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M4.5,17a0.5,0.5 0 1,0 0,1a0.5,0.5 0 1,0 0,-1z" />
     <path
-        android:fillColor="#000000"
+        android:fillColor="#ABFF43"
         android:strokeWidth="0"
         android:pathData="M4.5,20a0.5,0.5 0 1,0 0,1a0.5,0.5 0 1,0 0,-1z" />
 
     <!-- 돋보기 렌즈 부분 (외곽선 포함, 투명도 80%, 얇은 선) -->
     <path
         android:fillColor="@android:color/transparent"
-        android:strokeColor="#000000"
+        android:strokeColor="#ABFF43"
         android:strokeWidth="0.5"
         android:pathData="M15,16a2.5,2.5 0 1,0 0,5a2.5,2.5 0 1,0 0,-5z" />
 
     <!-- 돋보기 손잡이 (투명도 80%, 얇은 선) -->
     <path
-        android:fillColor="#000000"
-        android:strokeColor="#000000"
+        android:fillColor="#ABFF43"
+        android:strokeColor="#ABFF43"
         android:strokeWidth="0.5"
         android:pathData="M17.5,18.5l2.5,2.5" />
 

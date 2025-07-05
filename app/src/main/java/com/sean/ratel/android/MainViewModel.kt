@@ -113,7 +113,7 @@ class MainViewModel
 
         fun setPIPClick(pipClick: Pair<Boolean, ViewPager2?>) {
             _pipClick.value = pipClick
-            _isTopViewVisible.value = !pipClick.first
+            _isTopViewVisible.value = !pipClick.first && !isCurrentPageMoreView()
         }
 
         fun setViewPager(viewPager2: ViewPager2?) {
@@ -353,6 +353,19 @@ class MainViewModel
                         }
                     },
                 )
+        }
+
+        private fun isCurrentPageMoreView(): Boolean {
+            val moreRoute = _moreButtonClicked.value
+            return (
+                moreRoute == Destination.Home.Main.RecentlyWatchMore.route ||
+                    moreRoute == Destination.Home.Main.EditorPickMore.route ||
+                    moreRoute == Destination.Home.Main.PoplarShortFormMore.route ||
+                    moreRoute == Destination.Home.Main.RankingChannelMore.route ||
+                    moreRoute == Destination.Home.Main.RankingSubscriptionMore.route ||
+                    moreRoute == Destination.Home.Main.RankingSubscriptionUpMore.route ||
+                    moreRoute == Destination.Home.Main.RecommendMore.route
+            )
         }
 
         companion object {

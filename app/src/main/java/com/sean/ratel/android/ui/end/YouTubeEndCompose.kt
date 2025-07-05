@@ -60,11 +60,11 @@ import com.sean.ratel.android.data.common.YouTubeUtils
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
-import com.sean.ratel.android.ui.progress.YouTubeLoader
+import com.sean.ratel.android.ui.progress.LoadingPlaceholder
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -229,7 +229,7 @@ fun EndBottomContents(mainShortsModel: MainShortsModel?) {
 fun LoadingArea(isLoading: Boolean) {
     Box(Modifier.fillMaxSize()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            YouTubeLoader(loading = isLoading)
+            LoadingPlaceholder(loading = isLoading)
         }
     }
 }
@@ -382,7 +382,7 @@ fun BottomSeekBar(
 ) {
     val barHeight = 3.dp // SeekBar의 높이
     val backgroundColor = Background_op_10
-    val progressColor = Red
+    val progressColor = APP_TEXT_COLOR
 
     Box(
         modifier =

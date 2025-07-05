@@ -26,6 +26,7 @@ import com.sean.ratel.android.ui.home.HomeTopBar
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.NavGraph
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
 @Suppress("ktlint:standard:function-naming")
@@ -48,7 +49,6 @@ fun ShortFormPlayApp(
         val currentRoute = navBackStackEntry?.destination?.route ?: Destination.Splash.route
         val itemClick by remember { mainViewModel.itemClicked }
         val context = LocalContext.current as MainActivity
-
         Scaffold(
             modifier = Modifier.imePadding(),
             topBar = {
@@ -56,7 +56,7 @@ fun ShortFormPlayApp(
                     HomeTopBar(
                         Modifier.background(Color.Transparent),
                         mainViewModel,
-                        currentRoute == Destination.YouTube.route,
+                        currentRoute,
                         historyBack = {
                             mainViewModel.runNavigationBack(Destination.YouTube.route)
                         },
@@ -73,7 +73,7 @@ fun ShortFormPlayApp(
             },
             floatingActionButtonPosition = FabPosition.End,
         ) { innerPaddingModifier ->
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize().background(APP_BACKGROUND)) {
                 NavGraph(
                     navController = navController,
                     modifier = Modifier.padding(innerPaddingModifier),

@@ -40,8 +40,8 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 
 @Keep
 enum class HomeTab(
@@ -170,7 +170,7 @@ private fun HomeBottomBarView(
                             }
                         adViewModel.setBottomBarHeight(bottomVarHeight.toInt())
                     },
-                containerColor = Red,
+                containerColor = APP_BACKGROUND,
             ) {
                 Row(
                     Modifier

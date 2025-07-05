@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.TopNavigationBar
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.ViewBottomMargin
@@ -60,6 +62,7 @@ fun SettingView(
             Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .background(APP_BACKGROUND)
                 .verticalScroll(scrollState),
         ) {
             SettingsService(viewModel = viewModel)

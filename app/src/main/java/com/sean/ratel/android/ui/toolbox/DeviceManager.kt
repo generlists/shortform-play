@@ -1,7 +1,5 @@
 package com.sean.ratel.android.ui.toolbox
 
-import android.content.Context
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,7 +20,6 @@ import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -34,7 +31,8 @@ import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background_op_10
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
 @Suppress("ktlint:standard:function-naming")
@@ -43,7 +41,7 @@ fun PhoneAppList(viewModel: SettingViewModel?) {
     Column(
         Modifier
             .wrapContentSize()
-            .background(Color.White),
+            .background(APP_BACKGROUND),
     ) {
         PhoneManagerTitle()
         ToolBox.entries.forEach { toolBox ->
@@ -59,7 +57,7 @@ private fun PhoneManagerTitle() {
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(Background_op_10)
+            .background(APP_BACKGROUND)
             .alpha(0.9f)
             .padding(start = 5.dp),
     ) {
@@ -68,7 +66,7 @@ private fun PhoneManagerTitle() {
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal,
-            color = Color.Black,
+            color = Color.White,
         )
     }
 }
@@ -79,19 +77,18 @@ private fun PhoneManagerItem(
     viewModel: SettingViewModel?,
     item: ToolBox,
 ) {
-
     Column(
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .background(Color.White),
+            .background(APP_BACKGROUND),
     ) {
         Spacer(Modifier.height(5.dp))
 
         Row(
             Modifier
                 .wrapContentSize()
-                .background(Color.White)
+                .background(APP_BACKGROUND)
                 .clickable(onClick = { runDetailPage(item, viewModel) }),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -112,7 +109,7 @@ private fun PhoneManagerItem(
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Normal,
-                    color = Color.Black,
+                    color = Color.White,
                     modifier =
                         Modifier
                             .padding(top = 2.dp),
@@ -122,7 +119,7 @@ private fun PhoneManagerItem(
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Normal,
-                    color = Color.Black,
+                    color = APP_SUBTITLE_TEXT_COLOR,
                     modifier =
                         Modifier
                             .padding(top = 2.dp, bottom = 10.dp),

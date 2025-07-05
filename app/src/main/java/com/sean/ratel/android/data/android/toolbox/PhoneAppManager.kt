@@ -9,6 +9,7 @@ import android.content.pm.PackageManager.GET_META_DATA
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
+import androidx.core.net.toUri
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.domain.model.toolbox.AppManagerInfo
 import com.sean.ratel.android.utils.PhoneUtil
@@ -20,7 +21,6 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
-import androidx.core.net.toUri
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class PhoneAppManager
@@ -79,8 +79,11 @@ class PhoneAppManager
             } catch (e: Exception) {
                 e.printStackTrace()
                 // Google Play 앱이 없거나 오류가 발생할 경우, 웹 브라우저로 이동하도록 설정
-                val fallbackIntent = Intent(Intent.ACTION_VIEW,
-                    STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(appName).toUri())
+                val fallbackIntent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(appName).toUri(),
+                    )
                 context.startActivity(fallbackIntent)
             }
         }

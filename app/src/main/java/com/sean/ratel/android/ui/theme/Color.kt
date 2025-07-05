@@ -11,16 +11,15 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 // 메인색
-val Red = Color(android.graphics.Color.parseColor("#cf0107"))
+val APP_BACKGROUND = Color.Black
+val APP_TEXT_COLOR = Color(0xFFABFF43)
+val APP_SUBTITLE_TEXT_COLOR = Color(0xFF989A9F)
 val Background = Color(android.graphics.Color.parseColor("#F6F6F6"))
-val Background_80 = Color(android.graphics.Color.parseColor("#686868"))
-val BLACK = Color(android.graphics.Color.parseColor("#000000"))
 val Background_op_20 = Color(android.graphics.Color.parseColor("#33000000"))
+val IMAGE_FLOW_DOT_BACKGROUND = Color(android.graphics.Color.parseColor("#888888"))
 val Background_op_10 = Color(android.graphics.Color.parseColor("#1A000000"))
 val Background_op_80 = Color(android.graphics.Color.parseColor("#CC000000"))
-val THUMBNAIL_BACKGROUND = Color(android.graphics.Color.parseColor("#f0f0f0"))
-val Background_op_WHITE_10 = Color(android.graphics.Color.parseColor("#F5F5F5"))
+val THUMBNAIL_BACKGROUND = Color.Black
+val Background_op_WHITE_10 = Color(android.graphics.Color.parseColor("#80F6F6F6"))
 
-val AD_HEAD_LINE = Color(android.graphics.Color.parseColor("#252525"))
-val AD_ADVERISER = Color(android.graphics.Color.parseColor("#989a9f"))
-val AD_CALL_TO_ACTION = Color(android.graphics.Color.parseColor("#589aeb"))
+val MAIN_TITLE_UNDER_LINE = Color(0x80ABFF43)

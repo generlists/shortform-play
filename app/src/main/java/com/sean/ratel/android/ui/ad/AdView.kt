@@ -54,8 +54,9 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.MAX_ADAPTIVE_BANNER_SIZE
 import com.sean.ratel.android.databinding.NativeAdBinding
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.UIUtil
 import com.sean.ratel.android.utils.UIUtil.adInLineAdaptiveBannerSize
 import com.sean.ratel.android.utils.UIUtil.pixelToDp
@@ -181,7 +182,7 @@ private fun BannerView(
 
             if (progress && adBannerFail?.value == null) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().background(APP_BACKGROUND),
                     contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(
@@ -190,7 +191,7 @@ private fun BannerView(
                             .padding(1.dp),
                         // 원의 두께 조정
                         strokeWidth = 3.dp,
-                        color = Red,
+                        color = APP_TEXT_COLOR,
                     )
                 }
             }
@@ -251,7 +252,7 @@ private fun InLineAdaptiveBannerView(
                                     context,
                                     262f,
                                 ).dp,
-                            ).background(Color.White)
+                            ).background(APP_BACKGROUND)
                     } else {
                         Modifier
                     },
@@ -272,7 +273,7 @@ private fun InLineAdaptiveBannerView(
 
         if (progress && adInLineBannerFail?.value == null) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().background(APP_BACKGROUND),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(
@@ -281,7 +282,7 @@ private fun InLineAdaptiveBannerView(
                         .padding(1.dp),
                     // 원의 두께 조정
                     strokeWidth = 3.dp,
-                    color = Red,
+                    color = APP_TEXT_COLOR,
                 )
             }
         }
@@ -347,7 +348,7 @@ fun NativeAdCompose(adViewModel: AdViewModel?) {
                     if (adNativeFail?.value == null) {
                         Modifier
                             .height(300.dp)
-                            .background(Color.White)
+                            .background(APP_BACKGROUND)
                     } else {
                         Modifier
                     },
@@ -365,7 +366,7 @@ fun NativeAdCompose(adViewModel: AdViewModel?) {
                     .size(18.dp)
                     .padding(1.dp),
                 strokeWidth = 3.dp,
-                color = Red,
+                color = APP_TEXT_COLOR,
             )
         }
     }
@@ -407,7 +408,7 @@ private fun BindNativeView(ad: NativeAd) {
             ad.icon?.let {
                 (binding.adAppIcon).load(it.uri) {
                     transformations(CircleCropTransformation()) // 원형 이미지 변환 적용
-                        .placeholder(R.drawable.circle_shape)
+                        .placeholder(R.drawable.ad_circle_shape)
                 }
             } ?: run { (binding.adAppIcon as? ImageView)?.visibility = View.INVISIBLE }
 

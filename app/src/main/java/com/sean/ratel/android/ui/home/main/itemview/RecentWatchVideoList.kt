@@ -59,8 +59,9 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background_op_10
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
+import com.sean.ratel.android.ui.theme.MAIN_TITLE_UNDER_LINE
 import com.sean.ratel.android.ui.theme.THUMBNAIL_BACKGROUND
 import com.sean.ratel.android.utils.ComposeUtil.pxToDp
 import com.sean.ratel.android.utils.UIUtil
@@ -100,7 +101,7 @@ fun RecentVideoWatchList(viewModel: MainViewModel) {
                 Modifier
                     .width(UIUtil.pixelToDp(context, textWidth).dp)
                     .height(8.dp)
-                    .background(Background_op_10),
+                    .background(MAIN_TITLE_UNDER_LINE),
                 contentAlignment = Alignment.BottomCenter,
             ) {}
             Row(
@@ -124,7 +125,7 @@ fun RecentVideoWatchList(viewModel: MainViewModel) {
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        color = Color.Black,
+                        color = Color.White,
                         onTextLayout = { textLayoutResult: TextLayoutResult ->
                             textWidth = textLayoutResult.size.width.toFloat() // 렌더링된 픽셀 크기
                         },
@@ -132,7 +133,7 @@ fun RecentVideoWatchList(viewModel: MainViewModel) {
                             TextStyle(
                                 shadow =
                                     Shadow(
-                                        color = Color.White,
+                                        color = Color.Black,
                                         // 그림자의 위치 (x, y)
                                         offset = Offset(2f, 2f),
                                         // 그림자의 흐림 정도
@@ -170,7 +171,7 @@ fun RecentVideoWatchList(viewModel: MainViewModel) {
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.Normal,
                         fontSize = 15.sp,
-                        color = Color.Blue,
+                        color = APP_TEXT_COLOR,
                     )
                 }
             }
@@ -242,7 +243,7 @@ fun RecentVideoList(
                         if (LocalInspectionMode.current) {
                             val context = LocalContext.current
                             val placeholderDrawable =
-                                AppCompatResources.getDrawable(context, R.drawable.clip_lg_default)
+                                AppCompatResources.getDrawable(context, R.drawable.ad_native_default_background)
                             placeholderDrawable?.let {
                                 Image(
                                     // 로컬 이미지

@@ -69,9 +69,8 @@ import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_20
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -145,7 +144,7 @@ fun GridDisplayUi(
                 items = menuStringList,
             )
         },
-        containerColor = Background,
+        containerColor = APP_BACKGROUND,
     ) { innerPadding ->
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
         val adBannerSize =
@@ -210,7 +209,7 @@ fun GridDisplayUi(
                         .size(18.dp)
                         .padding(1.dp),
                     strokeWidth = 3.dp,
-                    color = Red,
+                    color = APP_BACKGROUND,
                 )
             }
         }
@@ -643,7 +642,7 @@ fun GridItemBoxRow(
                             // Preview 모드에서 로컬 이미지 사용
                             Image(
                                 // 로컬 이미지
-                                painter = painterResource(id = R.drawable.hqdefault),
+                                painter = painterResource(id = R.drawable.sample_image),
                                 contentDescription = "Preview Image",
                                 contentScale = ContentScale.Crop,
                                 modifier =

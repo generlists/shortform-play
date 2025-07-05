@@ -105,6 +105,7 @@ fun RatelDialogThemeOverlay(content: @Composable () -> Unit) {
                 ),
             button =
                 currentTypography.button.copy(
+                    color = APP_TEXT_COLOR,
                     fontWeight = FontWeight.Bold,
                     letterSpacing = 0.2.em,
                 ),

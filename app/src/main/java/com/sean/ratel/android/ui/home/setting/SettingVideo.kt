@@ -35,9 +35,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
-import com.sean.ratel.android.ui.theme.Background_op_10
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -52,17 +53,17 @@ fun SettingsVideo(viewModel: SettingViewModel?) {
             .background(Color.White),
     ) {
         SettingVideoTitle()
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
         SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_AUTO_PLAY)
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
         SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_LOOP_PLAY)
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
         SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_PIP_PLAY)
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
         SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_SOUND)
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
         SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_WIFI_STATE)
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
     }
 }
 
@@ -107,7 +108,7 @@ private fun SettingsVideo(
         Row(
             Modifier
                 .wrapContentSize()
-                .background(Color.White)
+                .background(APP_BACKGROUND)
                 .clickable(onClick = { }),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -117,7 +118,7 @@ private fun SettingsVideo(
                     fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Normal,
-                    color = Color.Black,
+                    color = Color.White,
                     modifier = Modifier.padding(top = 2.dp),
                 )
                 Text(
@@ -125,7 +126,7 @@ private fun SettingsVideo(
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Normal,
-                    color = Color.Black,
+                    color = APP_SUBTITLE_TEXT_COLOR,
                     modifier = Modifier.padding(top = 2.dp, bottom = 5.dp),
                 )
             }
@@ -137,7 +138,7 @@ private fun SettingsVideo(
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 RSwitch(
-                    positiveColor = Red,
+                    positiveColor = APP_TEXT_COLOR,
                     buttonHeight = 24.dp,
                     switchValue =
                         if (item == SettingsItems.SERVICE_VIDEO_AUTO_PLAY) {
@@ -188,7 +189,7 @@ private fun SettingVideoTitle() {
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(Background_op_10)
+            .background(APP_BACKGROUND)
             .alpha(0.9f)
             .padding(start = 5.dp, top = 3.dp, bottom = 3.dp),
     ) {
@@ -197,7 +198,7 @@ private fun SettingVideoTitle() {
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal,
-            color = Color.Black,
+            color = Color.White,
         )
     }
 }

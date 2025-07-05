@@ -65,10 +65,9 @@ import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.end.BottomSeekBar
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background
-import com.sean.ratel.android.ui.theme.Background_op_10
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import com.sean.ratel.android.utils.TimeUtil.timeToFloat
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
@@ -141,7 +140,7 @@ fun ListItemDisplayUi(
                 items = channelStringList,
             )
         },
-        containerColor = Background,
+        containerColor = APP_BACKGROUND,
     ) { innerPadding ->
 
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
@@ -187,7 +186,7 @@ fun ListItemDisplayUi(
                                     start = 5.dp,
                                     top = 5.dp,
                                     end = 5.dp,
-                                ).background(Color.White),
+                                ).background(APP_BACKGROUND),
                         ) {
                             Text(
                                 text = stringResource(R.string.main_recent_watch_video_max_1),
@@ -199,7 +198,7 @@ fun ListItemDisplayUi(
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 10.sp,
-                                color = Color.Black,
+                                color = APP_TEXT_COLOR,
                             )
                             Text(
                                 text = stringResource(R.string.main_recent_watch_video_max_2),
@@ -211,7 +210,7 @@ fun ListItemDisplayUi(
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 10.sp,
-                                color = Color.Black,
+                                color = APP_TEXT_COLOR,
                             )
                         }
 
@@ -264,7 +263,7 @@ fun ListItemDisplayUi(
                         .size(18.dp)
                         .padding(1.dp),
                     strokeWidth = 3.dp,
-                    color = Red,
+                    color = APP_BACKGROUND,
                 )
             }
         }
@@ -419,24 +418,18 @@ fun ListItemList(
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .background(Color.White),
+            .background(APP_BACKGROUND),
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
         ) {
-            Box(
-                Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(Background_op_10),
-            )
             Row(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(Background),
+                    .background(APP_BACKGROUND),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -449,7 +442,7 @@ fun ListItemList(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 10.sp,
-                    color = Color.Black,
+                    color = Color.White,
                 )
                 Box(Modifier.wrapContentSize().weight(0.3f), contentAlignment = Alignment.Center) {
                     Text(
@@ -459,7 +452,7 @@ fun ListItemList(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 10.sp,
-                        color = Color.Black,
+                        color = Color.White,
                     )
                 }
 
@@ -483,7 +476,7 @@ fun ListItemList(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 10.sp,
-                        color = Color.Black,
+                        color = Color.White,
                     )
                     if (viewType == ViewType.SubscriptionRankingUp) {
                         Text(
@@ -495,17 +488,11 @@ fun ListItemList(
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 10.sp,
-                            color = Color.Black,
+                            color = APP_TEXT_COLOR,
                         )
                     }
                 }
             }
-            Box(
-                Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(Background_op_10),
-            )
         }
 
         items.let {
@@ -525,12 +512,6 @@ fun ListItemList(
             ) {
                 items(count = items.size) { index ->
                     ListItem(viewType, route, index, items[index], mainViewModel, moreViewModel)
-                    Box(
-                        Modifier
-                            .height(1.dp)
-                            .fillMaxWidth()
-                            .background(Background),
-                    )
                 }
             }
         }
@@ -551,7 +532,7 @@ fun ListItem(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(Color.White)
+            .background(APP_BACKGROUND)
             .clickable {
                 mainViewModel?.goEndContent(
                     route,
@@ -577,7 +558,7 @@ fun ListItem(
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
-            color = Color.Black,
+            color = Color.White,
         )
         Row(
             Modifier.wrapContentSize().weight(0.3f),
@@ -602,7 +583,7 @@ fun ListItem(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = Color.Black,
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -638,7 +619,7 @@ fun ListItem(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                color = Color.Red,
+                color = APP_TEXT_COLOR,
             )
             if (viewType == ViewType.SubscriptionRankingUp) {
                 Text(
@@ -650,7 +631,7 @@ fun ListItem(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
-                    color = Color.Red,
+                    color = APP_TEXT_COLOR,
                 )
             }
         }
@@ -751,12 +732,6 @@ fun RecentlyWatchItemList(
                     mainViewModel,
                     moreViewModel,
                 )
-                Box(
-                    Modifier
-                        .height(1.dp)
-                        .fillMaxWidth()
-                        .background(Background),
-                )
             }
         }
     }
@@ -781,7 +756,7 @@ private fun RecentlyWatchItems(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(top = 2.dp, bottom = 2.dp)
-                .background(Color.White)
+                .background(APP_BACKGROUND)
                 .clickable {
                     mainViewModel?.goEndContent(
                         route,
@@ -887,7 +862,7 @@ private fun RecentlyWatchItems(
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = Color.White,
                 textAlign = TextAlign.Center,
             )
             Row(
@@ -918,7 +893,7 @@ private fun RecentlyWatchItems(
                             .padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
+                    color = Color.White,
                 )
             }
         }

@@ -1,4 +1,5 @@
 package com.sean.ratel.android.ui.home
+
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -41,8 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.PhoneUtil.shareAppLinkButton
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 
@@ -51,7 +54,7 @@ import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 fun HomeTopBar(
     modifier: Modifier,
     mainViewModel: MainViewModel?,
-    isEnd: Boolean,
+    isHomeNaviBar: String,
     historyBack: () -> Unit,
     privacyOptionClick: () -> Unit,
 ) {
@@ -62,7 +65,7 @@ fun HomeTopBar(
                 .height(56.dp)
                 .clickable(enabled = false, onClick = {})
                 .background(
-                    if (isEnd) {
+                    if (isHomeNaviBar == Destination.YouTube.route) {
                         Brush.verticalGradient(
                             colors =
                                 listOf(
@@ -74,7 +77,7 @@ fun HomeTopBar(
                     } else {
                         Brush.linearGradient(
                             // 동일한 빨간색으로 단일 색상 처리
-                            colors = listOf(Red, Red),
+                            colors = listOf(APP_BACKGROUND, APP_BACKGROUND),
                         )
                     },
                 ),
@@ -100,21 +103,30 @@ fun HomeTopBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val isPrivacy = mainViewModel?.isPrivacyOptionMenu?.collectAsState(false)
-
-            if (isEnd) {
+            if (isHomeNaviBar == Destination.Home.Main.route || isHomeNaviBar == Destination.Home.ShortForm.route) {
+                Image(
+                    painterResource(R.drawable.shortform_play_icon_main),
+                    contentDescription = null,
+                    modifier =
+                        Modifier
+                            .width(42.dp)
+                            .height(42.dp),
+                    contentScale = ContentScale.Fit,
+                )
+                TitleBox()
+                Spacer(modifier = Modifier.weight(1f))
+                PrivacyOptionMenu(isPrivacy?.value ?: false, privacyOptionClick)
+                SharerIconButton()
+            } else if (isHomeNaviBar == Destination.YouTube.route) {
                 BackButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     historyBack,
                 )
+                TitleBox()
+                Spacer(modifier = Modifier.weight(1f))
+                PIPButton(mainViewModel)
+                SharerIconButton()
             }
-
-            TitleBox()
-            Spacer(modifier = Modifier.weight(1f))
-
-            if (isEnd) PIPButton(mainViewModel)
-
-            SharerIconButton()
-            PrivacyOptionMenu(isPrivacy?.value ?: false, privacyOptionClick)
         }
     }
 }
@@ -270,6 +282,6 @@ fun PrivacyOptionMenu(
 @Composable
 private fun HomeTopBarPreview() {
     RatelappTheme {
-        HomeTopBar(Modifier, null, true, {}, {})
+        HomeTopBar(Modifier, null, Destination.YouTube.route, {}, {})
     }
 }

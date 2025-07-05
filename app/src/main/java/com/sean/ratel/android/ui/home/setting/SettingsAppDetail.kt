@@ -30,6 +30,8 @@ import androidx.compose.ui.unit.sp
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.PhoneUtil.getAppVersionName
@@ -42,12 +44,12 @@ fun SettingsAppDetail(viewModel: SettingViewModel?) {
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .background(Color.White),
+            .background(APP_BACKGROUND),
     ) {
         SettingsApp(SettingsItems.SETTING_APP_VERSION, viewModel, isArrow = false)
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
         SettingsApp(SettingsItems.SETTING_APP_OPEN_SOURCE, viewModel)
-        Spacer(Modifier.height(3.dp))
+        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
     }
 }
 
@@ -88,7 +90,7 @@ private fun SettingsApp(
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Normal,
                 fontFamily = FontFamily.SansSerif,
-                color = Color.Black,
+                color = Color.White,
                 modifier = Modifier.padding(start = 5.dp, top = 15.dp, bottom = 15.dp),
             )
             if (isArrow) {
@@ -123,7 +125,7 @@ private fun SettingsApp(
                         fontWeight = FontWeight.Bold,
                         fontStyle = FontStyle.Normal,
                         fontFamily = FontFamily.SansSerif,
-                        color = Color.Black,
+                        color = APP_TEXT_COLOR,
                         modifier = Modifier.padding(start = 5.dp, top = 15.dp, bottom = 15.dp),
                     )
                 }

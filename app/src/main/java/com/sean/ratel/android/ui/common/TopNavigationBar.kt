@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -51,7 +51,7 @@ fun TopNavigationBar(
         Modifier
             .fillMaxWidth()
             .height(56.dp)
-            .background(Red),
+            .background(APP_BACKGROUND),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(

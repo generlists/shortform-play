@@ -74,10 +74,10 @@ import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.common.preview.ShortsVideoParameterProvider
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.ui.theme.THUMBNAIL_BACKGROUND
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import com.sean.ratel.android.utils.ComposeUtil.pxToDp
@@ -155,7 +155,7 @@ fun VerticalScrollWithHorizontalItems(
 
     LazyColumn(
         // 세로 스크롤 전체 화면 채우기
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().background(APP_BACKGROUND),
         // 세로 항목 간 간격 설정
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
@@ -192,7 +192,7 @@ fun ShortFormList(
                 // 각 세로 항목은 가로로 꽉 채움
                 .wrapContentHeight(),
     ) {
-        Box(Modifier.background(Background)) {
+        Box(Modifier.background(APP_BACKGROUND)) {
             Text(
                 text =
                     categoryList[currentIndex][0].shortsVideoModel?.categoryName
@@ -205,12 +205,12 @@ fun ShortFormList(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 20.sp,
-                color = Color.Black,
+                color = Color.White,
                 style =
                     TextStyle(
                         shadow =
                             Shadow(
-                                color = Color.White,
+                                color = Color.Black,
                                 // 그림자의 위치 (x, y)
                                 offset = Offset(2f, 2f),
                                 // 그림자의 흐림 정도
@@ -291,7 +291,7 @@ fun RowCategoryList(
         }
     }
 
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd) {
+    Box(Modifier.fillMaxSize().background(APP_BACKGROUND), contentAlignment = Alignment.CenterEnd) {
         LazyRow(
             Modifier.fillMaxSize(),
             listState,
@@ -329,7 +329,7 @@ fun RowCategoryList(
                         if (LocalInspectionMode.current) {
                             val context = LocalContext.current
                             val placeholderDrawable =
-                                AppCompatResources.getDrawable(context, R.drawable.clip_lg_default)
+                                AppCompatResources.getDrawable(context, R.drawable.ad_native_default_background)
                             placeholderDrawable?.let {
                                 Image(
                                     // 로컬 이미지
@@ -526,7 +526,7 @@ private fun ProgressBar() {
                 .size(18.dp)
                 .padding(1.dp),
             strokeWidth = 3.dp,
-            color = Red,
+            color = APP_BACKGROUND,
         )
     }
 }
@@ -539,7 +539,7 @@ fun ScrollableTabBar() {
 
     ScrollableTabRow(
         selectedTabIndex = selectedTabIndex,
-        containerColor = Red,
+        containerColor = APP_BACKGROUND,
         // 탭 바의 좌우 여백
         edgePadding = 8.dp,
         indicator = {},
