@@ -1,5 +1,6 @@
 package com.sean.ratel.android.utils
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -8,6 +9,14 @@ import android.net.Uri
 import android.os.Build
 import android.provider.Settings
 import android.widget.Toast
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
@@ -125,15 +134,26 @@ object PhoneUtil {
         }
     }
 
-    fun getStatusBarHeight(context: Context): Int {
-        // 시스템에서 상태바의 높이를 나타내는 리소스 ID를 가져옵니다
-        val resourceId = context.resources.getIdentifier("status_bar_height", "dimen", "android")
-        return if (resourceId > 0) {
-            // 리소스 ID를 통해 상태바 높이를 픽셀 단위로 가져옵니다
-            context.resources.getDimensionPixelSize(resourceId)
-        } else {
-            0
-        }
+    @SuppressLint("DiscouragedApi")
+    @Suppress("ktlint:standard:function-naming")
+    @Composable
+    fun StatusBarHeight(): Dp {
+        val context = LocalContext.current
+        val density = context.resources.displayMetrics.density
+
+        val fallback =
+            remember {
+                val px =
+                    context.resources
+                        .getIdentifier("status_bar_height", "dimen", "android")
+                        .takeIf { it > 0 }
+                        ?.let { context.resources.getDimensionPixelSize(it) }
+                        ?: 0
+                (px / density).dp
+            }
+
+        val insetsDp = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        return if (insetsDp > 0.dp) insetsDp else fallback
     }
 
     fun goYoutubeApp(

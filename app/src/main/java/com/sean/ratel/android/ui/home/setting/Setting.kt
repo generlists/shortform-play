@@ -2,8 +2,12 @@ package com.sean.ratel.android.ui.home.setting
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -40,7 +44,9 @@ fun SettingView(
     adViewModel: AdViewModel?,
 ) {
     val context = LocalContext.current
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     Scaffold(
+        Modifier.padding(insetPaddingValue),
         topBar = {
             TopNavigationBar(
                 titleResourceId = R.string.setting,
@@ -57,11 +63,10 @@ fun SettingView(
         RLog.d("Setting", "$innerPadding")
         // LazyColumn
         val scrollState = rememberScrollState()
-
+        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
         Column(
             Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .background(APP_BACKGROUND)
                 .verticalScroll(scrollState),
         ) {

@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.main
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -7,12 +8,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -125,8 +129,10 @@ fun ListItemDisplayUi(
     val channelRankingTitle = moreViewModel.channelMoreList.collectAsState()
     val subscriptionTitle = moreViewModel.subscriptionMoreList.collectAsState()
     val subscriptionUpTitle = moreViewModel.subscriptionUpMoreList.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
 
     Scaffold(
+        Modifier.padding(insetPaddingValue),
         topBar = {
             TopNavigationBar(
                 titleString = title.value,
@@ -367,6 +373,7 @@ fun ListItemList(
     listState: LazyListState,
 ) {
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val index = moreViewModel.moreIndex.collectAsState()
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
@@ -501,9 +508,10 @@ fun ListItemList(
                     .fillMaxSize()
                     .then(
                         if (adBannerLoadingComplete.value.first) {
-                            Modifier.padding(
-                                bottom = adBannerLoadingComplete.value.second.dp,
-                            )
+                            Modifier
+                                .padding(
+                                    bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp,
+                                ).background(APP_BACKGROUND)
                         } else {
                             Modifier
                         },
@@ -663,11 +671,15 @@ fun RecentlyWatchItemList(
     listState: LazyListState,
 ) {
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val index = moreViewModel.moreIndex.collectAsState()
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
     }
-
+    Log.d(
+        "hbungshin",
+        "adBannerLoadingComplete : ${adBannerLoadingComplete.value.second} insetPaddingValue : ${insetPaddingValue.value.dp}",
+    )
     val isAtBottom = listState.isAtBottom()
     val coroutine = rememberCoroutineScope()
 
@@ -716,7 +728,7 @@ fun RecentlyWatchItemList(
                 .padding(top = 5.dp, bottom = 5.dp)
                 .then(
                     if (adBannerLoadingComplete.value.first) {
-                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp)
+                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp)
                     } else {
                         Modifier
                     },

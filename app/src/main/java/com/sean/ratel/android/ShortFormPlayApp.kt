@@ -3,9 +3,12 @@ package com.sean.ratel.android
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -49,12 +52,14 @@ fun ShortFormPlayApp(
         val currentRoute = navBackStackEntry?.destination?.route ?: Destination.Splash.route
         val itemClick by remember { mainViewModel.itemClicked }
         val context = LocalContext.current as MainActivity
+        val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+
         Scaffold(
             modifier = Modifier.imePadding(),
             topBar = {
                 if (isTopViewVisible) {
                     HomeTopBar(
-                        Modifier.background(Color.Transparent),
+                        Modifier.background(Color.Transparent).padding(top = insetPaddingValue),
                         mainViewModel,
                         currentRoute,
                         historyBack = {
@@ -73,6 +78,7 @@ fun ShortFormPlayApp(
             },
             floatingActionButtonPosition = FabPosition.End,
         ) { innerPaddingModifier ->
+
             Column(modifier = Modifier.fillMaxSize().background(APP_BACKGROUND)) {
                 NavGraph(
                     navController = navController,

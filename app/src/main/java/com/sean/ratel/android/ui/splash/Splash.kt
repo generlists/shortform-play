@@ -28,8 +28,7 @@ import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
-import com.sean.ratel.android.utils.PhoneUtil.getStatusBarHeight
-import com.sean.ratel.android.utils.UIUtil.toDp
+import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
 import kotlinx.coroutines.flow.combine
 
 @Suppress("ktlint:standard:function-naming")
@@ -47,15 +46,13 @@ fun Splash(
 @Suppress("ktlint:standard:function-naming")
 @Composable
 private fun SplashView(modifier: Modifier) {
-    val context = LocalContext.current
-    val statusBarPadding =
-        getStatusBarHeight(context).toDp() // WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    val statusBarPaddinga = StatusBarHeight()
 
     Box(
         Modifier
             .fillMaxSize()
             .background(APP_BACKGROUND)
-            .offset(y = -statusBarPadding),
+            .offset(y = -statusBarPaddinga),
         contentAlignment = Alignment.Center,
     ) {
         LottieLoader(

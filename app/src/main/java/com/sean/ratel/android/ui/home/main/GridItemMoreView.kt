@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -122,6 +125,7 @@ fun GridDisplayUi(
         }
 
     val currentData = moreViewModel.currentDataList.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
 
     val menuStringList =
         listOf(
@@ -131,6 +135,7 @@ fun GridDisplayUi(
         )
 
     Scaffold(
+        Modifier.padding(insetPaddingValue),
         topBar = {
             TopNavigationBar(
                 titleString = title.value,
@@ -356,6 +361,7 @@ fun GridItemList(
     listState: LazyListState,
 ) {
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     val index = moreViewModel.moreIndex.collectAsState()
     val viewType = viewModel.viewType.collectAsState()
     val route = viewModel.moreButtonClicked.value
@@ -412,7 +418,9 @@ fun GridItemList(
                 .fillMaxSize()
                 .then(
                     if (adBannerLoadingComplete.value.first) {
-                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp)
+                        Modifier.padding(
+                            bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.calculateTopPadding().value.dp,
+                        )
                     } else {
                         Modifier
                     },

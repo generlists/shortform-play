@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.darkColors
@@ -13,13 +12,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme =
     darkColorScheme(
@@ -62,13 +59,18 @@ fun RatelappTheme(
             darkTheme -> DarkColorScheme
             else -> LightColorScheme
         }
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
+    val systemUiController = rememberSystemUiController()
+
+    SideEffect {
+        // 상태바 및 내비게이션 바 색상 안전 설정
+        systemUiController.setStatusBarColor(
+            color = colorScheme.primary,
+            darkIcons = !darkTheme,
+        )
+        systemUiController.setNavigationBarColor(
+            color = colorScheme.primary,
+            darkIcons = !darkTheme,
+        )
     }
 
     MaterialTheme(

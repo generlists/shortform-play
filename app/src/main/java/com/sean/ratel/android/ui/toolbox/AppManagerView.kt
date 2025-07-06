@@ -10,11 +10,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -27,6 +30,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -71,10 +75,11 @@ fun AppManagerView(
 ) {
     val data = remember { viewModel.contents }
     var filterAction by remember { mutableIntStateOf(-1) }
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
 
     LoadingPlaceholder(loading = data.isEmpty())
 
-    Column(Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize().padding(insetPaddingValue)) {
         TopNavigationBar(
             titleResourceId = R.string.app_manager,
             historyBack = { mainViewModel?.runNavigationBack() },
@@ -98,7 +103,7 @@ fun AppManagerView(
                 .wrapContentHeight()
                 .background(APP_BACKGROUND),
         ) {
-            ItemList(data, viewModel)
+            ItemList(data, viewModel, adViewModel)
         }
     }
     FilterAppList(filterAction, viewModel)
@@ -110,10 +115,28 @@ fun AppManagerView(
 fun ItemList(
     items: List<AppManagerInfo>?,
     viewModel: AppManagerViewModel,
+    adViewModel: AdViewModel,
 ) {
+    val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+
     items?.let {
         RLog.d(TAG, "size ${items.size}")
-        LazyColumn {
+        LazyColumn(
+            Modifier
+                .wrapContentSize()
+                .background(Color.Transparent)
+                .then(
+                    if (adBannerLoadingComplete.value.first) {
+                        Modifier
+                            .padding(
+                                bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp,
+                            ).background(APP_BACKGROUND)
+                    } else {
+                        Modifier
+                    },
+                ),
+        ) {
             items(count = items.size) { index ->
                 AppListItem(items[index], viewModel)
             }
