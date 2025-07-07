@@ -84,11 +84,19 @@ android {
 
             buildConfigField("String", "FIREBASE_BASE_URL", "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"")
             // admob
-            buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("RELEASE_BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("RELEASE_NATIVE_AD_UNIT_ID")}\"")
-            buildConfigField("String", "ADAPTIVE_BANNER_UNIT_ID", "\"${localProperties.getProperty("RELEASE_ADAPTIVE_BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "INTERSTITIALAd_UNIT_ID", "\"${localProperties.getProperty("RELEASE_INTERSTITIALAd_UNIT_ID")}\"")
-            buildConfigField("String", "Ad_OPEN_UNIT_ID", "\"${localProperties.getProperty("RELEASE_Ad_OPEN_UNIT_ID")}\"")
+            buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("RELEASE_DEBUG_BANNER_UNIT_ID")}\"")
+            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("RELEASE_DEBUG_NATIVE_AD_UNIT_ID")}\"")
+            buildConfigField(
+                "String",
+                "ADAPTIVE_BANNER_UNIT_ID",
+                "\"${localProperties.getProperty("RELEASE_DEBUG_ADAPTIVE_BANNER_UNIT_ID")}\"",
+            )
+            buildConfigField(
+                "String",
+                "INTERSTITIALAd_UNIT_ID",
+                "\"${localProperties.getProperty("RELEASE_DEBUG_INTERSTITIALAd_UNIT_ID")}\"",
+            )
+            buildConfigField("String", "Ad_OPEN_UNIT_ID", "\"${localProperties.getProperty("RELEASE_DEBUG_Ad_OPEN_UNIT_ID")}\"")
 
             buildConfigField("String", "MY_EMAIL_ACCOUNT", "\"${localProperties.getProperty("MY_EMAIL_ACCOUNT")}\"")
             buildConfigField("String", "NOTICES_URL", "\"${localProperties.getProperty("NOTICES_URL")}\"")
