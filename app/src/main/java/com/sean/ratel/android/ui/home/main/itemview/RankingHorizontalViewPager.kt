@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
@@ -585,6 +586,10 @@ fun Item(
                         .clip(CircleShape)
                         .width(24.dp)
                         .height(24.dp),
+                ContentScale.Fit,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
             )
             Text(
                 text =

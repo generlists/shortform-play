@@ -1,5 +1,6 @@
 package com.sean.ratel.android
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,7 +54,7 @@ fun ShortFormPlayApp(
         val itemClick by remember { mainViewModel.itemClicked }
         val context = LocalContext.current as MainActivity
         val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-
+        Log.d("hbungshin", "insetPaddingValue home : $insetPaddingValue")
         Scaffold(
             modifier = Modifier.imePadding(),
             topBar = {

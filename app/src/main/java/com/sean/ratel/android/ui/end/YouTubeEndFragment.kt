@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -240,7 +241,9 @@ class YouTubeEndFragment(
 
     private fun adRequest() {
         launch {
-            mainViewModel.currentSelection.distinctUntilChanged().filter { it == createPosition }
+            mainViewModel.currentSelection
+                .distinctUntilChanged()
+                .filter { it == createPosition }
                 .collect { selection ->
                     if (selection > 0 &&
                         totalSize > getRemoteConfigIntValue(END_AD_POSITION) &&
@@ -534,7 +537,9 @@ class YouTubeEndFragment(
         }
 
         launch {
-            mainViewModel.currentSelection.filter { it == createPosition }.distinctUntilChanged()
+            mainViewModel.currentSelection
+                .filter { it == createPosition }
+                .distinctUntilChanged()
                 .collect { selection ->
                     val isSoundOff = youtubeContentEndViewModel.getSoundOff()
 
@@ -561,7 +566,6 @@ class YouTubeEndFragment(
         val isAdLoading by remember { youtubeContentEndViewModel.isAdLoading }
         val isPlaying by remember { youtubeContentEndViewModel.isPlaying }
         val topBarHeight = mainViewModel.topBarHeight.collectAsState(53)
-
         Scaffold(
             topBar = {},
             containerColor = Color.Transparent,
@@ -573,8 +577,7 @@ class YouTubeEndFragment(
                     .padding(top = topBarHeight.value.dp)
                     .clickable {
                         if (youTubeStreamPlayer.isPlaying()) youTubeStreamPlayer.pause() else youTubeStreamPlayer.start()
-                    }
-                    .padding(innerPadding),
+                    }.padding(innerPadding),
             ) {
                 // 채널, 영상타이틀 오른쪽 좋아요,싫어요,댓글,공유
                 // 맨하단 시크바

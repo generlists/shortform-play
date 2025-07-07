@@ -1,6 +1,9 @@
 package com.sean.ratel.android.ui.splash
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -11,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +33,7 @@ import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 
 @Suppress("ktlint:standard:function-naming")
@@ -46,13 +51,13 @@ fun Splash(
 @Suppress("ktlint:standard:function-naming")
 @Composable
 private fun SplashView(modifier: Modifier) {
-    val statusBarPaddinga = StatusBarHeight()
+    val statusBarPadding = StatusBarHeight()
 
     Box(
         Modifier
             .fillMaxSize()
             .background(APP_BACKGROUND)
-            .offset(y = -statusBarPaddinga),
+            .offset(y = -statusBarPadding),
         contentAlignment = Alignment.Center,
     ) {
         LottieLoader(
@@ -106,6 +111,7 @@ fun InitialDataAndAD(
     adViewModel: AdViewModel,
     splashViewModel: SplashViewModel,
 ) {
+    var showSplash by remember { mutableStateOf(true) }
     val isDataReady by remember {
         combine(
             splashViewModel.mainDataComplete,
@@ -117,10 +123,20 @@ fun InitialDataAndAD(
             isComplete && isInitialized
         }
     }.collectAsState(initial = false)
-    if (isDataReady) {
-        // adViewModel.showAppOpenAd(context)
-        adViewModel.goMainHome()
-    } else {
+    LaunchedEffect(isDataReady) {
+        if (isDataReady) {
+            delay(1500) // 1초 대기
+            // adViewModel.showAppOpenAd(context)
+            showSplash = false
+            delay(300) // fadeOut 동안 기다리기
+            adViewModel.goMainHome()
+        }
+    }
+
+    AnimatedVisibility(
+        visible = showSplash,
+        exit = fadeOut(animationSpec = tween(durationMillis = 300)),
+    ) {
         SplashView(modifier)
     }
 }

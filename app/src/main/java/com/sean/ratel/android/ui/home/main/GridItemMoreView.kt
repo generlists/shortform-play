@@ -556,6 +556,10 @@ fun GridChannelArea(
                         .clip(CircleShape)
                         .width(24.dp)
                         .height(24.dp),
+                ContentScale.Fit,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
             )
         }
         Text(
@@ -667,6 +671,10 @@ fun GridItemBoxRow(
                                     Modifier
                                         .aspectRatio(0.5625f)
                                         .fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                                R.drawable.vertical_background,
+                                R.drawable.vertical_background,
+                                R.drawable.vertical_background,
                             )
                         }
                     }

@@ -47,6 +47,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -580,6 +581,10 @@ fun ListItem(
                         .clip(CircleShape)
                         .width(24.dp)
                         .height(24.dp),
+                ContentScale.Fit,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
             )
             Text(
                 text =
@@ -892,6 +897,10 @@ private fun RecentlyWatchItems(
                             .clip(CircleShape)
                             .width(24.dp)
                             .height(24.dp),
+                    ContentScale.Fit,
+                    R.drawable.ic_play_icon,
+                    R.drawable.ic_play_icon,
+                    R.drawable.ic_play_icon,
                 )
                 Text(
                     item?.shortsChannelModel?.channelTitle ?: "title",

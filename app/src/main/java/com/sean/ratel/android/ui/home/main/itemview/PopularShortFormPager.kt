@@ -366,6 +366,10 @@ fun PopularVideoArea(shortVideoModel: ShortsVideoModel?) {
                         Modifier
                             .aspectRatio(0.5625f)
                             .fillMaxSize(),
+                    ContentScale.Crop,
+                    R.drawable. vertical_background,
+                    R.drawable. vertical_background,
+                    R.drawable. vertical_background,
                 )
             }
         }

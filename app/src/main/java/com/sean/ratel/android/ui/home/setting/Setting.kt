@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
@@ -63,12 +64,13 @@ fun SettingView(
         RLog.d("Setting", "$innerPadding")
         // LazyColumn
         val scrollState = rememberScrollState()
-        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
         Column(
             Modifier
                 .fillMaxSize()
                 .background(APP_BACKGROUND)
-                .verticalScroll(scrollState),
+                .verticalScroll(scrollState)
+                .padding(top = 64.dp), // 광고때매 임으로 올림
         ) {
             SettingsService(viewModel = viewModel)
             SettingsVideo(viewModel = viewModel)

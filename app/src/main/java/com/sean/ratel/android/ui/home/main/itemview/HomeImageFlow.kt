@@ -303,6 +303,10 @@ fun FlowChannelArea(
                             .clip(CircleShape)
                             .width(24.dp)
                             .height(24.dp),
+                    ContentScale.Fit,
+                    R.drawable.ic_play_icon,
+                    R.drawable.ic_play_icon,
+                    R.drawable.ic_play_icon,
                 )
             }
 

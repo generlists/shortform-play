@@ -149,7 +149,7 @@ private fun BannerView(
         if (adBannerLoadingComplete?.value?.second == null ||
             adBannerLoadingComplete.value.second == 0
         ) {
-            64.dp
+            64.dp // 로딩이 안보여 더미를 보여줌
         } else {
             adBannerLoadingComplete.value.second.dp
         }
@@ -172,8 +172,7 @@ private fun BannerView(
                     } else {
                         Modifier.padding(bottom = insetPaddingValue.calculateTopPadding().value.dp)
                     },
-                )
-                .background(Color.Transparent),
+                ).background(Color.Transparent),
         // 하단 바 높이만큼 패딩 추가
         contentAlignment = Alignment.BottomCenter,
     ) {
@@ -295,8 +294,7 @@ private fun InLineAdaptiveBannerView(
                                     context,
                                     262f,
                                 ).dp,
-                            )
-                            .background(APP_BACKGROUND)
+                            ).background(APP_BACKGROUND)
                     } else {
                         Modifier
                     },
