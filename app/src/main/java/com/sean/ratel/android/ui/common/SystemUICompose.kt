@@ -1,6 +1,7 @@
 package com.sean.ratel.android.ui.common
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.sean.ratel.android.ui.navigation.Destination
@@ -33,6 +34,26 @@ fun FullScreenToggleView(route: String) {
         )
         systemUiController.setNavigationBarColor(
             color = APP_BACKGROUND,
+            darkIcons = false,
+        )
+        systemUiController.isStatusBarVisible = true
+        systemUiController.isNavigationBarVisible = true
+    }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
+fun UpdateStateBar() {
+    val systemUiController = rememberSystemUiController()
+    LaunchedEffect(Unit) {
+        systemUiController.setSystemBarsColor(
+            // 상태바 색상 복구
+            color = Color.Black,
+            // 흰색 아이콘 (어두운 배경에서 사용)
+            darkIcons = false,
+        )
+        systemUiController.setNavigationBarColor(
+            color = Color.Black,
             darkIcons = false,
         )
         systemUiController.isStatusBarVisible = true

@@ -76,8 +76,13 @@ fun AppManagerView(
     val data = remember { viewModel.contents }
     var filterAction by remember { mutableIntStateOf(-1) }
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
+    val isLoaded by viewModel.appListLoaded.collectAsState()
 
-    LoadingPlaceholder(loading = data.isEmpty())
+    when {
+        !isLoaded -> LoadingPlaceholder(loading = true)
+        data.isEmpty() -> LoadingPlaceholder(loading = false)
+        else -> {}
+    }
 
     Column(Modifier.fillMaxSize().padding(insetPaddingValue)) {
         TopNavigationBar(

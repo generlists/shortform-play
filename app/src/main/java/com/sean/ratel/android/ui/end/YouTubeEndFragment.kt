@@ -63,6 +63,7 @@ import com.sean.ratel.android.databinding.YoutubeVideoEndBinding
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.interstitialAd
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
+import com.sean.ratel.android.ui.common.UpdateStateBar
 import com.sean.ratel.android.ui.pip.PIPViewModel
 import com.sean.ratel.android.ui.pip.PipResult
 import com.sean.ratel.android.ui.theme.Background_op_20
@@ -378,6 +379,7 @@ class YouTubeEndFragment(
 
             if (currentSelection.value == createPosition) {
                 if (!pipButtonClick.value) {
+                    UpdateStateBar()
                     PlayControllerView(mainShortsModel)
                 }
                 IsNetWorkAvailAble()

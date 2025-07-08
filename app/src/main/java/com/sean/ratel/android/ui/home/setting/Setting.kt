@@ -69,7 +69,8 @@ fun SettingView(
                 .fillMaxSize()
                 .background(APP_BACKGROUND)
                 .verticalScroll(scrollState)
-                .padding(top = 64.dp), // 광고때매 임으로 올림
+                // 광고때매 임으로 올림
+                .padding(top = 64.dp),
         ) {
             SettingsService(viewModel = viewModel)
             SettingsVideo(viewModel = viewModel)
