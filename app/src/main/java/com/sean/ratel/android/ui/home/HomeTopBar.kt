@@ -221,28 +221,27 @@ fun PIPButton(mainViewModel: MainViewModel?) {
             pipButtonEnabled.value = it
         }
     }
-    IconButton(
-        onClick = {
-            if (!context.hasPipPermission()) {
-                Toast
-                    .makeText(
-                        context,
-                        context.getString(R.string.setting_pip_go),
-                        Toast.LENGTH_SHORT,
-                    ).show()
+    Box(
+        Modifier.height(64.dp).width(64.dp).clickable(
+            enabled = pipButtonEnabled.value,
+            onClick = {
+                if (!context.hasPipPermission()) {
+                    Toast
+                        .makeText(
+                            context,
+                            context.getString(R.string.setting_pip_go),
+                            Toast.LENGTH_SHORT,
+                        ).show()
 
-                mainViewModel?.goSettingView()
-            } else {
-                val action = !(pipAction?.value?.first ?: false)
-                val viewPager = pipAction?.value?.second
-                mainViewModel?.setPIPClick(Pair(action, viewPager))
-            }
-        },
-        enabled = pipButtonEnabled.value,
-        modifier =
-            Modifier
-                .width(32.dp)
-                .height(32.dp),
+                    mainViewModel?.goSettingView()
+                } else {
+                    val action = !(pipAction?.value?.first ?: false)
+                    val viewPager = pipAction?.value?.second
+                    mainViewModel?.setPIPClick(Pair(action, viewPager))
+                }
+            },
+        ),
+        contentAlignment = Alignment.Center,
     ) {
         Image(
             // 이미지 리소스

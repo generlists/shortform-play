@@ -205,7 +205,7 @@ fun FragmentContainer(
                         this,
                         contentList,
                     ) // 데이터 기반 어댑터 설정
-                setOffscreenPageLimit(3)
+                setOffscreenPageLimit(1)
                 orientation = ViewPager2.ORIENTATION_VERTICAL
 
                 // 페이지 스크롤 상태, 페이지 선택 등의 이벤트 처리

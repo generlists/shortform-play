@@ -336,14 +336,13 @@ class YouTubeEndFragment(
         youTubeStreamPlayer =
             YouTubeStreamPlayerImpl(
                 lifecycle,
-                autoPlay = false,
+                autoPlay = true,
                 youtubeStreamPlayerAdapter,
                 iFramePlayerOptions,
                 youtubeStreamPlayerTracker,
             )
 
         lifecycle.addObserver(youTubePlayerView)
-
         youTubeStreamPlayer.initPlayer(networkHandle = false, videoId = mainShortsModel?.shortsVideoModel?.videoId)
         youTubePlayerView.matchParent()
 
@@ -402,6 +401,9 @@ class YouTubeEndFragment(
                         }
                     }
             }
+        }
+        launch {
+            youtubeContentEndViewModel.isProgress()
         }
     }
 
@@ -495,8 +497,10 @@ class YouTubeEndFragment(
     ) {
         youTubeStreamPlayer = state.youTubeStreamPlayer
         mainShortsModel?.shortsVideoModel?.videoId?.let { videoId ->
+
             youTubeStreamPlayer.loadVideo(videoId, 0f)
             if (selectPosition == createPosition) {
+                RLog.d("PLAYER", "state : PREPARE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}")
                 if (!youtubeContentEndViewModel.getAutoPlay()) {
                     youTubeStreamPlayer.pause()
                 }
@@ -508,19 +512,26 @@ class YouTubeEndFragment(
 
     private fun handleUnstartedState(selectPosition: Int) {
         if (selectPosition == createPosition && !youTubeStreamPlayer.isPlaying()) {
-            youTubeStreamPlayer.start()
+            RLog.d("PLAYER", "state : UNSTARTED , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}")
+            youtubeContentEndViewModel.setLoading(loading = true)
+            launch {
+                delay(500)
+                youTubeStreamPlayer.start()
+            }
         }
     }
 
     private fun handleBufferingState(selectedPosition: Int) {
         if (selectedPosition == createPosition) {
+            RLog.d("PLAYER", "state : BUFFER , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}")
             // Log.d("anatol","handleBufferingState loading = true")
-            youtubeContentEndViewModel.setLoading(loading = true)
+            // youtubeContentEndViewModel.setLoading(loading = true)
         }
     }
 
     private fun handlePausedState(selectPosition: Int) {
         if (selectPosition == createPosition) {
+            RLog.d("PLAYER", "state : PAUSE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}")
             youtubeContentEndViewModel.setPlaying(isPlaying = false)
             mainViewModel.setPIPButtonClickState(true)
         }
@@ -528,6 +539,7 @@ class YouTubeEndFragment(
 
     private suspend fun handlePlayingState(selectPosition: Int) {
         if (selectPosition == createPosition) {
+            RLog.d("PLAYER", "state : PLAYING , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}")
             youtubeContentEndViewModel.setLoading(loading = false)
             youtubeContentEndViewModel.setPlaying(isPlaying = true)
             mainViewModel.setPIPButtonClickState(true)
@@ -546,7 +558,7 @@ class YouTubeEndFragment(
 
                     if (selection == createPosition) {
                         RLog.d("hbungshin", "selection : $selection , isSoundOff  $isSoundOff")
-                        delay(500)
+                        delay(1000)
                         youTubeStreamPlayer.setMute(!isSoundOff)
                     }
                 }
@@ -563,7 +575,7 @@ class YouTubeEndFragment(
     @Suppress("ktlint:standard:function-naming")
     @Composable
     fun PlayControllerView(mainShortsModel: MainShortsModel?) {
-        val isLoading by remember { youtubeContentEndViewModel.isLoading }
+        val isLoading = youtubeContentEndViewModel.isProgress.collectAsState()
         val isAdLoading by remember { youtubeContentEndViewModel.isAdLoading }
         val isPlaying by remember { youtubeContentEndViewModel.isPlaying }
         val topBarHeight = mainViewModel.topBarHeight.collectAsState(53)
@@ -585,15 +597,18 @@ class YouTubeEndFragment(
                 Column(
                     Modifier
                         .wrapContentSize()
+                        .background(Color.Transparent)
                         .align(Alignment.BottomCenter),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     BottomContentsArea(mainShortsModel)
                 }
             }
+            if (isLoading.value) LoadingArea(isLoading = true)
         }
 
-        LoadingArea(isLoading)
+        // Log.d("PLAYER","${isLoading.value}")
+
         if (!isAdLoading) {
             PlayButton(isPlaying, onPlayChange = { if (it) youTubeStreamPlayer.start() })
         }

@@ -231,7 +231,7 @@ fun EndBottomContents(mainShortsModel: MainShortsModel?) {
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun LoadingArea(isLoading: Boolean) {
-    Box(Modifier.fillMaxSize()) {
+    Box(Modifier.fillMaxSize().background(Color.Transparent)) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             LoadingPlaceholder(loading = isLoading)
         }
