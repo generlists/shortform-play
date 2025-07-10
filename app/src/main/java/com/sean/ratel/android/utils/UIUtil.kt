@@ -204,6 +204,7 @@ object UIUtil {
         return formatter.format(number)
     }
 
+    @JvmStatic
     internal fun Context.hasPipPermission(): Boolean {
         val appOps = getSystemService(Context.APP_OPS_SERVICE) as AppOpsManager
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {

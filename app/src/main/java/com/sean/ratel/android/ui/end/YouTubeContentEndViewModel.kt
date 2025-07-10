@@ -72,8 +72,8 @@ YouTubeContentEndViewModel
         private val _watchList = MutableStateFlow<List<MainShortsModel>>(emptyList())
         val watchList: StateFlow<List<MainShortsModel>> = _watchList
 
-        private val _isLoading = mutableStateOf(true)
-        val isLoading: MutableState<Boolean> = _isLoading
+        private val _isLoading = MutableStateFlow<Boolean>(true)
+        val isLoading: StateFlow<Boolean> = _isLoading
 
         private val _isAdLoading = mutableStateOf(false)
 
@@ -82,6 +82,9 @@ YouTubeContentEndViewModel
         private val _isPlaying = mutableStateOf(true)
 
         val isPlaying: MutableState<Boolean> = _isPlaying
+
+        private val _isProgress = MutableStateFlow<Boolean>(true)
+        val isProgress: StateFlow<Boolean> = _isProgress
 
         private val _channelId = savedStateHandle.get<String>(Destination.YouTube.routeArgName)
 
@@ -342,6 +345,12 @@ YouTubeContentEndViewModel
         suspend fun setWifiOnlyPlay() = settingRepository.setWifiOnlyPlay(isWifiPlay = false)
 
         suspend fun getSoundOff() = settingRepository.getSoundOnOff()
+
+        suspend fun isProgress() {
+            isLoading.collect {
+                _isProgress.value = it
+            }
+        }
 
         companion object {
             val TAG = "YouTubeContentEndViewModel"

@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--Android 12+에서 SplashScreen API가 MainActivity에 자동 적용-->
 <resources>
-    <style name="Theme.MyApp.Splash" parent="Theme.SplashScreen">
-            <item name="windowActionBar">false</item>
-            <item name="windowNoTitle">true</item>
-            <item name="windowSplashScreenBackground">@color/white</item>
-            <item name="windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
-            <item name="windowSplashScreenIconBackgroundColor">@color/white</item>
-            <item name="postSplashScreenTheme">@style/Theme.MyApp</item>
-        </style>
-    <style name="Theme.MyApp" parent="android:Theme.Material.Light.NoActionBar">
+
+    <style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@android:color/white</item>
+        <item name="colorPrimary">@color/black</item>
+        <item name="colorPrimaryVariant">@color/black</item>
+        <item name="colorOnPrimary">@android:color/black</item>
+        <item name="android:statusBarColor">@android:color/black</item>
+        <!-- 추가: Splash 백그라운드 -->
+        <item name="windowSplashScreenBackground">@color/black</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/black</item>
+        <item name="android:windowBackground">@android:color/black</item>
     </style>
 </resources>

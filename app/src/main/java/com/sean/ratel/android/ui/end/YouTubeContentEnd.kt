@@ -1,7 +1,11 @@
 package com.sean.ratel.android.ui.end
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -190,6 +194,8 @@ fun FragmentContainer(
     val context = LocalContext.current
     val corutineScope = rememberCoroutineScope()
     val endBackButtonAction by mainViewModel.endBack.collectAsState()
+    val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
     val viewPager =
         remember {
             ViewPager2(context).apply {
@@ -199,7 +205,7 @@ fun FragmentContainer(
                         this,
                         contentList,
                     ) // 데이터 기반 어댑터 설정
-                setOffscreenPageLimit(3)
+                setOffscreenPageLimit(1)
                 orientation = ViewPager2.ORIENTATION_VERTICAL
 
                 // 페이지 스크롤 상태, 페이지 선택 등의 이벤트 처리
@@ -272,7 +278,7 @@ fun FragmentContainer(
             }
         }
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(bottom = bottomPadding),
         factory = { _ -> viewPager },
     )
     // 초기화

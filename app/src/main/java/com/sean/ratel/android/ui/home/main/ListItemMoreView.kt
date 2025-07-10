@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.main
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -7,12 +8,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -43,6 +47,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -65,10 +70,9 @@ import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.end.BottomSeekBar
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background
-import com.sean.ratel.android.ui.theme.Background_op_10
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import com.sean.ratel.android.utils.TimeUtil.timeToFloat
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
@@ -126,8 +130,10 @@ fun ListItemDisplayUi(
     val channelRankingTitle = moreViewModel.channelMoreList.collectAsState()
     val subscriptionTitle = moreViewModel.subscriptionMoreList.collectAsState()
     val subscriptionUpTitle = moreViewModel.subscriptionUpMoreList.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
 
     Scaffold(
+        Modifier.padding(insetPaddingValue),
         topBar = {
             TopNavigationBar(
                 titleString = title.value,
@@ -141,7 +147,7 @@ fun ListItemDisplayUi(
                 items = channelStringList,
             )
         },
-        containerColor = Background,
+        containerColor = APP_BACKGROUND,
     ) { innerPadding ->
 
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
@@ -187,7 +193,7 @@ fun ListItemDisplayUi(
                                     start = 5.dp,
                                     top = 5.dp,
                                     end = 5.dp,
-                                ).background(Color.White),
+                                ).background(APP_BACKGROUND),
                         ) {
                             Text(
                                 text = stringResource(R.string.main_recent_watch_video_max_1),
@@ -199,7 +205,7 @@ fun ListItemDisplayUi(
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 10.sp,
-                                color = Color.Black,
+                                color = APP_TEXT_COLOR,
                             )
                             Text(
                                 text = stringResource(R.string.main_recent_watch_video_max_2),
@@ -211,7 +217,7 @@ fun ListItemDisplayUi(
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 10.sp,
-                                color = Color.Black,
+                                color = APP_TEXT_COLOR,
                             )
                         }
 
@@ -264,7 +270,7 @@ fun ListItemDisplayUi(
                         .size(18.dp)
                         .padding(1.dp),
                     strokeWidth = 3.dp,
-                    color = Red,
+                    color = APP_BACKGROUND,
                 )
             }
         }
@@ -368,6 +374,7 @@ fun ListItemList(
     listState: LazyListState,
 ) {
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val index = moreViewModel.moreIndex.collectAsState()
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
@@ -419,24 +426,18 @@ fun ListItemList(
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .background(Color.White),
+            .background(APP_BACKGROUND),
     ) {
         Column(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
         ) {
-            Box(
-                Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(Background_op_10),
-            )
             Row(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(Background),
+                    .background(APP_BACKGROUND),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -449,7 +450,7 @@ fun ListItemList(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 10.sp,
-                    color = Color.Black,
+                    color = Color.White,
                 )
                 Box(Modifier.wrapContentSize().weight(0.3f), contentAlignment = Alignment.Center) {
                     Text(
@@ -459,7 +460,7 @@ fun ListItemList(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 10.sp,
-                        color = Color.Black,
+                        color = Color.White,
                     )
                 }
 
@@ -483,7 +484,7 @@ fun ListItemList(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 10.sp,
-                        color = Color.Black,
+                        color = Color.White,
                     )
                     if (viewType == ViewType.SubscriptionRankingUp) {
                         Text(
@@ -495,17 +496,11 @@ fun ListItemList(
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 10.sp,
-                            color = Color.Black,
+                            color = APP_TEXT_COLOR,
                         )
                     }
                 }
             }
-            Box(
-                Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(Background_op_10),
-            )
         }
 
         items.let {
@@ -514,9 +509,10 @@ fun ListItemList(
                     .fillMaxSize()
                     .then(
                         if (adBannerLoadingComplete.value.first) {
-                            Modifier.padding(
-                                bottom = adBannerLoadingComplete.value.second.dp,
-                            )
+                            Modifier
+                                .padding(
+                                    bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp,
+                                ).background(APP_BACKGROUND)
                         } else {
                             Modifier
                         },
@@ -525,12 +521,6 @@ fun ListItemList(
             ) {
                 items(count = items.size) { index ->
                     ListItem(viewType, route, index, items[index], mainViewModel, moreViewModel)
-                    Box(
-                        Modifier
-                            .height(1.dp)
-                            .fillMaxWidth()
-                            .background(Background),
-                    )
                 }
             }
         }
@@ -551,7 +541,7 @@ fun ListItem(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(Color.White)
+            .background(APP_BACKGROUND)
             .clickable {
                 mainViewModel?.goEndContent(
                     route,
@@ -577,7 +567,7 @@ fun ListItem(
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
-            color = Color.Black,
+            color = Color.White,
         )
         Row(
             Modifier.wrapContentSize().weight(0.3f),
@@ -591,6 +581,10 @@ fun ListItem(
                         .clip(CircleShape)
                         .width(24.dp)
                         .height(24.dp),
+                ContentScale.Fit,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
             )
             Text(
                 text =
@@ -602,7 +596,7 @@ fun ListItem(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = Color.Black,
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -638,7 +632,7 @@ fun ListItem(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                color = Color.Red,
+                color = APP_TEXT_COLOR,
             )
             if (viewType == ViewType.SubscriptionRankingUp) {
                 Text(
@@ -650,7 +644,7 @@ fun ListItem(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
-                    color = Color.Red,
+                    color = APP_TEXT_COLOR,
                 )
             }
         }
@@ -682,11 +676,15 @@ fun RecentlyWatchItemList(
     listState: LazyListState,
 ) {
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val index = moreViewModel.moreIndex.collectAsState()
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
     }
-
+    Log.d(
+        "hbungshin",
+        "adBannerLoadingComplete : ${adBannerLoadingComplete.value.second} insetPaddingValue : ${insetPaddingValue.value.dp}",
+    )
     val isAtBottom = listState.isAtBottom()
     val coroutine = rememberCoroutineScope()
 
@@ -735,7 +733,7 @@ fun RecentlyWatchItemList(
                 .padding(top = 5.dp, bottom = 5.dp)
                 .then(
                     if (adBannerLoadingComplete.value.first) {
-                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp)
+                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp)
                     } else {
                         Modifier
                     },
@@ -750,12 +748,6 @@ fun RecentlyWatchItemList(
                     items[index],
                     mainViewModel,
                     moreViewModel,
-                )
-                Box(
-                    Modifier
-                        .height(1.dp)
-                        .fillMaxWidth()
-                        .background(Background),
                 )
             }
         }
@@ -781,7 +773,7 @@ private fun RecentlyWatchItems(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .padding(top = 2.dp, bottom = 2.dp)
-                .background(Color.White)
+                .background(APP_BACKGROUND)
                 .clickable {
                     mainViewModel?.goEndContent(
                         route,
@@ -887,7 +879,7 @@ private fun RecentlyWatchItems(
                 overflow = TextOverflow.Ellipsis,
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black,
+                color = Color.White,
                 textAlign = TextAlign.Center,
             )
             Row(
@@ -905,6 +897,10 @@ private fun RecentlyWatchItems(
                             .clip(CircleShape)
                             .width(24.dp)
                             .height(24.dp),
+                    ContentScale.Fit,
+                    R.drawable.ic_play_icon,
+                    R.drawable.ic_play_icon,
+                    R.drawable.ic_play_icon,
                 )
                 Text(
                     item?.shortsChannelModel?.channelTitle ?: "title",
@@ -918,7 +914,7 @@ private fun RecentlyWatchItems(
                             .padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
                     fontSize = 10.sp,
                     fontWeight = FontWeight.Bold,
-                    color = Color.Black,
+                    color = Color.White,
                 )
             }
         }

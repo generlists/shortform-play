@@ -12,6 +12,9 @@ import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
@@ -29,6 +32,8 @@ AppManagerViewModel
     ) : ViewModel() {
         private val _contents = mutableStateListOf<AppManagerInfo>()
         val contents: List<AppManagerInfo> = _contents
+        private val _appListLoaded = MutableStateFlow(false)
+        val appListLoaded: StateFlow<Boolean> = _appListLoaded
 
         init {
             viewModelScope.launch {
@@ -37,11 +42,15 @@ AppManagerViewModel
         }
 
         private suspend fun phoneAppList(context: Context) {
-            // I/O 작업이나 네트워크 요청 시 주로 Dispatchers.IO 사용
-            phoneAppProvider.fetchInstalledApps(context).collect {
-                _contents.addAll(it)
-                _contents.sortedBy { it.lastUpdateTime }
-            }
+            val apps =
+                phoneAppProvider
+                    .fetchInstalledApps(context)
+                    .first() // 항상 한 번은 받음 (빈 리스트 포함)
+
+            _contents.clear()
+            _contents.addAll(apps.sortedBy { it.lastUpdateTime })
+
+            _appListLoaded.value = true
         }
 
         suspend fun appDelete(

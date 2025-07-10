@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -69,9 +72,8 @@ import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_20
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -123,6 +125,7 @@ fun GridDisplayUi(
         }
 
     val currentData = moreViewModel.currentDataList.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
 
     val menuStringList =
         listOf(
@@ -132,6 +135,7 @@ fun GridDisplayUi(
         )
 
     Scaffold(
+        Modifier.padding(insetPaddingValue),
         topBar = {
             TopNavigationBar(
                 titleString = title.value,
@@ -145,7 +149,7 @@ fun GridDisplayUi(
                 items = menuStringList,
             )
         },
-        containerColor = Background,
+        containerColor = APP_BACKGROUND,
     ) { innerPadding ->
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
         val adBannerSize =
@@ -210,7 +214,7 @@ fun GridDisplayUi(
                         .size(18.dp)
                         .padding(1.dp),
                     strokeWidth = 3.dp,
-                    color = Red,
+                    color = APP_BACKGROUND,
                 )
             }
         }
@@ -357,6 +361,7 @@ fun GridItemList(
     listState: LazyListState,
 ) {
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     val index = moreViewModel.moreIndex.collectAsState()
     val viewType = viewModel.viewType.collectAsState()
     val route = viewModel.moreButtonClicked.value
@@ -413,7 +418,9 @@ fun GridItemList(
                 .fillMaxSize()
                 .then(
                     if (adBannerLoadingComplete.value.first) {
-                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp)
+                        Modifier.padding(
+                            bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.calculateTopPadding().value.dp,
+                        )
                     } else {
                         Modifier
                     },
@@ -549,6 +556,10 @@ fun GridChannelArea(
                         .clip(CircleShape)
                         .width(24.dp)
                         .height(24.dp),
+                ContentScale.Fit,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
             )
         }
         Text(
@@ -643,7 +654,7 @@ fun GridItemBoxRow(
                             // Preview 모드에서 로컬 이미지 사용
                             Image(
                                 // 로컬 이미지
-                                painter = painterResource(id = R.drawable.hqdefault),
+                                painter = painterResource(id = R.drawable.sample_image),
                                 contentDescription = "Preview Image",
                                 contentScale = ContentScale.Crop,
                                 modifier =
@@ -660,6 +671,10 @@ fun GridItemBoxRow(
                                     Modifier
                                         .aspectRatio(0.5625f)
                                         .fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                                R.drawable.vertical_background,
+                                R.drawable.vertical_background,
+                                R.drawable.vertical_background,
                             )
                         }
                     }

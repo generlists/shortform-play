@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
@@ -58,9 +59,10 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background
-import com.sean.ratel.android.ui.theme.Background_80
-import com.sean.ratel.android.ui.theme.Background_op_10
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
+import com.sean.ratel.android.ui.theme.MAIN_TITLE_UNDER_LINE
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.TimeUtil
 import com.sean.ratel.android.utils.UIUtil
@@ -137,12 +139,6 @@ fun RankingHorizontalScrollView(
             end = 0.dp,
             top = 25.dp,
             bottom = 20.dp,
-        )
-        Box(
-            Modifier
-                .height(1.dp)
-                .fillMaxWidth()
-                .background(Background),
         )
     }
 
@@ -250,7 +246,7 @@ private fun RankingTitleArea(
                 Modifier
                     .width(UIUtil.pixelToDp(context, textWidth).dp)
                     .height(8.dp)
-                    .background(Background_op_10),
+                    .background(MAIN_TITLE_UNDER_LINE),
                 contentAlignment = Alignment.BottomCenter,
             ) {}
         }
@@ -276,7 +272,7 @@ private fun RankingTitleArea(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.Bold,
                         fontSize = fontSize,
-                        color = Color.Black,
+                        color = Color.White,
                         onTextLayout = { textLayoutResult: TextLayoutResult ->
                             textWidth = textLayoutResult.size.width.toFloat() // 렌더링된 픽셀 크기
                         },
@@ -284,7 +280,7 @@ private fun RankingTitleArea(
                             TextStyle(
                                 shadow =
                                     Shadow(
-                                        color = Color.White,
+                                        color = Color.Black,
                                         // 그림자의 위치 (x, y)
                                         offset = Offset(2f, 2f),
                                         // 그림자의 흐림 정도
@@ -307,9 +303,9 @@ private fun RankingTitleArea(
                                     .wrapContentSize(),
                                 fontFamily = FontFamily.SansSerif,
                                 fontStyle = FontStyle.Normal,
-                                fontWeight = FontWeight.Bold,
+                                fontWeight = FontWeight.Normal,
                                 fontSize = 10.sp,
-                                color = Background_80,
+                                color = APP_SUBTITLE_TEXT_COLOR,
                                 style =
                                     TextStyle(
                                         shadow =
@@ -371,7 +367,7 @@ private fun RankingTitleArea(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.Normal,
                         fontSize = 15.sp,
-                        color = Color.Blue,
+                        color = APP_TEXT_COLOR,
                     )
                 }
             }
@@ -425,7 +421,7 @@ fun ItemList(
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .background(Color.White),
+            .background(APP_BACKGROUND),
     ) {
         Column(
             Modifier
@@ -436,13 +432,13 @@ fun ItemList(
                 Modifier
                     .height(1.dp)
                     .fillMaxWidth()
-                    .background(Background_op_10),
+                    .background(APP_BACKGROUND),
             )
             Row(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .background(Background),
+                    .background(APP_BACKGROUND),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
@@ -455,7 +451,7 @@ fun ItemList(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 10.sp,
-                    color = Color.Black,
+                    color = Color.White,
                 )
                 Box(
                     Modifier
@@ -470,7 +466,7 @@ fun ItemList(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 10.sp,
-                        color = Color.Black,
+                        color = Color.White,
                     )
                 }
 
@@ -494,7 +490,7 @@ fun ItemList(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 10.sp,
-                        color = Color.Black,
+                        color = Color.White,
                     )
                     if (rankingIndex == 2) {
                         Text(
@@ -506,27 +502,15 @@ fun ItemList(
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.SemiBold,
                             fontSize = 10.sp,
-                            color = Color.Black,
+                            color = Color.White,
                         )
                     }
                 }
             }
-            Box(
-                Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(Background_op_10),
-            )
         }
 
         for (index in items.indices) {
             Item(index, rankingIndex, mainViewModel, items)
-            Box(
-                Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(Background),
-            )
         }
     }
 }
@@ -543,7 +527,7 @@ fun Item(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(Color.White)
+            .background(APP_BACKGROUND)
             .clickable {
                 val viewType =
                     if (rankingIndex ==
@@ -586,7 +570,7 @@ fun Item(
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
-            color = Color.Black,
+            color = Color.White,
         )
         Row(
             Modifier
@@ -602,6 +586,10 @@ fun Item(
                         .clip(CircleShape)
                         .width(24.dp)
                         .height(24.dp),
+                ContentScale.Fit,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
             )
             Text(
                 text =
@@ -613,7 +601,7 @@ fun Item(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
-                color = Color.Black,
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -649,7 +637,7 @@ fun Item(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                color = Color.Red,
+                color = APP_TEXT_COLOR,
             )
             if (rankingIndex == 2) {
                 Text(
@@ -661,7 +649,7 @@ fun Item(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
-                    color = Color.Red,
+                    color = APP_TEXT_COLOR,
                 )
             }
         }

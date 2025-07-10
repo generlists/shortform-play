@@ -11,5 +11,6 @@
     <color name="menu_green_selected">#55E094</color>
     <color name="menu_gray_unselected">#808080</color>
     <color name="overlay_pressed">#19000000</color>
+    <color name="star">#19000000</color>
 
 </resources>

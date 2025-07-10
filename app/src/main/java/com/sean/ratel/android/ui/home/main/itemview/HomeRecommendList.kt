@@ -64,8 +64,9 @@ import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.common.preview.MainParameterProvider
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.Background_op_10
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
+import com.sean.ratel.android.ui.theme.MAIN_TITLE_UNDER_LINE
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.UIUtil
 
@@ -138,7 +139,7 @@ private fun TitleArea(
             Modifier
                 .width(UIUtil.pixelToDp(context, textWidth).dp)
                 .height(8.dp)
-                .background(Background_op_10),
+                .background(MAIN_TITLE_UNDER_LINE),
             contentAlignment = Alignment.BottomCenter,
         ) {}
         Row(
@@ -163,7 +164,7 @@ private fun TitleArea(
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.Bold,
                         fontSize = 20.sp,
-                        color = Color.Black,
+                        color = Color.White,
                         onTextLayout = { textLayoutResult: TextLayoutResult ->
                             textWidth = textLayoutResult.size.width.toFloat() // 렌더링된 픽셀 크기
                         },
@@ -209,7 +210,7 @@ private fun TitleArea(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Normal,
                     fontSize = 15.sp,
-                    color = Color.Blue,
+                    color = APP_TEXT_COLOR,
                 )
             }
         }
@@ -285,7 +286,7 @@ fun RecommendItemBoxRow(
                             // Preview 모드에서 로컬 이미지 사용
                             Image(
                                 // 로컬 이미지
-                                painter = painterResource(id = R.drawable.hqdefault),
+                                painter = painterResource(id = R.drawable.sample_image),
                                 contentDescription = "Preview Image",
                                 contentScale = ContentScale.Crop,
                                 modifier =
@@ -302,6 +303,10 @@ fun RecommendItemBoxRow(
                                     Modifier
                                         .aspectRatio(0.5625f)
                                         .fillMaxSize(),
+                                contentScale = ContentScale.Crop,
+                                R.drawable.vertical_background,
+                                R.drawable.vertical_background,
+                                R.drawable.vertical_background,
                             )
                         }
                     }
@@ -442,6 +447,10 @@ fun ChannelArea(
                         .clip(CircleShape)
                         .width(24.dp)
                         .height(24.dp),
+                ContentScale.Fit,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
+                R.drawable.ic_play_icon,
             )
         }
         Text(

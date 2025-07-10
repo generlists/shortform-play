@@ -9,6 +9,7 @@ import android.content.pm.PackageManager.GET_META_DATA
 import android.net.Uri
 import android.provider.Settings
 import androidx.activity.result.ActivityResultLauncher
+import androidx.core.net.toUri
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.domain.model.toolbox.AppManagerInfo
 import com.sean.ratel.android.utils.PhoneUtil
@@ -21,6 +22,7 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class PhoneAppManager
     @Inject
     constructor() : PhoneAppProvider {
@@ -39,11 +41,11 @@ class PhoneAppManager
                     .filterNot { it.isSystemApp() || isMyApp(it.packageName) }
                     .map { packageInfo ->
                         AppManagerInfo(
-                            packageInfo.applicationInfo.loadLabel(context.packageManager).toString(),
-                            packageInfo.applicationInfo.loadIcon(context.packageManager),
+                            packageInfo.applicationInfo?.loadLabel(context.packageManager).toString(),
+                            packageInfo.applicationInfo?.loadIcon(context.packageManager),
                             packageInfo.packageName,
                             PhoneUtil
-                                .bytesToMegabytes(File(packageInfo.applicationInfo.sourceDir).length())
+                                .bytesToMegabytes(File(packageInfo.applicationInfo?.sourceDir).length())
                                 .toString(),
                             formatMillisToDate(packageInfo.firstInstallTime),
                             formatMillisToDate(packageInfo.lastUpdateTime),
@@ -57,7 +59,7 @@ class PhoneAppManager
         ) {
             val intent =
                 Intent(Intent.ACTION_DELETE).apply {
-                    data = Uri.parse("package:$packageName")
+                    data = "package:$packageName".toUri()
                 }
             deleteAppLauncher.launch(intent)
         }
@@ -70,14 +72,18 @@ class PhoneAppManager
             try {
                 val intent =
                     Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse(updateUrl)
+                        data = updateUrl.toUri()
                         setPackage("com.android.vending")
                     }
                 context.startActivity(intent)
             } catch (e: Exception) {
                 e.printStackTrace()
                 // Google Play 앱이 없거나 오류가 발생할 경우, 웹 브라우저로 이동하도록 설정
-                val fallbackIntent = Intent(Intent.ACTION_VIEW, Uri.parse(STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(appName)))
+                val fallbackIntent =
+                    Intent(
+                        Intent.ACTION_VIEW,
+                        STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(appName).toUri(),
+                    )
                 context.startActivity(fallbackIntent)
             }
         }
@@ -92,7 +98,7 @@ class PhoneAppManager
             context.startActivity(intent)
         }
 
-        private fun PackageInfo.isSystemApp(): Boolean = (applicationInfo.flags and ApplicationInfo.FLAG_SYSTEM) != 0
+        private fun PackageInfo.isSystemApp(): Boolean = (applicationInfo?.flags ?: 0) and ApplicationInfo.FLAG_SYSTEM != 0
 
         private fun isMyApp(packageName: String): Boolean = packageName == STRINGS.URL_MY_PACKAGE_NAME
     }

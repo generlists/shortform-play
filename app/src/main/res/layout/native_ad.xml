@@ -28,7 +28,7 @@
                     app:layout_constraintDimensionRatio="H,16:9"
                     app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintRight_toRightOf="parent"
-                    android:background="@drawable/clip_lg_default"/>
+                    android:background="@drawable/ad_native_default_background"/>
                 <ImageView
                     android:id="@+id/GAM_Ad_Badge"
                     android:layout_width="30dp"
@@ -38,13 +38,14 @@
                     android:layout_marginTop="12dp"
                     android:layout_marginLeft="12dp"
                     android:scaleType="fitCenter"
-                    android:src="@drawable/ladm_bdg_ad" />
+                    android:src="@drawable/native_bdg_ad" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/ad_text_Area"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/black"
                 app:layout_constraintTop_toBottomOf="@id/MediaPlayArea"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintHorizontal_chainStyle="packed"
@@ -77,7 +78,7 @@
                     android:id="@+id/ad_headline"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#252525"
+                    android:textColor="#ffff"
                     android:lineSpacingExtra="3dp"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="15dp"
@@ -95,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:textStyle="normal"
-                android:textColor="#000000"
+                android:textColor="#ffff"
                 android:lineSpacingExtra="3dp"
                 android:duplicateParentState="true"
                 android:layout_marginBottom="4dp"
@@ -120,6 +121,10 @@
                     android:paddingBottom="3dp"
                     android:isIndicator="true"
                     android:numStars="5"
+                    tools:rating="1.5"
+                    android:progressTint="#ABFF43"
+                   android:secondaryProgressTint="#989a9f"
+                android:backgroundTint="#989a9f"
                     android:stepSize="0.5" />
 
             </LinearLayout>
@@ -187,7 +192,7 @@
                     android:fontFamily="sans-serif"
                     android:clickable="true"
                     android:gravity="center"
-                    android:textColor="#589aeb"
+                    android:textColor="#ABFF43"
                     android:textSize="14sp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="15dp"

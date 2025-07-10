@@ -9,12 +9,16 @@ import android.widget.RatingBar
 import android.widget.TextView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
@@ -54,8 +58,9 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.MAX_ADAPTIVE_BANNER_SIZE
 import com.sean.ratel.android.databinding.NativeAdBinding
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.ui.theme.Red
 import com.sean.ratel.android.utils.UIUtil
 import com.sean.ratel.android.utils.UIUtil.adInLineAdaptiveBannerSize
 import com.sean.ratel.android.utils.UIUtil.pixelToDp
@@ -79,6 +84,7 @@ fun LoadBanner(
     var progress by remember { mutableStateOf(true) }
     val adLoadStart = adViewModel?.adLoadStart?.collectAsState()
     var adView by remember { mutableStateOf<AdView?>(null) }
+    var isSetting = currentRoute == Destination.Setting.route
     val height =
         if (currentRoute == Destination.AppManager.route ||
             currentRoute == Destination.SettingAppManagerDetail.route ||
@@ -123,7 +129,7 @@ fun LoadBanner(
     }
 
     if (adLoadStart?.value == true) {
-        BannerView(adView, height?.dp ?: 56.dp, progress, adViewModel)
+        BannerView(adView, height?.dp ?: 56.dp, progress, adViewModel, isSetting)
     }
 }
 
@@ -134,31 +140,65 @@ private fun BannerView(
     height: Dp,
     progress: Boolean,
     adViewModel: AdViewModel?,
+    isSetting: Boolean,
 ) {
     val adBannerFail = adViewModel?.adBannerFail?.collectAsState()
+    val adBannerLoadingComplete = adViewModel?.adBannerLoadingCompleteAndGetAdSize?.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
+    val adBannerSize =
+        if (adBannerLoadingComplete?.value?.second == null ||
+            adBannerLoadingComplete.value.second == 0
+        ) {
+            64.dp // 로딩이 안보여 더미를 보여줌
+        } else {
+            adBannerLoadingComplete.value.second.dp
+        }
 
+    RLog.d(
+        "AdView",
+        "isSetting : $isSetting , calculateTopPadding :" +
+            " ${insetPaddingValue.calculateTopPadding().value.dp} , " +
+            "height : ${adBannerLoadingComplete?.value?.second}",
+    )
     Box(
         modifier =
             Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(Color.Transparent)
-                .padding(bottom = height),
+                .fillMaxSize()
+                .then(
+                    if (isSetting == true) {
+                        Modifier.padding(
+                            bottom = adBannerSize.value.dp,
+                        )
+                    } else {
+                        Modifier.padding(bottom = insetPaddingValue.calculateTopPadding().value.dp)
+                    },
+                ).background(Color.Transparent),
         // 하단 바 높이만큼 패딩 추가
         contentAlignment = Alignment.BottomCenter,
     ) {
+        val bannerHeight = UIUtil.adSize(LocalContext.current).height
+        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
         Box(
             Modifier
-                .then(if (adBannerFail?.value == null) Modifier.height(64.dp) else Modifier),
+                .then(
+                    if (adBannerFail?.value == null) {
+                        Modifier
+                            .height(bannerHeight.dp + bottomPadding.value.dp)
+                            .padding(bottom = insetPaddingValue.calculateTopPadding())
+                            .fillMaxWidth()
+                    } else {
+                        Modifier
+                    },
+                ),
+            contentAlignment = Alignment.BottomCenter,
         ) {
             Box(
                 Modifier
                     .fillMaxWidth()
                     .then(
                         if (adBannerFail?.value == null) {
-                            Modifier
-                                .height(64.dp)
-                                .background(Color.White)
+                            Modifier.height(bannerHeight.dp).background(APP_BACKGROUND)
                         } else {
                             Modifier
                         },
@@ -181,7 +221,10 @@ private fun BannerView(
 
             if (progress && adBannerFail?.value == null) {
                 Box(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .background(APP_BACKGROUND),
                     contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(
@@ -190,7 +233,7 @@ private fun BannerView(
                             .padding(1.dp),
                         // 원의 두께 조정
                         strokeWidth = 3.dp,
-                        color = Red,
+                        color = APP_TEXT_COLOR,
                     )
                 }
             }
@@ -251,7 +294,7 @@ private fun InLineAdaptiveBannerView(
                                     context,
                                     262f,
                                 ).dp,
-                            ).background(Color.White)
+                            ).background(APP_BACKGROUND)
                     } else {
                         Modifier
                     },
@@ -272,7 +315,10 @@ private fun InLineAdaptiveBannerView(
 
         if (progress && adInLineBannerFail?.value == null) {
             Box(
-                modifier = Modifier.fillMaxSize(),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(APP_BACKGROUND),
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator(
@@ -281,7 +327,7 @@ private fun InLineAdaptiveBannerView(
                         .padding(1.dp),
                     // 원의 두께 조정
                     strokeWidth = 3.dp,
-                    color = Red,
+                    color = APP_TEXT_COLOR,
                 )
             }
         }
@@ -347,7 +393,7 @@ fun NativeAdCompose(adViewModel: AdViewModel?) {
                     if (adNativeFail?.value == null) {
                         Modifier
                             .height(300.dp)
-                            .background(Color.White)
+                            .background(APP_BACKGROUND)
                     } else {
                         Modifier
                     },
@@ -365,7 +411,7 @@ fun NativeAdCompose(adViewModel: AdViewModel?) {
                     .size(18.dp)
                     .padding(1.dp),
                 strokeWidth = 3.dp,
-                color = Red,
+                color = APP_TEXT_COLOR,
             )
         }
     }
@@ -407,7 +453,7 @@ private fun BindNativeView(ad: NativeAd) {
             ad.icon?.let {
                 (binding.adAppIcon).load(it.uri) {
                     transformations(CircleCropTransformation()) // 원형 이미지 변환 적용
-                        .placeholder(R.drawable.circle_shape)
+                        .placeholder(R.drawable.ad_circle_shape)
                 }
             } ?: run { (binding.adAppIcon as? ImageView)?.visibility = View.INVISIBLE }
 

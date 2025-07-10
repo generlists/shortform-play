@@ -3,9 +3,12 @@ package com.sean.ratel.android
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -17,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.LoadBanner
@@ -26,6 +30,7 @@ import com.sean.ratel.android.ui.home.HomeTopBar
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.NavGraph
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
 @Suppress("ktlint:standard:function-naming")
@@ -48,15 +53,16 @@ fun ShortFormPlayApp(
         val currentRoute = navBackStackEntry?.destination?.route ?: Destination.Splash.route
         val itemClick by remember { mainViewModel.itemClicked }
         val context = LocalContext.current as MainActivity
-
+        val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+        RLog.d("hbungshin", "insetPaddingValue home : $insetPaddingValue")
         Scaffold(
             modifier = Modifier.imePadding(),
             topBar = {
                 if (isTopViewVisible) {
                     HomeTopBar(
-                        Modifier.background(Color.Transparent),
+                        Modifier.background(Color.Transparent).padding(top = insetPaddingValue),
                         mainViewModel,
-                        currentRoute == Destination.YouTube.route,
+                        currentRoute,
                         historyBack = {
                             mainViewModel.runNavigationBack(Destination.YouTube.route)
                         },
@@ -73,7 +79,8 @@ fun ShortFormPlayApp(
             },
             floatingActionButtonPosition = FabPosition.End,
         ) { innerPaddingModifier ->
-            Column(modifier = Modifier.fillMaxSize()) {
+
+            Column(modifier = Modifier.fillMaxSize().background(APP_BACKGROUND)) {
                 NavGraph(
                     navController = navController,
                     modifier = Modifier.padding(innerPaddingModifier),

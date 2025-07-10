@@ -32,6 +32,7 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
@@ -42,7 +43,7 @@ fun SettingsApp(viewModel: SettingViewModel?) {
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .background(Color.White),
+            .background(APP_BACKGROUND),
     ) {
         val context = LocalContext.current
         AppTitle()
@@ -100,7 +101,7 @@ private fun SettingsApp(
                 fontWeight = FontWeight.Bold,
                 fontStyle = FontStyle.Normal,
                 fontFamily = FontFamily.SansSerif,
-                color = Color.Black,
+                color = Color.White,
                 modifier = Modifier.padding(start = 5.dp, top = 15.dp, bottom = 15.dp),
             )
             Box(
@@ -140,7 +141,7 @@ private fun AppTitle() {
             fontSize = 12.sp,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal,
-            color = Color.Black,
+            color = Color.White,
         )
     }
 }
