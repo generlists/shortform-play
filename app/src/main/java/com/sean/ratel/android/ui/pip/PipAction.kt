@@ -103,10 +103,12 @@ enum class PipAction(
                 PendingIntent.getBroadcast(
                     context,
                     action.requestCode,
-                    Intent(action.intentAction).putExtra(
-                        action.intentExtraName,
-                        action.intentExtraValue,
-                    ),
+                    Intent(action.intentAction)
+                        .setPackage(context.packageName) // Android 15 부터 명시적 내부전송을 명확히 보내야함
+                        .putExtra(
+                            action.intentExtraName,
+                            action.intentExtraValue,
+                        ),
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
                 )
             val icon = Icon.createWithResource(context, action.iconDrawableResId)

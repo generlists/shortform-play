@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
 @Suppress("ktlint:standard:function-naming")
@@ -122,7 +123,7 @@ fun TopNavigationBar(
                     .align(Alignment.CenterVertically),
             ) {
                 DropDownMenuComposable(
-                    Color.White,
+                    APP_TEXT_COLOR,
                     ImageVector.vectorResource(R.drawable.ic_sort_list),
                     modifer = Modifier.align(Alignment.End),
                 ) { menuExpanded, onMenuDismiss ->
