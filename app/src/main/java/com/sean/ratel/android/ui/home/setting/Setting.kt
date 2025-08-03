@@ -1,14 +1,14 @@
 package com.sean.ratel.android.ui.home.setting
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
@@ -62,20 +63,19 @@ fun SettingView(
     ) { innerPadding ->
         RLog.d("Setting", "$innerPadding")
         // LazyColumn
-        val scrollState = rememberScrollState()
 
-        Column(
-            Modifier
-                .fillMaxSize()
-                .background(APP_BACKGROUND)
-                .verticalScroll(scrollState)
-                // 광고때매 임으로 올림
-                .padding(top = 64.dp),
+        LazyColumn(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(APP_BACKGROUND)
+                    .padding(top = 64.dp, bottom = REMAIN_AD_MARGIN),
         ) {
-            SettingsService(viewModel = viewModel)
-            SettingsVideo(viewModel = viewModel)
-            SettingsApp(viewModel = viewModel)
-            ViewBottomMargin(adViewModel)
+            item { SettingsService(viewModel) }
+            item { SettingsVideo(viewModel) }
+            item { SettingsApp(viewModel) }
+            item { ViewBottomMargin(adViewModel) }
+            item { Spacer(Modifier.height(64.dp)) }
         }
     }
 }

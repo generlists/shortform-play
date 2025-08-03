@@ -1,5 +1,6 @@
 package com.sean.ratel.android.data.common
 
+import androidx.compose.ui.unit.dp
 import com.sean.ratel.android.BuildConfig
 
 object STRINGS {
@@ -15,6 +16,8 @@ object STRINGS {
     const val FEEDBACK_TITLE = "[숏폼플레이 문의]"
 
     const val MAX_ADAPTIVE_BANNER_SIZE = 100
+
+    val REMAIN_AD_MARGIN = 24.dp
 
     // ad
     const val TEST_DEVICE_HASHED_ID = "ABCDEF012345"

@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.home.main
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -63,6 +62,7 @@ import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.TopNavigationBar
@@ -511,7 +511,7 @@ fun ListItemList(
                         if (adBannerLoadingComplete.value.first) {
                             Modifier
                                 .padding(
-                                    bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp,
+                                    bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp + REMAIN_AD_MARGIN,
                                 ).background(APP_BACKGROUND)
                         } else {
                             Modifier
@@ -681,7 +681,7 @@ fun RecentlyWatchItemList(
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
     }
-    Log.d(
+    RLog.d(
         "hbungshin",
         "adBannerLoadingComplete : ${adBannerLoadingComplete.value.second} insetPaddingValue : ${insetPaddingValue.value.dp}",
     )
@@ -733,7 +733,7 @@ fun RecentlyWatchItemList(
                 .padding(top = 5.dp, bottom = 5.dp)
                 .then(
                     if (adBannerLoadingComplete.value.first) {
-                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp)
+                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp + REMAIN_AD_MARGIN)
                     } else {
                         Modifier
                     },

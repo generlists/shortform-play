@@ -55,6 +55,7 @@ import com.google.android.gms.ads.nativead.NativeAd
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.MAX_ADAPTIVE_BANNER_SIZE
 import com.sean.ratel.android.databinding.NativeAdBinding
 import com.sean.ratel.android.ui.navigation.Destination
@@ -177,8 +178,7 @@ private fun BannerView(
         contentAlignment = Alignment.BottomCenter,
     ) {
         val bannerHeight = UIUtil.adSize(LocalContext.current).height
-        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
+        val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + STRINGS.REMAIN_AD_MARGIN
         Box(
             Modifier
                 .then(
@@ -198,7 +198,9 @@ private fun BannerView(
                     .fillMaxWidth()
                     .then(
                         if (adBannerFail?.value == null) {
-                            Modifier.height(bannerHeight.dp).background(APP_BACKGROUND)
+                            Modifier
+                                .height(bannerHeight.dp)
+                                .background(APP_BACKGROUND)
                         } else {
                             Modifier
                         },
