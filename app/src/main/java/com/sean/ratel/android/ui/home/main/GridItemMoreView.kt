@@ -64,6 +64,7 @@ import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsChannelModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
@@ -419,7 +420,9 @@ fun GridItemList(
                 .then(
                     if (adBannerLoadingComplete.value.first) {
                         Modifier.padding(
-                            bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.calculateTopPadding().value.dp,
+                            bottom =
+                                adBannerLoadingComplete.value.second.dp + insetPaddingValue.calculateTopPadding().value.dp +
+                                    REMAIN_AD_MARGIN,
                         )
                     } else {
                         Modifier

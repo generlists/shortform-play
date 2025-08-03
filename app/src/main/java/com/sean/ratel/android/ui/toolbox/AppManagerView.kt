@@ -50,6 +50,7 @@ import com.google.accompanist.drawablepainter.DrawablePainter
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
 import com.sean.ratel.android.data.domain.model.toolbox.AppManagerInfo
@@ -135,7 +136,7 @@ fun ItemList(
                     if (adBannerLoadingComplete.value.first) {
                         Modifier
                             .padding(
-                                bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp,
+                                bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp + STRINGS.REMAIN_AD_MARGIN,
                             ).background(APP_BACKGROUND)
                     } else {
                         Modifier
