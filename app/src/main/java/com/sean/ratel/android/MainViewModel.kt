@@ -353,6 +353,24 @@ class MainViewModel
                         }
                     },
                 )
+
+            // 2. 서버 값 가져오기 (캐시 0초로 강제 새로고침)
+            remoteConfig
+                .fetchAndActivate()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val updated = task.result
+                        RLog.d("RemoteConfig", "Fetch success. Updated: $updated")
+                        // 실제 값 로그 출력
+                        remoteConfig.all.forEach { entry ->
+                            RLog.d("RemoteConfig", "${entry.key} = ${entry.value.asString()}")
+                        }
+
+                        RemoteConfig.setRemoteConfig(remoteConfig.all)
+                    } else {
+                        RLog.e("RemoteConfig", "Fetch failed: ${task.exception}")
+                    }
+                }
         }
 
         private fun isCurrentPageMoreView(): Boolean {

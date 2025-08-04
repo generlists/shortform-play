@@ -2,7 +2,7 @@
 <defaultsMap>
     <entry>
         <key>main_ad</key>
-        <value>1</value>
+        <value>-99999</value>
     </entry>
     <entry>
         <key>main_shortform_ad</key>

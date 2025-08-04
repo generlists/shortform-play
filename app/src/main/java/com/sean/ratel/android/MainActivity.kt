@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -90,6 +91,7 @@ class MainActivity : FragmentActivity() {
                 finish = { finish() },
             )
         }
+        enableEdgeToEdge()
         mainViewModel.sendGALog(Event.APP_OPEN, route = Destination.Home.route)
     }
 
