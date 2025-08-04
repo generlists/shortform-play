@@ -91,7 +91,7 @@ fun ShortFormPlayApp(
 
             if ((
                     currentRoute != Destination.Splash.route &&
-                        currentRoute != Destination.Home.Main.route &&
+                        // currentRoute != Destination.Home.Main.route &&
                         currentRoute != Destination.Home.ShortForm.route &&
                         // 구글정책상 한페이지에 하나의 광고만허용
                         currentRoute != Destination.YouTube.route &&

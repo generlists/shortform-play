@@ -86,6 +86,7 @@ fun LoadBanner(
     val adLoadStart = adViewModel?.adLoadStart?.collectAsState()
     var adView by remember { mutableStateOf<AdView?>(null) }
     var isSetting = currentRoute == Destination.Setting.route
+    var isMain = currentRoute == Destination.Home.Main.route
     val height =
         if (currentRoute == Destination.AppManager.route ||
             currentRoute == Destination.SettingAppManagerDetail.route ||
@@ -130,7 +131,7 @@ fun LoadBanner(
     }
 
     if (adLoadStart?.value == true) {
-        BannerView(adView, height?.dp ?: 56.dp, progress, adViewModel, isSetting)
+        BannerView(adView, height?.dp ?: 56.dp, progress, adViewModel, isSetting, isMain)
     }
 }
 
@@ -142,6 +143,7 @@ private fun BannerView(
     progress: Boolean,
     adViewModel: AdViewModel?,
     isSetting: Boolean,
+    isMain: Boolean,
 ) {
     val adBannerFail = adViewModel?.adBannerFail?.collectAsState()
     val adBannerLoadingComplete = adViewModel?.adBannerLoadingCompleteAndGetAdSize?.collectAsState()
@@ -191,7 +193,7 @@ private fun BannerView(
                         Modifier
                     },
                 ),
-            contentAlignment = Alignment.BottomCenter,
+            contentAlignment = if (isMain) Alignment.TopCenter else Alignment.BottomCenter,
         ) {
             Box(
                 Modifier

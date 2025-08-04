@@ -39,8 +39,8 @@ object RemoteConfig {
 
     fun getRemoteConfigIntValue(key: String): Int {
         if (key != BANNER_AD_VISIBILITY) {
-            return (map[key] as? Long)?.toInt() ?: 1
+            return (map[key] as? Long)?.toInt() ?: -99999
         }
-        return 0
+        return -99999
     }
 }

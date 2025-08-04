@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -31,7 +32,6 @@ import com.sean.ratel.android.data.dto.RecommendList
 import com.sean.ratel.android.data.dto.ShortFormVideoSearchList
 import com.sean.ratel.android.data.dto.TopFiveList
 import com.sean.ratel.android.ui.ad.AdViewModel
-import com.sean.ratel.android.ui.ad.NativeAdCompose
 import com.sean.ratel.android.ui.home.main.itemview.AutoScrollImagePager
 import com.sean.ratel.android.ui.home.main.itemview.EditorPickHorizontalList
 import com.sean.ratel.android.ui.home.main.itemview.HomeRecommendList
@@ -198,6 +198,7 @@ fun ShortsItemList(
     listState: LazyListState,
 ) {
     val adFail = adViewModel.adNativeFail.collectAsState().value
+    val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
 
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
@@ -212,7 +213,16 @@ fun ShortsItemList(
     }
     val size = itemSize - 2 + RemoteConfig.getRemoteConfigIntValue(MAX_RECOMMEND_SIZE)
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .then(
+                    if (adBannerLoadingComplete.value.first == true) {
+                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp)
+                    } else {
+                        Modifier
+                    },
+                ),
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         var i = 0
@@ -227,7 +237,7 @@ fun ShortsItemList(
                     AutoScrollImagePager(viewModel, topFiveData)
                 }
                 if (i == adPosition && adFail == null) {
-                    NativeAdCompose(adViewModel)
+                    // NativeAdCompose(adViewModel)
                 }
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECENTLY_WATCH_ORDER) && adFail != null) ||
                     i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECENTLY_WATCH_ORDER) + 1 &&
