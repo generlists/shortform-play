@@ -156,7 +156,7 @@ class AdViewModel
             }
 
             // Set your test devices.
-            if (com.sean.ratel.core.BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 MobileAds.setRequestConfiguration(
                     RequestConfiguration
                         .Builder()
