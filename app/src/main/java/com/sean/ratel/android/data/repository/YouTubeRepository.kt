@@ -7,7 +7,6 @@ import com.sean.ratel.android.ui.splash.SplashViewModel
 import com.sean.ratel.android.utils.TimeUtil.getCurrentDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,27 +19,16 @@ class YouTubeRepository
     ) {
         private var mainShortsVideosCache: MainShortsResponse? = null
 
-        suspend fun requestNewYouTubeVideos(
+        suspend fun requestYouTubeVideos(
             requestType: SplashViewModel.RequestType,
             url: String,
+            countryCode: String?,
             forceRefresh: Boolean = false,
         ): Flow<MainShortsResponse> =
             flow {
                 if (mainShortsVideosCache != null && !forceRefresh) {
                     mainShortsVideosCache?.let { emit(it) }
                 } else {
-                    // 새로운 API 호출
-                    val countryCode =
-                        if (Locale
-                                .getDefault()
-                                .country
-                                .toString()
-                                .isNotEmpty()
-                        ) {
-                            Locale.getDefault().country
-                        } else {
-                            "KR"
-                        }
                     val currentDate = getCurrentDate()
 
                     val key =

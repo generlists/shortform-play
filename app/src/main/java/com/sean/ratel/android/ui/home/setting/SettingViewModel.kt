@@ -97,6 +97,8 @@ class SettingViewModel
 
         suspend fun getSoundOnOff(): Boolean = settingRepository.getSoundOnOff()
 
+        suspend fun getLocale(): String = settingRepository.getLocale()
+
         suspend fun setAutoPlay(isAutoPlay: Boolean) {
             settingRepository.setAutoPlay(isAutoPlay)
         }
@@ -117,12 +119,30 @@ class SettingViewModel
             settingRepository.setWifiOnlyPlay(isWifiOnly)
         }
 
+        suspend fun setLocale(locale: String) {
+            settingRepository.setLocale(locale)
+        }
+
         fun sendGALog(
             event: String,
             route: String? = null,
             viewType: ViewType? = null,
         ) {
             gaLog.sendEvent(event, route, viewType)
+        }
+
+        fun sendGALog(
+            screenName: String,
+            eventName: String,
+            actionName: String,
+            parameter: Map<String, String>,
+        ) {
+            gaLog.sendEvent(
+                screenName,
+                eventName,
+                actionName,
+                parameter,
+            )
         }
 
         companion object {

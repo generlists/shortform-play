@@ -15,6 +15,7 @@ import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.RecentVideoRepository
+import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -37,6 +38,7 @@ class MainViewModel
         val navigator: Navigator,
         val gaLog: GALog,
         val recentVideoRepository: RecentVideoRepository,
+        val settingRepository: SettingRepository,
         val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
     ) : ViewModel() {
         // FAB 가시성을 관리하는 상태

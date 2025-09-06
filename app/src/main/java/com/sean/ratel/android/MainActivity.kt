@@ -70,6 +70,8 @@ class MainActivity : FragmentActivity() {
             installSplashScreen()
         }
 
+        adViewModel.setForceClearCache(intent.getBooleanExtra("clear_cache", false))
+
         googleMobileAdsConsentManager.gatherConsent(this) { error ->
             if (error != null) RLog.d(TAG, "${error.errorCode}: ${error.message}")
 
@@ -120,6 +122,10 @@ class MainActivity : FragmentActivity() {
                 currentPipClick.value = isInPictureInPictureMode
             }
         }
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
     }
 
     /**

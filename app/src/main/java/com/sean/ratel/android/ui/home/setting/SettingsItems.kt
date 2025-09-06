@@ -23,6 +23,11 @@ enum class SettingsItems(
         R.string.setting_private_policy,
         null,
     ),
+    SETTING_SHORTFORM_COUNTRY(
+        null,
+        0,
+        R.string.setting_select_shortform_country_description,
+    ),
     SERVICE_VIDEO_AUTO_PLAY(
         null,
         R.string.setting_play_auto_play,

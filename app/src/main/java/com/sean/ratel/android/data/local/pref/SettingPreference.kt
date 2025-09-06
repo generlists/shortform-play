@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -20,6 +21,7 @@ class SettingPreference
         private val pipPlay = booleanPreferencesKey("PIP_PLAY")
         private val soundOnOff = booleanPreferencesKey("SOUND_ONOFF")
         private val wifiPlay = booleanPreferencesKey("WIFI_ONLY")
+        private val localeString = stringPreferencesKey("LOCALE")
 
         suspend fun setPIPPlay(isPIPMode: Boolean) {
             dataStore.edit { it[pipPlay] = isPIPMode }
@@ -41,6 +43,10 @@ class SettingPreference
             dataStore.edit { it[soundOnOff] = isSound }
         }
 
+        suspend fun setLocale(locale: String) {
+            dataStore.edit { it[localeString] = locale }
+        }
+
         suspend fun getAutoPlay(): Boolean = dataStore.data.map { it[autoPlay] }.first() ?: true
 
         suspend fun getLoopPlay(): Boolean = dataStore.data.map { it[loopPlay] }.first() ?: true
@@ -50,4 +56,6 @@ class SettingPreference
         suspend fun getWifiOnlyPlay(): Boolean = dataStore.data.map { it[wifiPlay] }.first() ?: true
 
         suspend fun getSoundOnOff(): Boolean = dataStore.data.map { it[soundOnOff] }.first() ?: false
+
+        suspend fun getLocale(): String = dataStore.data.map { it[localeString] }.first() ?: ""
     }

@@ -13,27 +13,26 @@ import com.sean.ratel.android.ui.navigation.Destination
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun FullScreenToggleView(route: String) {
-
     val context = LocalContext.current
     val activity = remember { context.findActivity() }
     val window = remember(activity) { activity?.window }
-    val controller = remember(window) {
-        window?.let { WindowCompat.getInsetsController(it, it.decorView) }
-    }
-
-        if (route == Destination.Splash.route) {
-            // 스플래시는 완전 풀스크린(바 숨김)
-            controller?.isAppearanceLightStatusBars = false
-            controller?.isAppearanceLightNavigationBars = false
-            controller?.hide(
-                WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars()
-            )
-        } else {
-            controller?.isAppearanceLightStatusBars = false
-            controller?.isAppearanceLightNavigationBars = false
-            controller?.show(WindowInsetsCompat.Type.systemBars())
+    val controller =
+        remember(window) {
+            window?.let { WindowCompat.getInsetsController(it, it.decorView) }
         }
 
+    if (route == Destination.Splash.route) {
+        // 스플래시는 완전 풀스크린(바 숨김)
+        controller?.isAppearanceLightStatusBars = false
+        controller?.isAppearanceLightNavigationBars = false
+        controller?.hide(
+            WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars(),
+        )
+    } else {
+        controller?.isAppearanceLightStatusBars = false
+        controller?.isAppearanceLightNavigationBars = false
+        controller?.show(WindowInsetsCompat.Type.systemBars())
+    }
 }
 
 @Suppress("ktlint:standard:function-naming")

@@ -192,7 +192,6 @@ dependencies {
 
     // google auth
     implementation(libs.google.accompanist.drawablepainter)
-    //implementation(libs.google.accompanist.systemuicontroller)
 
     // admob
     implementation(libs.google.play.service.ads)
