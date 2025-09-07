@@ -14,7 +14,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -58,11 +57,11 @@ class MainActivity : FragmentActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
-        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) getWindow().decorView
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
         // Remote Config
         launch {
             mainViewModel.firebaseRemoteConfig(remoteConfig)
@@ -70,6 +69,8 @@ class MainActivity : FragmentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             installSplashScreen()
         }
+
+        adViewModel.setForceClearCache(intent.getBooleanExtra("clear_cache", false))
 
         googleMobileAdsConsentManager.gatherConsent(this) { error ->
             if (error != null) RLog.d(TAG, "${error.errorCode}: ${error.message}")
@@ -91,7 +92,7 @@ class MainActivity : FragmentActivity() {
                 finish = { finish() },
             )
         }
-        enableEdgeToEdge()
+
         mainViewModel.sendGALog(Event.APP_OPEN, route = Destination.Home.route)
     }
 
@@ -121,6 +122,10 @@ class MainActivity : FragmentActivity() {
                 currentPipClick.value = isInPictureInPictureMode
             }
         }
+    }
+
+    override fun attachBaseContext(base: Context) {
+        super.attachBaseContext(base)
     }
 
     /**

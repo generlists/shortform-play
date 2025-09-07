@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
@@ -56,7 +57,8 @@ fun ShortFormPlayApp(
         val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
         RLog.d("hbungshin", "insetPaddingValue home : $insetPaddingValue")
         Scaffold(
-            modifier = Modifier.imePadding(),
+            contentWindowInsets = WindowInsets.safeDrawing,
+            modifier = Modifier.imePadding().background(APP_BACKGROUND),
             topBar = {
                 if (isTopViewVisible) {
                     HomeTopBar(

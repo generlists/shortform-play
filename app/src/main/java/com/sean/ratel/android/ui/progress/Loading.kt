@@ -73,7 +73,7 @@ fun LoadingMainPlaceholder(
     loading: Boolean,
 ) {
     if (!loading) return
-    val modifier = modifier.wrapContentSize()
+    val modifiers = modifier.wrapContentSize()
     Box(
         Modifier
             .fillMaxSize()
@@ -81,7 +81,7 @@ fun LoadingMainPlaceholder(
         contentAlignment = Alignment.BottomCenter,
     ) {
         LottieLoader(
-            modifier
+            modifiers
                 .width(80.dp)
                 .height(80.dp),
             rawRes = R.raw.loading,

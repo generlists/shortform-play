@@ -71,7 +71,7 @@ fun NavGraph(
     ) {
         // Splash
         composable(Destination.Splash.route) {
-            Splash(modifier, splashViewModel, adViewModel)
+            Splash(splashViewModel, adViewModel)
         }
 
         // Home

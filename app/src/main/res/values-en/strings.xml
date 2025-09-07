@@ -10,6 +10,14 @@
     <string name="search">SEARCH</string>
     <string name="popular_shortform">Popular ShortForm</string>
     <string name="base_date">base date %s</string>
+    <!-- 1.0.5-->
+    <string name="select_shortform_country_title">Choose your shortform country!</string>
+    <string name="select_country_korea">🇰🇷\u00A0 Korea</string>
+    <string name="select_country_usa">🇺🇸\u00A0 USA</string>
+    <string name="setting_select_shortform_country">ShortForm Region</string>
+    <string name="setting_select_shortform_country_description">Changing the viewing country will restart the app.</string>
+    <string name="select_country_description">You can change the viewing country in ⚙️ Settings → ShortForm Region.</string>
+
 
     <!-- Permisson-->
     <string name="alert_phone_permission">You only need permission if you have permission.</string>
@@ -76,8 +84,6 @@
     <string name="device_update_sort">Update</string>
     <string name="device_name_sort">Name</string>
     <string name="device_size_sort">capacity</string>
-
-
 
     <string name="short_form_end">ShortForm Play</string>
     <string name="short_form_app_share">Please share the ShortFrom-Play App with your friends!!</string>

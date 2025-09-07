@@ -9,14 +9,12 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme =
     darkColorScheme(
@@ -59,19 +57,6 @@ fun RatelappTheme(
             darkTheme -> DarkColorScheme
             else -> LightColorScheme
         }
-    val systemUiController = rememberSystemUiController()
-
-    SideEffect {
-        // 상태바 및 내비게이션 바 색상 안전 설정
-        systemUiController.setStatusBarColor(
-            color = colorScheme.primary,
-            darkIcons = !darkTheme,
-        )
-        systemUiController.setNavigationBarColor(
-            color = colorScheme.primary,
-            darkIcons = !darkTheme,
-        )
-    }
 
     MaterialTheme(
         colorScheme = colorScheme,

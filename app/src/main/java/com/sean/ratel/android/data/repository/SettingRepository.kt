@@ -31,6 +31,10 @@ SettingRepository
             settingPreference.setWifiOnlyPlay(isWifiPlay)
         }
 
+        suspend fun setLocale(locale: String) {
+            settingPreference.setLocale(locale)
+        }
+
         suspend fun getAutoPlay() = settingPreference.getAutoPlay()
 
         suspend fun getLoopPlay(): Boolean = settingPreference.getLoopPlay()
@@ -40,4 +44,6 @@ SettingRepository
         suspend fun getWifiOnlyPlay(): Boolean = settingPreference.getWifiOnlyPlay()
 
         suspend fun getPIPPlay() = settingPreference.getPIPPlay()
+
+        suspend fun getLocale() = settingPreference.getLocale()
     }

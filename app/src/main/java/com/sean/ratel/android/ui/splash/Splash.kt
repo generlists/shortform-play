@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,30 +28,34 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.storage.FirebaseStorage
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS.getShortFormCountry
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
+import com.sean.ratel.android.ui.common.ShortFormSelectDialog
 import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
+import com.sean.ratel.android.utils.UIUtil.getCountryCode
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.launch
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun Splash(
-    modifier: Modifier,
     splashViewModel: SplashViewModel,
     adViewModel: AdViewModel,
 ) {
     BackHandler { splashViewModel.navigator.finish() }
     NetworkAlert(splashViewModel)
-    InitialDataAndAD(modifier, adViewModel, splashViewModel)
+    InitialDataAndAD(adViewModel, splashViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-private fun SplashView(modifier: Modifier) {
+private fun SplashView() {
     val statusBarPadding = StatusBarHeight()
 
     Box(
@@ -107,29 +112,71 @@ private fun NetworkAlert(splashViewModel: SplashViewModel) {
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun InitialDataAndAD(
-    modifier: Modifier,
     adViewModel: AdViewModel,
     splashViewModel: SplashViewModel,
 ) {
     var showSplash by remember { mutableStateOf(true) }
-    val isDataReady by remember {
-        combine(
-            splashViewModel.mainDataComplete,
-            adViewModel.adMobInitialComplete,
-        ) { isComplete, isInitialized ->
+    var locale by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    val isAMobInitialComplete by remember { mutableStateOf(adViewModel.adMobInitialComplete) }
+    val isAdComplete = isAMobInitialComplete.collectAsState().value
+    val options = getShortFormCountry(LocalContext.current)
+    var loadLocale by remember { mutableStateOf(false) }
+    val forceRefresh = adViewModel.forceClearCache.collectAsState().value
 
-            // todo if(isInitialized) adViewModel.openAdLoad(context)
-
-            isComplete && isInitialized
+    LaunchedEffect(isAMobInitialComplete) {
+        coroutineScope.launch {
+            locale = splashViewModel.getLocale()
+            loadLocale = true
         }
-    }.collectAsState(initial = false)
-    LaunchedEffect(isDataReady) {
-        if (isDataReady) {
-            delay(1500) // 1초 대기
-            // adViewModel.showAppOpenAd(context)
-            showSplash = false
-            delay(300) // fadeOut 동안 기다리기
-            adViewModel.goMainHome()
+    }
+
+    if (isAdComplete && loadLocale) {
+        if (locale.isEmpty()) {
+            ShortFormSelectDialog(
+                defaultCountryCode = getCountryCode(),
+                options = options,
+                onClick = { countryCode ->
+                    locale = countryCode
+                    splashViewModel.sendGALog(
+                        screenName = GASplashAnalytics.SCREEN_NAME,
+                        eventName = GASplashAnalytics.Event.SELECT_COUNTY_CLICK,
+                        actionName = GASplashAnalytics.Action.CLICK,
+                        parameter =
+                            mapOf(
+                                GASplashAnalytics.Param.COUNTY_CODE to locale,
+                            ),
+                    )
+
+                    coroutineScope.launch {
+                        splashViewModel.setLocale(countryCode)
+                        splashViewModel.requestYouTubeVideos(
+                            SplashViewModel.RequestType.TODAY,
+                            FirebaseStorage.getInstance(),
+                            getCountryCode(countryCode),
+                            forceRefresh,
+                        )
+                    }
+                },
+                onDismiss = {},
+            )
+        } else {
+            LaunchedEffect(Unit) {
+                splashViewModel.requestYouTubeVideos(
+                    SplashViewModel.RequestType.TODAY,
+                    FirebaseStorage.getInstance(),
+                    getCountryCode(locale),
+                    forceRefresh,
+                )
+                splashViewModel.mainDataComplete.collect { complete ->
+                    if (complete) {
+                        delay(1500)
+                        showSplash = false
+                        delay(500)
+                        adViewModel.goMainHome()
+                    }
+                }
+            }
         }
     }
 
@@ -137,7 +184,7 @@ fun InitialDataAndAD(
         visible = showSplash,
         exit = fadeOut(animationSpec = tween(durationMillis = 300)),
     ) {
-        SplashView(modifier)
+        SplashView()
     }
 }
 

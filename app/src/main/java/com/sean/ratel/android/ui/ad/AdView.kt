@@ -35,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
@@ -85,21 +84,8 @@ fun LoadBanner(
     var progress by remember { mutableStateOf(true) }
     val adLoadStart = adViewModel?.adLoadStart?.collectAsState()
     var adView by remember { mutableStateOf<AdView?>(null) }
-    var isSetting = currentRoute == Destination.Setting.route
-    var isMain = currentRoute == Destination.Home.Main.route
-    val height =
-        if (currentRoute == Destination.AppManager.route ||
-            currentRoute == Destination.SettingAppManagerDetail.route ||
-            currentRoute == Destination.Home.Main.PoplarShortFormMore.route ||
-            currentRoute == Destination.Home.Main.EditorPickMore.route ||
-            currentRoute == Destination.Home.Main.RecommendMore.route ||
-            currentRoute == Destination.Home.Main.RankingChannelMore.route ||
-            currentRoute == Destination.Home.Main.RecentlyWatchMore.route
-        ) {
-            0
-        } else {
-            adViewModel?.bottomBarHeight?.value
-        }
+    val isSetting = currentRoute == Destination.Setting.route
+    val isMain = currentRoute == Destination.Home.Main.route
 
     // AdView 생성은 ViewModel에서 처리
     LaunchedEffect(Unit) {
@@ -131,7 +117,7 @@ fun LoadBanner(
     }
 
     if (adLoadStart?.value == true) {
-        BannerView(adView, height?.dp ?: 56.dp, progress, adViewModel, isSetting, isMain)
+        BannerView(adView, progress, adViewModel, isSetting, isMain)
     }
 }
 
@@ -139,7 +125,6 @@ fun LoadBanner(
 @Composable
 private fun BannerView(
     adView: AdView?,
-    height: Dp,
     progress: Boolean,
     adViewModel: AdViewModel?,
     isSetting: Boolean,

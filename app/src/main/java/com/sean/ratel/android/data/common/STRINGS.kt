@@ -1,7 +1,9 @@
 package com.sean.ratel.android.data.common
 
+import android.content.Context
 import androidx.compose.ui.unit.dp
 import com.sean.ratel.android.BuildConfig
+import com.sean.ratel.android.R
 
 object STRINGS {
     const val MY_EMAIL_ACCOUNT = BuildConfig.MY_EMAIL_ACCOUNT
@@ -35,4 +37,10 @@ object STRINGS {
 
     @Suppress("ktlint:standard:function-naming")
     fun YOUTUBE_APP_BY_CHANNEL_ID(channelId: String): String = "https://m.youtube.com/channel/$channelId"
+
+    fun getShortFormCountry(context: Context): List<Pair<String, String>> =
+        listOf(
+            Pair(context.resources.getString(R.string.select_country_korea), "KR"),
+            Pair(context.resources.getString(R.string.select_country_usa), "US"),
+        )
 }

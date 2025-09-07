@@ -29,7 +29,8 @@ object UIUtil {
         val displayMetrics = context.resources.displayMetrics
         val adWidthPixels =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val windowMetrics = context.getSystemService(WindowManager::class.java)?.currentWindowMetrics
+                val windowMetrics =
+                    context.getSystemService(WindowManager::class.java)?.currentWindowMetrics
                 windowMetrics?.bounds?.width() ?: 0
             } else {
                 displayMetrics.widthPixels
@@ -46,7 +47,8 @@ object UIUtil {
         val displayMetrics = context.resources.displayMetrics
         val adWidthPixels =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                val windowMetrics = context.getSystemService(WindowManager::class.java)?.currentWindowMetrics
+                val windowMetrics =
+                    context.getSystemService(WindowManager::class.java)?.currentWindowMetrics
                 windowMetrics?.bounds?.width() ?: 0
             } else {
                 displayMetrics.widthPixels
@@ -222,4 +224,17 @@ object UIUtil {
             ) == AppOpsManager.MODE_ALLOWED
         }
     }
+
+    fun getCountryCode(countryCode: String? = null): String =
+        countryCode
+            ?: if (Locale
+                    .getDefault()
+                    .country
+                    .toString()
+                    .isNotEmpty()
+            ) {
+                Locale.getDefault().country
+            } else {
+                "KR"
+            }
 }

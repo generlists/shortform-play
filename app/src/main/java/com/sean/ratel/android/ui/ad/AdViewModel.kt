@@ -94,6 +94,13 @@ class AdViewModel
         private val _viewAd = MutableStateFlow(false)
         val viewAd: StateFlow<Boolean> = _viewAd
 
+        private val _forceClearCache = MutableStateFlow(false)
+        val forceClearCache: StateFlow<Boolean> = _forceClearCache
+
+        fun setForceClearCache(forceClearCache: Boolean) {
+            _forceClearCache.value = forceClearCache
+        }
+
         fun setViewAd(viewAd: Boolean) {
             _viewAd.value = viewAd
         }
@@ -156,7 +163,7 @@ class AdViewModel
             }
 
             // Set your test devices.
-            if (com.sean.ratel.core.BuildConfig.DEBUG) {
+            if (BuildConfig.DEBUG) {
                 MobileAds.setRequestConfiguration(
                     RequestConfiguration
                         .Builder()

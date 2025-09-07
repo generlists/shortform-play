@@ -1,62 +1,51 @@
 package com.sean.ratel.android.ui.common
 
+import android.app.Activity
+import android.content.Context
+import android.content.ContextWrapper
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.graphics.Color
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun FullScreenToggleView(route: String) {
-    // SystemUiController 사용하여 시스템 UI 제어
-    val systemUiController = rememberSystemUiController()
+    val context = LocalContext.current
+    val activity = remember { context.findActivity() }
+    val window = remember(activity) { activity?.window }
+    val controller =
+        remember(window) {
+            window?.let { WindowCompat.getInsetsController(it, it.decorView) }
+        }
 
     if (route == Destination.Splash.route) {
-        // 전체 화면 모드
-        systemUiController.setSystemBarsColor(
-            color = Color.Black,
-            darkIcons = false,
+        // 스플래시는 완전 풀스크린(바 숨김)
+        controller?.isAppearanceLightStatusBars = false
+        controller?.isAppearanceLightNavigationBars = false
+        controller?.hide(
+            WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.navigationBars(),
         )
-        systemUiController.setNavigationBarColor(
-            color = Color.Black,
-            darkIcons = true,
-        )
-        systemUiController.isStatusBarVisible = false
-        systemUiController.isNavigationBarVisible = false
     } else {
-        systemUiController.setSystemBarsColor(
-            // 상태바 색상 복구
-            color = APP_BACKGROUND,
-            // 흰색 아이콘 (어두운 배경에서 사용)
-            darkIcons = false,
-        )
-        systemUiController.setNavigationBarColor(
-            color = APP_BACKGROUND,
-            darkIcons = false,
-        )
-        systemUiController.isStatusBarVisible = true
-        systemUiController.isNavigationBarVisible = true
+        controller?.isAppearanceLightStatusBars = false
+        controller?.isAppearanceLightNavigationBars = false
+        controller?.show(WindowInsetsCompat.Type.systemBars())
     }
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun UpdateStateBar() {
-    val systemUiController = rememberSystemUiController()
-    LaunchedEffect(Unit) {
-        systemUiController.setSystemBarsColor(
-            // 상태바 색상 복구
-            color = Color.Black,
-            // 흰색 아이콘 (어두운 배경에서 사용)
-            darkIcons = false,
-        )
-        systemUiController.setNavigationBarColor(
-            color = Color.Black,
-            darkIcons = false,
-        )
-        systemUiController.isStatusBarVisible = true
-        systemUiController.isNavigationBarVisible = true
+    FullScreenToggleView(Destination.YouTube.route)
+}
+
+fun Context.findActivity(): Activity? {
+    var ctx = this
+    while (ctx is ContextWrapper) {
+        if (ctx is Activity) return ctx
+        ctx = ctx.baseContext
     }
+    return null
 }

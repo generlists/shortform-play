@@ -72,6 +72,7 @@ fun SettingView(
                     .padding(top = 64.dp, bottom = REMAIN_AD_MARGIN),
         ) {
             item { SettingsService(viewModel) }
+            item { SettingsCountry(viewModel) }
             item { SettingsVideo(viewModel) }
             item { SettingsApp(viewModel) }
             item { ViewBottomMargin(adViewModel) }
