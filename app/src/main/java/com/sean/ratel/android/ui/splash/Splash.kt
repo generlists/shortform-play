@@ -45,18 +45,17 @@ import kotlinx.coroutines.launch
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun Splash(
-    modifier: Modifier,
     splashViewModel: SplashViewModel,
     adViewModel: AdViewModel,
 ) {
     BackHandler { splashViewModel.navigator.finish() }
     NetworkAlert(splashViewModel)
-    InitialDataAndAD(modifier, adViewModel, splashViewModel)
+    InitialDataAndAD(adViewModel, splashViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-private fun SplashView(modifier: Modifier) {
+private fun SplashView() {
     val statusBarPadding = StatusBarHeight()
 
     Box(
@@ -113,7 +112,6 @@ private fun NetworkAlert(splashViewModel: SplashViewModel) {
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun InitialDataAndAD(
-    modifier: Modifier,
     adViewModel: AdViewModel,
     splashViewModel: SplashViewModel,
 ) {
@@ -186,7 +184,7 @@ fun InitialDataAndAD(
         visible = showSplash,
         exit = fadeOut(animationSpec = tween(durationMillis = 300)),
     ) {
-        SplashView(modifier)
+        SplashView()
     }
 }
 

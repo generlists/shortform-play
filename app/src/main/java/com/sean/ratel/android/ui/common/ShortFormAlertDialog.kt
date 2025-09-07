@@ -123,7 +123,7 @@ fun ShortFormSelectDialog(
 ) {
     var selectedCountryCode by remember { mutableStateOf(defaultCountryCode) }
     RatelDialogThemeOverlay {
-        Dialog(onDismissRequest = { onDismiss }) {
+        Dialog(onDismissRequest = { onDismiss(true) }) {
             Card(
                 modifier =
                     Modifier

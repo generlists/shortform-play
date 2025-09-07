@@ -35,13 +35,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.getShortFormCountry
 import com.sean.ratel.android.data.log.GASettingAnalytics
 import com.sean.ratel.android.ui.common.ShortFormSelectDialog
-import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_10
@@ -57,16 +55,9 @@ fun SettingsCountry(viewModel: SettingViewModel?) {
             .fillMaxWidth()
             .background(APP_BACKGROUND),
     ) {
-        val context = LocalContext.current
         AppTitle()
         Spacer(Modifier.height(3.dp))
-        ShortFormCountry(SettingsItems.SETTING_SHORTFORM_COUNTRY, viewModel) {
-            viewModel?.runAppDetail()
-            viewModel?.sendGALog(
-                Event.SCREEN_VIEW,
-                Destination.SettingAppManagerDetail.route,
-            )
-        }
+        ShortFormCountry(SettingsItems.SETTING_SHORTFORM_COUNTRY, viewModel)
     }
 }
 
@@ -75,10 +66,13 @@ fun SettingsCountry(viewModel: SettingViewModel?) {
 private fun ShortFormCountry(
     item: SettingsItems,
     viewModel: SettingViewModel?,
-    goPage: () -> Unit,
 ) {
     var showPopup by remember { mutableStateOf(false) }
-    val options = listOf(Pair(stringResource(R.string.select_country_korea), "KR"), Pair(stringResource(R.string.select_country_usa), "US"))
+    val options =
+        listOf(
+            Pair(stringResource(R.string.select_country_korea), "KR"),
+            Pair(stringResource(R.string.select_country_usa), "US"),
+        )
     var locale by remember { mutableStateOf("KR") }
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
