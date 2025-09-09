@@ -1,130 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ShortForm Play</string>
-    <string name="title">ShortForm Play</string>
-    <string name="home">HOME</string>
-    <string name="video">ShortForm</string>
-    <string name="main">Main</string>
-    <string name="setting">Setting</string>
-    <string name="my">My</string>
-    <string name="search">SEARCH</string>
-    <string name="popular_shortform">Popular ShortForm</string>
-    <string name="base_date">base date %s</string>
-    <!-- 1.0.5-->
-    <string name="select_shortform_country_title">Choose your shortform country!</string>
-    <string name="select_country_korea">🇰🇷\u00A0 Korea</string>
-    <string name="select_country_usa">🇺🇸\u00A0 USA</string>
-    <string name="setting_select_shortform_country">ShortForm Region</string>
-    <string name="setting_select_shortform_country_description">Changing the viewing country will restart the app.</string>
-    <string name="select_country_description">You can change the viewing country in ⚙️ Settings → ShortForm Region.</string>
+    <string name="app_name">วิดีโอสั้นเพลย์</string>
+    <string name="title">วิดีโอสั้นเพลย์</string>
+    <string name="home">หน้าแรก</string>
+    <string name="video">วิดีโอสั้น</string>
+    <string name="main">เมน</string>
+    <string name="setting">การตั้งค่า</string>
+    <string name="my">ของฉัน</string>
+    <string name="search">ค้นหา</string>
+    <string name="popular_shortform">วิดีโอสั้นยอดนิยม</string>
+    <string name="base_date">ข้อมูล ณ วันที่ %s</string>
+    <!--1.0.5 -->
+    <string name="select_shortform_country_title">เลือกประเทศสำหรับรับชมวิดีโอสั้นของคุณ!</string>
+    <string name="select_country_korea">🇰🇷\u00A0 เกาหลีใต้</string>
+    <string name="select_country_usa">🇺🇸\u00A0 สหรัฐอเมริกา</string>
+    <string name="setting_select_shortform_country_description">การเปลี่ยนประเทศจะทำให้แอปรีสตาร์ท</string>
+    <string name="setting_select_shortform_country">ภูมิภาควิดีโอสั้น</string>
+    <string name="select_country_description">คุณสามารถเปลี่ยนประเทศได้ที่ ⚙️ การตั้งค่า → ภูมิภาควิดีโอสั้น</string>
 
+    <!-- สิทธิ์การใช้งาน -->
+    <string name="alert_phone_permission">คุณต้องให้สิทธิ์เฉพาะเมื่อแอปต้องการเท่านั้น</string>
 
-    <!-- Permisson-->
-    <string name="alert_phone_permission">You only need permission if you have permission.</string>
-
-    <string name="shorts">Shorts</string>
+    <string name="shorts">ช็อตวิดีโอ</string>
     <string name="lils">Lils</string>
     <string name="X">X</string>
     <string name="naver_clip">NaverClip</string>
     <string name="daum_shorts">DaumShorts</string>
 
     <!-- DebugView -->
-    <string name="baisc_info">Basic information</string>
-    <string name="multi_view">Multi View</string>
-    <string name="viewer_example">Viewer example</string>
-    <string name="extra_example">Other Videos</string>
+    <string name="baisc_info">ข้อมูลพื้นฐาน</string>
+    <string name="multi_view">หลายมุมมอง</string>
+    <string name="viewer_example">ตัวอย่างผู้ชม</string>
+    <string name="extra_example">วิดีโออื่นๆ</string>
     <string name="hls_title_1" translatable="false">Apple 4x3 basic stream (TS)</string>
     <string name="hls_sample">HLS</string>
-    <string name="hls_title_2">Akamai Sample HLS</string>
-    <string name="view_count">View Count</string>
-    <string name="ahto_play_setting">Auto Play Setting</string>
+    <string name="hls_title_2">ตัวอย่าง HLS จาก Akamai</string>
+    <string name="view_count">จำนวนการดู</string>
+    <string name="ahto_play_setting">การตั้งค่าเล่นอัตโนมัติ</string>
     <string name="etc">ETC.</string>
-    <!-- 설정 -->
-    <string name="setting_service">Service Management</string>
-    <string name="setting_notice">Announcement</string>
-    <string name="setting_qna">Contact us</string>
-    <string name="setting_private_policy">Terms and Privacy Policy</string>
-    <string name="setting_play">Video Function</string>
-    <string name="setting_play_continue">Continuous Play</string>
-    <string name="setting_play_clipping_dscription">Repeats the current video after one video ends.</string>
-    <string name="setting_play_auto_play">Auto Play</string>
-    <string name="setting_play_auto_play_description">When video playback starts, playback starts automatically.</string>
-    <string name="setting_play_clipping_play">Repeat Play</string>
-    <string name="setting_play_wifi_play">Play only on Wi-Fi</string>
-    <string name="setting_play_wifi_play_discription">It plays only in Wi-Fi status and shows other network notification information.</string>
-    <string name="setting_pip_play">Use PIP Player</string>
-    <string name="setting_pip_play_discription">Press the PIP button at the top of the video playback \n or the home button (OS 12 or later) to run in PIP</string>
-    <string name="setting_pip_go">Please enable PIP mode in settings.</string>
-    <string name="setting_sound">Setting Sound</string>
-    <string name="setting_sound_description">You can turn the sound on or off during playback.</string>
-    <string name="setting_app_manager">App Management</string>
-    <string name="setting_app_detail_info">App Manager</string>
-    <string name="setting_app_info">App Information</string>
-    <string name="setting_app_version">App Version</string>
-    <string name="setting_app_openSource">Open source License</string>
-    <string name="setting_app_rate">Rating Cycle</string>
-    <string name="setting_app_present">Donate</string>
-    <string name="setting_app_email_not_found">Email client not found.</string>
-    <string name="setting_app_opensource_not_produce">The open source license used in the app is provided only for the actual distribution version.</string>
-    <string name="pip_memory_error">low memory error</string>
-    <!--App Manager -->
-    <string name="app_manager">App Manager</string>
-    <string name="app_manager_detail">Show and manage app information on your device.</string>
-    <string name="network_manager">Network Management</string>
-    <string name="network_manager_detail">It shows the current network status in my device environment.</string>
-    <string name="device_care">Device Care</string>
-    <string name="device_care_detail">Clean up unnecessary apps running on your device.</string>
-    <string name="device_manager_title">Device Management</string>
+    <!-- การตั้งค่า -->
+    <string name="setting_service">การจัดการบริการ</string>
+    <string name="setting_notice">ประกาศ</string>
+    <string name="setting_qna">ติดต่อเรา</string>
+    <string name="setting_private_policy">ข้อกำหนดและนโยบายความเป็นส่วนตัว</string>
+
+    <string name="setting_play">ฟังก์ชันวิดีโอ</string>
+    <string name="setting_play_continue">เล่นต่อเนื่อง</string>
+    <string name="setting_play_clipping_dscription">เล่นวิดีโอเดิมซ้ำหลังจากจบ</string>
+    <string name="setting_play_auto_play">เล่นอัตโนมัติ</string>
+    <string name="setting_play_auto_play_description">เมื่อเริ่มเล่นวิดีโอ ระบบจะเล่นโดยอัตโนมัติ</string>
+    <string name="setting_play_clipping_play">เล่นซ้ำ</string>
+    <string name="setting_play_wifi_play">เล่นผ่าน Wi-Fi เท่านั้น</string>
+    <string name="setting_play_wifi_play_discription">เล่นเฉพาะเมื่อเชื่อมต่อ Wi-Fi\nและแจ้งเตือนเมื่อใช้งานเครือข่ายอื่น</string>
+
+    <string name="setting_pip_play">ใช้งานตัวเล่นแบบ PIP</string>
+    <string name="setting_pip_play_discription">กดปุ่ม PIP ด้านบนของวิดีโอ\nหรือปุ่มโฮม (Android 12 ขึ้นไป) เพื่อเปิดโหมด PIP</string>
+    <string name="setting_pip_go">โปรดเปิดใช้งานโหมด PIP ในการตั้งค่า</string>
+
+    <string name="setting_sound">ตั้งค่าเสียง</string>
+    <string name="setting_sound_description">คุณสามารถเปิดหรือปิดเสียงระหว่างการเล่นได้</string>
+
+    <string name="setting_app_manager">การจัดการแอป</string>
+    <string name="setting_app_detail_info">ตัวจัดการแอป</string>
+    <string name="setting_app_info">ข้อมูลแอป</string>
+    <string name="setting_app_version">เวอร์ชันแอป</string>
+    <string name="setting_app_openSource">สิทธิ์โอเพ่นซอร์ส</string>
+    <string name="setting_app_rate">รอบการให้คะแนน</string>
+    <string name="setting_app_present">สนับสนุน</string>
+    <string name="setting_app_email_not_found">ไม่พบแอปอีเมล</string>
+    <string name="setting_app_opensource_not_produce">แอปนี้แสดงสิทธิ์โอเพ่นซอร์สเฉพาะในเวอร์ชันที่เผยแพร่เท่านั้น</string>
+
+    <string name="pip_memory_error">หน่วยความจำต่ำ</string>
+
+    <!-- ผู้จัดการแอป -->
+    <string name="app_manager">ตัวจัดการแอป</string>
+    <string name="app_manager_detail">แสดงและจัดการข้อมูลแอปในอุปกรณ์ของคุณ</string>
+    <string name="network_manager">การจัดการเครือข่าย</string>
+    <string name="network_manager_detail">แสดงสถานะเครือข่ายปัจจุบันของอุปกรณ์คุณ</string>
+    <string name="device_care">ดูแลอุปกรณ์</string>
+    <string name="device_care_detail">ล้างแอปที่ไม่จำเป็นซึ่งกำลังทำงานอยู่</string>
+    <string name="device_manager_title">การจัดการอุปกรณ์</string>
     <string name="device_manager_apk_size">%s MB</string>
-    <string name="device_manager_update_time">Update Date%s</string>
-    <string name="device_manager_app_detail">App details</string>
-    <string name="device_manager_app_delete">Delete App</string>
-    <string name="device_manager_comming_soon">The feature is being prepared!!</string>
-    <string name="device_browser_select">Browser Selection</string>
-    <string name="device_update_sort">Update</string>
-    <string name="device_name_sort">Name</string>
-    <string name="device_size_sort">capacity</string>
+    <string name="device_manager_update_time">อัปเดตเมื่อ %s</string>
+    <string name="device_manager_app_detail">รายละเอียดแอป</string>
+    <string name="device_manager_app_delete">ลบแอป</string>
+    <string name="device_manager_comming_soon">ฟีเจอร์นี้อยู่ระหว่างการพัฒนา!</string>
+    <string name="device_browser_select">เลือกเบราว์เซอร์</string>
+    <string name="device_update_sort">เรียงตามการอัปเดต</string>
+    <string name="device_name_sort">เรียงตามชื่อ</string>
+    <string name="device_size_sort">เรียงตามขนาด</string>
 
-    <string name="short_form_end">ShortForm Play</string>
-    <string name="short_form_app_share">Please share the ShortFrom-Play App with your friends!!</string>
 
+
+    <string name="short_form_end">วิดีโอสั้นเพลย์</string>
+    <string name="short_form_app_share">แชร์แอป ShortForm Play ให้เพื่อนของคุณเลย!</string>
 
     <string name="end_lkie">5600</string>
-    <string name="end_dislike">DisLike</string>
+    <string name="end_dislike">ไม่ชอบ</string>
     <string name="end_comment">183</string>
-    <string name="end_share">Share</string>
-    <string name="end_sound_off">SoundOff</string>
-    <string name="end_sound_on">SoundOn</string>
-    <string name="end_video_view_count">Views  %s</string>
+    <string name="end_share">แชร์</string>
+    <string name="end_sound_off">ปิดเสียง</string>
+    <string name="end_sound_on">เปิดเสียง</string>
+    <string name="end_video_view_count">ยอดเข้าชม %s</string>
 
-    <!--alert -->
-    <string name="alert_wifi_body">Not in Wi-Fi status.\nDo you still want to play?</string>
-    <string name="alert_no_network">There is no network connection.\n Do you want to close the app?</string>
-    <string name="alert_ok">OK</string>
-    <string name="alert_cancel">Cancel</string>
+    <!-- การแจ้งเตือน -->
+    <string name="alert_wifi_body">ไม่ได้เชื่อมต่อ Wi-Fi\nคุณต้องการเล่นต่อหรือไม่?</string>
+    <string name="alert_no_network">ไม่มีการเชื่อมต่อเครือข่าย\nคุณต้องการปิดแอปหรือไม่?</string>
+    <string name="alert_ok">ตกลง</string>
+    <string name="alert_cancel">ยกเลิก</string>
 
-    <string name="subscription_count">Subscribers : %s</string>
-    <string name="search_count">Views : %s</string>
-    <string name="start_date">Start Date : %s</string>
-    <string name="main_more">More</string>
+    <string name="subscription_count">ผู้ติดตาม : %s</string>
+    <string name="search_count">ยอดเข้าชม : %s</string>
+    <string name="start_date">วันที่เริ่มต้น : %s</string>
+    <string name="main_more">เพิ่มเติม</string>
 
-    <string name="main_more_search">By View</string>
-    <string name="main_more_like">Sort by Likes</string>
-    <string name="main_more_comment">By Comment</string>
-    <string name="main_ranking_label">Daily Ranking</string>
-    <string name="main_go_channel">Visit Channel Home</string>
-    <string name="main_rank_order">Ranking</string>
-    <string name="main_rank_channel">Channel</string>
-    <string name="main_rank_subscription">Subscribers</string>
-    <string name="main_rank_search">Views</string>
-    <string name="main_rank_new">NEW</string>
+    <string name="main_more_search">เรียงตามยอดเข้าชม</string>
+    <string name="main_more_like">เรียงตามยอดถูกใจ</string>
+    <string name="main_more_comment">เรียงตามความคิดเห็น</string>
+    <string name="main_ranking_label">อันดับรายวัน</string>
+    <string name="main_go_channel">ไปยังหน้าแรกของช่อง</string>
+    <string name="main_rank_order">อันดับ</string>
+    <string name="main_rank_channel">ช่อง</string>
+    <string name="main_rank_subscription">ผู้ติดตาม</string>
+    <string name="main_rank_search">ยอดเข้าชม</string>
+    <string name="main_rank_new">ใหม่</string>
 
-    <string name="main_recent_watch_video">Recently Video</string>
-    <string name="main_recent_watch_video_max_1">Up to 500 recently viewed videos are saved.</string>
-    <string name="main_recent_watch_video_max_2">Afterwards, it will be deleted starting from the oldest order.</string>
+    <string name="main_recent_watch_video">วิดีโอที่ดูล่าสุด</string>
+    <string name="main_recent_watch_video_max_1">บันทึกวิดีโอที่รับชมล่าสุดได้สูงสุด 500 รายการ</string>
+    <string name="main_recent_watch_video_max_2">หลังจากนั้นจะถูกลบโดยเรียงจากรายการที่เก่าที่สุด</string>
 
-    <string name="pip_frist_video_message">This is the first video.</string>
-    <string name="pip_last_video_message">This is the last video.</string>
-
+    <string name="pip_frist_video_message">นี่คือวิดีโอแรก</string>
+    <string name="pip_last_video_message">นี่คือวิดีโอสุดท้าย</string>
 
 </resources>

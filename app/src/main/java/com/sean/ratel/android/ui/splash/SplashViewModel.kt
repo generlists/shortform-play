@@ -80,7 +80,6 @@ class SplashViewModel
                     if (_shortformList.value.second > 0) {
                         mainLoadComplete()
                     }
-
                     val speed = (System.currentTimeMillis() - startTime) / 1000
                     RLog.d(
                         TAG,
@@ -100,7 +99,6 @@ class SplashViewModel
                     .addOnSuccessListener { url ->
                         continuation.resume(url)
                     }.addOnFailureListener { exception ->
-                        RLog.e(TAG, "$exception")
                         if (_retryCount.value <= 3) {
                             viewModelScope.launch {
                                 requestYouTubeVideos(

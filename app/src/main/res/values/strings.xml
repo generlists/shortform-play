@@ -50,7 +50,7 @@
     <string name="setting_play_auto_play_description">When video playback starts, playback starts automatically.</string>
     <string name="setting_play_clipping_play">Repeat Play</string>
     <string name="setting_play_wifi_play">Play only on Wi-Fi</string>
-    <string name="setting_play_wifi_play_discription">It plays only in Wi-Fi status and shows other network notification information.</string>
+    <string name="setting_play_wifi_play_discription">It plays only in Wi-Fi status and \n shows other network notification information.</string>
     <string name="setting_pip_play">Use PIP Player</string>
     <string name="setting_pip_play_discription">Press the PIP button at the top of the video playback \n or the home button (OS 12 or later) to run in PIP</string>
     <string name="setting_pip_go">Please enable PIP mode in settings.</string>

@@ -129,6 +129,15 @@ fun InitialDataAndAD(
             locale = splashViewModel.getLocale()
             loadLocale = true
         }
+        splashViewModel.mainDataComplete.collect { complete ->
+
+            if (complete) {
+                delay(1500)
+                showSplash = false
+                delay(500)
+                adViewModel.goMainHome()
+            }
+        }
     }
 
     if (isAdComplete && loadLocale) {
@@ -168,14 +177,6 @@ fun InitialDataAndAD(
                     getCountryCode(locale),
                     forceRefresh,
                 )
-                splashViewModel.mainDataComplete.collect { complete ->
-                    if (complete) {
-                        delay(1500)
-                        showSplash = false
-                        delay(500)
-                        adViewModel.goMainHome()
-                    }
-                }
             }
         }
     }
