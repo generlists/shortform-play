@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
@@ -159,6 +160,7 @@ private fun HomeBottomBarView(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .align(Alignment.Center)
+                    .windowInsetsPadding(WindowInsets.navigationBars)
                     .windowInsetsBottomHeight(
                         WindowInsets.navigationBars.add(WindowInsets(bottom = 56.dp)),
                     ).onGloballyPositioned { coordinates ->

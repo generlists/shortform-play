@@ -1,130 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ShortForm Play</string>
-    <string name="title">ShortForm Play</string>
+    <string name="app_name">短影音播放</string>
+    <string name="title">短影音播放</string>
     <string name="home">HOME</string>
-    <string name="video">ShortForm</string>
-    <string name="main">Main</string>
-    <string name="setting">Setting</string>
-    <string name="my">My</string>
-    <string name="search">SEARCH</string>
-    <string name="popular_shortform">Popular ShortForm</string>
-    <string name="base_date">base date %s</string>
-    <!-- 1.0.5-->
-    <string name="select_shortform_country_title">Choose your shortform country!</string>
-    <string name="select_country_korea">🇰🇷\u00A0 Korea</string>
-    <string name="select_country_usa">🇺🇸\u00A0 USA</string>
-    <string name="setting_select_shortform_country">ShortForm Region</string>
-    <string name="setting_select_shortform_country_description">Changing the viewing country will restart the app.</string>
-    <string name="select_country_description">You can change the viewing country in ⚙️ Settings → ShortForm Region.</string>
-
+    <string name="video">短影音</string>
+    <string name="main">首頁</string>
+    <string name="setting">設定</string>
+    <string name="my">我的</string>
+    <string name="search">搜尋</string>
+    <string name="popular_shortform">熱門短影音</string>
+    <string name="base_date">基準日期 %s</string>
+    <!--1.0.5 -->
+    <string name="select_shortform_country_title">選擇你的短影音地區!</string>
+    <string name="select_country_korea">🇰🇷\u00A0 韓國</string>
+    <string name="select_country_usa">🇺🇸\u00A0 美國</string>
+    <string name="setting_select_shortform_country_description">更改觀看地區會重新啟動應用程式。</string>
+    <string name="setting_select_shortform_country">短影音地區</string>
+    <string name="select_country_description">你可以在 ⚙️ 設定 → 短影音地區 中更改觀看國家。</string>
 
     <!-- Permisson-->
-    <string name="alert_phone_permission">You only need permission if you have permission.</string>
+    <string name="alert_phone_permission">僅在需要時才會請求權限。</string>
 
-    <string name="shorts">Shorts</string>
+    <string name="shorts">短片</string>
     <string name="lils">Lils</string>
     <string name="X">X</string>
-    <string name="naver_clip">NaverClip</string>
-    <string name="daum_shorts">DaumShorts</string>
+    <string name="naver_clip">Naver剪輯</string>
+    <string name="daum_shorts">Daum短片</string>
 
     <!-- DebugView -->
-    <string name="baisc_info">Basic information</string>
-    <string name="multi_view">Multi View</string>
-    <string name="viewer_example">Viewer example</string>
-    <string name="extra_example">Other Videos</string>
-    <string name="hls_title_1" translatable="false">Apple 4x3 basic stream (TS)</string>
+    <string name="baisc_info">基本資訊</string>
+    <string name="multi_view">多重視角</string>
+    <string name="viewer_example">觀眾範例</string>
+    <string name="extra_example">其他影片</string>
+    <string name="hls_title_1" translatable="false">Apple 4:3 基本串流 (TS)</string>
     <string name="hls_sample">HLS</string>
-    <string name="hls_title_2">Akamai Sample HLS</string>
-    <string name="view_count">View Count</string>
-    <string name="ahto_play_setting">Auto Play Setting</string>
+    <string name="hls_title_2">Akamai HLS 範例</string>
+    <string name="view_count">觀看次數</string>
+    <string name="ahto_play_setting">自動播放設定</string>
     <string name="etc">ETC.</string>
-    <!-- 설정 -->
-    <string name="setting_service">Service Management</string>
-    <string name="setting_notice">Announcement</string>
-    <string name="setting_qna">Contact us</string>
-    <string name="setting_private_policy">Terms and Privacy Policy</string>
-    <string name="setting_play">Video Function</string>
-    <string name="setting_play_continue">Continuous Play</string>
-    <string name="setting_play_clipping_dscription">Repeats the current video after one video ends.</string>
-    <string name="setting_play_auto_play">Auto Play</string>
-    <string name="setting_play_auto_play_description">When video playback starts, playback starts automatically.</string>
-    <string name="setting_play_clipping_play">Repeat Play</string>
-    <string name="setting_play_wifi_play">Play only on Wi-Fi</string>
-    <string name="setting_play_wifi_play_discription">It plays only in Wi-Fi status and shows other network notification information.</string>
-    <string name="setting_pip_play">Use PIP Player</string>
-    <string name="setting_sound">Setting Sound</string>
-    <string name="setting_sound_description">You can turn the sound on or off during playback.</string>
-    <string name="setting_pip_play_discription">Press the PIP button at the top of the video playback \n or the home button (OS 12 or later) to run in PIP</string>
-    <string name="setting_pip_go">Please enable PIP mode in settings.</string>
-    <string name="setting_app_manager">App Management</string>
-    <string name="setting_app_detail_info">App Manager</string>
-    <string name="setting_app_info">App Information</string>
-    <string name="setting_app_version">App Version</string>
-    <string name="setting_app_openSource">Open source License</string>
-    <string name="setting_app_rate">Rating Cycle</string>
-    <string name="setting_app_present">Donate</string>
-    <string name="setting_app_email_not_found">Email client not found.</string>
-    <string name="setting_app_opensource_not_produce">The open source license used in the app is provided only for the actual distribution version.</string>
-    <string name="pip_memory_error">low memory error</string>
+    <!-- 設定 -->
+    <string name="setting_service">服務管理</string>
+    <string name="setting_notice">公告</string>
+    <string name="setting_qna">聯絡我們</string>
+    <string name="setting_private_policy">使用條款與隱私政策</string>
+    <string name="setting_play">影片功能</string>
+    <string name="setting_play_continue">連續播放</string>
+    <string name="setting_play_clipping_dscription">影片結束後會自動重播。</string>
+    <string name="setting_play_auto_play">自動播放</string>
+    <string name="setting_play_auto_play_description">啟動播放時會自動開始影片。</string>
+    <string name="setting_play_clipping_play">重複播放</string>
+    <string name="setting_play_wifi_play">僅限 Wi-Fi 播放</string>
+    <string name="setting_play_wifi_play_discription">僅在 Wi-Fi 下播放，\n並顯示其他網路提示。</string>
+    <string name="setting_pip_play">啟用 PIP 播放器</string>
+    <string name="setting_pip_play_discription">點擊影片上方的 PIP 按鈕\n或按主畫面鍵（Android 12+）即可啟用。</string>
+    <string name="setting_pip_go">請在設定中啟用 PIP 模式。</string>
+    <string name="setting_sound">聲音設定</string>
+    <string name="setting_sound_description">可在播放中開啟或關閉聲音。</string>
+    <string name="setting_app_manager">應用程式管理</string>
+    <string name="setting_app_detail_info">應用程式管理員</string>
+    <string name="setting_app_info">應用資訊</string>
+    <string name="setting_app_version">應用版本</string>
+    <string name="setting_app_openSource">開源授權</string>
+    <string name="setting_app_rate">評分週期</string>
+    <string name="setting_app_present">贊助支持</string>
+    <string name="setting_app_email_not_found">找不到電子郵件應用程式。</string>
+    <string name="setting_app_opensource_not_produce">本應用的開源授權僅提供於實際發佈版本中。</string>
+    <string name="pip_memory_error">記憶體不足錯誤</string>
+
     <!--App Manager -->
-    <string name="app_manager">App Manager</string>
-    <string name="app_manager_detail">Show and manage app information on your device.</string>
-    <string name="network_manager">Network Management</string>
-    <string name="network_manager_detail">It shows the current network status in my device environment.</string>
-    <string name="device_care">Device Care</string>
-    <string name="device_care_detail">Clean up unnecessary apps running on your device.</string>
-    <string name="device_manager_title">Device Management</string>
+    <string name="app_manager">應用管理員</string>
+    <string name="app_manager_detail">顯示並管理您裝置上的應用資訊。</string>
+    <string name="network_manager">網路管理</string>
+    <string name="network_manager_detail">顯示當前裝置的網路狀態。</string>
+    <string name="device_care">裝置維護</string>
+    <string name="device_care_detail">清理裝置中不必要的執行應用。</string>
+    <string name="device_manager_title">裝置管理</string>
     <string name="device_manager_apk_size">%s MB</string>
-    <string name="device_manager_update_time">Update Date%s</string>
-    <string name="device_manager_app_detail">App details</string>
-    <string name="device_manager_app_delete">Delete App</string>
-    <string name="device_manager_comming_soon">The feature is being prepared!!</string>
-    <string name="device_browser_select">Browser Selection</string>
-    <string name="device_update_sort">Update</string>
-    <string name="device_name_sort">Name</string>
-    <string name="device_size_sort">capacity</string>
+    <string name="device_manager_update_time">更新日期 %s</string>
+    <string name="device_manager_app_detail">應用詳情</string>
+    <string name="device_manager_app_delete">刪除應用</string>
+    <string name="device_manager_comming_soon">功能開發中，敬請期待！</string>
+    <string name="device_browser_select">瀏覽器選擇</string>
+    <string name="device_update_sort">按更新排序</string>
+    <string name="device_name_sort">按名稱排序</string>
+    <string name="device_size_sort">按容量排序</string>
 
-    <string name="short_form_end">ShortForm Play</string>
-    <string name="short_form_app_share">Please share the ShortFrom-Play App with your friends!!</string>
 
+    <string name="short_form_end">短影音播放</string>
+    <string name="short_form_app_share">快把「短影音播放」App 分享給朋友吧！</string>
 
     <string name="end_lkie">5600</string>
-    <string name="end_dislike">DisLike</string>
+    <string name="end_dislike">不喜歡</string>
     <string name="end_comment">183</string>
-    <string name="end_share">Share</string>
-    <string name="end_sound_off">SoundOff</string>
-    <string name="end_sound_on">SoundOn</string>
-    <string name="end_video_view_count">Views  %s</string>
+    <string name="end_share">分享</string>
+    <string name="end_sound_off">靜音</string>
+    <string name="end_sound_on">開聲</string>
+    <string name="end_video_view_count">觀看次數 %s</string>
 
-    <!--alert -->
-    <string name="alert_wifi_body">Not in Wi-Fi status.\nDo you still want to play?</string>
-    <string name="alert_no_network">There is no network connection.\n Do you want to close the app?</string>
-    <string name="alert_ok">OK</string>
-    <string name="alert_cancel">Cancel</string>
+    <!-- 警告 -->
+    <string name="alert_wifi_body">目前非 Wi-Fi 環境。\n是否仍要播放？</string>
+    <string name="alert_no_network">目前沒有網路連線。\n是否要關閉應用程式？</string>
+    <string name="alert_ok">確定</string>
+    <string name="alert_cancel">取消</string>
 
-    <string name="subscription_count">Subscribers : %s</string>
-    <string name="search_count">Views : %s</string>
-    <string name="start_date">Start Date : %s</string>
-    <string name="main_more">More</string>
+    <string name="subscription_count">訂閱者：%s</string>
+    <string name="search_count">觀看次數：%s</string>
+    <string name="start_date">開始日期：%s</string>
+    <string name="main_more">更多</string>
 
-    <string name="main_more_search">By View</string>
-    <string name="main_more_like">Sort by Likes</string>
-    <string name="main_more_comment">By Comment</string>
-    <string name="main_ranking_label">Daily Ranking</string>
-    <string name="main_go_channel">Visit Channel Home</string>
-    <string name="main_rank_order">Ranking</string>
-    <string name="main_rank_channel">Channel</string>
-    <string name="main_rank_subscription">Subscribers</string>
-    <string name="main_rank_search">Views</string>
-    <string name="main_rank_new">NEW</string>
+    <string name="main_more_search">依觀看次數</string>
+    <string name="main_more_like">依喜歡數排序</string>
+    <string name="main_more_comment">依留言數</string>
+    <string name="main_ranking_label">每日排行榜</string>
+    <string name="main_go_channel">前往頻道主頁</string>
+    <string name="main_rank_order">排行</string>
+    <string name="main_rank_channel">頻道</string>
+    <string name="main_rank_subscription">訂閱者</string>
+    <string name="main_rank_search">觀看次數</string>
+    <string name="main_rank_new">最新</string>
 
-    <string name="main_recent_watch_video">Recently Video</string>
-    <string name="main_recent_watch_video_max_1">Up to 500 recently viewed videos are saved.</string>
-    <string name="main_recent_watch_video_max_2">Afterwards, it will be deleted starting from the oldest order.</string>
+    <string name="main_recent_watch_video">最近觀看</string>
+    <string name="main_recent_watch_video_max_1">最多可儲存 500 筆最近觀看的影片。</string>
+    <string name="main_recent_watch_video_max_2">之後將會從最舊的開始刪除。</string>
 
-    <string name="pip_frist_video_message">This is the first video.</string>
-    <string name="pip_last_video_message">This is the last video.</string>
-
+    <string name="pip_frist_video_message">這是第一部影片。</string>
+    <string name="pip_last_video_message">這是最後一部影片。</string>
 
 </resources>

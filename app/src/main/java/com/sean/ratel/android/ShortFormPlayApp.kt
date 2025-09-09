@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -58,11 +60,16 @@ fun ShortFormPlayApp(
         RLog.d("hbungshin", "insetPaddingValue home : $insetPaddingValue")
         Scaffold(
             contentWindowInsets = WindowInsets.safeDrawing,
-            modifier = Modifier.imePadding().background(APP_BACKGROUND),
+            modifier =
+                Modifier
+                    .imePadding()
+                    .background(APP_BACKGROUND),
             topBar = {
                 if (isTopViewVisible) {
                     HomeTopBar(
-                        Modifier.background(Color.Transparent).padding(top = insetPaddingValue),
+                        Modifier
+                            .background(Color.Transparent)
+                            .windowInsetsPadding(WindowInsets.statusBars),
                         mainViewModel,
                         currentRoute,
                         historyBack = {
@@ -82,10 +89,18 @@ fun ShortFormPlayApp(
             floatingActionButtonPosition = FabPosition.End,
         ) { innerPaddingModifier ->
 
-            Column(modifier = Modifier.fillMaxSize().background(APP_BACKGROUND)) {
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(APP_BACKGROUND),
+            ) {
                 NavGraph(
                     navController = navController,
-                    modifier = Modifier.padding(innerPaddingModifier),
+                    modifier =
+                        Modifier
+                            .padding(innerPaddingModifier)
+                            .windowInsetsPadding(WindowInsets.systemBars),
                     navigator = mainViewModel.navigator,
                     finish = finish,
                 )

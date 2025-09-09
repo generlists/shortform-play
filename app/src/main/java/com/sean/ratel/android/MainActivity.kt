@@ -14,6 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -61,7 +62,12 @@ class MainActivity : FragmentActivity() {
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            enableEdgeToEdge()
+        } else {
+            // Android 15 이상에서는 enableEdgeToEdge() 미사용
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+        }
         // Remote Config
         launch {
             mainViewModel.firebaseRemoteConfig(remoteConfig)
