@@ -18,11 +18,13 @@ import com.sean.ratel.android.data.common.RemoteConfig.MAIN_AD_KEY
 import com.sean.ratel.android.data.common.RemoteConfig.MAIN_SHORTFORM_KEY
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.MainShortsResponse
+import com.sean.ratel.android.data.dto.TrendShortsResponse
 import com.sean.ratel.android.ui.end.YouTubeContentEndViewModel
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.navigation.Destination
 import java.text.DecimalFormat
 import java.util.Locale
+import kotlin.random.Random
 
 object UIUtil {
     fun adSize(context: Context): AdSize {
@@ -174,11 +176,25 @@ object UIUtil {
         return gson.toJson(mainShortsListResponse)
     }
 
+    fun trendsShortsListToJson(trendShortsResponse: TrendShortsResponse): String {
+        val gson = GsonBuilder().create()
+        return gson.toJson(trendShortsResponse)
+    }
+
     // JSON 문자열을 List<MainShortsModel>로 변환
-    fun jsonToObject(jsonString: String?): MainShortsResponse? =
+    fun jsonToMainShortsObject(jsonString: String?): MainShortsResponse? =
         try {
             val gson = Gson()
             gson.fromJson(jsonString, MainShortsResponse::class.java)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+
+    fun jsonToTrendsShortsObject(jsonString: String?): TrendShortsResponse? =
+        try {
+            val gson = Gson()
+            gson.fromJson(jsonString, TrendShortsResponse::class.java)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -237,4 +253,80 @@ object UIUtil {
             } else {
                 "KR"
             }
+
+    fun pickTendShortsFromMap(
+        shortsMap: Map<String, List<MainShortsModel>>,
+        totalCount: Int = 10,
+    ): List<MainShortsModel> {
+        val random = Random(System.nanoTime())
+        val result = mutableListOf<MainShortsModel>()
+        val usedChannels = mutableSetOf<String>()
+
+        //  각 key에서 최소 1개 ~ 최대 2개 뽑기 (채널 중복 최소화)
+        shortsMap.values.forEach { list ->
+            if (list.isEmpty()) return@forEach
+
+            val shuffled = list.shuffled(random)
+            val first = shuffled.first()
+            result += first
+            usedChannels += first.shortsChannelModel?.channelId ?: ""
+
+            if (shuffled.size > 1) {
+                val second =
+                    shuffled.drop(1).firstOrNull {
+                        it.shortsChannelModel?.channelId !in usedChannels
+                    } ?: shuffled.getOrNull(1) // 못 찾으면 그냥 2번째
+                if (second != null) {
+                    result += second
+                    usedChannels += second.shortsChannelModel?.channelId ?: ""
+                }
+            }
+        }
+
+        // 부족하면 전체에서 추가 (채널 중복 최소화)
+        if (result.size < totalCount) {
+            val allCandidates = shortsMap.values.flatten().shuffled(random)
+            val extras = mutableListOf<MainShortsModel>()
+
+            // 채널 중복 피해서 먼저 채우기
+            for (item in allCandidates) {
+                if (extras.size + result.size >= totalCount) break
+                if (item.shortsChannelModel?.channelId !in usedChannels) {
+                    extras += item
+                    usedChannels += item.shortsChannelModel?.channelId ?: ""
+                }
+            }
+
+            // 그래도 부족하면 중복 허용해서 채우기
+            if (result.size + extras.size < totalCount) {
+                val stillNeed = totalCount - (result.size + extras.size)
+                extras +=
+                    allCandidates
+                        .filterNot { it in result + extras }
+                        .take(stillNeed)
+            }
+
+            result += extras
+        }
+
+        // 전체 데이터가 아예 10개 미만이면 있는 만큼만 리턴
+        val allSize = shortsMap.values.sumOf { it.size }
+        return if (allSize < totalCount) {
+            // 전체 데이터에서 채널 분산 고려 후 반환
+            val allCandidates = shortsMap.values.flatten().shuffled(random)
+            val picked = mutableListOf<MainShortsModel>()
+            val used = mutableSetOf<String>()
+
+            for (item in allCandidates) {
+                if (picked.size >= allSize) break
+                if (item.shortsChannelModel?.channelId !in used || picked.size + (allSize - picked.size) <= allSize) {
+                    picked += item
+                    used += item.shortsChannelModel?.channelId ?: ""
+                }
+            }
+            picked
+        } else {
+            result.take(totalCount)
+        }
+    }
 }

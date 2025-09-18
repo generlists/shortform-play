@@ -13,6 +13,7 @@ import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.RANDOM_GA_END_SIZE
 import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.RecentVideoRepository
 import com.sean.ratel.android.data.repository.SettingRepository
@@ -59,6 +60,12 @@ class MainViewModel
         private val _mainShorts =
             MutableStateFlow(Pair(MainShortFormList(), MAIN_ITEM_COUNT))
         val mainShorts: StateFlow<Pair<MainShortFormList, Int>> = _mainShorts
+
+        private val _trendsShorts = MutableStateFlow(TrendsShortFormList())
+        val trendsShorts: StateFlow<TrendsShortFormList> = _trendsShorts
+
+        private val _mainTrendShortsList = MutableStateFlow(emptyList<MainShortsModel>())
+        val mainTrendShortsList: StateFlow<List<MainShortsModel>> = _mainTrendShortsList
 
         private val _isHomeVisible = MutableStateFlow(true)
         val isHomeVisible: StateFlow<Boolean> = _isHomeVisible
@@ -112,6 +119,9 @@ class MainViewModel
 
         private val _buttonClickState = MutableStateFlow<Boolean>(false)
         val buttonClickState: Flow<Boolean> = _buttonClickState
+
+        private val _moreTrendShortsKey = MutableStateFlow<String?>(null)
+        val moreTrendShortsKey: MutableStateFlow<String?> = _moreTrendShortsKey
 
         fun setPIPClick(pipClick: Pair<Boolean, ViewPager2?>) {
             _pipClick.value = pipClick
@@ -206,6 +216,8 @@ class MainViewModel
                 ViewType.SubscriptionRanking,
                 ViewType.SubscriptionRankingUp,
                 ViewType.RecentlyWatch,
+                ViewType.MainTrendShorts,
+                ViewType.TrendShortsMore,
                 -> {
                     navigator.navigateTo(
                         Destination.YouTube.dynamicRoute(selectedIndex.toString()),
@@ -229,9 +241,11 @@ class MainViewModel
         fun goMoreContent(
             route: String,
             viewType: ViewType,
+            trendsShortsKey: String? = null,
         ) {
             _viewType.value = viewType
             _moreButtonClicked.value = route
+            _moreTrendShortsKey.value = trendsShortsKey
             navigator.navigateTo(route, false)
         }
 
@@ -239,8 +253,14 @@ class MainViewModel
             navigator.navigateTo(Destination.Setting.route)
         }
 
-        fun mainShortsData(items: Pair<MainShortFormList, Int>) {
-            _mainShorts.value = items
+        fun mainShortsData(
+            mainShorts: Pair<MainShortFormList, Int>,
+            trendsShorts: TrendsShortFormList,
+            mainTrendShortsList: List<MainShortsModel>,
+        ) {
+            _mainShorts.value = mainShorts
+            _trendsShorts.value = trendsShorts
+            _mainTrendShortsList.value = mainTrendShortsList
         }
 
         fun shortFormVideoData(items: Map<String, List<MainShortsModel>>) {

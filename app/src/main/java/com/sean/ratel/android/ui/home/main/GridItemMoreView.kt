@@ -69,18 +69,18 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsChannelModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.common.ShortFormBottomSheetDialog
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.progress.TrendShortsMenuButton
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-
-val GridItemTAG = "GridItemMoreView"
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -91,10 +91,20 @@ fun GridItemMoreView(
 ) {
     val viewType = mainViewModel.viewType.collectAsState()
     val mainShorts = mainViewModel.mainShorts.collectAsState()
+    val trendShorts = mainViewModel.trendsShorts.collectAsState()
+    val moreTrendShortsKey = mainViewModel.moreTrendShortsKey.collectAsState()
     val moreIndex = moreViewModel.moreIndex.collectAsState()
 
     if (moreIndex.value == 0) {
-        moreViewModel.mainShortFormData(viewType.value, mainShorts.value, null)
+        if (viewType.value == ViewType.TrendShortsMore) {
+            moreViewModel.mainTrendsShortsData(moreTrendShortsKey.value, trendShorts.value)
+        } else {
+            moreViewModel.mainShortFormData(
+                viewType.value,
+                mainShorts.value,
+                null,
+            )
+        }
     }
 
     GridDisplayUi(viewType.value, adViewModel, mainViewModel, moreViewModel)
@@ -110,10 +120,13 @@ fun GridDisplayUi(
 ) {
     var filterAction by remember { mutableIntStateOf(-1) }
     val initScroll = moreViewModel.initScroll.collectAsState()
-    val title = moreViewModel.popularShortFormTitle.collectAsState()
+    val title = moreViewModel.gridShortFormTitle.collectAsState()
     val popularTitle = moreViewModel.popularShortsFormMoreList.collectAsState()
     val editorTitle = moreViewModel.editorPickMoreList.collectAsState()
     val recommendTitle = moreViewModel.recommendMoreList.collectAsState()
+    val trendShortsTitle = moreViewModel.trendShortsMoreList.collectAsState()
+    val trendShortsKeys = trendShortsTitle.value?.event_list?.keys
+    val moreTrendShortsKey = mainViewModel.moreTrendShortsKey.collectAsState()
 
     val filterVisiable =
         remember {
@@ -160,6 +173,8 @@ fun GridDisplayUi(
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = remember { mutableStateOf(0) }
         val scrollOffset = remember { mutableStateOf(0) }
+        var showBottomSheet by remember { mutableStateOf(false) }
+        var selected by remember { mutableStateOf<String?>(moreTrendShortsKey.value) }
 
         val listState =
             rememberLazyListState(
@@ -174,6 +189,7 @@ fun GridDisplayUi(
                 popularTitle = popularTitle.value.videoSearchList.title,
                 editorTitle = editorTitle.value.title,
                 recommendTitle = recommendTitle.value.title,
+                trendShortsTitle = "🔥${stringResource(R.string.main_trends_shorts_title)}",
             )
         }
 
@@ -193,7 +209,26 @@ fun GridDisplayUi(
                     },
                     listState,
                 )
+                if (viewType == ViewType.TrendShortsMore) {
+                    Box(Modifier.wrapContentSize()) {
+                        TrendShortsMenuButton(adViewModel, Modifier, true, onclick = {
+                            showBottomSheet = true
+                        })
+                    }
+                }
             }
+        }
+        if (showBottomSheet) {
+            ShortFormBottomSheetDialog(
+                items = trendShortsKeys?.toTypedArray(),
+                selectedValue = selected,
+                onSelect = { value ->
+                    selected = value
+                    showBottomSheet = false
+                    moreViewModel.mainTrendsShortsData(selected)
+                },
+                onDismiss = { showBottomSheet = false },
+            )
         }
         if (initScroll.value) {
             LaunchedEffect(Unit) {
@@ -219,7 +254,7 @@ fun GridDisplayUi(
                 )
             }
         }
-        if (viewType == ViewType.Recommend || viewType == ViewType.EditorPick) {
+        if (viewType == ViewType.Recommend || viewType == ViewType.EditorPick || viewType == ViewType.TrendShortsMore) {
             filterAction = -1
         } else {
             FilterList(filterAction, mainViewModel, moreViewModel)
@@ -237,12 +272,14 @@ private fun FilterList(
     val popularTitle = moreViewModel.popularShortsFormMoreList.collectAsState()
     val editorTitle = moreViewModel.editorPickMoreList.collectAsState()
     val recommendTitle = moreViewModel.recommendMoreList.collectAsState()
+
     SetTitle(
         moreViewModel,
         mainViewModel,
         popularTitle.value.videoSearchList.title,
         editorTitle.value.title,
         recommendTitle.value.title,
+        "🔥${stringResource(R.string.main_trends_shorts_title)}",
     )
     if (filterAction == -1) return
 
@@ -269,6 +306,7 @@ private fun FilterList(
         popularTitle.value.videoSearchList.title,
         editorTitle.value.title,
         recommendTitle.value.title,
+        "🔥${stringResource(R.string.main_trends_shorts_title)}",
     )
 }
 
@@ -280,6 +318,7 @@ private fun SetTitle(
     popularTitle: String,
     editorTitle: String,
     recommendTitle: String,
+    trendShortsTitle: String,
 ) {
     val context = LocalContext.current
 
@@ -287,7 +326,7 @@ private fun SetTitle(
         mainViewModel.viewType.collect {
             when (it) {
                 ViewType.PopularSearchShortForm ->
-                    moreViewModel.setPopularShortFormTitle(
+                    moreViewModel.setGridShortFormTitle(
                         String.format(
                             "%s",
                             "$popularTitle(${context.getString(R.string.main_more_search)})",
@@ -295,7 +334,7 @@ private fun SetTitle(
                     )
 
                 ViewType.PopularLikeShortForm ->
-                    moreViewModel.setPopularShortFormTitle(
+                    moreViewModel.setGridShortFormTitle(
                         (
                             String.format(
                                 "%s",
@@ -305,7 +344,7 @@ private fun SetTitle(
                     )
 
                 ViewType.PopularCommentShortForm ->
-                    moreViewModel.setPopularShortFormTitle(
+                    moreViewModel.setGridShortFormTitle(
                         (
                             String.format(
                                 "%s",
@@ -315,12 +354,15 @@ private fun SetTitle(
                     )
 
                 ViewType.EditorPick ->
-                    moreViewModel.setPopularShortFormTitle(editorTitle)
+                    moreViewModel.setGridShortFormTitle(editorTitle)
 
                 ViewType.Recommend ->
-                    moreViewModel.setPopularShortFormTitle(recommendTitle)
+                    moreViewModel.setGridShortFormTitle(recommendTitle)
 
-                else -> moreViewModel.setPopularShortFormTitle(popularTitle)
+                ViewType.TrendShortsMore ->
+                    moreViewModel.setGridShortFormTitle(trendShortsTitle)
+
+                else -> moreViewModel.setGridShortFormTitle(popularTitle)
             }
         }
     }

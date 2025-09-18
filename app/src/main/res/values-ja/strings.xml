@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ショートフォームプレイ</string>
+    <string name="title">ショートフォームプレイ</string>
+    <string name="home">ホーム</string>
+    <string name="video">ショートフォーム</string>
+    <string name="main">メイン</string>
+    <string name="setting">設定</string>
+    <string name="my">マイページ</string>
+    <string name="search">検索</string>
+    <string name="popular_shortform">人気のショートフォーム</string>
+    <string name="base_date">基準日 %s</string>
+    <!--1.0.5 -->
+    <string name="select_shortform_country_title">ショートフォームの視聴国を選択してください！</string>
+    <string name="select_country_korea">🇰🇷\u00A0 韓国</string>
+    <string name="select_country_usa">🇺🇸\u00A0 アメリカ</string>
+    <string name="setting_select_shortform_country_description">視聴国を変更するとアプリが再起動されます。</string>
+    <string name="setting_select_shortform_country">ショートフォーム地域</string>
+    <string name="select_country_description">⚙️ 設定 → ショートフォーム地域 で視聴国を変更できます。</string>
+    <!-- Permisson -->
+    <string name="alert_phone_permission">許可がある場合にのみ、アクセス権が必要です。</string>
+
+    <string name="shorts">ショート</string>
+    <string name="lils">リルズ</string>
+    <string name="X">X</string>
+    <string name="naver_clip">ネイバークリップ</string>
+    <string name="daum_shorts">ダウムショート</string>
+
+    <!-- DebugView -->
+    <string name="baisc_info">基本情報</string>
+    <string name="multi_view">マルチビュー</string>
+    <string name="viewer_example">視聴者の例</string>
+    <string name="extra_example">その他の動画</string>
+    <string name="hls_title_1" translatable="false">Apple 4x3 basic stream (TS)</string>
+    <string name="hls_sample">HLS</string>
+    <string name="hls_title_2">Akamai サンプル HLS</string>
+    <string name="view_count">再生回数</string>
+    <string name="ahto_play_setting">自動再生設定</string>
+    <string name="etc">その他</string>
+    <!-- 設定 -->
+    <string name="setting_service">サービス管理</string>
+    <string name="setting_notice">お知らせ</string>
+    <string name="setting_qna">お問い合わせ</string>
+    <string name="setting_private_policy">利用規約とプライバシーポリシー</string>
+    <string name="setting_play">動画機能</string>
+    <string name="setting_play_continue">連続再生</string>
+    <string name="setting_play_clipping_dscription">1つの動画が終了した後、同じ動画を繰り返し再生します。</string>
+    <string name="setting_play_auto_play">自動再生</string>
+    <string name="setting_play_auto_play_description">動画再生が開始されると、自動的に再生されます。</string>
+    <string name="setting_play_clipping_play">リピート再生</string>
+    <string name="setting_play_wifi_play">Wi-Fi接続時のみ再生</string>
+    <string name="setting_play_wifi_play_discription">Wi-Fi接続時のみ再生し、\nその他のネットワーク時には通知を表示します。</string>
+    <string name="setting_pip_play">PIPプレイヤーを使用</string>
+    <string name="setting_pip_play_discription">動画再生画面の上部にあるPIPボタン、\nまたはホームボタン（OS12以降）を押してPIPで実行します。</string>
+    <string name="setting_pip_go">設定でPIPモードを有効にしてください。</string>
+    <string name="setting_sound">サウンド設定</string>
+    <string name="setting_sound_description">再生中に音声をオンまたはオフにできます。</string>
+    <string name="setting_app_manager">アプリ管理</string>
+    <string name="setting_app_detail_info">アプリマネージャー</string>
+    <string name="setting_app_info">アプリ情報</string>
+    <string name="setting_app_version">アプリバージョン</string>
+    <string name="setting_app_openSource">オープンソースライセンス</string>
+    <string name="setting_app_rate">評価サイクル</string>
+    <string name="setting_app_present">寄付する</string>
+    <string name="setting_app_email_not_found">メールクライアントが見つかりません。</string>
+    <string name="setting_app_opensource_not_produce">アプリで使用されているオープンソースライセンスは、実際の配布バージョンにのみ提供されます。</string>
+    <string name="pip_memory_error">メモリ不足エラー</string>
+
+    <!-- アプリマネージャー -->
+    <string name="app_manager">アプリマネージャー</string>
+    <string name="app_manager_detail">お使いのデバイスでアプリ情報を表示および管理します。</string>
+    <string name="network_manager">ネットワーク管理</string>
+    <string name="network_manager_detail">デバイスのネットワーク状況を表示します。</string>
+    <string name="device_care">デバイスケア</string>
+    <string name="device_care_detail">不要なアプリをクリーンアップしてデバイスを最適化します。</string>
+    <string name="device_manager_title">デバイス管理</string>
+    <string name="device_manager_apk_size">%s MB</string>
+    <string name="device_manager_update_time">更新日: %s</string>
+    <string name="device_manager_app_detail">アプリの詳細</string>
+    <string name="device_manager_app_delete">アプリを削除</string>
+    <string name="device_manager_comming_soon">この機能は準備中です！</string>
+    <string name="device_browser_select">ブラウザの選択</string>
+    <string name="device_update_sort">更新順</string>
+    <string name="device_name_sort">名前順</string>
+    <string name="device_size_sort">容量順</string>
+
+
+
+    <string name="short_form_end">ショートフォームプレイ</string>
+    <string name="short_form_app_share">ショートフォームプレイアプリを友達とシェアしましょう！</string>
+
+    <string name="end_lkie">5600</string>
+    <string name="end_dislike">低評価</string>
+    <string name="end_comment">183</string>
+    <string name="end_share">共有</string>
+    <string name="end_sound_off">ミュート</string>
+    <string name="end_sound_on">音声オン</string>
+    <string name="end_video_view_count">再生回数 %s</string>
+
+    <!-- 警告 -->
+    <string name="alert_wifi_body">Wi-Fiに接続されていません。\n再生を続けますか？</string>
+    <string name="alert_no_network">ネットワークに接続されていません。\nアプリを終了しますか？</string>
+    <string name="alert_ok">OK</string>
+    <string name="alert_cancel">キャンセル</string>
+
+    <string name="subscription_count">チャンネル登録者数 : %s</string>
+    <string name="search_count">再生回数 : %s</string>
+    <string name="start_date">開始日 : %s</string>
+    <string name="main_more">もっと見る</string>
+
+    <string name="main_more_search">再生回数順</string>
+    <string name="main_more_like">高評価順</string>
+    <string name="main_more_comment">コメント順</string>
+    <string name="main_ranking_label">デイリーランキング</string>
+    <string name="main_go_channel">チャンネルホームへ</string>
+    <string name="main_rank_order">順位</string>
+    <string name="main_rank_channel">チャンネル</string>
+    <string name="main_rank_subscription">登録者数</string>
+    <string name="main_rank_search">再生数</string>
+    <string name="main_rank_new">新着</string>
+
+    <string name="main_recent_watch_video">最近見た動画</string>
+    <string name="main_recent_watch_video_max_1">最近見た動画は最大500件まで保存されます。</string>
+    <string name="main_recent_watch_video_max_2">それ以降は古い順に削除されます。</string>
+
+    <string name="pip_frist_video_message">これが最初の動画です。</string>
+    <string name="pip_last_video_message">これが最後の動画です。</string>
+
+    <!-- 1.0.6 -->
+    <string name="main_trends_shorts_title">トレンドショート</string>
+
+</resources>

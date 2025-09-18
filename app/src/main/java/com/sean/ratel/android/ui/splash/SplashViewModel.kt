@@ -8,12 +8,15 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.dto.MainShortFormList
+import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.data.repository.YouTubeRepository
 import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.NetworkUtil
 import com.sean.ratel.android.utils.TimeUtil.getCurrentDate
+import com.sean.ratel.android.utils.UIUtil.pickTendShortsFromMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,23 +35,23 @@ class SplashViewModel
         private val youTubeRepository: YouTubeRepository,
         private val settingRepository: SettingRepository,
     ) : ViewModel() {
-//        private val _shortsList = MutableStateFlow<MutableList<MainShortsModel>>(mutableListOf())
-//        val shortsList: StateFlow<MutableList<MainShortsModel>> = _shortsList
-
         private val _shortformList =
-            MutableStateFlow<Pair<MainShortFormList, Int>>(Pair(MainShortFormList(), 7))
+            MutableStateFlow(Pair(MainShortFormList(), 7))
         val shortformList: StateFlow<Pair<MainShortFormList, Int>> = _shortformList
+
+        private val _trendShortsList = MutableStateFlow(TrendsShortFormList())
+        val trendsShortsList: StateFlow<TrendsShortFormList> = _trendShortsList
+
+        private val _mainTrendShortsList = MutableStateFlow(emptyList<MainShortsModel>())
+        val mainTrendShortsList: StateFlow<List<MainShortsModel>> = _mainTrendShortsList
 
         private val _mainDataComplete = MutableStateFlow(false)
         val mainDataComplete = _mainDataComplete
 
-        private val _retryCount = MutableStateFlow(0)
+        private val _trendsShortsComplete = MutableStateFlow(false)
+        val trendsShortsComplete = _trendsShortsComplete
 
-        init {
-//            viewModelScope.launch {
-//                requestNewYouTubeVideos(RequestType.TODAY, FirebaseStorage.getInstance())
-//            }
-        }
+        private val _retryCount = MutableStateFlow(0)
 
         suspend fun requestYouTubeVideos(
             requestType: RequestType,
@@ -78,13 +81,53 @@ class SplashViewModel
                     _shortformList.value = Pair(response.shortformList, response.itemSize)
 
                     if (_shortformList.value.second > 0) {
-                        mainLoadComplete()
+                        _mainDataComplete.value = true
                     }
 
                     val speed = (System.currentTimeMillis() - startTime) / 1000
                     RLog.d(
                         TAG,
                         "${_shortformList.value.second} , $speed 초",
+                    )
+                }
+        }
+
+        suspend fun requestYouTubeTrendShorts(
+            requestType: RequestType,
+            storage: FirebaseStorage,
+            countryCode: String? = null,
+            forceRefresh: Boolean = false,
+        ) {
+            val currentDate = getCurrentDate()
+            val startTime = System.currentTimeMillis()
+            val downloadKey =
+                if (requestType == RequestType.TODAY) {
+                    String.format(TRENDS_SHORTS_UPLOAD_URL, currentDate, countryCode)
+                } else {
+                    TRENDS_SHORTS_DEFAULT_URL
+                }
+
+            youTubeRepository
+                .requestYouTubeTrendShorts(
+                    requestType,
+                    getDownloadUrl(storage.reference.child(downloadKey), countryCode).toString(),
+                    countryCode,
+                    forceRefresh,
+                ).collect { response ->
+
+                    _trendShortsList.value = response.shortformList
+
+                    _mainTrendShortsList.value =
+                        pickTendShortsFromMap(_trendShortsList.value.event_list)
+
+                    if (_trendShortsList.value.event_list.size > 0) {
+                        _trendsShortsComplete.value = true
+                    }
+
+                    val speed = (System.currentTimeMillis() - startTime) / 1000
+                    RLog.d(
+                        TAG,
+                        "trendShorts 크기 : ${_trendShortsList.value.event_list.size} , $speed 초",
                     )
                 }
         }
@@ -145,10 +188,9 @@ class SplashViewModel
             const val TAG = "SplashViewModel"
             private const val UPLOAD_URL = "%s/shortform-play/shorts_main_list_%s.json"
             private const val DEFAULT_URL = "shorts_main_default_%s.json"
-        }
 
-        private fun mainLoadComplete() {
-            _mainDataComplete.value = true
+            private const val TRENDS_SHORTS_UPLOAD_URL = "%s/shortform-play/shorts_trailer_list_%s.json"
+            private const val TRENDS_SHORTS_DEFAULT_URL = "shorts_trailer_default.json"
         }
 
         enum class RequestType {

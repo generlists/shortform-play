@@ -42,6 +42,12 @@ fun YouTubeContentEnd(
     val itemClicked = mainViewModel.itemClicked.value
     LaunchedEffect(Unit) {
         youTubeContentEndViewModel.mainShortsData(mainViewModel.mainShorts.value)
+        youTubeContentEndViewModel.mainTrendShortsData(mainViewModel.mainTrendShortsList.value)
+        youTubeContentEndViewModel.moreTrendShortsData(
+            mainViewModel.trendsShorts.value.event_list.values
+                .flatMap { it },
+        )
+
         youTubeContentEndViewModel.shortFormVideoData(mainViewModel.shortFormVideoList.value)
         youTubeContentEndViewModel.setRecentlyWatchData(mainViewModel.watchVideoList.value)
 
@@ -52,7 +58,8 @@ fun YouTubeContentEnd(
             itemClicked == Destination.Home.Main.RankingChannelMore.route ||
             itemClicked == Destination.Home.Main.RankingSubscriptionMore.route ||
             itemClicked == Destination.Home.Main.RankingSubscriptionUpMore.route ||
-            itemClicked == Destination.Home.Main.RecentlyWatchMore.route
+            itemClicked == Destination.Home.Main.RecentlyWatchMore.route ||
+            itemClicked == Destination.Home.Main.TrendShortsMore.route
         ) {
             when (mainViewModel.viewType.value) {
                 ViewType.ImageFlow -> youTubeContentEndViewModel.setImageFlowData()
@@ -88,6 +95,12 @@ fun YouTubeContentEnd(
                 ViewType.RecentlyWatch -> {
                     youTubeContentEndViewModel.setWatchData(selectedIndex)
                 }
+                ViewType.MainTrendShorts -> {
+                    youTubeContentEndViewModel.setMainTrendShortsData(selectedIndex)
+                }
+                ViewType.TrendShortsMore -> {
+                    youTubeContentEndViewModel.setMoreTendShortsData(selectedIndex)
+                }
 
                 else -> Unit
             }
@@ -114,12 +127,17 @@ fun DisplayUI(
     val recommendList by youTubeContentEndViewModel.recommendShortsList.collectAsState()
     val categoryShortFromVideo by youTubeContentEndViewModel.shortFormVideoList.collectAsState()
     val watchList by youTubeContentEndViewModel.watchList.collectAsState()
+    val mainTrendsShorts by youTubeContentEndViewModel.mainTrendShortsList.collectAsState()
+    val moreTrendsShorts by youTubeContentEndViewModel.moreTrendShortsList.collectAsState()
     val activity = LocalContext.current as FragmentActivity
 
     if ((
             popularShorFormList?.isNotEmpty() == true ||
                 imageFlowList?.isNotEmpty() == true ||
-                editorPickList?.isNotEmpty() == true
+                editorPickList?.isNotEmpty() == true ||
+                mainTrendsShorts?.isNotEmpty() == true ||
+                moreTrendsShorts?.isNotEmpty() == true
+
         ) ||
         channelRankingList.isNotEmpty() ||
         subscriptionRankingList.isNotEmpty() ||
@@ -168,6 +186,8 @@ private fun getEndData(
         ViewType.SubscriptionRankingUp -> youTubeContentEndViewModel.subscriptionRankingUpList.value
         ViewType.ShortFormVideo -> youTubeContentEndViewModel.shortFormVideoList.value
         ViewType.RecentlyWatch -> youTubeContentEndViewModel.watchList.value
+        ViewType.MainTrendShorts -> youTubeContentEndViewModel.mainTrendShortsList.value
+        ViewType.TrendShortsMore -> youTubeContentEndViewModel.moreTrendShortsList.value
         else -> null
     }
 

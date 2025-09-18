@@ -40,6 +40,7 @@ import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
 import com.sean.ratel.android.utils.UIUtil.getCountryCode
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 @Suppress("ktlint:standard:function-naming")
@@ -129,9 +130,17 @@ fun InitialDataAndAD(
             locale = splashViewModel.getLocale()
             loadLocale = true
         }
-        splashViewModel.mainDataComplete.collect { complete ->
 
-            if (complete) {
+        combine(
+            splashViewModel.mainDataComplete,
+            splashViewModel.trendsShortsComplete,
+        ) { mainData, trendsShortsData ->
+
+            Pair(mainData, trendsShortsData)
+        }.collect { combinedResult ->
+            val (main, trends) = combinedResult
+
+            if (main && trends) {
                 delay(1500)
                 showSplash = false
                 delay(500)
@@ -172,6 +181,12 @@ fun InitialDataAndAD(
         } else {
             LaunchedEffect(Unit) {
                 splashViewModel.requestYouTubeVideos(
+                    SplashViewModel.RequestType.TODAY,
+                    FirebaseStorage.getInstance(),
+                    getCountryCode(locale),
+                    forceRefresh,
+                )
+                splashViewModel.requestYouTubeTrendShorts(
                     SplashViewModel.RequestType.TODAY,
                     FirebaseStorage.getInstance(),
                     getCountryCode(locale),

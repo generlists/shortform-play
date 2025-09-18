@@ -127,5 +127,7 @@
 
     <string name="pip_frist_video_message">처음 영상 입니다.</string>
     <string name="pip_last_video_message">마지막 영상 입니다."</string>
+    <!-- 1.0.6 -->
+    <string name="main_trends_shorts_title">트랜드 쇼츠</string>
 
 </resources>

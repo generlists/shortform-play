@@ -10,6 +10,7 @@ import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.RecommendList
 import com.sean.ratel.android.data.dto.ShortFormVideoList
+import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,13 +61,16 @@ class MainMoreViewModel
             )
         val recentlyWatchMoreList: StateFlow<List<MainShortsModel>> = _recentlyWatchMoreList
 
+        private val _trendShortsMoreList = MutableStateFlow<TrendsShortFormList?>(TrendsShortFormList())
+        val trendShortsMoreList: StateFlow<TrendsShortFormList?> = _trendShortsMoreList
+
         private var _currentFilter = 0
 
         private val _initScroll = MutableStateFlow<Boolean>(false)
         val initScroll: StateFlow<Boolean> = _initScroll
 
-        private val _popularShortFormTitle = MutableStateFlow<String>("")
-        val popularShortFormTitle: StateFlow<String> = _popularShortFormTitle
+        private val _gridShortFormTitle = MutableStateFlow<String>("")
+        val gridShortFormTitle: StateFlow<String> = _gridShortFormTitle
 
         private val _listMoreTitle = MutableStateFlow<String>("")
         val listMoreTitle: StateFlow<String> = _listMoreTitle
@@ -74,8 +78,8 @@ class MainMoreViewModel
         private val _moreIndex = MutableStateFlow<Int>(0)
         val moreIndex: StateFlow<Int> get() = _moreIndex
 
-        fun setPopularShortFormTitle(title: String) {
-            _popularShortFormTitle.value = title
+        fun setGridShortFormTitle(title: String) {
+            _gridShortFormTitle.value = title
         }
 
         fun setListItemMoreTitle(title: String) {
@@ -315,6 +319,24 @@ class MainMoreViewModel
 
                 else -> Unit
             }
+        }
+
+        fun mainTrendsShortsData(
+            filterKey: String?,
+            trendShorts: TrendsShortFormList? = null,
+        ) {
+            if (_trendShortsMoreList.value?.event_list?.isEmpty() == true) _trendShortsMoreList.value = trendShorts
+
+            val dataList =
+                _trendShortsMoreList.value
+                    ?.event_list
+                    ?.get(filterKey)
+                    ?.toMutableList() ?: mutableListOf<MainShortsModel>()
+
+            _currentDataList.value.clear()
+            _currentDataList.value.addAll(dataList)
+            _initScroll.value = true
+            _moreIndex.value = 0
         }
 
         suspend fun popularShortFormFilter(filter: Int) {

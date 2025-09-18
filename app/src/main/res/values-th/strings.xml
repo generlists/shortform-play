@@ -132,4 +132,7 @@
     <string name="pip_frist_video_message">นี่คือวิดีโอแรก</string>
     <string name="pip_last_video_message">นี่คือวิดีโอสุดท้าย</string>
 
+    <!-- 1.0.6 -->
+    <string name="main_trends_shorts_title">ชอร์ตกระแส</string>
+
 </resources>
