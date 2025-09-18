@@ -42,6 +42,12 @@ YouTubeContentEndViewModel
                 mapOf(),
             )
 
+        private val _mainTrendShortsList = MutableStateFlow<List<MainShortsModel>>(emptyList())
+        val mainTrendShortsList: StateFlow<List<MainShortsModel>?> = _mainTrendShortsList
+
+        private val _moreTrendShortsList = MutableStateFlow<List<MainShortsModel>>(emptyList())
+        val moreTrendShortsList: StateFlow<List<MainShortsModel>?> = _moreTrendShortsList
+
         private val _imageFlowShortsList = MutableStateFlow<List<MainShortsModel>>(emptyList())
         val imageFlowShortsList: StateFlow<List<MainShortsModel>?> = _imageFlowShortsList
 
@@ -102,6 +108,14 @@ YouTubeContentEndViewModel
 
         fun mainShortsData(items: Pair<MainShortFormList, Int>) {
             _mainFromShorts.value = items
+        }
+
+        fun mainTrendShortsData(items: List<MainShortsModel>) {
+            _mainTrendShortsList.value = items
+        }
+
+        fun moreTrendShortsData(items: List<MainShortsModel>) {
+            _moreTrendShortsList.value = items
         }
 
         fun shortFormVideoData(items: Map<String, List<MainShortsModel>>) {
@@ -306,6 +320,36 @@ YouTubeContentEndViewModel
                 )
 
             _watchList.value = headVideoList + tailVideoList
+        }
+
+        fun setMainTrendShortsData(selectedIndex: Int) {
+            val mainTrendShorts = _mainTrendShortsList.value
+
+            val headVideoList =
+                mainTrendShorts.subList(selectedIndex.coerceAtLeast(0), mainTrendShorts.size)
+            val tailVideoList =
+                mainTrendShorts.subList(0, selectedIndex.coerceAtMost(mainTrendShorts.size))
+
+            if (_mainTrendShortsList.value.isNotEmpty()) {
+                _mainTrendShortsList.value = emptyList<MainShortsModel>()
+            }
+
+            _mainTrendShortsList.value = headVideoList + tailVideoList
+        }
+
+        fun setMoreTendShortsData(selectedIndex: Int) {
+            val moreTrendShorts = _moreTrendShortsList.value
+
+            val headVideoList =
+                moreTrendShorts.subList(selectedIndex.coerceAtLeast(0), moreTrendShorts.size)
+            val tailVideoList =
+                moreTrendShorts.subList(0, selectedIndex.coerceAtMost(moreTrendShorts.size))
+
+            if (_moreTrendShortsList.value.isNotEmpty()) {
+                _moreTrendShortsList.value = emptyList<MainShortsModel>()
+            }
+
+            _moreTrendShortsList.value = headVideoList + tailVideoList
         }
 
         fun back() {

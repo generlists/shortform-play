@@ -37,23 +37,27 @@
         <value>10</value>
     </entry>
     <entry>
-        <key>recently_watch_order</key>
+        <key>trends_shorts_order</key>
         <value>1</value>
     </entry>
     <entry>
-        <key>popular_order</key>
+        <key>recently_watch_order</key>
         <value>2</value>
     </entry>
     <entry>
-        <key>editor_pick_order</key>
+        <key>popular_order</key>
         <value>3</value>
     </entry>
     <entry>
-        <key>daily_ranking_order</key>
+        <key>editor_pick_order</key>
         <value>4</value>
     </entry>
     <entry>
-        <key>recommend_shortform_order</key>
+        <key>daily_ranking_order</key>
         <value>5</value>
+    </entry>
+    <entry>
+        <key>recommend_shortform_order</key>
+        <value>6</value>
     </entry>
 </defaultsMap>

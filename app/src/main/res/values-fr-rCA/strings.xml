@@ -138,5 +138,7 @@
     <!-- PIP -->
     <string name="pip_frist_video_message">C’est la première vidéo.</string>
     <string name="pip_last_video_message">C’est la dernière vidéo.</string>
+    <!-- 1.0.6 -->
+    <string name="main_trends_shorts_title">Shorts d’actualité</string>
 
 </resources>

@@ -47,6 +47,8 @@ object Destination {
             data object RecommendMore : Screen("home/main/recommendMore")
 
             data object RecentlyWatchMore : Screen("home/main/recentlyWatchMore")
+
+            data object TrendShortsMore : Screen("home/main/trendShortsMore")
         }
 
         data object ShortForm : Screen("home/shortform") {

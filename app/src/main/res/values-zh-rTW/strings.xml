@@ -125,5 +125,7 @@
 
     <string name="pip_frist_video_message">這是第一部影片。</string>
     <string name="pip_last_video_message">這是最後一部影片。</string>
+    <!-- 1.0.6 -->
+    <string name="main_trends_shorts_title">熱門話題短片</string>
 
 </resources>

@@ -3,6 +3,8 @@ package com.sean.ratel.android.ui.home
 enum class ViewType {
     ImageFlow,
     RecentlyWatch,
+    MainTrendShorts,
+    TrendShortsMore,
     PopularSearchShortForm,
     PopularSearchShortFormMore,
     PopularLikeShortForm,

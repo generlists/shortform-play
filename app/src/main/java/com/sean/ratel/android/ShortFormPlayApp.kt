@@ -123,7 +123,8 @@ fun ShortFormPlayApp(
                 currentRoute == Destination.Home.Main.RankingChannelMore.route ||
                 currentRoute == Destination.Home.Main.RankingSubscriptionMore.route ||
                 currentRoute == Destination.Home.Main.RankingSubscriptionUpMore.route ||
-                currentRoute == Destination.Home.Main.RecentlyWatchMore.route
+                currentRoute == Destination.Home.Main.RecentlyWatchMore.route ||
+                currentRoute == Destination.Home.Main.TrendShortsMore.route
             ) {
                 LoadingPlaceholder(loading = isHomeVisible)
             }

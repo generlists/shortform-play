@@ -32,6 +32,7 @@ import com.sean.ratel.android.ui.splash.Splash
 import com.sean.ratel.android.ui.splash.SplashViewModel
 import com.sean.ratel.android.ui.toolbox.AppManagerView
 import com.sean.ratel.android.ui.toolbox.AppManagerViewModel
+import kotlinx.coroutines.flow.combine
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -51,8 +52,16 @@ fun NavGraph(
     val splashViewModel: SplashViewModel = hiltViewModel(key = SplashViewModel.TAG)
 
     LaunchedEffect(Unit) {
-        splashViewModel.shortformList.collect {
-            mainViewModel.mainShortsData(it)
+        combine(
+            splashViewModel.shortformList,
+            splashViewModel.trendsShortsList,
+            splashViewModel.mainTrendShortsList,
+        ) { mainData, trendsShortsData, mainTrendShorts ->
+
+            Triple(mainData, trendsShortsData, mainTrendShorts)
+        }.collect { combinedResult ->
+            val (main, trends, mainTrends) = combinedResult
+            mainViewModel.mainShortsData(main, trends, mainTrends)
         }
     }
 
@@ -172,6 +181,13 @@ fun NavGraph(
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
             ListItemMoreView(adViewModel, mainViewModel, viewModel)
+        }
+        composable(
+            Destination.Home.Main.TrendShortsMore.route,
+            enterTransition = { EnterTransition.None },
+        ) {
+            val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
+            GridItemMoreView(adViewModel, mainViewModel, viewModel)
         }
 
         composable(

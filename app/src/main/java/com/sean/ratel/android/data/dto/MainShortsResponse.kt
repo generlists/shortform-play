@@ -13,6 +13,19 @@ data class MainShortsResponse(
 
 @Keep
 @Parcelize
+data class TrendShortsResponse(
+    val shortformList: TrendsShortFormList,
+) : Parcelable
+
+@Keep
+@Parcelize
+data class TrendsShortFormList(
+    val title: String = "",
+    val event_list: Map<String, List<MainShortsModel>> = emptyMap(),
+) : Parcelable
+
+@Keep
+@Parcelize
 data class MainShortFormList(
     val topFiveList: TopFiveList = TopFiveList(),
     val editorPickList: EditorPickList = EditorPickList(),
