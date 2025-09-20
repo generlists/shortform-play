@@ -404,7 +404,8 @@ class MainViewModel
                     moreRoute == Destination.Home.Main.RankingChannelMore.route ||
                     moreRoute == Destination.Home.Main.RankingSubscriptionMore.route ||
                     moreRoute == Destination.Home.Main.RankingSubscriptionUpMore.route ||
-                    moreRoute == Destination.Home.Main.RecommendMore.route
+                    moreRoute == Destination.Home.Main.RecommendMore.route ||
+                    moreRoute == Destination.Home.Main.TrendShortsMore.route
             )
         }
 
