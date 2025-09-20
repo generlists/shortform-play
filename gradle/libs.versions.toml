@@ -60,7 +60,7 @@ espresso = "3.5.1"
 
 
 
-shortform-play ="0.0.0.1"
+shortform-play ="0.0.0.2"
 
 [libraries]
 ai-shortformplay ={ module = "ai.shortform-play.sdk.ratel.player.android:player-core", version.ref = "shortform-play" }

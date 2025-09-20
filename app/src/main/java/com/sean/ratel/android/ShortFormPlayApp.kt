@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.LoadBanner
@@ -55,7 +54,7 @@ fun ShortFormPlayApp(
         val itemClick by remember { mainViewModel.itemClicked }
         val context = LocalContext.current as MainActivity
         val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-        RLog.d("hbungshin", "insetPaddingValue home : $insetPaddingValue")
+
         Scaffold(
             contentWindowInsets = WindowInsets.safeDrawing,
             modifier = Modifier.imePadding().background(APP_BACKGROUND),
