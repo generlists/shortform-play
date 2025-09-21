@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.home.main.itemview
 
-import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -77,8 +76,6 @@ fun TrendShortsList(
 
     val trendShorts = viewModel.mainTrendShortsList.collectAsState().value
     val initDataKey = trendShortsData.event_list.keys.toList()[0] // 0번째
-
-    Log.d("hbungshin", "initDataKey : $initDataKey")
 
     Column(
         modifier =

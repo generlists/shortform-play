@@ -69,7 +69,6 @@ class SplashViewModel
                 } else {
                     String.format(DEFAULT_URL, countryCode)
                 }
-
             youTubeRepository
                 .requestYouTubeVideos(
                     requestType,
@@ -114,7 +113,6 @@ class SplashViewModel
                     countryCode,
                     forceRefresh,
                 ).collect { response ->
-
                     _trendShortsList.value = response.shortformList
 
                     _mainTrendShortsList.value =
@@ -143,7 +141,6 @@ class SplashViewModel
                     .addOnSuccessListener { url ->
                         continuation.resume(url)
                     }.addOnFailureListener { exception ->
-                        RLog.e(TAG, "$exception")
                         if (_retryCount.value <= 3) {
                             viewModelScope.launch {
                                 requestYouTubeVideos(
@@ -152,6 +149,14 @@ class SplashViewModel
                                     countryCode,
                                     forceRefresh,
                                 )
+                                viewModelScope.launch {
+                                    requestYouTubeTrendShorts(
+                                        RequestType.DEFAULT,
+                                        FirebaseStorage.getInstance(),
+                                        countryCode,
+                                        forceRefresh,
+                                    )
+                                }
                             }
                         }
                         _retryCount.value += 1

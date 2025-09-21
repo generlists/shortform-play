@@ -148,7 +148,6 @@ fun InitialDataAndAD(
             }
         }
     }
-
     if (isAdComplete && loadLocale) {
         if (locale.isEmpty()) {
             ShortFormSelectDialog(
@@ -174,6 +173,12 @@ fun InitialDataAndAD(
                             getCountryCode(countryCode),
                             forceRefresh,
                         )
+                        splashViewModel.requestYouTubeTrendShorts(
+                            SplashViewModel.RequestType.TODAY,
+                            FirebaseStorage.getInstance(),
+                            getCountryCode(locale),
+                            forceRefresh,
+                        )
                     }
                 },
                 onDismiss = {},
@@ -186,6 +191,7 @@ fun InitialDataAndAD(
                     getCountryCode(locale),
                     forceRefresh,
                 )
+
                 splashViewModel.requestYouTubeTrendShorts(
                     SplashViewModel.RequestType.TODAY,
                     FirebaseStorage.getInstance(),
