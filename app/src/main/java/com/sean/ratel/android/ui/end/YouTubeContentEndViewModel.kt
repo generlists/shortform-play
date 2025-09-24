@@ -337,8 +337,10 @@ YouTubeContentEndViewModel
             _mainTrendShortsList.value = headVideoList + tailVideoList
         }
 
-        fun setMoreTendShortsData(selectedIndex: Int) {
+        fun setMoreTendShortsData(videoId: String) {
             val moreTrendShorts = _moreTrendShortsList.value
+            // 넘어온 videdo id 와 같은 id 를 찾은 것에 대한 index
+            val selectedIndex = moreTrendShorts.indexOfFirst { it.shortsVideoModel?.videoId == videoId }
 
             val headVideoList =
                 moreTrendShorts.subList(selectedIndex.coerceAtLeast(0), moreTrendShorts.size)

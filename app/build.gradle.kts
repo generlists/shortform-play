@@ -37,8 +37,8 @@ android {
         applicationId = "com.sean.ratel.android"
         minSdk = 28
         targetSdk = 35
-        versionCode = 10061
-        versionName = "1.0.6.1"
+        versionCode = 10062
+        versionName = "1.0.6.2"
         testInstrumentationRunner = "com.sean.ratel.android.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true

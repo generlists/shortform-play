@@ -668,12 +668,15 @@ fun GridItemBoxRow(
                             Modifier.clickable {
                                 RLog.d(
                                     "hbungshin",
-                                    "position : $position viewType : $viewType title :${shortVideoModel.title}",
+                                    "position : $position viewType : $viewType " +
+                                        "title :${shortVideoModel.title} ,  videoId : ${items[i].shortsVideoModel?.videoId}",
                                 )
                                 viewModel.goEndContent(
                                     route,
                                     viewType,
                                     position,
+                                    null,
+                                    items[i].shortsVideoModel?.videoId,
                                 )
                                 viewModel.sendGALog(
                                     Event.SCREEN_VIEW,
@@ -749,7 +752,8 @@ fun GridItemBoxRow(
                                                         Color.Black,
                                                     ),
                                             ),
-                                    ).align(Alignment.End),
+                                    )
+                                    .align(Alignment.End),
                         ) {
                             Text(
                                 text = videoDuration,

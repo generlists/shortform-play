@@ -123,6 +123,9 @@ class MainViewModel
         private val _moreTrendShortsKey = MutableStateFlow<String?>(null)
         val moreTrendShortsKey: MutableStateFlow<String?> = _moreTrendShortsKey
 
+        private val _selectVideoId = mutableStateOf<String?>(null)
+        val selectVideoId: MutableState<String?> = _selectVideoId
+
         fun setPIPClick(pipClick: Pair<Boolean, ViewPager2?>) {
             _pipClick.value = pipClick
             _isTopViewVisible.value = !pipClick.first && !isCurrentPageMoreView()
@@ -191,10 +194,12 @@ class MainViewModel
             viewType: ViewType,
             selectedIndex: Int = 0,
             channelId: String? = null,
+            videoId: String? = null,
         ) {
             _itemClicked.value = route
             _selectedIndex.value = selectedIndex
             _viewType.value = viewType
+            _selectVideoId.value = videoId
 
             when (viewType) {
                 ViewType.ImageFlow -> {
