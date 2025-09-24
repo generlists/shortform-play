@@ -39,6 +39,7 @@ fun YouTubeContentEnd(
     youTubeContentEndViewModel: YouTubeContentEndViewModel,
 ) {
     val selectedIndex by remember { mainViewModel.selectedIndex }
+    val selectedVideoId by remember { mainViewModel.selectVideoId }
     val itemClicked = mainViewModel.itemClicked.value
     LaunchedEffect(Unit) {
         youTubeContentEndViewModel.mainShortsData(mainViewModel.mainShorts.value)
@@ -99,7 +100,7 @@ fun YouTubeContentEnd(
                     youTubeContentEndViewModel.setMainTrendShortsData(selectedIndex)
                 }
                 ViewType.TrendShortsMore -> {
-                    youTubeContentEndViewModel.setMoreTendShortsData(selectedIndex)
+                    selectedVideoId?.let { youTubeContentEndViewModel.setMoreTendShortsData(it) }
                 }
 
                 else -> Unit
