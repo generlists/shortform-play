@@ -311,6 +311,9 @@ class MainViewModel
         ) {
             navigator.navigateBack(recreate)
             _tabClicked.value = null
+            if (isCurrentPageMoreView() && route != Destination.YouTube.route) {
+                _moreButtonClicked.value = null
+            }
 
             if (route == Destination.YouTube.route) _endBack.value = true
         }
