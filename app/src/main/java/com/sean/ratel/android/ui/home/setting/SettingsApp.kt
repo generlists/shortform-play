@@ -35,6 +35,7 @@ import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.utils.PhoneUtil
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -57,7 +58,7 @@ fun SettingsApp(viewModel: SettingViewModel?) {
         }
         Spacer(Modifier.height(3.dp))
         SettingsApp(SettingsItems.SETTING_APP_RATE, viewModel) {
-            viewModel?.runAppStore(
+            PhoneUtil.runAppStore(
                 context,
                 URL_GOOGLE_PLAY_APP(
                     URL_MY_PACKAGE_NAME,

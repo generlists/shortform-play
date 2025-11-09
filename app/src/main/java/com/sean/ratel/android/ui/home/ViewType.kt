@@ -25,5 +25,6 @@ enum class ViewType {
     Recommend,
     RecommendMore,
     ShortFormVideo,
+    SearchShortsVideo,
     UNKWNONTYPE,
 }

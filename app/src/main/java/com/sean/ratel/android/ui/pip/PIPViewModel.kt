@@ -56,7 +56,7 @@ class PIPViewModel : ViewModel() {
         val playNextAction = PipAction.getRemoteAction(pipContext, PipAction.SKIP_NEXT)
 
         RLog.d(
-            "hbungshin",
+            "MainActivity",
             "[PIP] updatePipParams isPlaying $isPlaying ," +
                 " aspectRatio : $aspectRatio, enter : $enter",
         )

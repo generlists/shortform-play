@@ -1,7 +1,6 @@
 package com.sean.ratel.android.ui.end
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -55,6 +54,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.YouTubeUtils
 import com.sean.ratel.android.data.dto.MainShortsModel
@@ -329,7 +329,7 @@ fun RightContentArea(
                                                 disLike,
                                                 sound,
                                                 onChanged = { pLike, pDisLike, pSound ->
-                                                    Log.d(
+                                                    RLog.d(
                                                         "KKKKKKKK",
                                                         "pLike : $pLike , pDisLike : $pDisLike pSound : $pSound , sound : $sound",
                                                     )

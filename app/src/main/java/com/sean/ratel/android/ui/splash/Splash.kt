@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.splash
 
+import android.content.Context
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
@@ -30,13 +31,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.storage.FirebaseStorage
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS
+import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
+import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
 import com.sean.ratel.android.data.common.STRINGS.getShortFormCountry
+import com.sean.ratel.android.data.log.GAKeys.SPLASH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.ShortFormSelectDialog
 import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
 import com.sean.ratel.android.utils.UIUtil.getCountryCode
 import kotlinx.coroutines.delay
@@ -51,6 +57,7 @@ fun Splash(
 ) {
     BackHandler { splashViewModel.navigator.finish() }
     NetworkAlert(splashViewModel)
+    AuthCheckAlert(splashViewModel)
     InitialDataAndAD(adViewModel, splashViewModel)
 }
 
@@ -112,6 +119,44 @@ private fun NetworkAlert(splashViewModel: SplashViewModel) {
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
+private fun AuthCheckAlert(splashViewModel: SplashViewModel) {
+    val context = LocalContext.current
+    val showDialog = splashViewModel.authCheck.collectAsState()
+
+    if (showDialog.value != 0) {
+        ShortFormCommonAlertDialog(
+            onDismiss = { buttonClick ->
+                if (buttonClick) {
+                    if (showDialog.value == 1000) {
+                        PhoneUtil.runAppStore(
+                            context,
+                            URL_GOOGLE_PLAY_APP(
+                                URL_MY_PACKAGE_NAME,
+                            ),
+                        )
+                    } else {
+                        PhoneUtil.sendEmail(context, STRINGS.FEEDBACK_TITLE, qnaResource(context))
+                    }
+                    splashViewModel.setAuthCheck(0)
+                }
+            },
+            if (showDialog.value == 1000)stringResource(R.string.go_app_store) else stringResource(R.string.auth_error),
+            if (showDialog.value == 1000) stringResource(R.string.store_update_btn) else stringResource(R.string.alert_ok),
+        )
+    }
+}
+
+fun qnaResource(context: Context): String {
+    val str = StringBuilder()
+    str.append("App Version : ")
+    str.append(PhoneUtil.getAppVersionName(context))
+    str.append("\n")
+    str.append(PhoneUtil.getEnvironment())
+    return str.toString()
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
 fun InitialDataAndAD(
     adViewModel: AdViewModel,
     splashViewModel: SplashViewModel,
@@ -124,6 +169,7 @@ fun InitialDataAndAD(
     val options = getShortFormCountry(LocalContext.current)
     var loadLocale by remember { mutableStateOf(false) }
     val forceRefresh = adViewModel.forceClearCache.collectAsState().value
+    val authCheck by splashViewModel.authCheck.collectAsState()
 
     LaunchedEffect(isAMobInitialComplete) {
         coroutineScope.launch {
@@ -139,6 +185,7 @@ fun InitialDataAndAD(
             Pair(mainData, trendsShortsData)
         }.collect { combinedResult ->
             val (main, trends) = combinedResult
+            if (authCheck > 0) return@collect
 
             if (main && trends) {
                 delay(1500)
@@ -156,7 +203,7 @@ fun InitialDataAndAD(
                 onClick = { countryCode ->
                     locale = countryCode
                     splashViewModel.sendGALog(
-                        screenName = GASplashAnalytics.SCREEN_NAME,
+                        screenName = GASplashAnalytics.SCREEN_NAME.get(SPLASH_SCREEN) ?: "",
                         eventName = GASplashAnalytics.Event.SELECT_COUNTY_CLICK,
                         actionName = GASplashAnalytics.Action.CLICK,
                         parameter =

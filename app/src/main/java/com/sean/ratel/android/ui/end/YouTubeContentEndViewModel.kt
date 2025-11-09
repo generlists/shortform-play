@@ -4,17 +4,22 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.data.api.ApiResult
+import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.data.repository.YouTubeEndUserRepository
+import com.sean.ratel.android.data.repository.YouTubeRepository
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Suppress("ktlint:standard:property-naming")
@@ -26,6 +31,7 @@ YouTubeContentEndViewModel
         private val navigator: Navigator,
         private val savedStateHandle: SavedStateHandle,
         private val youTubeEndUserRepository: YouTubeEndUserRepository,
+        private val youtueRepository: YouTubeRepository,
         private val settingRepository: SettingRepository,
     ) : ViewModel() {
         private val _mainFromShorts =
@@ -93,6 +99,12 @@ YouTubeContentEndViewModel
         val isProgress: StateFlow<Boolean> = _isProgress
 
         private val _channelId = savedStateHandle.get<String>(Destination.YouTube.routeArgName)
+
+        private val _searchShots = MutableStateFlow<List<MainShortsModel>>(emptyList())
+        val searchShots: StateFlow<List<MainShortsModel>> = _searchShots
+
+        private val _uiState = MutableStateFlow<UiState<MainShortsModel>>(UiState.Idle)
+        val uiState: StateFlow<UiState<MainShortsModel>> = _uiState
 
         fun setAdLoading(loading: Boolean) {
             _isAdLoading.value = loading
@@ -396,6 +408,46 @@ YouTubeContentEndViewModel
             isLoading.collect {
                 _isProgress.value = it
             }
+        }
+
+        fun requestYouTubeShortsSearchToEnd(
+            videoId: String,
+            categoryShorts: Map<String, List<MainShortsModel>>,
+        ) = viewModelScope.launch {
+            youtueRepository
+                .requestYouTubeShortsSearchToEnd(videoId, settingRepository.getLocale())
+                .collect { response ->
+
+                    when (response) {
+                        is ApiResult.Loading -> {
+                            _uiState.value = UiState.Loading
+                        }
+
+                        is ApiResult.Success -> {
+                            response.data.shortsVideoModel?.let {
+                                val categoryName =
+                                    it.categoryName
+
+                                val updatedList: List<MainShortsModel> =
+                                    buildList {
+                                        add(response.data)
+                                        categoryShorts[categoryName]?.let { addAll(it) }
+                                    }
+                                _searchShots.value = updatedList
+                            } ?: run {
+                                _searchShots.value = categoryShorts.values.flatMap { it }
+                            }
+                            _uiState.value = UiState.Success(response.data)
+                        }
+
+                        is ApiResult.Exception -> {
+                            _uiState.value =
+                                response.e.message?.let { UiState.Error(it) } ?: UiState.Error("")
+                        }
+
+                        else -> Unit
+                    }
+                }
         }
 
         companion object {

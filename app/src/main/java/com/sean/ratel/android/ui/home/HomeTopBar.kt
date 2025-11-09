@@ -43,9 +43,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.utils.PhoneUtil.searchButton
 import com.sean.ratel.android.utils.PhoneUtil.shareAppLinkButton
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 
@@ -116,7 +119,7 @@ fun HomeTopBar(
                 TitleBox()
                 Spacer(modifier = Modifier.weight(1f))
                 PrivacyOptionMenu(isPrivacy?.value ?: false, privacyOptionClick)
-                SharerIconButton()
+                SearchIconButton(mainViewModel)
             } else if (isHomeNaviBar == Destination.YouTube.route) {
                 BackButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
@@ -205,6 +208,29 @@ fun SharerIconButton() {
             painter = painterResource(id = R.drawable.ic_share_main),
             contentDescription = stringResource(R.string.end_share),
             modifier = Modifier,
+        )
+    }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
+fun SearchIconButton(mainViewModel: MainViewModel?) {
+    val context = LocalContext.current
+    IconButton(
+        onClick = { searchButton(context) },
+        modifier = Modifier,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_search),
+            contentDescription = stringResource(R.string.search),
+            modifier = Modifier,
+        )
+
+        mainViewModel?.sendGALog(
+            screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+            eventName = GASplashAnalytics.Event.SELECT_SEARCH_BTN_CLICK,
+            actionName = GASplashAnalytics.Action.CLICK,
+            mapOf(),
         )
     }
 }

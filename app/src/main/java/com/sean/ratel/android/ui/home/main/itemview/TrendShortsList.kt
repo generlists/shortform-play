@@ -75,7 +75,11 @@ fun TrendShortsList(
     val context = LocalContext.current
 
     val trendShorts = viewModel.mainTrendShortsList.collectAsState().value
-    val initDataKey = trendShortsData.event_list.keys.toList()[0] // 0번째
+    val initDataKey =
+        trendShortsData.event_list.keys
+            .toList()
+            .takeIf { it.isNotEmpty() }
+            ?.firstOrNull()
 
     Column(
         modifier =

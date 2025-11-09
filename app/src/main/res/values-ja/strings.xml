@@ -129,4 +129,17 @@
     <!-- 1.0.6 -->
     <string name="main_trends_shorts_title">トレンドショート</string>
 
+    <!--1.0.7 -->
+    <string name="main_shorts_post_fix">Shorts</string>
+    <string name="main_shorts_user_suggest">検索キーワードを入力してください!</string>
+    <string name="search_topbar_hint">検索キーワードを入力してください（IU、ILLIT、BTS）</string>
+    <string name="go_app_store">Google Play ストアのバージョンが古いです。最新バージョンに更新してから再試行してください。</string>
+    <string name="store_update_btn">ストアへ</string>
+    <string name="auth_error">認証エラーが発生しました。カスタマーサポートにお問い合わせください。</string>
+
+    <string name="api_no_network_error">インターネットに接続されていません。</string>
+    <string name="api_bad_request_error">無効なリクエストです。</string>
+    <string name="api_server_error">サーバーエラーが発生しました。</string>
+    <string name="api_unknown_error">不明なエラーが発生しました。</string>
+
 </resources>

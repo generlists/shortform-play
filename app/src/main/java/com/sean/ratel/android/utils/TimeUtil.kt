@@ -1,8 +1,8 @@
 package com.sean.ratel.android.utils
 
 import android.annotation.SuppressLint
+import com.sean.player.utils.log.RLog
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -11,7 +11,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
-import java.util.regex.Pattern
 
 object TimeUtil {
     fun formatMillisToDate(millis: Long): String {
@@ -50,33 +49,6 @@ object TimeUtil {
         }
 
         return "00:00" // Default value if parsing fails
-    }
-
-    fun parseYouTubeDuration(duration: String?): Duration? {
-        duration?.let {
-            val pattern = Pattern.compile("PT(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?")
-            val matcher = pattern.matcher(duration)
-
-            var hours = 0L
-            var minutes = 0L
-            var seconds = 0L
-
-            if (matcher.matches()) {
-                if (matcher.group(1) != null) {
-                    hours = matcher.group(1)?.toLong() ?: 0L
-                }
-                if (matcher.group(2) != null) {
-                    minutes = matcher.group(2)?.toLong() ?: 0L
-                }
-                if (matcher.group(3) != null) {
-                    seconds = matcher.group(3)?.toLong() ?: 0L
-                }
-            }
-
-            return Duration.ofHours(hours).plusMinutes(minutes).plusSeconds(seconds)
-        } ?: run {
-            return null
-        }
     }
 
     fun formatTimeFromFloat(floatTime: Float): String {
@@ -127,5 +99,30 @@ object TimeUtil {
         val minutes = parts[0].toInt()
         val seconds = parts[1].toInt()
         return (minutes * 60 + seconds).toFloat()
+    }
+
+    fun expTimePrint(
+        expTime: Long,
+        currentTime: Long,
+    ) {
+        // Instant 변환
+        val expInstant = Instant.ofEpochMilli(expTime)
+        val curInstant = Instant.ofEpochMilli(currentTime)
+
+        // 포맷터 (2025-11-05 09:15:14 형태)
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+
+        // UTC 기준
+        val expUtc = formatter.withZone(ZoneId.of("UTC")).format(expInstant)
+        val curUtc = formatter.withZone(ZoneId.of("UTC")).format(curInstant)
+
+        // KST 기준 (Asia/Seoul)
+        val expKst = formatter.withZone(ZoneId.of("Asia/Seoul")).format(expInstant)
+        val curKst = formatter.withZone(ZoneId.of("Asia/Seoul")).format(curInstant)
+
+        RLog.d("SKTTTTTTTTT", "🕒 토큰 만료(exp) 시간 (UTC): $expUtc")
+        RLog.d("SKTTTTTTTTT", "🕘 토큰 만료(exp) 시간 (KST): $expKst")
+        RLog.d("SKTTTTTTTTT", "⏰ 현재 시간 (UTC): $curUtc")
+        RLog.d("SKTTTTTTTTT", "⏰ 현재 시간 (KST): $curKst")
     }
 }

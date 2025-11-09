@@ -135,4 +135,17 @@
     <!-- 1.0.6 -->
     <string name="main_trends_shorts_title">ชอร์ตกระแส</string>
 
+    <!--1.0.7 -->
+    <string name="main_shorts_post_fix">Shorts</string>
+    <string name="main_shorts_user_suggest">กรุณากรอกคำค้นหา!</string>
+    <string name="search_topbar_hint">กรุณากรอกคำค้นหา (IU, ILLIT, BTS)</string>
+    <string name="go_app_store">Google Play Store ของคุณล้าสมัย กรุณาอัปเดตเป็นเวอร์ชันล่าสุดแล้วลองอีกครั้ง</string>
+    <string name="store_update_btn">ไปที่ร้านค้า</string>
+    <string name="auth_error">เกิดข้อผิดพลาดในการยืนยันตัวตน โปรดติดต่อฝ่ายบริการลูกค้า</string>
+
+    <string name="api_no_network_error">ไม่มีการเชื่อมต่ออินเทอร์เน็ต</string>
+    <string name="api_bad_request_error">คำขอไม่ถูกต้อง</string>
+    <string name="api_server_error">เกิดข้อผิดพลาดของเซิร์ฟเวอร์</string>
+    <string name="api_unknown_error">เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ</string>
+
 </resources>

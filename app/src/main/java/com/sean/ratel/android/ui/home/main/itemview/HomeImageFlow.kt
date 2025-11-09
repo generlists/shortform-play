@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,7 +57,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.firebase.analytics.FirebaseAnalytics.Event
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
@@ -100,12 +105,41 @@ fun AutoScrollImagePager(
     val density = LocalDensity.current
     val heightInPx = with(density) { 150.dp.toPx() } // Dp -> Px 변환
 
+    RLog.d("JSPPPP", "autoScroll : $autoScroll")
     // 자동 스크롤 기능
     LaunchedEffect(autoScroll) {
         while (autoScroll) {
-            delay(4000)
+            delay(4000L)
             val nextPage = pagerState.currentPage + 1
             pagerState.animateScrollToPage(nextPage, animationSpec = tween(durationMillis = 1500))
+        }
+    }
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val corutine = rememberCoroutineScope()
+
+    DisposableEffect(lifecycleOwner) {
+        val observer =
+            LifecycleEventObserver { _, event ->
+                RLog.d("JSPPPP", "Lifecycle event: $event")
+
+                when (event) {
+                    Lifecycle.Event.ON_RESUME -> {
+                        corutine.launch {
+                            pagerState.scrollToPage(pagerState.currentPage)
+                        }
+                    }
+                    Lifecycle.Event.ON_PAUSE -> {
+                        autoScroll = false
+                    }
+                    else -> Unit
+                }
+            }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 

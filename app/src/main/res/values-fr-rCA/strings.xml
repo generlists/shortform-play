@@ -141,4 +141,18 @@
     <!-- 1.0.6 -->
     <string name="main_trends_shorts_title">Shorts d’actualité</string>
 
+    <!--1.0.7 -->
+
+    <string name="main_shorts_post_fix">Shorts</string>
+    <string name="main_shorts_user_suggest">Entrez un terme de recherche!</string>
+    <string name="search_topbar_hint">Entrez un terme de recherche (IU, ILLIT, BTS)</string>
+    <string name="go_app_store">Votre Google Play Store n’est pas à jour. Veuillez le mettre à jour puis réessayer.</string>
+    <string name="store_update_btn">Aller au magasin</string>
+    <string name="auth_error">Une erreur d’authentification s’est produite. Veuillez contacter le service à la clientèle.</string>
+
+    <string name="api_no_network_error">Aucune connexion Internet.</string>
+    <string name="api_bad_request_error">Requête invalide.</string>
+    <string name="api_server_error">Erreur du serveur.</string>
+    <string name="api_unknown_error">Une erreur inconnue s’est produite.</string>
+
 </resources>

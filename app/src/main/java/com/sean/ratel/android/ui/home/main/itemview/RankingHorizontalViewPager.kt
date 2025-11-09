@@ -212,7 +212,6 @@ fun RankingHorizontalScrollView(
             .distinctUntilChanged() // 페이지 변경 이벤트만 수신
             .collect { currentPage ->
                 mainViewModel.setChannelPager(currentPage)
-                // RLog.d("hbungshin", "Page changed to: $currentPage")
             }
     }
 }

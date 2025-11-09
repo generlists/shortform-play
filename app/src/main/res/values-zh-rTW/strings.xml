@@ -128,4 +128,17 @@
     <!-- 1.0.6 -->
     <string name="main_trends_shorts_title">熱門話題短片</string>
 
+    <!--1.0.7 -->
+    <string name="main_shorts_post_fix">Shorts</string>
+    <string name="main_shorts_user_suggest">請輸入搜尋關鍵字!</string>
+    <string name="search_topbar_hint">請輸入搜尋關鍵字（IU、ILLIT、BTS)</string>
+    <string name="go_app_store">您的 Google Play 商店版本過舊。請更新至最新版本後再試一次。</string>
+    <string name="store_update_btn">前往商店</string>
+    <string name="auth_error">發生驗證錯誤，請聯絡客服人員。</string>
+
+    <string name="api_no_network_error">沒有網路連線。</string>
+    <string name="api_bad_request_error">無效的請求。</string>
+    <string name="api_server_error">伺服器發生錯誤。</string>
+    <string name="api_unknown_error">發生未知錯誤。</string>
+
 </resources>

@@ -1,10 +1,7 @@
 package com.sean.ratel.android.ui.home.setting
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.lifecycle.ViewModel
-import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.SettingRepository
@@ -55,34 +52,6 @@ class SettingViewModel
             url: String,
         ) {
             PhoneUtil.openBrowsere(context, url)
-        }
-
-        fun runAppStore(
-            context: Context,
-            storeUrl: String,
-        ) {
-            try {
-                val intent =
-                    Intent(Intent.ACTION_VIEW).apply {
-                        data = Uri.parse(storeUrl)
-                        setPackage("com.android.vending")
-                    }
-                context.startActivity(intent)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                val fallbackIntent =
-                    Intent(
-                        Intent.ACTION_VIEW,
-                        Uri.parse(
-                            STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(
-                                context.getString(
-                                    R.string.title,
-                                ),
-                            ),
-                        ),
-                    )
-                context.startActivity(fallbackIntent)
-            }
         }
 
         fun goAppSettingsOpenSourceLicense(context: Context) = PhoneUtil.goAppSettingsOpenSourceLicense(context)
