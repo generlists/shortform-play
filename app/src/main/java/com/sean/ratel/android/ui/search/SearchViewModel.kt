@@ -58,16 +58,13 @@ class SearchViewModel
         private val _searchSuggestComplete = MutableStateFlow(false)
         val searchSuggestComplete = _searchSuggestComplete
 
-        private val _sessionId = MutableStateFlow(generateNewSession())
+        private val _sessionId = MutableStateFlow("")
         val sessionId: StateFlow<String> = _sessionId
 
         private var lastSearchQuery: String = ""
 
         private val _moreIndex = MutableStateFlow<Int>(0)
         val moreIndex: StateFlow<Int> get() = _moreIndex
-
-        private val _searchItemClicked = mutableStateOf<String?>(null)
-        val searchItemClicked: MutableState<String?> = _searchItemClicked
 
         private val _currentLocale = MutableStateFlow<String>(Locale.KOREA.toString())
         val currentLocale: StateFlow<String> = _currentLocale
@@ -90,11 +87,16 @@ class SearchViewModel
             lastVideoId: String? = null,
         ) {
             var startTime = System.currentTimeMillis()
+            RLog.d("KKKKKKKKK", "requestYouTubeSearchResult query : $query, position : $position  _sessionId :${_sessionId.value}")
 
             viewModelScope.launch {
                 if (query != lastSearchQuery) {
                     _sessionId.value = generateNewSession()
                     lastSearchQuery = query
+                        .split("+")
+                        .firstOrNull()
+                        ?.trim()
+                        ?: query.trim()
                 }
                 youtubeApiRepository
                     .requestYouTubeSearch(
@@ -221,7 +223,7 @@ class SearchViewModel
 
             RLog.d(
                 "KKKKKKKKK",
-                "index $index , lastVideoId : $lastVideoId , country : ${locale.country} , toLanguageTag : ${locale.toLanguageTag()}",
+                "index $index , lastVideoId : $lastVideoId query : $lastSearchQuery : $lastSearchQuery , _sessionId : ${_sessionId.value}",
             )
 
             viewModelScope.launch {
@@ -297,10 +299,10 @@ class SearchViewModel
             navigator.navigateTo(route, false)
         }
 
-        private fun requestResetSession(seesionId: String) {
+        fun requestResetSession(sessionId: String) {
             viewModelScope.launch {
-                youtubeApiRepository.requestResetSession(seesionId).collect { response ->
-                    RLog.d("OKKKKKKKK", "$response ,  _sessionId : $seesionId")
+                youtubeApiRepository.requestResetSession(sessionId).collect { response ->
+                    RLog.d("KKKKKKKKK", "$response ,  _sessionId : $sessionId")
                     when (response) {
                         is ApiResult.Loading -> RLog.d("OKKKKKKKK", "Loading")
                         is ApiResult.Success -> RLog.d("OKKKKKKKK", "message ${response.data.message}")

@@ -108,7 +108,7 @@ fun KeyWordSearchDisplayUi(
             adViewModel.adBannerLoadingCompleteAndGetAdSize
                 .collectAsState()
                 .value.second
-        var moreLoading by remember { mutableStateOf(true) }
+        var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = remember { mutableStateOf(0) }
         val scrollOffset = remember { mutableStateOf(0) }
 
@@ -147,7 +147,7 @@ fun KeyWordSearchDisplayUi(
             listState.scrollToItem(0)
         }
 
-        RLog.d("SSSSSSS", "moreLoading : $moreLoading , adBannerSize :$adBannerSize ,  bottomBarHeight : $bottomBarHeight")
+        RLog.d("KKKKKKKKK", "moreLoading : $moreLoading , adBannerSize :$adBannerSize ,  bottomBarHeight : $bottomBarHeight")
         if (moreLoading) {
             Box(
                 Modifier
@@ -218,7 +218,7 @@ fun KeyWordSearchGridItemList(
 
     LaunchedEffect(isAtBottom) {
         if (isAtBottom) {
-            RLog.d("SSSSSSS", "isAtBottom : $isAtBottom")
+            RLog.d("KKKKKKKKK", "isAtBottom : $isAtBottom")
             if (searchViewModel.maxMoreIndex() > index.value && searchViewModel.hasNext.value) {
                 loading(true)
                 searchViewModel.setMorEVent(index.value + 1)
@@ -226,7 +226,7 @@ fun KeyWordSearchGridItemList(
 
             searchViewModel.moreIndex.collectLatest { newValue ->
                 RLog.d(
-                    "SSSSSSS",
+                    "KKKKKKKKK",
                     "Received moreIndex update: $newValue, maxindex : ${
                         searchViewModel.maxMoreIndex()
                     }",

@@ -51,6 +51,7 @@ fun SearchComposeUi(
 
         val uiState = rememberSaveable { mutableStateOf(SearchUiState.UserSuggest) }
         val fromSelection = remember { mutableStateOf(false) }
+        val sessionId by searchViewModel.sessionId.collectAsState()
 
         val apiState = searchViewModel.uiState.collectAsState()
         Scaffold(
@@ -68,7 +69,10 @@ fun SearchComposeUi(
                         query.value = q
                     },
                     fromSelection,
-                    historyBack = { finish() },
+                    historyBack = {
+                        searchViewModel.requestResetSession(sessionId)
+                        finish()
+                    },
                 )
             },
         ) { innerPaddingModifier ->
