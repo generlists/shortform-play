@@ -165,6 +165,7 @@ class YouTubeEndFragment(
     }
 
     fun onClickPipButton() {
+        RLog.d("MainActivity", "onClickPipButton")
         val videoSize = youTubeStreamPlayer.getVideoSize()
         val isPlaying = youTubeStreamPlayer.isPlaying()
         val visibleRect = Rect()
@@ -177,6 +178,7 @@ class YouTubeEndFragment(
                 visibleRect,
                 isPlaying = isPlaying,
             )
+        RLog.d("MainActivity", "enterPipMode : $enterPipMode")
 
         when (enterPipMode) {
             PipResult.NoSystemFeature ->
@@ -524,7 +526,6 @@ class YouTubeEndFragment(
     private fun handleBufferingState(selectedPosition: Int) {
         if (selectedPosition == createPosition) {
             RLog.d("PLAYER", "state : BUFFER , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}")
-            // Log.d("anatol","handleBufferingState loading = true")
             // youtubeContentEndViewModel.setLoading(loading = true)
         }
     }
@@ -606,8 +607,6 @@ class YouTubeEndFragment(
             }
             if (isLoading.value) LoadingArea(isLoading = true)
         }
-
-        // Log.d("PLAYER","${isLoading.value}")
 
         if (!isAdLoading) {
             PlayButton(isPlaying, onPlayChange = { if (it) youTubeStreamPlayer.start() })

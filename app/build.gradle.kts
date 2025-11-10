@@ -37,8 +37,8 @@ android {
         applicationId = "com.sean.ratel.android"
         minSdk = 28
         targetSdk = 35
-        versionCode = 10062
-        versionName = "1.0.6.2"
+        versionCode = 10070
+        versionName = "1.0.7"
         testInstrumentationRunner = "com.sean.ratel.android.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -63,6 +63,8 @@ android {
         debug {
 
             buildConfigField("String", "FIREBASE_BASE_URL", "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"")
+            buildConfigField("String", "SHORTFORM_PLAY_BASE_URL", "\"${localProperties.getProperty("SHORTFORM_PLAY_BASE_URL")}\"")
+            buildConfigField("String", "GOOGLE_CLOUD_PROJECT_NUMBER", "\"${localProperties.getProperty("GOOGLE_CLOUD_PROJECT_NUMBER")}\"")
             // admob
             buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("DEBUG_BANNER_UNIT_ID")}\"")
             buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("DEBUG_NATIVE_AD_UNIT_ID")}\"")
@@ -83,6 +85,9 @@ android {
         release {
 
             buildConfigField("String", "FIREBASE_BASE_URL", "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"")
+            buildConfigField("String", "SHORTFORM_PLAY_BASE_URL", "\"${localProperties.getProperty("SHORTFORM_PLAY_BASE_URL")}\"")
+            buildConfigField("String", "GOOGLE_CLOUD_PROJECT_NUMBER", "\"${localProperties.getProperty("GOOGLE_CLOUD_PROJECT_NUMBER")}\"")
+
             // admob
             buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("RELEASE_DEBUG_BANNER_UNIT_ID")}\"")
             buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("RELEASE_DEBUG_NATIVE_AD_UNIT_ID")}\"")
@@ -205,6 +210,8 @@ dependencies {
     implementation(libs.squareup.okhttp.logging)
     implementation(libs.squareup.retrofit2)
     implementation(libs.squareup.retrofit2.converter.gson)
+    implementation(libs.google.play.integrity)
+    implementation(libs.com.auth.java.jwt)
 
     // image
     implementation(libs.coil)
@@ -222,7 +229,6 @@ dependencies {
     implementation(libs.firebase.analytics)
     // firebase config
     implementation(libs.firebase.config)
-
     // test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit.ext)

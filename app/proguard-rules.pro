@@ -48,9 +48,14 @@
 # Firebase SDK의 모든 클래스 유지
 -keep class com.google.firebase.** { *; }
 -keep class com.google.android.gms.measurement.** { *; }
+-keep class com.auth0.jwt.** { *; }
+-keep class com.google.android.play.** { *; }
+
 #admob
 -keep class com.google.ads.** # Don't proguard AdMob classes
 -dontwarn com.google.ads.** # Temporary workaround for v6.2.1. It gives a warning that you can ignore
+
+
 
 #라인정보
 -keepattributes SourceFile,LineNumberTable

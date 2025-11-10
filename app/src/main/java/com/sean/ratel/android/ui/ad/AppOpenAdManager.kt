@@ -2,7 +2,6 @@ package com.sean.ratel.android.ui.ad
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
@@ -118,7 +117,7 @@ class AppOpenAdManager constructor(
         }
 
         // If the app open ad is not available yet, invoke the callback.
-        Log.d(TAG, "isAdAvailable : ${isAdAvailable()}")
+        RLog.d(TAG, "isAdAvailable : ${isAdAvailable()}")
         if (!isAdAvailable()) {
             RLog.d(TAG, "The app open ad is not ready yet.")
             onShowAdCompleteListener.onShowAdComplete()
@@ -128,7 +127,7 @@ class AppOpenAdManager constructor(
             return
         }
 
-        Log.d(TAG, "Will show ad.")
+        RLog.d(TAG, "Will show ad.")
 
         appOpenAd?.fullScreenContentCallback =
             object : FullScreenContentCallback() {

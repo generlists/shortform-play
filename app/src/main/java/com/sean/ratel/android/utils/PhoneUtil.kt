@@ -17,8 +17,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.sean.ratel.android.R
+import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.MY_EMAIL_ACCOUNT
 import com.sean.ratel.core.BuildConfig
@@ -53,6 +56,18 @@ object PhoneUtil {
             }
         val shareIntent = Intent.createChooser(sendIntent, null)
         context.startActivity(shareIntent)
+    }
+
+    fun searchButton(context: Context) {
+        val intent = Intent(context, SearchActivity::class.java)
+
+        val options =
+            ActivityOptionsCompat.makeCustomAnimation(
+                context,
+                android.R.anim.fade_in,
+                android.R.anim.fade_out,
+            )
+        ContextCompat.startActivity(context, intent, options.toBundle())
     }
 
     // 버전 이름 가져오기 (versionName)
@@ -164,5 +179,33 @@ object PhoneUtil {
             Intent(Intent.ACTION_VIEW, Uri.parse(param))
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
         context.startActivity(intent)
+    }
+
+    fun runAppStore(
+        context: Context,
+        storeUrl: String,
+    ) {
+        try {
+            val intent =
+                Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(storeUrl)
+                    setPackage("com.android.vending")
+                }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            val fallbackIntent =
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse(
+                        STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(
+                            context.getString(
+                                R.string.title,
+                            ),
+                        ),
+                    ),
+                )
+            context.startActivity(fallbackIntent)
+        }
     }
 }

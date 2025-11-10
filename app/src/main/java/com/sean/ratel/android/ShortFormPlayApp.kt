@@ -22,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sean.ratel.android.data.common.RemoteConfig
+import com.sean.ratel.android.ui.ad.AdBannerLocation
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.LoadBanner
 import com.sean.ratel.android.ui.common.FullScreenToggleView
@@ -102,7 +103,7 @@ fun ShortFormPlayApp(
                 adMobInitialComplete &&
                 RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
             ) {
-                LoadBanner(currentRoute, adViewModel)
+                LoadBanner(currentRoute, adViewModel, AdBannerLocation.BOTTOM)
             }
 
             FullScreenToggleView(currentRoute)

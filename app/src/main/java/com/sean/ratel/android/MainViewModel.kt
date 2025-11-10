@@ -16,7 +16,6 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.RecentVideoRepository
-import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -39,7 +38,6 @@ class MainViewModel
         val navigator: Navigator,
         val gaLog: GALog,
         val recentVideoRepository: RecentVideoRepository,
-        val settingRepository: SettingRepository,
         val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
     ) : ViewModel() {
         // FAB 가시성을 관리하는 상태
@@ -126,9 +124,16 @@ class MainViewModel
         private val _selectVideoId = mutableStateOf<String?>(null)
         val selectVideoId: MutableState<String?> = _selectVideoId
 
+        private val _categoryByContents =
+            MutableStateFlow<Map<String, List<MainShortsModel>>>(
+                mutableMapOf(),
+            )
+        val categoryByContents: StateFlow<Map<String, List<MainShortsModel>>> = _categoryByContents
+
         fun setPIPClick(pipClick: Pair<Boolean, ViewPager2?>) {
             _pipClick.value = pipClick
             _isTopViewVisible.value = !pipClick.first && !isCurrentPageMoreView()
+            RLog.d(TAG, "_pipClick : ${ _pipClick.value},  _isTopViewVisible : ${ _isTopViewVisible.value}")
         }
 
         fun setViewPager(viewPager2: ViewPager2?) {
@@ -239,6 +244,14 @@ class MainViewModel
                         )
                     }
                 }
+                ViewType.SearchShortsVideo -> {
+                    videoId?.let {
+                        navigator.navigateTo(
+                            Destination.YouTube.dynamicRoute(it),
+                            false,
+                        )
+                    }
+                }
                 else -> Unit
             }
         }
@@ -298,6 +311,9 @@ class MainViewModel
         ) {
             navigator.navigateBack(recreate)
             _tabClicked.value = null
+            if (isCurrentPageMoreView() && route != Destination.YouTube.route) {
+                _moreButtonClicked.value = null
+            }
 
             if (route == Destination.YouTube.route) _endBack.value = true
         }
@@ -328,6 +344,20 @@ class MainViewModel
             } else {
                 gaLog.sendEvent(event, route, viewType, channelId, videoId)
             }
+        }
+
+        fun sendGALog(
+            screenName: String,
+            eventName: String,
+            actionName: String,
+            parameter: Map<String, String>,
+        ) {
+            gaLog.sendEvent(
+                screenName,
+                eventName,
+                actionName,
+                parameter,
+            )
         }
 
         val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -376,7 +406,7 @@ class MainViewModel
                 }.addOnFailureListener(
                     object : OnFailureListener {
                         override fun onFailure(p0: Exception) {
-                            RLog.e("MainViewModel", "Fail RemoteConfig $p0")
+                            RLog.e(TAG, "Fail RemoteConfig $p0")
                         }
                     },
                 )
@@ -390,12 +420,12 @@ class MainViewModel
                         RLog.d("RemoteConfig", "Fetch success. Updated: $updated")
                         // 실제 값 로그 출력
                         remoteConfig.all.forEach { entry ->
-                            RLog.d("RemoteConfig", "${entry.key} = ${entry.value.asString()}")
+                            RLog.d(TAG, "${entry.key} = ${entry.value.asString()}")
                         }
 
                         RemoteConfig.setRemoteConfig(remoteConfig.all)
                     } else {
-                        RLog.e("RemoteConfig", "Fetch failed: ${task.exception}")
+                        RLog.e(TAG, "Fetch failed: ${task.exception}")
                     }
                 }
         }
@@ -414,7 +444,38 @@ class MainViewModel
             )
         }
 
+        fun setSearchCategoryShortFormVieo() {
+            val shorts = _mainShorts.value.first
+
+            val zipList =
+                (
+                    (shorts.topFiveList.fiveList.flatMap { it.value }) +
+                        (
+                            shorts.shortformVideoList.videoSearchList.searchList +
+                                shorts.shortformVideoList.videoCommentList.commentList +
+                                shorts.shortformVideoList.videoLikeList.likeList
+                        ) +
+                        (
+                            shorts.channelVideoList.channelSearchList.searchList +
+                                shorts.channelVideoList.channelLikeList.likeList
+                        ) +
+                        shorts.editorPickList.pickList +
+                        shorts.channelSubscriptionList.subscriptionList +
+                        shorts.channelSubscriptionUpList.subscriptionUpList +
+                        shorts.shortformRecommendList.recommendList
+                ).toMutableList()
+                    .distinct()
+                    .groupBy { it.shortsVideoModel?.categoryName }
+                    .filterKeys { it != null }
+                    .mapKeys { it.key ?: "음악" }
+
+            _categoryByContents.value = zipList
+
+            RLog.d(TAG, "zipList : ${zipList.keys}")
+        }
+
         companion object {
             private const val MAIN_ITEM_COUNT = 7
+            private const val TAG = "MainViewModel"
         }
     }

@@ -2,10 +2,12 @@ package com.sean.ratel.android.utils
 
 import android.app.AppOpsManager
 import android.content.Context
+import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
 import android.util.DisplayMetrics
 import android.view.WindowManager
+import androidx.annotation.StringRes
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
@@ -13,6 +15,7 @@ import com.google.android.gms.ads.AdSize
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.MAIN_AD_KEY
 import com.sean.ratel.android.data.common.RemoteConfig.MAIN_SHORTFORM_KEY
@@ -71,17 +74,6 @@ object UIUtil {
         }
     }
 
-    fun findFragment(
-        context: Context,
-        position: Int,
-    ): YouTubeEndFragment? {
-        val fragmentManager = (context as FragmentActivity).supportFragmentManager
-        val fragmentTag = "f$position"
-        val fragment = fragmentManager.findFragmentByTag(fragmentTag)
-        if (fragment is YouTubeEndFragment) return fragment
-        return null
-    }
-
     fun findCurrentFragment(
         context: Context,
         position: Int,
@@ -97,7 +89,7 @@ object UIUtil {
         position: Int,
         pageScrollState: YouTubeContentEndViewModel.PageScrollState,
     ) {
-        RLog.d("", "$context ,  $position , $pageScrollState")
+        RLog.d("Utils", "$context ,  $position , $pageScrollState")
     }
 
     fun formatNumberByLocale(
@@ -253,6 +245,58 @@ object UIUtil {
             } else {
                 "KR"
             }
+
+    fun getLanguageCode(): String =
+        if (Locale
+                .getDefault()
+                .language
+                .toString()
+                .isNotEmpty()
+        ) {
+            Locale.getDefault().language
+        } else {
+            "ko"
+        }
+
+    fun getLanguageTag(): String =
+        if (Locale
+                .getDefault()
+                .toLanguageTag()
+                .toString()
+                .isNotEmpty()
+        ) {
+            Locale.getDefault().toLanguageTag()
+        } else {
+            "ko-KR"
+        }
+
+    fun getAppLocaleByStringResource(
+        context: Context,
+        countryCode: String,
+    ) = getLocalizedString(context, R.string.main_shorts_post_fix, countryCode)
+
+    fun getLocalizedString(
+        context: Context,
+        @StringRes resId: Int,
+        countryCode: String,
+    ): String {
+        val config = Configuration(context.resources.configuration)
+        config.setLocale(localeFromCountryCode(countryCode))
+        val localizedContext = context.createConfigurationContext(config)
+        return localizedContext.resources.getString(resId)
+    }
+
+    fun localeFromCountryCode(countryCode: String): Locale =
+        when (countryCode.uppercase()) {
+            "KR" -> Locale.KOREA
+            "US" -> Locale.US
+            "JP" -> Locale.JAPAN
+            "TW" -> Locale.TAIWAN
+            "TH" -> Locale("th", "TH")
+            "ID" -> Locale("id", "ID")
+            "CA" -> Locale.CANADA
+            else -> Locale.ENGLISH
+        }
 
     fun pickTendShortsFromMap(
         shortsMap: Map<String, List<MainShortsModel>>,

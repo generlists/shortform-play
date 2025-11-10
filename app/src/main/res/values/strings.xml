@@ -131,4 +131,19 @@
     <!-- 1.0.6 -->
     <string name="main_trends_shorts_title">Trend Shorts</string>
 
+    <!--1.0.7 -->
+
+    <string name="main_shorts_post_fix">Shorts</string>
+    <string name="main_shorts_user_suggest">Enter a search term!</string>
+    <string name="search_topbar_hint">Enter a search term (IU, ILLIT, BTS)</string>
+    <string name="go_app_store">Your Google Play Store is outdated. Please update to the latest version and try again.</string>
+    <string name="store_update_btn">Go to Store</string>
+    <string name="auth_error">An authentication error occurred. Please contact customer support.</string>
+
+    <string name="api_no_network_error">No internet connection.</string>
+    <string name="api_bad_request_error">Invalid request.</string>
+    <string name="api_server_error">A server error occurred.</string>
+    <string name="api_unknown_error">An unknown error occurred.</string>
+
+
 </resources>

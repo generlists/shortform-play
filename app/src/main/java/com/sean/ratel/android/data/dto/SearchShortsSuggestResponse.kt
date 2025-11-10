@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @Keep
-data class ShortsSearchModel(
-    var videoList: List<String>? = listOf(),
+data class SearchShortsSuggestResponse(
+    val query: String = "",
+    val suggestions: List<String> = emptyList(),
 ) : Parcelable

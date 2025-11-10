@@ -7,10 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.data.api.ApiResult
+import com.sean.ratel.android.data.api.ApiResult.Loading.safeApiCall
+import com.sean.ratel.android.data.common.IntegrityManager
+import com.sean.ratel.android.data.dto.IntegrityExchangeReq
 import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.TrendsShortFormList
+import com.sean.ratel.android.data.local.pref.AuthTokenPreference
 import com.sean.ratel.android.data.log.GALog
+import com.sean.ratel.android.data.repository.AuthRepository
 import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.data.repository.YouTubeRepository
 import com.sean.ratel.android.ui.navigation.Navigator
@@ -18,6 +24,7 @@ import com.sean.ratel.android.utils.NetworkUtil
 import com.sean.ratel.android.utils.TimeUtil.getCurrentDate
 import com.sean.ratel.android.utils.UIUtil.pickTendShortsFromMap
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -30,10 +37,14 @@ import kotlin.coroutines.suspendCoroutine
 class SplashViewModel
     @Inject
     constructor(
+        @ApplicationContext private val context: Context,
         val navigator: Navigator,
         val gaLog: GALog,
         private val youTubeRepository: YouTubeRepository,
         private val settingRepository: SettingRepository,
+        private val autoRepository: AuthRepository,
+        private val prefs: AuthTokenPreference,
+        private val integrityManager: IntegrityManager,
     ) : ViewModel() {
         private val _shortformList =
             MutableStateFlow(Pair(MainShortFormList(), 7))
@@ -52,6 +63,74 @@ class SplashViewModel
         val trendsShortsComplete = _trendsShortsComplete
 
         private val _retryCount = MutableStateFlow(0)
+
+        private val _authCheck = MutableStateFlow(0)
+        val authCheck = _authCheck
+
+        init {
+            viewModelScope.launch {
+                val token = prefs.currentToken()
+
+                RLog.d(TAG, "init splash $token")
+                RLog.d(TAG, "isExpired ${autoRepository.isExpired(token)}")
+
+                if (prefs.getAccessToken() == null || autoRepository.isExpired(token)) {
+                    if (isNetWorkAvailable(context)) {
+                        val hash = autoRepository.getRequestHash()
+
+                        when (val result = integrityManager.requestIntegrityToken(hash)) {
+                            is IntegrityManager.IntegrityResult.Success -> {
+                                // 정상 처리
+                                RLog.d("auth", "Integrity token: ${result.token}")
+                                val authResult =
+                                    safeApiCall {
+                                        autoRepository.exchange(
+                                            IntegrityExchangeReq(
+                                                context.packageName,
+                                                result.token,
+                                                hash,
+                                            ),
+                                        )
+                                    }
+
+                                when (authResult) {
+                                    is ApiResult.Success -> {
+                                        val data = authResult.data
+                                        val accessToken = data.access_token
+                                        val expiresIn = data.expires_in ?: (24 * 3600L)
+                                        accessToken?.let {
+                                            prefs.saveAccessToken(accessToken, expiresIn)
+                                            prefs.updateTokenCache()
+                                        }
+                                        RLog.d("Auth", "Access Token 갱신 성공: expires in $expiresIn 초")
+                                    }
+
+                                    is ApiResult.Error -> {
+                                        RLog.e("Auth", "서버 응답 오류(${authResult.code}): ${authResult.message}")
+                                    }
+
+                                    is ApiResult.Exception -> {
+                                        RLog.e("Auth", "기타 네트워크 예외: ${authResult.e.localizedMessage}")
+                                    }
+
+                                    else -> Unit
+                                }
+                            }
+
+                            is IntegrityManager.IntegrityResult.Failure -> {
+                                RLog.e(TAG, "Integrity failed: ${result.errorCode}")
+                                _authCheck.value = result.errorCode
+//                        if (result.errorCode == StandardIntegrityErrorCode.CANNOT_BIND_TO_SERVICE) {
+//                            _authCheck.value = result.errorCode
+//                        } else {
+//                            _uiEvent.emit(UiEvent.ShowErrorMessage("Integrity check failed"))
+//                        }
+                            }
+                        }
+                    }
+                }
+            }
+        }
 
         suspend fun requestYouTubeVideos(
             requestType: RequestType,
@@ -97,6 +176,7 @@ class SplashViewModel
             countryCode: String? = null,
             forceRefresh: Boolean = false,
         ) {
+            RLog.d(TAG, "locale: requestYouTubeTrendShorts")
             val currentDate = getCurrentDate()
             val startTime = System.currentTimeMillis()
             val downloadKey =
@@ -169,6 +249,10 @@ class SplashViewModel
 
         suspend fun setLocale(locale: String) {
             settingRepository.setLocale(locale)
+        }
+
+        fun setAuthCheck(check: Int) {
+            _authCheck.value = check
         }
 
         fun exitApp() {

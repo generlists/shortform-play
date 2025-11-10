@@ -35,7 +35,7 @@ google-api-client-android ="1.23.1"
 google-oss ="17.0.0"
 google-accompanist-drawable ="0.36.0"
 google-accompanist-systemuicontroller ="0.30.0"
-
+google-integrity ="1.5.0"
 
 
 retrofit2 = "2.9.0"
@@ -57,7 +57,7 @@ lottie = "6.3.0"
 junit = "4.13.2"
 junit-ext = "1.1.5"
 espresso = "3.5.1"
-
+java-jwt="4.4.0"
 
 
 shortform-play ="0.0.0.2"
@@ -66,6 +66,7 @@ shortform-play ="0.0.0.2"
 ai-shortformplay ={ module = "ai.shortform-play.sdk.ratel.player.android:player-core", version.ref = "shortform-play" }
 
 
+com-auth-java-jwt = { module = "com.auth0:java-jwt", version.ref = "java-jwt" }
 
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "android-core" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "android-splash" }
@@ -116,6 +117,7 @@ google-api-service-youtube = { module = "com.google.apis:google-api-services-you
 google-oauth-client-jetty = { module = "com.google.oauth-client:google-oauth-client-jetty", version.ref = "google-auth-jetty"}
 google-accompanist-drawablepainter= { module = "com.google.accompanist:accompanist-drawablepainter", version.ref = "google-accompanist-drawable"}
 google-accompanist-systemuicontroller= { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "google-accompanist-systemuicontroller"}
+google-play-integrity = { module = "com.google.android.play:integrity", version.ref = "google-integrity"}
 
 #admob
 google-play-service-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "google-ad"}

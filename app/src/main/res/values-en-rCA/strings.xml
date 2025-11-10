@@ -130,5 +130,19 @@
 
     <!-- 1.0.6 -->
 
+    <!--1.0.7 -->
+
+    <string name="main_shorts_post_fix">Shorts</string>
+    <string name="main_shorts_user_suggest">Type your search!</string>
+    <string name="search_topbar_hint">Type your search (IU, ILLIT, BTS)</string>
+    <string name="go_app_store">Your Google Play Store is out of date. Please update to the latest version and try again.</string>
+    <string name="store_update_btn">Open Store</string>
+    <string name="auth_error">An authentication error has occurred. Please contact customer service.</string>
+
+    <string name="api_no_network_error">No internet connection.</string>
+    <string name="api_bad_request_error">Bad request.</string>
+    <string name="api_server_error">Server error occurred.</string>
+    <string name="api_unknown_error">An unknown error has occurred.</string>
+
 
 </resources>

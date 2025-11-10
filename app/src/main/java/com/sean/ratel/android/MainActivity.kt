@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -16,19 +15,23 @@ import androidx.annotation.RequiresApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
+import com.sean.ratel.android.ui.end.YouTubeEndFragment
+import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.pip.PipAction
-import com.sean.ratel.android.utils.UIUtil
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 import com.sean.ratel.player.core.util.launch
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 /**
@@ -45,8 +48,11 @@ class MainActivity : FragmentActivity() {
 
     @Inject
     lateinit var log: GALog
-    private val currentPipClick = MutableStateFlow(false)
+    private val pipButtonState = MutableSharedFlow<Int>(extraBufferCapacity = 1)
+
     private val currentItem = MutableStateFlow(0)
+
+    private var currentFragment: YouTubeEndFragment? = null
 
     private var pipBroadcastReceiver: BroadcastReceiver? = null
 
@@ -100,6 +106,97 @@ class MainActivity : FragmentActivity() {
         }
 
         mainViewModel.sendGALog(Event.APP_OPEN, route = Destination.Home.route)
+
+        launch {
+            combine(
+                mainViewModel.pipClick,
+                mainViewModel.viewPager2,
+            ) { pipClick, viewPager2 ->
+                Pair(pipClick, viewPager2)
+            }.collect { (pipClick, viewPager2) ->
+                if (pipClick.first) {
+                    currentFragment = getEndFragment(viewPager2)
+                }
+            }
+        }
+
+        launch {
+            pipButtonState.collect {
+                when (it) {
+                    PipAction.PAUSE.intentExtraValue -> {
+                        currentFragment?.pause()
+                        currentFragment?.pipButtonState()
+                        pipButtonState.tryEmit(0)
+                    }
+                    PipAction.PLAY.intentExtraValue -> {
+                        currentFragment?.play()
+                        currentFragment?.pipButtonState()
+                        pipButtonState.tryEmit(0)
+                    }
+                    PipAction.SKIP_PREVIOUS.intentExtraValue -> {
+                        val currentIndex = currentFragment?.pager?.currentItem ?: 0
+                        if (currentIndex == 0) {
+                            Toast
+                                .makeText(
+                                    baseContext,
+                                    this@MainActivity.getString(R.string.pip_frist_video_message),
+                                    Toast.LENGTH_LONG,
+                                ).show()
+                        } else {
+                            currentFragment?.pager?.setCurrentItem(currentItem.value - 1, false)
+                            currentItem.value -= 1
+                            currentFragment?.pipButtonState()
+                        }
+                        pipButtonState.tryEmit(0)
+                    }
+                    PipAction.SKIP_NEXT.intentExtraValue -> {
+                        val totalSize = currentFragment?.pager?.adapter?.itemCount ?: 0
+                        val index = currentFragment?.pager?.currentItem ?: 0
+                        val isLast = (totalSize - 1) == index
+
+                        RLog.d(
+                            "MainActivity",
+                            "isNextAction totalSize  $totalSize , index : $index  , isLast : $isLast",
+                        )
+                        if (isLast) {
+                            Toast
+                                .makeText(
+                                    baseContext,
+                                    this@MainActivity.getString(R.string.pip_last_video_message),
+                                    Toast.LENGTH_LONG,
+                                ).show()
+                        } else {
+                            currentFragment?.pager?.setCurrentItem(currentItem.value + 1, false)
+                            currentItem.value += 1
+                            currentFragment?.pipButtonState()
+                        }
+                        pipButtonState.tryEmit(0)
+                    }
+                }
+            }
+        }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+
+        val target = intent.getStringExtra("target")
+        val videoId = intent.getStringExtra("videoId")
+        val viewType = intent.getStringExtra("viewType")
+
+        RLog.d(TAG, "target : $target , videoId : $videoId , viewType : $viewType")
+
+        if (target == "youtube_end" && videoId != null && viewType == ViewType.SearchShortsVideo.name) {
+            mainViewModel.setSearchCategoryShortFormVieo()
+            mainViewModel.goEndContent(
+                Destination.Search.route,
+                ViewType.SearchShortsVideo,
+                0,
+                null,
+                videoId,
+            )
+        }
     }
 
     @Deprecated("Deprecated in Java")
@@ -107,7 +204,7 @@ class MainActivity : FragmentActivity() {
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode)
 
-        RLog.d(TAG, "isInPictureInPictureMode : $isInPictureInPictureMode")
+        RLog.d("MainActivity", "isInPictureInPictureMode : $isInPictureInPictureMode")
 
         if (isInPictureInPictureMode) {
             val pipBroadcastReceiver = pipBroadcastReceiver ?: PipBroadcastReceiver()
@@ -125,7 +222,6 @@ class MainActivity : FragmentActivity() {
         launch {
             mainViewModel.viewPager2.collect {
                 mainViewModel.setPIPClick(Pair(isInPictureInPictureMode, it))
-                currentPipClick.value = isInPictureInPictureMode
             }
         }
     }
@@ -144,7 +240,7 @@ class MainActivity : FragmentActivity() {
         ) {
             intent ?: return
             RLog.d(
-                "SKT",
+                TAG,
                 "onReceive() , intent=$intent, action=${intent.action} extra : ${
                     intent.getIntExtra(
                         "splay.intent.extra.pip",
@@ -152,68 +248,12 @@ class MainActivity : FragmentActivity() {
                     )
                 }",
             )
-            val fragment = UIUtil.findFragment(this@MainActivity, currentItem.value)
 
             when {
-                PipAction.isPauseAction(intent) -> {
-                    fragment?.pause()
-                    fragment?.pipButtonState()
-                }
-
-                PipAction.isPlayAction(intent) -> {
-                    fragment?.play()
-                    fragment?.pipButtonState()
-                }
-
-                PipAction.isPreviousAction(intent) -> {
-                    launch {
-                        val totalSize = fragment?.pager?.adapter?.itemCount ?: 0
-                        val index = fragment?.pager?.currentItem ?: 0
-                        val isLast = (totalSize - 1) == index
-                        RLog.d(
-                            TAG,
-                            "isPreviousAction totalSize  $totalSize , index : $index  , isLast : $isLast",
-                        )
-                        // 여러번 클릭하거나 다른 액션 갓다오면 한 3번 클릭해도 반응이 없다
-                        if (index == 0) {
-                            Toast
-                                .makeText(
-                                    baseContext,
-                                    this@MainActivity.getString(R.string.pip_frist_video_message),
-                                    Toast.LENGTH_LONG,
-                                ).show()
-                        } else {
-                            fragment?.pager?.setCurrentItem(currentItem.value - 1, false)
-                            currentItem.value -= 1
-                            fragment?.pipButtonState()
-                        }
-                    }
-                }
-
-                PipAction.isNextAction(intent) -> {
-                    launch {
-                        val totalSize = fragment?.pager?.adapter?.itemCount ?: 0
-                        val index = fragment?.pager?.currentItem ?: 0
-                        val isLast = (totalSize - 1) == index
-
-                        RLog.d(
-                            TAG,
-                            "isNextAction totalSize  $totalSize , index : $index  , isLast : $isLast",
-                        )
-                        if (isLast) {
-                            Toast
-                                .makeText(
-                                    baseContext,
-                                    this@MainActivity.getString(R.string.pip_last_video_message),
-                                    Toast.LENGTH_LONG,
-                                ).show()
-                        } else {
-                            fragment?.pager?.setCurrentItem(currentItem.value + 1, false)
-                            currentItem.value += 1
-                            fragment?.pipButtonState()
-                        }
-                    }
-                }
+                PipAction.isPauseAction(intent) -> pipButtonState.tryEmit(PipAction.PAUSE.intentExtraValue)
+                PipAction.isPlayAction(intent) -> pipButtonState.tryEmit(PipAction.PLAY.intentExtraValue)
+                PipAction.isPreviousAction(intent) -> pipButtonState.tryEmit(PipAction.SKIP_PREVIOUS.intentExtraValue)
+                PipAction.isNextAction(intent) -> pipButtonState.tryEmit(PipAction.SKIP_NEXT.intentExtraValue)
             }
         }
     }
@@ -226,16 +266,24 @@ class MainActivity : FragmentActivity() {
 
     private fun pipClickProcess() {
         launch {
-            mainViewModel.pipClick.collect {
-                if (it.first && !currentPipClick.value) {
-                    RLog.d(TAG, "PIP 클릭이벤트 : currentItem : ${it.second?.currentItem ?: 0}")
-                    val currentIndex = it.second?.currentItem ?: 0
-                    val fragment =
-                        UIUtil.findFragment(this@MainActivity, currentIndex)
+            combine(
+                mainViewModel.pipClick,
+                mainViewModel.viewPager2,
+            ) { pipClick, viewPager2 ->
+
+                Pair(pipClick, viewPager2)
+            }.collect { combinedResult ->
+
+                val (pipClick, viewPager2) = combinedResult
+
+                if (pipClick.first) {
+                    val currentIndex = pipClick.second?.currentItem ?: 0
+                    val fragmentManager = (this@MainActivity as FragmentActivity).supportFragmentManager
+                    val itemId = viewPager2?.adapter?.getItemId(currentIndex)
+                    val fragment = fragmentManager.findFragmentByTag("f$itemId") as? YouTubeEndFragment
                     if (hasPipPermission()) {
                         fragment?.onClickPipButton()
-                        currentItem.value = it.second?.currentItem ?: 0
-                        currentPipClick.value = true
+                        currentItem.value = pipClick.second?.currentItem ?: 0
                     }
                 }
             }
@@ -247,7 +295,7 @@ class MainActivity : FragmentActivity() {
         super.onUserLeaveHint()
 
         if (isInPictureInPictureMode) {
-            Log.d("PIP", "Close button clicked in PIP mode")
+            RLog.d(TAG, "Close button clicked in PIP mode")
             finish()
         }
     }
@@ -256,9 +304,17 @@ class MainActivity : FragmentActivity() {
         super.onStop()
 
         if (isInPictureInPictureMode) {
-            RLog.d("SKT", "PIP mode stopped, possibly due to Close button")
+            RLog.d(TAG, "PIP mode stopped, possibly due to Close button")
             finish()
         }
+    }
+
+    private fun getEndFragment(viewPager2: ViewPager2?): YouTubeEndFragment? {
+        val fragmentManager =
+            (this@MainActivity as FragmentActivity).supportFragmentManager
+        val itemId = viewPager2?.adapter?.getItemId(viewPager2.currentItem)
+        val tag = "f$itemId"
+        return fragmentManager.findFragmentByTag(tag) as? YouTubeEndFragment
     }
 
     companion object {

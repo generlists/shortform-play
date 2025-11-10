@@ -68,6 +68,12 @@ import kotlinx.coroutines.launch
 
 const val TAG = "ADView"
 
+enum class AdBannerLocation {
+    TOP,
+    CENTER,
+    BOTTOM,
+}
+
 @Suppress("ktlint:standard:function-naming")
 /**
  * 하단 띠배너 생성
@@ -76,6 +82,7 @@ const val TAG = "ADView"
 fun LoadBanner(
     currentRoute: String,
     adViewModel: AdViewModel?,
+    adBannerLocation: AdBannerLocation,
 ) {
     RLog.d(TAG, "LoadBanner!! Start $currentRoute")
 
@@ -86,6 +93,7 @@ fun LoadBanner(
     var adView by remember { mutableStateOf<AdView?>(null) }
     val isSetting = currentRoute == Destination.Setting.route
     val isMain = currentRoute == Destination.Home.Main.route
+    val isSearch = currentRoute == Destination.Search.route && adBannerLocation == AdBannerLocation.BOTTOM
 
     // AdView 생성은 ViewModel에서 처리
     LaunchedEffect(Unit) {
@@ -117,7 +125,7 @@ fun LoadBanner(
     }
 
     if (adLoadStart?.value == true) {
-        BannerView(adView, progress, adViewModel, isSetting, isMain)
+        BannerView(adView, progress, adViewModel, isSetting, isMain, isSearch, adBannerLocation)
     }
 }
 
@@ -129,6 +137,8 @@ private fun BannerView(
     adViewModel: AdViewModel?,
     isSetting: Boolean,
     isMain: Boolean,
+    isSearch: Boolean,
+    adBannerLocation: AdBannerLocation,
 ) {
     val adBannerFail = adViewModel?.adBannerFail?.collectAsState()
     val adBannerLoadingComplete = adViewModel?.adBannerLoadingCompleteAndGetAdSize?.collectAsState()
@@ -143,7 +153,7 @@ private fun BannerView(
         }
 
     RLog.d(
-        "AdView",
+        TAG,
         "isSetting : $isSetting , calculateTopPadding :" +
             " ${insetPaddingValue.calculateTopPadding().value.dp} , " +
             "height : ${adBannerLoadingComplete?.value?.second}",
@@ -162,7 +172,18 @@ private fun BannerView(
                     },
                 ).background(Color.Transparent),
         // 하단 바 높이만큼 패딩 추가
-        contentAlignment = Alignment.BottomCenter,
+        contentAlignment =
+            if (adBannerLocation ==
+                AdBannerLocation.TOP
+            ) {
+                Alignment.TopCenter
+            } else if (adBannerLocation ==
+                AdBannerLocation.BOTTOM
+            ) {
+                Alignment.BottomCenter
+            } else {
+                Alignment.Center
+            },
     ) {
         val bannerHeight = UIUtil.adSize(LocalContext.current).height
         val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + STRINGS.REMAIN_AD_MARGIN
@@ -172,7 +193,7 @@ private fun BannerView(
                     if (adBannerFail?.value == null) {
                         Modifier
                             .height(bannerHeight.dp + bottomPadding.value.dp)
-                            .padding(bottom = insetPaddingValue.calculateTopPadding())
+                            .then(if (!isSearch) Modifier.padding(bottom = insetPaddingValue.calculateTopPadding()) else Modifier)
                             .fillMaxWidth()
                     } else {
                         Modifier
@@ -185,9 +206,7 @@ private fun BannerView(
                     .fillMaxWidth()
                     .then(
                         if (adBannerFail?.value == null) {
-                            Modifier
-                                .height(bannerHeight.dp)
-                                .background(APP_BACKGROUND)
+                            Modifier.height(bannerHeight.dp).background(APP_BACKGROUND)
                         } else {
                             Modifier
                         },
@@ -380,9 +399,7 @@ fun NativeAdCompose(adViewModel: AdViewModel?) {
                 .fillMaxWidth()
                 .then(
                     if (adNativeFail?.value == null) {
-                        Modifier
-                            .height(300.dp)
-                            .background(APP_BACKGROUND)
+                        Modifier.height(300.dp).background(APP_BACKGROUND)
                     } else {
                         Modifier
                     },

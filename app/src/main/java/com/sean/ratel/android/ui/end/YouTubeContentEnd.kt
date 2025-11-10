@@ -1,5 +1,7 @@
 package com.sean.ratel.android.ui.end
 
+import android.view.View
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -11,20 +13,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
+import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.end.YouTubeContentEndViewModel.PageScrollState
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.UIUtil.findCurrentFragment
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,7 +44,14 @@ fun YouTubeContentEnd(
 ) {
     val selectedIndex by remember { mainViewModel.selectedIndex }
     val selectedVideoId by remember { mainViewModel.selectVideoId }
+    val categoryShortsList by mainViewModel.categoryByContents.collectAsState()
+    val searchShortsVideo by youTubeContentEndViewModel.searchShots.collectAsState()
+    val searchRequestLoading = remember { mutableStateOf(false) }
+
     val itemClicked = mainViewModel.itemClicked.value
+
+    val apiState = youTubeContentEndViewModel.uiState.collectAsState()
+
     LaunchedEffect(Unit) {
         youTubeContentEndViewModel.mainShortsData(mainViewModel.mainShorts.value)
         youTubeContentEndViewModel.mainTrendShortsData(mainViewModel.mainTrendShortsList.value)
@@ -96,9 +107,11 @@ fun YouTubeContentEnd(
                 ViewType.RecentlyWatch -> {
                     youTubeContentEndViewModel.setWatchData(selectedIndex)
                 }
+
                 ViewType.MainTrendShorts -> {
                     youTubeContentEndViewModel.setMainTrendShortsData(selectedIndex)
                 }
+
                 ViewType.TrendShortsMore -> {
                     selectedVideoId?.let { youTubeContentEndViewModel.setMoreTendShortsData(it) }
                 }
@@ -107,10 +120,48 @@ fun YouTubeContentEnd(
             }
         } else if (mainViewModel.itemClicked.value == Destination.Home.ShortForm.route) {
             youTubeContentEndViewModel.setShortFormVideoData(selectedIndex)
+        } else if (mainViewModel.itemClicked.value == Destination.Search.route) {
+            searchRequestLoading.value = true
+
+            selectedVideoId?.let {
+                youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
+                    it,
+                    categoryShortsList,
+                )
+            }
         }
     }
 
     DisplayUI(youTubeContentEndViewModel, mainViewModel)
+
+    if (searchRequestLoading.value) {
+        when (apiState.value) {
+            is UiState.Loading -> {
+                LoadingArea(!searchShortsVideo.isEmpty())
+            }
+
+            is UiState.Success<*> -> {
+                LoadingArea(false)
+            }
+
+            is UiState.Error -> {
+                LoadingArea(false)
+                Toast
+                    .makeText(
+                        LocalContext.current,
+                        (apiState.value as UiState.Error).message,
+                        Toast.LENGTH_LONG,
+                    ).show()
+            }
+
+            is UiState.Idle -> {
+                LoadingArea(true)
+            }
+        }
+
+        LoadingArea(searchShortsVideo.isEmpty())
+        searchRequestLoading.value = searchShortsVideo.isEmpty()
+    }
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -130,6 +181,7 @@ fun DisplayUI(
     val watchList by youTubeContentEndViewModel.watchList.collectAsState()
     val mainTrendsShorts by youTubeContentEndViewModel.mainTrendShortsList.collectAsState()
     val moreTrendsShorts by youTubeContentEndViewModel.moreTrendShortsList.collectAsState()
+    val searchShortsVideo by youTubeContentEndViewModel.searchShots.collectAsState()
     val activity = LocalContext.current as FragmentActivity
 
     if ((
@@ -145,13 +197,15 @@ fun DisplayUI(
         subscriptionRankingUpList.isNotEmpty() ||
         recommendList.isNotEmpty() ||
         categoryShortFromVideo.isNotEmpty() ||
-        watchList.isNotEmpty()
+        watchList.isNotEmpty() ||
+        searchShortsVideo.isNotEmpty()
     ) {
         val endList =
             getEndData(mainViewModel.viewType.collectAsState().value, youTubeContentEndViewModel)
+
         Surface(
             modifier = Modifier.fillMaxSize(),
-            color = Color.Black,
+            color = APP_BACKGROUND,
         ) {
             endList?.let {
                 FragmentViewPagerWithData(
@@ -189,6 +243,7 @@ private fun getEndData(
         ViewType.RecentlyWatch -> youTubeContentEndViewModel.watchList.value
         ViewType.MainTrendShorts -> youTubeContentEndViewModel.mainTrendShortsList.value
         ViewType.TrendShortsMore -> youTubeContentEndViewModel.moreTrendShortsList.value
+        ViewType.SearchShortsVideo -> youTubeContentEndViewModel.searchShots.value
         else -> null
     }
 
@@ -220,6 +275,7 @@ fun FragmentContainer(
     val viewPager =
         remember {
             ViewPager2(context).apply {
+                id = View.generateViewId()
                 adapter =
                     YouTubeFragmentStateAdapter(
                         fragmentActivity,
@@ -298,12 +354,18 @@ fun FragmentContainer(
                 )
             }
         }
+
     AndroidView(
-        modifier = Modifier.fillMaxSize().padding(bottom = bottomPadding),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(bottom = bottomPadding),
         factory = { _ -> viewPager },
+        update = { pager ->
+            (pager.adapter as? YouTubeFragmentStateAdapter)?.submitList(contentList)
+        },
     )
     // 초기화
-
     BackHandler(enabled = true) {
         viewPager.adapter = null
         mainViewModel.runNavigationBack(Destination.YouTube.route)

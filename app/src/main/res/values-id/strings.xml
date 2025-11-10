@@ -139,4 +139,17 @@
     <string name="pip_last_video_message">Ini adalah video terakhir.</string>
     <!-- 1.0.6 -->
     <string name="main_trends_shorts_title">Shorts Isu Hangat</string>
+
+    <!--1.0.7 -->
+    <string name="main_shorts_post_fix">Shorts</string>
+    <string name="main_shorts_user_suggest">Masukkan kata pencarian!</string>
+    <string name="search_topbar_hint">Masukkan kata pencarian (IU, ILLIT, BTS)</string>
+    <string name="go_app_store">Google Play Store Anda sudah kedaluwarsa. Silakan perbarui ke versi terbaru dan coba lagi.</string>
+    <string name="store_update_btn">Buka Toko</string>
+    <string name="auth_error">Terjadi kesalahan autentikasi. Silakan hubungi layanan pelanggan.</string>
+
+    <string name="api_no_network_error">Tidak ada koneksi internet.</string>
+    <string name="api_bad_request_error">Permintaan tidak valid.</string>
+    <string name="api_server_error">Terjadi kesalahan server.</string>
+    <string name="api_unknown_error">Terjadi kesalahan yang tidak diketahui.</string>
 </resources>
