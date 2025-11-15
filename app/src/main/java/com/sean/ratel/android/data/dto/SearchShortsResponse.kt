@@ -9,6 +9,7 @@ import kotlinx.parcelize.Parcelize
 data class SearchShortsResponse(
     val results: List<SearchResultModel> = emptyList(),
     val hasNext: Boolean = true,
+    val cache: Boolean = false,
 ) : Parcelable
 
 @Parcelize

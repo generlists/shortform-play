@@ -170,22 +170,22 @@ private fun BannerView(
                     } else {
                         Modifier.padding(bottom = insetPaddingValue.calculateTopPadding().value.dp)
                     },
-                ).background(Color.Transparent),
+                ),
         // 하단 바 높이만큼 패딩 추가
-        contentAlignment =
-            if (adBannerLocation ==
-                AdBannerLocation.TOP
-            ) {
-                Alignment.TopCenter
-            } else if (adBannerLocation ==
-                AdBannerLocation.BOTTOM
-            ) {
-                Alignment.BottomCenter
-            } else {
-                Alignment.Center
-            },
+        if (adBannerLocation ==
+            AdBannerLocation.TOP
+        ) {
+            Alignment.TopCenter
+        } else if (adBannerLocation ==
+            AdBannerLocation.BOTTOM
+        ) {
+            Alignment.BottomCenter
+        } else {
+            Alignment.Center
+        },
     ) {
         val bannerHeight = UIUtil.adSize(LocalContext.current).height
+        RLog.d(TAG, "isMain : $isMain , adBannerLocation :$adBannerLocation")
         val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + STRINGS.REMAIN_AD_MARGIN
         Box(
             Modifier
@@ -199,7 +199,15 @@ private fun BannerView(
                         Modifier
                     },
                 ),
-            contentAlignment = if (isMain) Alignment.TopCenter else Alignment.BottomCenter,
+            if (isMain) {
+                Alignment.TopCenter
+            } else {
+                if (adBannerLocation == AdBannerLocation.BOTTOM) {
+                    Alignment.BottomCenter
+                } else {
+                    Alignment.TopCenter
+                }
+            },
         ) {
             Box(
                 Modifier

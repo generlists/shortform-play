@@ -2,12 +2,11 @@ package com.sean.ratel.android.ui.search
 
 import android.content.Context
 import android.content.Intent
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
+import com.sean.ratel.android.R
 import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.api.ApiResult
 import com.sean.ratel.android.data.api.UiState
@@ -21,8 +20,13 @@ import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.UIUtil.getAppLocaleByStringResource
 import com.sean.ratel.android.utils.UIUtil.localeFromCountryCode
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import java.util.Locale
 import java.util.UUID
@@ -74,12 +78,22 @@ class SearchViewModel
 
         private fun generateNewSession(): String = UUID.randomUUID().toString()
 
+        private val _searchRetry = MutableStateFlow(false)
+        val searchRetry: StateFlow<Boolean> = _searchRetry
+
+        private val _searchLoading = MutableStateFlow(false)
+        val searchLoading: StateFlow<Boolean> = _searchLoading
+
+        private val _isSuggestLoading = MutableStateFlow(true)
+        val isSuggestLoading: StateFlow<Boolean> = _isSuggestLoading
+
         init {
             requestSaveSuggestResultList()
             requestLocale()
         }
 
         fun requestYouTubeSearchResult(
+            context: Context,
             query: String,
             position: Int = 0,
             countryCode: String,
@@ -87,10 +101,13 @@ class SearchViewModel
             lastVideoId: String? = null,
         ) {
             var startTime = System.currentTimeMillis()
-            RLog.d("KKKKKKKKK", "requestYouTubeSearchResult query : $query, position : $position  _sessionId :${_sessionId.value}")
+            RLog.d("SSSSSSSSSS", "requestYouTubeSearchResult query : $query, position : $position  _sessionId :${_sessionId.value}")
 
             viewModelScope.launch {
                 if (query != lastSearchQuery) {
+                    // 기존 세션 제거
+                    requestResetSession(_sessionId.value)
+
                     _sessionId.value = generateNewSession()
                     lastSearchQuery = query
                         .split("+")
@@ -111,26 +128,34 @@ class SearchViewModel
                             is ApiResult.Loading -> {
                                 startTime = System.currentTimeMillis()
                                 _uiState.value = UiState.Loading
+                                _searchLoading.value = true
                             }
 
                             is ApiResult.Success -> {
                                 _shortsSearchList.value = response.data.results
                                 _hasNext.value = response.data.hasNext
                                 _searchDataComplete.value = true
+                                _searchLoading.value = false
 
                                 if (response.data.results.isNotEmpty()) {
                                     saveSearchResultModel(query, response.data.results[0])
+                                    if (response.data.cache) {
+                                        // 너무 빨라서 딜레이를 줘야 recomposition 이 일어남
+                                        delay(500)
+                                    }
+                                    _uiState.value = UiState.Success(response.data)
+                                } else {
+                                    _uiState.value = UiState.Error(context.getString(R.string.api_empty_error))
                                 }
-
-                                _uiState.value = UiState.Success(response.data)
                                 val endTime = System.currentTimeMillis() - startTime
                                 RLog.d("SearchViewModel", "endTime : ${endTime / 1000} 초")
                             }
 
                             is ApiResult.Exception -> {
-                                RLog.d("SearchViewModel", "message : ${response.e.message}")
+                                RLog.d(TAG, "message : ${response.e.message}")
                                 _uiState.value =
                                     response.e.message?.let { UiState.Error(it) } ?: UiState.Error("")
+                                _searchLoading.value = false
                             }
 
                             else -> Unit
@@ -160,7 +185,7 @@ class SearchViewModel
                             }
 
                             is ApiResult.Exception -> {
-                                RLog.d("SearchViewModel", "message : ${response.e.message}")
+                                RLog.d(TAG, "message : ${response.e.message}")
                                 _uiState.value =
                                     response.e.message?.let { UiState.Error(it) } ?: UiState.Error("")
                             }
@@ -176,16 +201,23 @@ class SearchViewModel
             item: SearchResultModel,
         ) {
             viewModelScope.launch {
-                RLog.d("hbungshin", "keyWord : $keyWord , item : ${item.copy(searchKeyword = keyWord)}")
+                RLog.d(TAG, "keyWord : $keyWord , item : ${item.copy(searchKeyword = keyWord)}")
                 youtubeApiRepository.saveSearchResultModel(item.copy(searchKeyword = keyWord.split("+")[0].trim()))
             }
         }
 
         fun requestSaveSuggestResultList() {
             viewModelScope.launch {
-                youtubeApiRepository.getSaveSuggestResultList().collect { data ->
-                    _userSuggestList.value = data
-                }
+                youtubeApiRepository
+                    .getSaveSuggestResultList()
+                    .onStart { _isSuggestLoading.value = true }
+                    .onEach { data ->
+                        _userSuggestList.value = data
+                    }.onCompletion { _isSuggestLoading.value = false }
+                    .catch { _isSuggestLoading.value = false }
+                    .collect {
+                        _userSuggestList.value = it
+                    }
             }
         }
 
@@ -222,12 +254,15 @@ class SearchViewModel
             val lastVideoId = _shortsSearchList.value.last().videoId
 
             RLog.d(
-                "KKKKKKKKK",
+                TAG,
                 "index $index , lastVideoId : $lastVideoId query : $lastSearchQuery : $lastSearchQuery , _sessionId : ${_sessionId.value}",
             )
 
             viewModelScope.launch {
                 if (query != lastSearchQuery) {
+                    // 기존 세션 제거
+                    requestResetSession(_sessionId.value)
+
                     _sessionId.value = generateNewSession()
                     lastSearchQuery = query
                 }
@@ -260,7 +295,7 @@ class SearchViewModel
                             }
 
                             is ApiResult.Exception -> {
-                                RLog.d("SearchViewModel", "message : ${response.e.message}")
+                                RLog.d(TAG, "message : ${response.e.message}")
                                 _uiState.value =
                                     response.e.message?.let { UiState.Error(it) } ?: UiState.Error("")
                                 complete(false)
@@ -299,14 +334,19 @@ class SearchViewModel
             navigator.navigateTo(route, false)
         }
 
+        fun setSearchRetry(searchRetry: Boolean) {
+            _searchRetry.value = searchRetry
+        }
+
         fun requestResetSession(sessionId: String) {
+            if (sessionId.isEmpty()) return
             viewModelScope.launch {
                 youtubeApiRepository.requestResetSession(sessionId).collect { response ->
-                    RLog.d("KKKKKKKKK", "$response ,  _sessionId : $sessionId")
+                    RLog.d(TAG, "$response ,  _sessionId : $sessionId")
                     when (response) {
-                        is ApiResult.Loading -> RLog.d("OKKKKKKKK", "Loading")
-                        is ApiResult.Success -> RLog.d("OKKKKKKKK", "message ${response.data.message}")
-                        is ApiResult.Exception -> RLog.e("OKKKKKKKK", "message : ${response.e.message}")
+                        is ApiResult.Loading -> RLog.d(TAG, "Loading")
+                        is ApiResult.Success -> RLog.d(TAG, "message ${response.data.message}")
+                        is ApiResult.Exception -> RLog.e(TAG, "message : ${response.e.message}")
                         else -> Unit
                     }
                 }
@@ -325,5 +365,9 @@ class SearchViewModel
                 actionName,
                 parameter,
             )
+        }
+
+        companion object {
+            private val TAG = "SearchViewModel"
         }
     }

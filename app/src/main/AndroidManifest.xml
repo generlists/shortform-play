@@ -66,10 +66,10 @@
             android:name=".SearchActivity"
             android:exported="true"
             android:hardwareAccelerated="true"
-            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustNothing"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.MyApp">
+            >
         </activity>
 
         <activity

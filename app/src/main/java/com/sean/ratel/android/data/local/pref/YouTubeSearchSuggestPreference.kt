@@ -43,7 +43,7 @@ class YouTubeSearchSuggestPreference
                     .toMutableList()
                     .apply {
                         add(0, newItem) // 최신 항목을 맨 위로
-                    }.take(200) // 최대 200개 유지
+                    }.take(20) // 최대 20개 유지
 
             val updatedJson = gson.toJson(updatedList)
 

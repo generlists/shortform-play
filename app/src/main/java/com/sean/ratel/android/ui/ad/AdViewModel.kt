@@ -27,6 +27,7 @@ import com.sean.ratel.android.data.repository.YouTubeRepository
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.UIUtil
+import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlaybackState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -361,6 +362,17 @@ class AdViewModel
                 adLoader.loadAd(AdRequest.Builder().build())
             }
         }
+
+        data class AdTriggerState(
+            val selection: Int,
+            val playbackState: YouTubeStreamPlaybackState,
+            val shouldTriggerAd: Boolean,
+        )
+
+        data class AdResult(
+            val complete: Boolean?,
+            val fail: LoadAdError?,
+        )
 
         companion object {
             const val TAG: String = "ADVIEW"

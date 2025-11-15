@@ -147,5 +147,7 @@
     <string name="api_bad_request_error">คำขอไม่ถูกต้อง</string>
     <string name="api_server_error">เกิดข้อผิดพลาดของเซิร์ฟเวอร์</string>
     <string name="api_unknown_error">เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ</string>
+    <string name="api_empty_error">ดึงข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง!</string>
+    <string name="api_error_retry">ลองอีกครั้ง</string>
 
 </resources>

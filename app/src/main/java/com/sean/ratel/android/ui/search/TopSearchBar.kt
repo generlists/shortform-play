@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
@@ -52,6 +51,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun TopSearchBar(
     modifier: Modifier,
+    loading: Boolean,
     query: String,
     queryChange: (String) -> Unit,
     fromSuggestion: MutableState<Boolean>,
@@ -113,6 +113,7 @@ fun TopSearchBar(
                 // 실제 텍스트 입력 필드
                 SearchTextField(
                     query = query,
+                    searchLoading = loading,
                     onQueryChange = {
                         if (it.length <= 50) queryChange(it)
 
@@ -139,6 +140,7 @@ fun TopSearchBar(
 @Composable
 fun SearchTextField(
     query: String,
+    searchLoading: Boolean,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     fromSuggestion: MutableState<Boolean>,
@@ -188,14 +190,13 @@ fun SearchTextField(
             value = textFieldValue,
             onValueChange = { newValue ->
                 textFieldValue = newValue
-                RLog.d("LOLSSS", "newValue.text : $newValue.text")
                 onQueryChange(newValue.text) // 필요 시 외부 state로 전달
             },
             singleLine = true,
             textStyle =
                 TextStyle(
                     fontSize = 18.sp,
-                    color = APP_TEXT_COLOR,
+                    color = Color.White,
                     textAlign = TextAlign.Start,
                     platformStyle = PlatformTextStyle(includeFontPadding = true),
                 ),
@@ -206,6 +207,7 @@ fun SearchTextField(
                     .padding(5.dp)
                     .focusRequester(focusRequester)
                     .align(Alignment.CenterStart),
+            enabled = !searchLoading,
             keyboardOptions =
                 KeyboardOptions.Default.copy(
                     imeAction = androidx.compose.ui.text.input.ImeAction.Done,
