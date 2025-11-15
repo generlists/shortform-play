@@ -132,7 +132,7 @@ fun YouTubeContentEnd(
         }
     }
 
-    DisplayUI(youTubeContentEndViewModel, mainViewModel,searchRequestLoading.value)
+    DisplayUI(youTubeContentEndViewModel, mainViewModel, searchRequestLoading.value)
 
     if (searchRequestLoading.value) {
         when (apiState.value) {
@@ -161,7 +161,6 @@ fun YouTubeContentEnd(
 
         LoadingArea(searchShortsVideo.isEmpty())
         searchRequestLoading.value = searchShortsVideo.isEmpty()
-
     }
 }
 
@@ -170,7 +169,7 @@ fun YouTubeContentEnd(
 fun DisplayUI(
     youTubeContentEndViewModel: YouTubeContentEndViewModel,
     mainViewModel: MainViewModel,
-    fromSearch:Boolean,
+    fromSearch: Boolean,
 ) {
     val popularShorFormList by youTubeContentEndViewModel.popularShortsFormList.collectAsState()
     val imageFlowList by youTubeContentEndViewModel.imageFlowShortsList.collectAsState()
@@ -254,21 +253,21 @@ private fun getEndData(
 @Composable
 fun FragmentViewPagerWithData(
     fragmentActivity: FragmentActivity,
-    fromSearch:Boolean,
+    fromSearch: Boolean,
     mainViewModel: MainViewModel,
     // 데이터를 동적으로 전달할 리스트
     contentList: List<MainShortsModel>,
 ) {
     // implementation("androidx.compose.foundation:foundation:1.5.0") 뷰페이저는 인덱스를 잘못가지고 와서 아직 안정성이 떨어짐
     // 좀더 딥하게 파파야함.
-    FragmentContainer(fragmentActivity,fromSearch, mainViewModel, contentList)
+    FragmentContainer(fragmentActivity, fromSearch, mainViewModel, contentList)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun FragmentContainer(
     fragmentActivity: FragmentActivity,
-    fromSearch:Boolean,
+    fromSearch: Boolean,
     mainViewModel: MainViewModel,
     contentList: List<MainShortsModel>,
 ) {

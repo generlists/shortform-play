@@ -98,7 +98,7 @@ fun SearchComposeUi(
                             query.value = userSelect
                             fromSelection.value = true
 
-                            searchViewModel.requestYouTubeSearchResult(context,keyword, 0, locale.country, locale.toLanguageTag())
+                            searchViewModel.requestYouTubeSearchResult(context, keyword, 0, locale.country, locale.toLanguageTag())
                             uiState.value = SearchUiState.Searching
                         }
                     }
@@ -112,18 +112,16 @@ fun SearchComposeUi(
 
                         when (apiState.value) {
                             is UiState.Success<*> -> {
-                                RLog.d("SearchComposeUi","TypingSuggest apiState : Success")
+                                RLog.d("SearchComposeUi", "TypingSuggest apiState : Success")
                                 LaunchedEffect(searchDataComplete.value) {
                                     if (searchViewModel.searchDataComplete.value) {
                                         searchViewModel.searchDataComplete(false)
                                     }
                                 }
                             }
-                            is UiState.Error -> ErrorView(context,searchViewModel,apiState.value)
-
+                            is UiState.Error -> ErrorView(context, searchViewModel, apiState.value)
 
                             else -> Unit
-
                         }
 
                         if (searchSuggestComplete.value) {
@@ -135,9 +133,9 @@ fun SearchComposeUi(
                                 val newKeyword = "$suggest + ${getAppLocaleByStringResource(context, currentLocale)}"
                                 query.value = suggest
                                 fromSelection.value = true
-                                RLog.d("SearchComposeUi","클릭 자동완성 아이템 : ${uiState.value}")
+                                RLog.d("SearchComposeUi", "클릭 자동완성 아이템 : ${uiState.value}")
 
-                                searchViewModel.requestYouTubeSearchResult(context,newKeyword, 0, locale.country, locale.toLanguageTag())
+                                searchViewModel.requestYouTubeSearchResult(context, newKeyword, 0, locale.country, locale.toLanguageTag())
                                 uiState.value = SearchUiState.Searching
                             }
                         }
@@ -159,8 +157,7 @@ fun SearchComposeUi(
                                 }
                             }
                             is UiState.Error -> {
-                                ErrorView(context,searchViewModel,apiState.value)
-
+                                ErrorView(context, searchViewModel, apiState.value)
                             }
                             is UiState.Idle -> Unit
                         }
@@ -190,44 +187,44 @@ fun SearchComposeUi(
             }
 
             LaunchedEffect(query.value) {
-                    if (query.value.isNotEmpty() && uiState.value != SearchUiState.Searching) {
-                        uiState.value = SearchUiState.TypingSuggest
-
-                    } else if (query.value.isEmpty() && uiState.value != SearchUiState.Searching) {
-                        uiState.value = SearchUiState.UserSuggest
-                    }
+                if (query.value.isNotEmpty() && uiState.value != SearchUiState.Searching) {
+                    uiState.value = SearchUiState.TypingSuggest
+                } else if (query.value.isEmpty() && uiState.value != SearchUiState.Searching) {
+                    uiState.value = SearchUiState.UserSuggest
+                }
             }
         }
 
-        if(searchRetryState.value){
-            RetryButton() {
+        if (searchRetryState.value) {
+            RetryButton {
                 val locale = localeFromCountryCode(currentLocale)
                 val newKeyword = "${query.value} + ${getAppLocaleByStringResource(context, currentLocale)}"
                 fromSelection.value = true
-                searchViewModel.requestYouTubeSearchResult(context,newKeyword, 0, locale.country, locale.toLanguageTag())
+                searchViewModel.requestYouTubeSearchResult(context, newKeyword, 0, locale.country, locale.toLanguageTag())
                 uiState.value = SearchUiState.Searching
                 searchViewModel.setSearchRetry(false)
-
             }
-
         }
-
     }
 }
 
+@Suppress("ktlint:standard:function-naming")
 @Composable
-fun ErrorView(context: Context, searchViewModel: SearchViewModel, uiState: UiState<SearchShortsResponse>) {
+fun ErrorView(
+    context: Context,
+    searchViewModel: SearchViewModel,
+    uiState: UiState<SearchShortsResponse>,
+) {
     LoadingArea(false)
     LocalSoftwareKeyboardController.current?.hide()
     LaunchedEffect(uiState) {
         val message = (uiState as UiState.Error).message
-        RLog.d("SearchComposeUi","message : $message")
-        if(message == context.getString(R.string.api_empty_error)){
+        RLog.d("SearchComposeUi", "message : $message")
+        if (message == context.getString(R.string.api_empty_error)) {
             searchViewModel.setSearchRetry(true)
         }
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }
-
 }
 
 enum class SearchUiState {

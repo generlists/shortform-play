@@ -58,6 +58,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -82,13 +83,11 @@ import com.sean.ratel.android.ui.ad.LoadBanner
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -184,7 +183,6 @@ fun KeyWordSearchDisplayUi(
                 }
             }
         }
-
     }
 }
 
@@ -222,17 +220,16 @@ fun KeyWordSearchGridItemList(
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
     val index = searchViewModel.moreIndex.collectAsState()
 
-
     val isAtBottom = listState.isAtBottom()
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     RLog.d("KeywordSearch", "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex()} , index.value : ${index.value}")
     LaunchedEffect(isAtBottom) {
         if (isAtBottom) {
-         //   RLog.d("KKKKKKKKK", "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex()} , index.value : ${index.value},  hasNext : ${searchViewModel.hasNext.value}")
+            //   RLog.d("KKKKKKKKK", "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex()} , index.value : ${index.value},  hasNext : ${searchViewModel.hasNext.value}")
             if (searchViewModel.maxMoreIndex() > index.value && searchViewModel.hasNext.value) {
                 loading(true)
-               // searchViewModel.setMorEVent(index.value + 1)
+                // searchViewModel.setMorEVent(index.value + 1)
                 searchViewModel.moreContent(context, index.value + 1, query, complete = {
                     coroutine.launch {
                         loading(false)
@@ -471,7 +468,7 @@ fun GridItemBoxRow(
                         RLog.d(
                             "KKKKKK",
                             "position : $position" +
-                                    "title :${searchVideoModel.title} ,  videoId : ${items[i].videoId}",
+                                "title :${searchVideoModel.title} ,  videoId : ${items[i].videoId}",
                         )
                         searchViewModel?.goEndContent(
                             context,
@@ -486,8 +483,10 @@ fun GridItemBoxRow(
                                 actionName = GASplashAnalytics.Action.SELECT,
                                 parameter =
                                     mapOf(
-                                        GASplashAnalytics.Param.VIDEO_ID to (items[i].videoId
-                                            ?: ""),
+                                        GASplashAnalytics.Param.VIDEO_ID to (
+                                            items[i].videoId
+                                                ?: ""
+                                        ),
                                     ),
                             )
                         }
@@ -609,56 +608,60 @@ fun GridItemBoxRow(
         }
     }
 }
+
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun RetryButton(
-    retry: () -> Unit,
-) {
+fun RetryButton(retry: () -> Unit) {
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 56.dp+insetPaddingValue)
-            .background(Color.Transparent),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(top = 56.dp + insetPaddingValue)
+                .background(Color.Transparent),
+        contentAlignment = Alignment.Center,
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(APP_BACKGROUND),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(APP_BACKGROUND),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Button(
                 onClick = retry,
-                modifier = Modifier
-                    .wrapContentWidth()
-                    .height(50.dp),
+                modifier =
+                    Modifier
+                        .wrapContentWidth()
+                        .height(50.dp),
                 shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(
-                    backgroundColor = Color.Transparent
-                ),
-                border = BorderStroke(2.dp, Color(0xFFADFF2F)), // 연두색 보더
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
+                colors =
+                    ButtonDefaults.buttonColors(
+                        backgroundColor = Color.Transparent,
+                    ),
+                border = BorderStroke(2.dp, Color(0xFFADFF2F)),
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
             ) {
                 Text(
-                    text = "재시도",
-                    color = Color(0xFFADFF2F), // 연두색 텍스트
+                    text = stringResource(R.string.api_error_retry),
+                    color = Color(0xFFADFF2F),
                     fontSize = 16.sp,
                     fontWeight = FontWeight.SemiBold,
                     fontFamily = FontFamily.SansSerif,
-                    style = TextStyle(
-                        shadow = Shadow(
-                            color = Color.Black.copy(alpha = 0.6f),
-                            offset = Offset(2f, 2f),
-                            blurRadius = 4f
-                        )
-                    )
+                    style =
+                        TextStyle(
+                            shadow =
+                                Shadow(
+                                    color = Color.Black.copy(alpha = 0.6f),
+                                    offset = Offset(2f, 2f),
+                                    blurRadius = 4f,
+                                ),
+                        ),
                 )
             }
         }
     }
-
 }
 
 @Suppress("ktlint:standard:function-naming")

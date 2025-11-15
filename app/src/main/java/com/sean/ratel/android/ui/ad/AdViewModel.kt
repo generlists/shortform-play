@@ -363,17 +363,16 @@ class AdViewModel
             }
         }
 
+        data class AdTriggerState(
+            val selection: Int,
+            val playbackState: YouTubeStreamPlaybackState,
+            val shouldTriggerAd: Boolean,
+        )
 
-    data class AdTriggerState(
-        val selection: Int,
-        val playbackState: YouTubeStreamPlaybackState,
-        val shouldTriggerAd: Boolean
-    )
-
-    data class AdResult(
-        val complete: Boolean?,
-        val fail: LoadAdError?
-    )
+        data class AdResult(
+            val complete: Boolean?,
+            val fail: LoadAdError?,
+        )
 
         companion object {
             const val TAG: String = "ADVIEW"

@@ -11,7 +11,7 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 
 class YouTubeFragmentStateAdapter(
     activity: FragmentActivity,
-    private val fromSearch:Boolean,
+    private val fromSearch: Boolean,
     val viewPager2: ViewPager2?,
     private var dataList: List<MainShortsModel>,
 ) : FragmentStateAdapter(activity) {

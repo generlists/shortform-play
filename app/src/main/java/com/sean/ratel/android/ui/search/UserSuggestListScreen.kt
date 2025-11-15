@@ -22,7 +22,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,7 +67,7 @@ fun UserSuggestListScreen(
     val isLoading by searchViewModel.isSuggestLoading.collectAsState()
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
-    if(!isLoading){
+    if (!isLoading) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 text = stringResource(R.string.main_shorts_user_suggest),
@@ -96,7 +95,7 @@ fun UserSuggestListScreen(
     }
     if (userSuggestList.isNotEmpty()) {
         UserSuggestUI(adViewModel, searchViewModel, userSuggestList, selectItem)
-    }else{
+    } else {
         Box(Modifier.fillMaxWidth().height(48.dp))
     }
 }
@@ -191,70 +190,74 @@ private fun UserSuggestsItems(
                             GASplashAnalytics.Param.VIDEO_ID to (item.videoId ?: ""),
                         ),
                 )
-            }
-            .background(Color.Black)
+            }.background(Color.Black)
             .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // 왼쪽 썸네일 + 텍스트
         Row(
-            modifier = Modifier
-                .fillMaxWidth(0.85f) // weight 대신 비율 기반
-                .wrapContentHeight(),
+            modifier =
+                Modifier
+                    .fillMaxWidth(0.85f) // weight 대신 비율 기반
+                    .wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             // 썸네일
             Surface(
                 shape = RoundedCornerShape(6.dp),
-                modifier = Modifier
-                    .height(34.dp)
-                    .aspectRatio(1.7f)
+                modifier =
+                    Modifier
+                        .height(34.dp)
+                        .aspectRatio(1.7f),
             ) {
                 NetworkImage(
                     url = item.thumbnail ?: "",
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize(),
                 )
             }
 
             // 텍스트
             Text(
                 text = item.searchKeyword,
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .align(Alignment.CenterVertically),
+                modifier =
+                    Modifier
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically),
                 fontFamily = FontFamily.SansSerif,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 color = Color(0xFFEEEEEE),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = LocalTextStyle.current.copy(
-                    shadow = Shadow(
-                        color = Color(0x80000000),
-                        offset = Offset(1f, 1f),
-                        blurRadius = 4f,
+                style =
+                    LocalTextStyle.current.copy(
+                        shadow =
+                            Shadow(
+                                color = Color(0x80000000),
+                                offset = Offset(1f, 1f),
+                                blurRadius = 4f,
+                            ),
                     ),
-                ),
             )
         }
 
         // 오른쪽 X 아이콘
         IconButton(
             onClick = { searchViewModel.removeSuggestKeyWord(item) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(36.dp)
-                .padding(end = 4.dp)
-                .align(Alignment.CenterVertically),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(36.dp)
+                    .padding(end = 4.dp)
+                    .align(Alignment.CenterVertically),
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_suggest_small_close),
                 contentDescription = "Remove",
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier.size(24.dp),
             )
         }
-
     }
 }
 

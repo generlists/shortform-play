@@ -153,4 +153,5 @@
     <string name="api_server_error">Terjadi kesalahan server.</string>
     <string name="api_unknown_error">Terjadi kesalahan yang tidak diketahui.</string>
     <string name="api_empty_error">Gagal mengambil data. Silakan coba lagi!</string>
+    <string name="api_error_retry">Coba Lagi</string>
 </resources>

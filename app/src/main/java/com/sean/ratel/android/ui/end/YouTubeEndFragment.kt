@@ -248,14 +248,13 @@ class YouTubeEndFragment(
         launch {
             combine(
                 mainViewModel.currentSelection,
-                youTubeStreamPlayer.playbackState
+                youTubeStreamPlayer.playbackState,
             ) { selection, playbackState ->
                 AdViewModel.AdTriggerState(
                     selection = selection,
                     playbackState = playbackState,
-                    shouldTriggerAd = shouldShowAd(selection)
+                    shouldTriggerAd = shouldShowAd(selection),
                 )
-
             }.collect { adTriggerState ->
                 RLog.d(TAG, "state : $adTriggerState")
                 if (adTriggerState.shouldTriggerAd) {
@@ -265,7 +264,6 @@ class YouTubeEndFragment(
                     launch {
                         youTubeStreamPlayer.start()
                     }
-
                 }
             }
         }
@@ -273,28 +271,26 @@ class YouTubeEndFragment(
     private suspend fun observeAdResult(
         onAdReady: () -> Unit,
         onAdComplete: () -> Unit,
-        onAdFail: () -> Unit
+        onAdFail: () -> Unit,
     ) {
         combine(
             adViewModel.interstitialAdComplete,
-            adViewModel.interstitialAdFail
+            adViewModel.interstitialAdFail,
         ) { interstitialAdComplete, interstitialAdFail ->
             AdViewModel.AdResult(
                 interstitialAdComplete,
-                interstitialAdFail
+                interstitialAdFail,
             )
-        }
-            .collect { result ->
+        }.collect { result ->
 
-                result.complete?.let { isLoading ->
-                    RLog.d(TAG, "complete ${isLoading}")
+            result.complete
+                ?.let { isLoading ->
+                    RLog.d(TAG, "complete $isLoading")
                     if (isLoading) onAdComplete() else onAdReady()
                 }?.let {
                     if (result.fail != null) onAdFail() else onAdReady()
                 }
-
-            }
-
+        }
     }
 
     private fun showLoading(enable: Boolean) {
@@ -308,7 +304,7 @@ class YouTubeEndFragment(
         // 재생 중이면 광고보기 전 PAUSE
         RLog.d(
             TAG,
-            "playbackState : ${playbackState},  selection : ${selection} createPosition : ${createPosition}"
+            "playbackState : $playbackState,  selection : $selection createPosition : $createPosition",
         )
         if (playbackState == YouTubeStreamPlaybackState.Playing || playbackState == YouTubeStreamPlaybackState.UnStarted) {
             youTubeStreamPlayer.pause()
@@ -343,7 +339,7 @@ class YouTubeEndFragment(
                     fromSearch = false
                     showLoading(false)
                     youTubeStreamPlayer.start()
-                }
+                },
             )
         }
     }
@@ -353,8 +349,8 @@ class YouTubeEndFragment(
 
         val isIntervalHit =
             selection > 0 &&
-                    totalSize > adInterval &&
-                    selection % adInterval == 0
+                totalSize > adInterval &&
+                selection % adInterval == 0
 
         val isFirstFromSearch = (selection == 0 && fromSearch)
 
@@ -424,7 +420,7 @@ class YouTubeEndFragment(
         lifecycle.addObserver(youTubePlayerView)
         youTubeStreamPlayer.initPlayer(
             networkHandle = false,
-            videoId = mainShortsModel?.shortsVideoModel?.videoId
+            videoId = mainShortsModel?.shortsVideoModel?.videoId,
         )
         youTubePlayerView.matchParent()
 
@@ -581,13 +577,13 @@ class YouTubeEndFragment(
         mainShortsModel?.shortsVideoModel?.videoId?.let { videoId ->
             RLog.d(
                 "PLAYER",
-                "state : PREPARE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}"
+                "state : PREPARE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
             )
             if (!adProcessing) youTubeStreamPlayer.loadVideo(videoId, 0f)
             if (selectPosition == createPosition) {
                 RLog.d(
                     "PLAYER",
-                    "state : PREPARE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}"
+                    "state : PREPARE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
                 )
                 if (!youtubeContentEndViewModel.getAutoPlay()) {
                     youTubeStreamPlayer.pause()
@@ -602,7 +598,7 @@ class YouTubeEndFragment(
         if (selectPosition == createPosition && !youTubeStreamPlayer.isPlaying() && !adProcessing) {
             RLog.d(
                 "PLAYER",
-                "state : UNSTARTED , videoId : ${mainShortsModel?.shortsVideoModel?.videoId} adProcessing : $adProcessing"
+                "state : UNSTARTED , videoId : ${mainShortsModel?.shortsVideoModel?.videoId} adProcessing : $adProcessing",
             )
             youtubeContentEndViewModel.setLoading(loading = true)
             launch {
@@ -616,7 +612,7 @@ class YouTubeEndFragment(
         if (selectedPosition == createPosition) {
             RLog.d(
                 "PLAYER",
-                "state : BUFFER , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}"
+                "state : BUFFER , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
             )
             // youtubeContentEndViewModel.setLoading(loading = true)
         }
@@ -626,7 +622,7 @@ class YouTubeEndFragment(
         if (selectPosition == createPosition) {
             RLog.d(
                 "PLAYER",
-                "state : PAUSE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}"
+                "state : PAUSE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
             )
             youtubeContentEndViewModel.setPlaying(isPlaying = false)
             mainViewModel.setPIPButtonClickState(true)
@@ -637,7 +633,7 @@ class YouTubeEndFragment(
         if (selectPosition == createPosition) {
             RLog.d(
                 "PLAYER",
-                "state : PLAYING , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}"
+                "state : PLAYING , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
             )
             youtubeContentEndViewModel.setLoading(loading = false)
             youtubeContentEndViewModel.setPlaying(isPlaying = true)
@@ -689,8 +685,7 @@ class YouTubeEndFragment(
                     .padding(top = topBarHeight.value.dp)
                     .clickable {
                         if (youTubeStreamPlayer.isPlaying()) youTubeStreamPlayer.pause() else youTubeStreamPlayer.start()
-                    }
-                    .padding(innerPadding),
+                    }.padding(innerPadding),
             ) {
                 // 채널, 영상타이틀 오른쪽 좋아요,싫어요,댓글,공유
                 // 맨하단 시크바

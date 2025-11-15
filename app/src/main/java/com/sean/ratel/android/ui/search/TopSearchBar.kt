@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
@@ -141,7 +140,7 @@ fun TopSearchBar(
 @Composable
 fun SearchTextField(
     query: String,
-    searchLoading:Boolean,
+    searchLoading: Boolean,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     fromSuggestion: MutableState<Boolean>,
@@ -213,7 +212,6 @@ fun SearchTextField(
                 KeyboardOptions.Default.copy(
                     imeAction = androidx.compose.ui.text.input.ImeAction.Done,
                 ),
-
         )
     }
 }

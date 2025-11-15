@@ -105,7 +105,7 @@ class SearchViewModel
 
             viewModelScope.launch {
                 if (query != lastSearchQuery) {
-                    //기존 세션 제거
+                    // 기존 세션 제거
                     requestResetSession(_sessionId.value)
 
                     _sessionId.value = generateNewSession()
@@ -139,12 +139,12 @@ class SearchViewModel
 
                                 if (response.data.results.isNotEmpty()) {
                                     saveSearchResultModel(query, response.data.results[0])
-                                    if(response.data.cache){
-                                        //너무 빨라서 딜레이를 줘야 recomposition 이 일어남
+                                    if (response.data.cache) {
+                                        // 너무 빨라서 딜레이를 줘야 recomposition 이 일어남
                                         delay(500)
                                     }
                                     _uiState.value = UiState.Success(response.data)
-                                }else{
+                                } else {
                                     _uiState.value = UiState.Error(context.getString(R.string.api_empty_error))
                                 }
                                 val endTime = System.currentTimeMillis() - startTime
@@ -208,14 +208,14 @@ class SearchViewModel
 
         fun requestSaveSuggestResultList() {
             viewModelScope.launch {
-                youtubeApiRepository.getSaveSuggestResultList()
+                youtubeApiRepository
+                    .getSaveSuggestResultList()
                     .onStart { _isSuggestLoading.value = true }
                     .onEach { data ->
                         _userSuggestList.value = data
-                    }
-                    .onCompletion { _isSuggestLoading.value = false }
+                    }.onCompletion { _isSuggestLoading.value = false }
                     .catch { _isSuggestLoading.value = false }
-                    .collect{
+                    .collect {
                         _userSuggestList.value = it
                     }
             }
@@ -260,10 +260,8 @@ class SearchViewModel
 
             viewModelScope.launch {
                 if (query != lastSearchQuery) {
-
-                    //기존 세션 제거
+                    // 기존 세션 제거
                     requestResetSession(_sessionId.value)
-
 
                     _sessionId.value = generateNewSession()
                     lastSearchQuery = query
@@ -280,7 +278,6 @@ class SearchViewModel
                         when (response) {
                             is ApiResult.Loading -> {
                                 _uiState.value = UiState.Loading
-
                             }
 
                             is ApiResult.Success -> {
@@ -336,8 +333,9 @@ class SearchViewModel
             context.finish()
             navigator.navigateTo(route, false)
         }
-        fun setSearchRetry(searchRetry:Boolean){
-            _searchRetry.value =searchRetry
+
+        fun setSearchRetry(searchRetry: Boolean) {
+            _searchRetry.value = searchRetry
         }
 
         fun requestResetSession(sessionId: String) {
@@ -354,7 +352,6 @@ class SearchViewModel
                 }
             }
         }
-
 
         fun sendGALog(
             screenName: String,

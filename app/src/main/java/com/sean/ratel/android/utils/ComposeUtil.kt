@@ -94,7 +94,7 @@ object ComposeUtil {
                 RLog.d(
                     "AT_BOTTOM",
                     "isScrollingDown=$isScrollingDown, lastIndex=${lastVisibleItem.index}, " +
-                            "isLastItem=$isLastItem, isFullyVisible=$isFullyVisible, viewportEnd=$viewportEnd"
+                        "isLastItem=$isLastItem, isFullyVisible=$isFullyVisible, viewportEnd=$viewportEnd",
                 )
 
                 // 아래로 스크롤 중이고 + 마지막 아이템 완전 노출일 때만 true

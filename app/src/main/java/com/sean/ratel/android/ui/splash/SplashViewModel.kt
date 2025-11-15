@@ -74,7 +74,7 @@ class SplashViewModel
                 RLog.d("auth", "init splash $token")
                 RLog.d("auth", "isExpired ${autoRepository.isExpired(token)}")
 
-                if (token== null || autoRepository.isExpired(token)) {
+                if (token == null || autoRepository.isExpired(token)) {
                     if (isNetWorkAvailable(context)) {
                         val hash = autoRepository.getRequestHash()
 
