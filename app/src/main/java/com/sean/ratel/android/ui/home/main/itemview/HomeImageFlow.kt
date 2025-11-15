@@ -67,6 +67,7 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.TopFiveList
+import com.sean.ratel.android.ui.ad.TAG
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -121,7 +122,7 @@ fun AutoScrollImagePager(
     DisposableEffect(lifecycleOwner) {
         val observer =
             LifecycleEventObserver { _, event ->
-                RLog.d("JSPPPP", "Lifecycle event: $event")
+                RLog.d(TAG, "Lifecycle event: $event")
 
                 when (event) {
                     Lifecycle.Event.ON_RESUME -> {

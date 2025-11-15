@@ -144,6 +144,7 @@
     <string name="api_bad_request_error">Invalid request.</string>
     <string name="api_server_error">A server error occurred.</string>
     <string name="api_unknown_error">An unknown error occurred.</string>
+    <string name="api_empty_error">Failed to fetch data. Please try again!</string>
 
 
 </resources>

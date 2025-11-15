@@ -154,5 +154,6 @@
     <string name="api_bad_request_error">Requête invalide.</string>
     <string name="api_server_error">Erreur du serveur.</string>
     <string name="api_unknown_error">Une erreur inconnue s’est produite.</string>
+    <string name="api_empty_error">Échec du chargement des données. Veuillez réessayer !</string>
 
 </resources>

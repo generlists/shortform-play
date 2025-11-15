@@ -6,15 +6,15 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,11 +42,9 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
-import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.SearchResultModel
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
@@ -67,14 +65,16 @@ fun UserSuggestListScreen(
     selectItem: (String) -> Unit,
 ) {
     val userSuggestList by searchViewModel.userSuggestList.collectAsState()
+    val isLoading by searchViewModel.isSuggestLoading.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
-    if (userSuggestList.isNotEmpty()) {
-        UserSuggestUI(adViewModel, searchViewModel, userSuggestList, selectItem)
-    } else {
+    if(!isLoading){
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
                 text = stringResource(R.string.main_shorts_user_suggest),
-                Modifier.wrapContentSize().padding(top = 10.dp, bottom = 10.dp),
+                Modifier
+                    .wrapContentSize()
+                    .padding(top = 10.dp, bottom = 10.dp),
                 fontFamily = FontFamily.SansSerif,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.SemiBold,
@@ -94,6 +94,11 @@ fun UserSuggestListScreen(
             )
         }
     }
+    if (userSuggestList.isNotEmpty()) {
+        UserSuggestUI(adViewModel, searchViewModel, userSuggestList, selectItem)
+    }else{
+        Box(Modifier.fillMaxWidth().height(48.dp))
+    }
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -106,45 +111,32 @@ fun UserSuggestUI(
 ) {
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
 
-    Scaffold(
-        containerColor = APP_BACKGROUND,
-    ) { innerPadding ->
+    Box(
+        Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.CenterStart,
+    ) {
+        Box(
+            Modifier
+                .wrapContentSize()
+                .padding(top = 10.dp),
+        ) {
+            LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.TOP)
+        }
 
         Box(
             Modifier
                 .fillMaxSize()
-                .padding(
-                    start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                    end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                    bottom = innerPadding.calculateBottomPadding(),
-                    top = 0.dp,
+                .then(
+                    if (adBannerLoadingComplete.value.first) {
+                        Modifier.padding(top = adBannerLoadingComplete.value.second.dp + 20.dp)
+                    } else {
+                        Modifier
+                    },
                 ),
-            contentAlignment = Alignment.CenterStart,
+            contentAlignment = Alignment.TopCenter,
         ) {
-            val topMargin = 20.dp
-
-            Box(
-                Modifier
-                    .wrapContentSize()
-                    .padding(top = topMargin),
-            ) {
-                LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.TOP)
-            }
-
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .then(
-                        if (adBannerLoadingComplete.value.first) {
-                            Modifier.padding(top = adBannerLoadingComplete.value.second.dp + topMargin + REMAIN_AD_MARGIN)
-                        } else {
-                            Modifier
-                        },
-                    ),
-                contentAlignment = Alignment.TopCenter,
-            ) {
-                UserSuggestListView(items, searchViewModel, selectItem)
-            }
+            UserSuggestListView(items, searchViewModel, selectItem)
         }
     }
 }
@@ -184,7 +176,7 @@ private fun UserSuggestsItems(
     Row(
         Modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .wrapContentHeight()
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(color = Color.White.copy(alpha = 0.2f)),
@@ -199,106 +191,70 @@ private fun UserSuggestsItems(
                             GASplashAnalytics.Param.VIDEO_ID to (item.videoId ?: ""),
                         ),
                 )
-            }.background(Color.Black)
-            .padding(start = 7.dp, top = 7.dp, bottom = 7.dp),
+            }
+            .background(Color.Black)
+            .padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // 왼쪽 썸네일 + 텍스트
         Row(
-            Modifier.wrapContentSize().weight(0.3f),
+            modifier = Modifier
+                .fillMaxWidth(0.85f) // weight 대신 비율 기반
+                .wrapContentHeight(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Box(
-                Modifier
-                    .wrapContentHeight(),
-                contentAlignment = Alignment.CenterStart,
+            // 썸네일
+            Surface(
+                shape = RoundedCornerShape(6.dp),
+                modifier = Modifier
+                    .height(34.dp)
+                    .aspectRatio(1.7f)
             ) {
-                Surface(
-                    shape = RoundedCornerShape(6.dp),
-                ) {
-                    NetworkImage(
-                        url = item.thumbnail ?: "",
-                        contentDescription = null,
-                        modifier =
-                            Modifier
-                                .aspectRatio(1.7f)
-                                .wrapContentHeight(),
-                    )
-                }
+                NetworkImage(
+                    url = item.thumbnail ?: "",
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
-//            NetworkImage(
-//                url = item.thumbnail ?: "",
-//                contentDescription = null,
-//                modifier =
-//                    Modifier
-//                        .clip(CircleShape)
-//                        .width(24.dp)
-//                        .height(24.dp),
-//                ContentScale.Fit,
-//                R.drawable.ic_play_icon,
-//                R.drawable.ic_play_icon,
-//                R.drawable.ic_play_icon,
-//            )
+
+            // 텍스트
             Text(
-                text =
-                    item.searchKeyword,
-                Modifier
-                    .padding(start = 5.dp, top = 5.dp, bottom = 5.dp)
-                    .width(200.dp),
+                text = item.searchKeyword,
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .align(Alignment.CenterVertically),
                 fontFamily = FontFamily.SansSerif,
-                fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 14.sp,
                 color = Color(0xFFEEEEEE),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style =
-                    LocalTextStyle.current.copy(
-                        shadow =
-                            Shadow(
-                                color = Color(0x80000000),
-                                offset = Offset(1f, 1f),
-                                blurRadius = 4f,
-                            ),
+                style = LocalTextStyle.current.copy(
+                    shadow = Shadow(
+                        color = Color(0x80000000),
+                        offset = Offset(1f, 1f),
+                        blurRadius = 4f,
                     ),
+                ),
             )
         }
 
-        Row(
-            Modifier
+        // 오른쪽 X 아이콘
+        IconButton(
+            onClick = { searchViewModel.removeSuggestKeyWord(item) },
+            modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
-                .weight(0.2f),
-            verticalAlignment = Alignment.CenterVertically,
+                .height(36.dp)
+                .padding(end = 4.dp)
+                .align(Alignment.CenterVertically),
         ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(end = 5.dp),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                IconButton(
-                    onClick = {
-                        searchViewModel.removeSuggestKeyWord(item)
-                    },
-                    modifier =
-                        Modifier
-                            .size(24.dp)
-                            // 아이콘 크기 설정
-                            .padding(start = 5.dp),
-                ) {
-                    Image(
-                        // 이미지 리소스
-                        painter = painterResource(id = R.drawable.ic_suggest_small_close),
-                        contentDescription = "Search Cancel Icon",
-                        modifier =
-                            Modifier
-                                .height(32.dp)
-                                .width(32.dp),
-                    )
-                }
-            }
+            Image(
+                painter = painterResource(id = R.drawable.ic_suggest_small_close),
+                contentDescription = "Remove",
+                modifier = Modifier.size(24.dp)
+            )
         }
+
     }
 }
 

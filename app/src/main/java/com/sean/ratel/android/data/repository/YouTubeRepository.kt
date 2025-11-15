@@ -170,7 +170,13 @@ class YouTubeRepository
                     val message =
                         when (e.code()) {
                             in 400..499 -> context.resources.getString(R.string.api_bad_request_error)
-                            in 500..599 -> context.resources.getString(R.string.api_server_error)
+                            in 500..599 -> {
+                                if (e.code() == 503) {
+                                    context.resources.getString(R.string.api_empty_error)
+                                } else {
+                                    context.resources.getString(R.string.api_server_error)
+                                }
+                            }
                             else -> context.resources.getString(R.string.api_unknown_error)
                         }
                     emit(ApiResult.Exception(ServerErrorException(message)))

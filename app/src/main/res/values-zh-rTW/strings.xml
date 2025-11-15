@@ -140,5 +140,6 @@
     <string name="api_bad_request_error">無效的請求。</string>
     <string name="api_server_error">伺服器發生錯誤。</string>
     <string name="api_unknown_error">發生未知錯誤。</string>
+    <string name="api_empty_error">資料取得失敗，請再試一次！</string>
 
 </resources>

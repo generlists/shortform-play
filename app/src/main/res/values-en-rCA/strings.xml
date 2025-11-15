@@ -143,6 +143,7 @@
     <string name="api_bad_request_error">Bad request.</string>
     <string name="api_server_error">Server error occurred.</string>
     <string name="api_unknown_error">An unknown error has occurred.</string>
+    <string name="api_empty_error">Failed to fetch data. Please try again!</string>
 
 
 </resources>

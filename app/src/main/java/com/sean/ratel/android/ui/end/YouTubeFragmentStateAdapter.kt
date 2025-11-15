@@ -11,6 +11,7 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 
 class YouTubeFragmentStateAdapter(
     activity: FragmentActivity,
+    private val fromSearch:Boolean,
     val viewPager2: ViewPager2?,
     private var dataList: List<MainShortsModel>,
 ) : FragmentStateAdapter(activity) {
@@ -33,13 +34,15 @@ class YouTubeFragmentStateAdapter(
         return id.hashCode().toLong()
     }
 
-    override fun createFragment(position: Int): Fragment =
-        YouTubeEndFragment.newInstance(
+    override fun createFragment(position: Int): Fragment {
+        return YouTubeEndFragment.newInstance(
             viewPager2,
             position,
+            fromSearch,
             dataList.size,
             dataList[position],
         )
+    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(newList: List<MainShortsModel>) {

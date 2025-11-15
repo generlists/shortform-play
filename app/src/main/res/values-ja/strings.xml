@@ -141,5 +141,6 @@
     <string name="api_bad_request_error">無効なリクエストです。</string>
     <string name="api_server_error">サーバーエラーが発生しました。</string>
     <string name="api_unknown_error">不明なエラーが発生しました。</string>
+    <string name="api_empty_error">データの取得に失敗しました。もう一度お試しください！</string>
 
 </resources>

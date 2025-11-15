@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.search
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,23 +8,31 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -62,6 +71,7 @@ import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.RANDOM_GA_END_SIZE
+import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.SearchResultModel
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
@@ -72,6 +82,7 @@ import com.sean.ratel.android.ui.ad.LoadBanner
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
@@ -126,7 +137,7 @@ fun KeyWordSearchDisplayUi(
                     .padding(
                         start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
                         end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        bottom = innerPadding.calculateBottomPadding(),
+                        bottom = 0.dp,
                         top = 0.dp,
                     ),
             ) {
@@ -147,7 +158,7 @@ fun KeyWordSearchDisplayUi(
             listState.scrollToItem(0)
         }
 
-        RLog.d("KKKKKKKKK", "moreLoading : $moreLoading , adBannerSize :$adBannerSize ,  bottomBarHeight : $bottomBarHeight")
+        RLog.d("KKKKKKKKK", "moreLoading : $moreLoading , adBannerSize :$adBannerSize ,  bottomBarHeight : $bottomBarHeight $")
         if (moreLoading) {
             Box(
                 Modifier
@@ -160,7 +171,7 @@ fun KeyWordSearchDisplayUi(
                     Modifier
                         .fillMaxWidth()
                         .height(64.dp)
-                        .background(APP_BACKGROUND),
+                        .background(Color.Transparent),
                     contentAlignment = Alignment.Center,
                 ) {
                     CircularProgressIndicator(
@@ -173,6 +184,7 @@ fun KeyWordSearchDisplayUi(
                 }
             }
         }
+
     }
 }
 
@@ -210,74 +222,48 @@ fun KeyWordSearchGridItemList(
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
     val index = searchViewModel.moreIndex.collectAsState()
 
-    RLog.d("hbungshin", "size : ${adBannerLoadingComplete.value.second}")
 
     val isAtBottom = listState.isAtBottom()
     val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
-
+    RLog.d("KeywordSearch", "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex()} , index.value : ${index.value}")
     LaunchedEffect(isAtBottom) {
         if (isAtBottom) {
-            RLog.d("KKKKKKKKK", "isAtBottom : $isAtBottom")
+         //   RLog.d("KKKKKKKKK", "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex()} , index.value : ${index.value},  hasNext : ${searchViewModel.hasNext.value}")
             if (searchViewModel.maxMoreIndex() > index.value && searchViewModel.hasNext.value) {
                 loading(true)
-                searchViewModel.setMorEVent(index.value + 1)
-            }
-
-            searchViewModel.moreIndex.collectLatest { newValue ->
-                RLog.d(
-                    "KKKKKKKKK",
-                    "Received moreIndex update: $newValue, maxindex : ${
-                        searchViewModel.maxMoreIndex()
-                    }",
+               // searchViewModel.setMorEVent(index.value + 1)
+                searchViewModel.moreContent(context, index.value + 1, query, complete = {
+                    coroutine.launch {
+                        loading(false)
+                        listState.animateScrollBy(50f)
+                        searchViewModel.setMorEVent(index.value + 1)
+                    }
+                })
+                searchViewModel.sendGALog(
+                    screenName = GASplashAnalytics.SCREEN_NAME.get(SEARCH_SCREEN) ?: "",
+                    eventName = GASplashAnalytics.Event.SEARCH_MORE_VIEW,
+                    actionName = GASplashAnalytics.Action.VIEW,
+                    parameter =
+                        mapOf(
+                            GASplashAnalytics.Param.SEARCH_MORE_INDEX to index.toString(),
+                        ),
                 )
-                if (newValue > 0 && searchViewModel.maxMoreIndex() >= newValue) {
-                    searchViewModel.moreContent(context, newValue, query, complete = {
-                        coroutine.launch {
-                            loading(false)
-                            listState.animateScrollBy(50f)
-                        }
-                    })
-                    searchViewModel.sendGALog(
-                        screenName = GASplashAnalytics.SCREEN_NAME.get(SEARCH_SCREEN) ?: "",
-                        eventName = GASplashAnalytics.Event.SEARCH_MORE_VIEW,
-                        actionName = GASplashAnalytics.Action.VIEW,
-                        parameter =
-                            mapOf(
-                                GASplashAnalytics.Param.SEARCH_MORE_INDEX to index.toString(),
-                            ),
-                    )
-                } else {
-                    loading(false)
-                }
             }
-        } else {
-            loading(false)
         }
     }
 
-    Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
-        Box(Modifier.fillMaxSize()) {
+    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(Modifier.weight(1f)) {
             LazyColumn(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .background(APP_BACKGROUND)
-                        .then(
-                            if (adBannerLoadingComplete.value.first) {
-                                Modifier.padding(
-                                    bottom =
-                                        adBannerLoadingComplete.value.second.dp +
-                                            REMAIN_AD_MARGIN,
-                                )
-                            } else {
-                                Modifier
-                            },
-                        ),
+                        .background(APP_BACKGROUND),
                 state = listState,
             ) {
                 var i = 0
-                item(key = items[i].itemPosition) {
+                item(key = items[i].videoId) {
                     while (i < items.size) {
                         if (i + 2 < items.size) {
                             Row(
@@ -329,11 +315,22 @@ fun KeyWordSearchGridItemList(
                 }
             }
         }
-
+        val bottomPadding =
+            adBannerLoadingComplete.value.second.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+                STRINGS.REMAIN_AD_MARGIN
         Box(
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .then(
+                    if (adBannerLoadingComplete.value.first) {
+                        Modifier
+                            .height(
+                                bottomPadding,
+                            )
+                    } else {
+                        Modifier
+                    },
+                ),
             contentAlignment = Alignment.BottomStart,
         ) {
             LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.BOTTOM)
@@ -474,7 +471,7 @@ fun GridItemBoxRow(
                         RLog.d(
                             "KKKKKK",
                             "position : $position" +
-                                "title :${searchVideoModel.title} ,  videoId : ${items[i].videoId}",
+                                    "title :${searchVideoModel.title} ,  videoId : ${items[i].videoId}",
                         )
                         searchViewModel?.goEndContent(
                             context,
@@ -489,7 +486,8 @@ fun GridItemBoxRow(
                                 actionName = GASplashAnalytics.Action.SELECT,
                                 parameter =
                                     mapOf(
-                                        GASplashAnalytics.Param.VIDEO_ID to (items[i].videoId ?: ""),
+                                        GASplashAnalytics.Param.VIDEO_ID to (items[i].videoId
+                                            ?: ""),
                                     ),
                             )
                         }
@@ -610,6 +608,57 @@ fun GridItemBoxRow(
             }
         }
     }
+}
+@Suppress("ktlint:standard:function-naming")
+@Composable
+fun RetryButton(
+    retry: () -> Unit,
+) {
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 56.dp+insetPaddingValue)
+            .background(Color.Transparent),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(APP_BACKGROUND),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Button(
+                onClick = retry,
+                modifier = Modifier
+                    .wrapContentWidth()
+                    .height(50.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent
+                ),
+                border = BorderStroke(2.dp, Color(0xFFADFF2F)), // 연두색 보더
+                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp)
+            ) {
+                Text(
+                    text = "재시도",
+                    color = Color(0xFFADFF2F), // 연두색 텍스트
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.SemiBold,
+                    fontFamily = FontFamily.SansSerif,
+                    style = TextStyle(
+                        shadow = Shadow(
+                            color = Color.Black.copy(alpha = 0.6f),
+                            offset = Offset(2f, 2f),
+                            blurRadius = 4f
+                        )
+                    )
+                )
+            }
+        }
+    }
+
 }
 
 @Suppress("ktlint:standard:function-naming")

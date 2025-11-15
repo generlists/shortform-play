@@ -69,19 +69,19 @@ class SplashViewModel
 
         init {
             viewModelScope.launch {
-                val token = prefs.currentToken()
+                prefs.updateTokenCache()
+                val token = prefs.getAccessToken()
+                RLog.d("auth", "init splash $token")
+                RLog.d("auth", "isExpired ${autoRepository.isExpired(token)}")
 
-                RLog.d(TAG, "init splash $token")
-                RLog.d(TAG, "isExpired ${autoRepository.isExpired(token)}")
-
-                if (prefs.getAccessToken() == null || autoRepository.isExpired(token)) {
+                if (token== null || autoRepository.isExpired(token)) {
                     if (isNetWorkAvailable(context)) {
                         val hash = autoRepository.getRequestHash()
 
                         when (val result = integrityManager.requestIntegrityToken(hash)) {
                             is IntegrityManager.IntegrityResult.Success -> {
                                 // 정상 처리
-                                RLog.d("auth", "Integrity token: ${result.token}")
+                                RLog.d("KKKKKKKKK", "Integrity token: ${result.token}")
                                 val authResult =
                                     safeApiCall {
                                         autoRepository.exchange(
@@ -102,15 +102,15 @@ class SplashViewModel
                                             prefs.saveAccessToken(accessToken, expiresIn)
                                             prefs.updateTokenCache()
                                         }
-                                        RLog.d("Auth", "Access Token 갱신 성공: expires in $expiresIn 초")
+                                        RLog.d("auth", "Access Token 갱신 성공: expires in $expiresIn 초")
                                     }
 
                                     is ApiResult.Error -> {
-                                        RLog.e("Auth", "서버 응답 오류(${authResult.code}): ${authResult.message}")
+                                        RLog.e("auth", "서버 응답 오류(${authResult.code}): ${authResult.message}")
                                     }
 
                                     is ApiResult.Exception -> {
-                                        RLog.e("Auth", "기타 네트워크 예외: ${authResult.e.localizedMessage}")
+                                        RLog.e("auth", "기타 네트워크 예외: ${authResult.e.localizedMessage}")
                                     }
 
                                     else -> Unit
