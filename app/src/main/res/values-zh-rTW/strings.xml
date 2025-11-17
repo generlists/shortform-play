@@ -14,6 +14,13 @@
     <string name="select_shortform_country_title">選擇你的短影音地區!</string>
     <string name="select_country_korea">🇰🇷\u00A0 韓國</string>
     <string name="select_country_usa">🇺🇸\u00A0 美國</string>
+    <string name="select_country_japan">🇯🇵\u00A0 日本</string>
+    <string name="select_country_tailand">🇹🇭\u00A0 泰國</string>
+    <string name="select_country_indonesia">🇮🇩\u00A0 印尼</string>
+    <string name="select_country_taiwan">🇹🇼\u00A0 台灣</string>
+    <string name="select_country_canada_en">🇨🇦\u00A0 加拿大(en)</string>
+    <string name="select_country_canada_fr">🇨🇦\u00A0 加拿大(fr)</string>
+
     <string name="setting_select_shortform_country_description">更改觀看地區會重新啟動應用程式。</string>
     <string name="setting_select_shortform_country">短影音地區</string>
     <string name="select_country_description">你可以在 ⚙️ 設定 → 短影音地區 中更改觀看國家。</string>

@@ -22,6 +22,7 @@ class SettingPreference
         private val soundOnOff = booleanPreferencesKey("SOUND_ONOFF")
         private val wifiPlay = booleanPreferencesKey("WIFI_ONLY")
         private val localeString = stringPreferencesKey("LOCALE")
+        private val newUpdate = booleanPreferencesKey("NEW_LOCALE")
 
         suspend fun setPIPPlay(isPIPMode: Boolean) {
             dataStore.edit { it[pipPlay] = isPIPMode }
@@ -47,6 +48,10 @@ class SettingPreference
             dataStore.edit { it[localeString] = locale }
         }
 
+        suspend fun setNewUpdate(upate: Boolean) {
+            dataStore.edit { it[newUpdate] = upate }
+        }
+
         suspend fun getAutoPlay(): Boolean = dataStore.data.map { it[autoPlay] }.first() ?: true
 
         suspend fun getLoopPlay(): Boolean = dataStore.data.map { it[loopPlay] }.first() ?: true
@@ -58,4 +63,6 @@ class SettingPreference
         suspend fun getSoundOnOff(): Boolean = dataStore.data.map { it[soundOnOff] }.first() ?: false
 
         suspend fun getLocale(): String = dataStore.data.map { it[localeString] }.first() ?: ""
+
+        suspend fun getNewUpdate(): Boolean = dataStore.data.map { it[newUpdate] }.first() ?: false
     }

@@ -40,7 +40,12 @@ object STRINGS {
 
     fun getShortFormCountry(context: Context): List<Pair<String, String>> =
         listOf(
-            Pair(context.resources.getString(R.string.select_country_korea), "KR"),
-            Pair(context.resources.getString(R.string.select_country_usa), "US"),
+            Pair(context.getString(R.string.select_country_korea), "KR"),
+            Pair(context.getString(R.string.select_country_usa), "US"),
+            Pair(context.getString(R.string.select_country_japan), "JP"),
+            Pair(context.getString(R.string.select_country_taiwan), "TW"),
+            Pair(context.getString(R.string.select_country_indonesia), "ID"),
+            Pair(context.getString(R.string.select_country_tailand), "TH"),
+            Pair(context.getString(R.string.select_country_canada_en), "CA"),
         )
 }

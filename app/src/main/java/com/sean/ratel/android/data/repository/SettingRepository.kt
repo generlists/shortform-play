@@ -35,6 +35,10 @@ SettingRepository
             settingPreference.setLocale(locale)
         }
 
+        suspend fun setNewUpdate(update: Boolean) {
+            settingPreference.setNewUpdate(update)
+        }
+
         suspend fun getAutoPlay() = settingPreference.getAutoPlay()
 
         suspend fun getLoopPlay(): Boolean = settingPreference.getLoopPlay()
@@ -46,4 +50,6 @@ SettingRepository
         suspend fun getPIPPlay() = settingPreference.getPIPPlay()
 
         suspend fun getLocale() = settingPreference.getLocale()
+
+        suspend fun getNewUpdate() = settingPreference.getNewUpdate()
     }

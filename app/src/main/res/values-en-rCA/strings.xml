@@ -14,6 +14,13 @@
     <string name="select_shortform_country_title">Choose your shortform country!</string>
     <string name="select_country_korea">🇰🇷\u00A0 Korea</string>
     <string name="select_country_usa">🇺🇸\u00A0 USA</string>
+    <string name="select_country_japan">🇯🇵\u00A0 JAPAN</string>
+    <string name="select_country_tailand">🇹🇭\u00A0 Thailand</string>
+    <string name="select_country_indonesia">🇮🇩\u00A0 Indonesia</string>
+    <string name="select_country_taiwan">🇹🇼\u00A0 Taiwan</string>
+    <string name="select_country_canada_en">🇨🇦\u00A0 Canada(en)</string>
+    <string name="select_country_canada_fr">🇨🇦\u00A0 Canada(fr)</string>
+
     <string name="setting_select_shortform_country_description">Changing the viewing country will restart the app.</string>
     <string name="setting_select_shortform_country">ShortForm Region</string>
     <string name="select_country_description">You can change the viewing country in ⚙️ Settings → ShortForm Region.</string>

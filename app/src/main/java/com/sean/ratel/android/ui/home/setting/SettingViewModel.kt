@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.SettingRepository
+import com.sean.ratel.android.data.repository.YouTubeRepository
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
@@ -18,6 +19,7 @@ class SettingViewModel
     constructor(
         private val navigator: Navigator,
         private val settingRepository: SettingRepository,
+        private val youTubeRepository: YouTubeRepository,
         private val gaLog: GALog,
     ) : ViewModel() {
         fun runAppManagerDetail() {
@@ -90,6 +92,10 @@ class SettingViewModel
 
         suspend fun setLocale(locale: String) {
             settingRepository.setLocale(locale)
+        }
+
+        suspend fun removeLocalCache(patternKey: String) {
+            youTubeRepository.clearDataByKeyPattern(patternKey)
         }
 
         fun sendGALog(

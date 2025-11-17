@@ -168,7 +168,6 @@ class YouTubeEndFragment(
     }
 
     fun onClickPipButton() {
-        RLog.d("MainActivity", "onClickPipButton")
         val videoSize = youTubeStreamPlayer.getVideoSize()
         val isPlaying = youTubeStreamPlayer.isPlaying()
         val visibleRect = Rect()
@@ -181,7 +180,6 @@ class YouTubeEndFragment(
                 visibleRect,
                 isPlaying = isPlaying,
             )
-        RLog.d("MainActivity", "enterPipMode : $enterPipMode")
 
         when (enterPipMode) {
             PipResult.NoSystemFeature ->
@@ -256,11 +254,11 @@ class YouTubeEndFragment(
                     shouldTriggerAd = shouldShowAd(selection),
                 )
             }.collect { adTriggerState ->
-                RLog.d(TAG, "state : $adTriggerState")
+                RLog.d(TAG, "shouldTriggerAd : ${adTriggerState.shouldTriggerAd} , state : $adTriggerState")
                 if (adTriggerState.shouldTriggerAd) {
                     handleAdFlow(adTriggerState)
                 } else {
-                    showLoading(false)
+                    // showLoading(false)
                     launch {
                         youTubeStreamPlayer.start()
                     }
@@ -294,6 +292,7 @@ class YouTubeEndFragment(
     }
 
     private fun showLoading(enable: Boolean) {
+        RLog.d("YouTubeEndFragment", "enable : $enable")
         youtubeContentEndViewModel.setLoading(enable)
         youtubeContentEndViewModel.setAdLoading(enable)
     }
@@ -632,7 +631,7 @@ class YouTubeEndFragment(
     private suspend fun handlePlayingState(selectPosition: Int) {
         if (selectPosition == createPosition) {
             RLog.d(
-                "PLAYER",
+                "YouTubeEndFragment",
                 "state : PLAYING , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
             )
             youtubeContentEndViewModel.setLoading(loading = false)
@@ -699,6 +698,7 @@ class YouTubeEndFragment(
                     BottomContentsArea(mainShortsModel)
                 }
             }
+            RLog.d("YouTubeEndFragment", "isLoading : ${isLoading.value}")
             if (isLoading.value) LoadingArea(isLoading = true)
         }
 

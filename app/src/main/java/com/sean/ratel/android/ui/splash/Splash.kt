@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.storage.FirebaseStorage
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
@@ -67,32 +68,23 @@ private fun SplashView() {
     val statusBarPadding = StatusBarHeight()
 
     Box(
-        Modifier
-            .fillMaxSize()
-            .background(APP_BACKGROUND)
-            .offset(y = -statusBarPadding),
+        Modifier.fillMaxSize().background(APP_BACKGROUND).offset(y = -statusBarPadding),
         contentAlignment = Alignment.Center,
     ) {
         LottieLoader(
-            Modifier
-                .wrapContentSize()
-                .width(240.dp)
-                .height(240.dp),
+            Modifier.wrapContentSize().width(240.dp).height(240.dp),
             rawRes = R.raw.splash,
             forever = true,
         )
     }
     Box(
-        Modifier
-            .fillMaxSize()
-            .padding(bottom = 30.dp),
+        Modifier.fillMaxSize().padding(bottom = 30.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Image(
             painterResource(R.drawable.splash_text),
             contentDescription = "Text",
-            modifier =
-                Modifier.wrapContentSize(),
+            modifier = Modifier.wrapContentSize(),
         )
     }
 }
@@ -140,8 +132,20 @@ private fun AuthCheckAlert(splashViewModel: SplashViewModel) {
                     splashViewModel.setAuthCheck(0)
                 }
             },
-            if (showDialog.value == 1000)stringResource(R.string.go_app_store) else stringResource(R.string.auth_error),
-            if (showDialog.value == 1000) stringResource(R.string.store_update_btn) else stringResource(R.string.alert_ok),
+            if (showDialog.value == 1000) {
+                stringResource(R.string.go_app_store)
+            } else {
+                stringResource(
+                    R.string.auth_error,
+                )
+            },
+            if (showDialog.value == 1000) {
+                stringResource(R.string.store_update_btn)
+            } else {
+                stringResource(
+                    R.string.alert_ok,
+                )
+            },
         )
     }
 }
@@ -167,14 +171,14 @@ fun InitialDataAndAD(
     val isAMobInitialComplete by remember { mutableStateOf(adViewModel.adMobInitialComplete) }
     val isAdComplete = isAMobInitialComplete.collectAsState().value
     val options = getShortFormCountry(LocalContext.current)
-    var loadLocale by remember { mutableStateOf(false) }
     val forceRefresh = adViewModel.forceClearCache.collectAsState().value
     val authCheck by splashViewModel.authCheck.collectAsState()
+    val newUpdate by splashViewModel.newUpdate.collectAsState()
 
     LaunchedEffect(isAMobInitialComplete) {
         coroutineScope.launch {
             locale = splashViewModel.getLocale()
-            loadLocale = true
+            splashViewModel.loadNewUpdate()
         }
 
         combine(
@@ -186,7 +190,7 @@ fun InitialDataAndAD(
         }.collect { combinedResult ->
             val (main, trends) = combinedResult
             if (authCheck > 0) return@collect
-
+            RLog.d("SPLASH", "main : $main trends : $trends")
             if (main && trends) {
                 delay(1500)
                 showSplash = false
@@ -195,13 +199,17 @@ fun InitialDataAndAD(
             }
         }
     }
-    if (isAdComplete && loadLocale) {
-        if (locale.isEmpty()) {
+
+    RLog.d("SPLASH", "isAdComplete : $isAdComplete newUpdate : $newUpdate, locale : $locale")
+    if (isAdComplete) {
+        if (locale.isEmpty() || !newUpdate) {
+            RLog.d("SPLASH", "newUpdate : $newUpdate")
             ShortFormSelectDialog(
                 defaultCountryCode = getCountryCode(),
                 options = options,
                 onClick = { countryCode ->
                     locale = countryCode
+
                     splashViewModel.sendGALog(
                         screenName = GASplashAnalytics.SCREEN_NAME.get(SPLASH_SCREEN) ?: "",
                         eventName = GASplashAnalytics.Event.SELECT_COUNTY_CLICK,
@@ -214,18 +222,8 @@ fun InitialDataAndAD(
 
                     coroutineScope.launch {
                         splashViewModel.setLocale(countryCode)
-                        splashViewModel.requestYouTubeVideos(
-                            SplashViewModel.RequestType.TODAY,
-                            FirebaseStorage.getInstance(),
-                            getCountryCode(countryCode),
-                            forceRefresh,
-                        )
-                        splashViewModel.requestYouTubeTrendShorts(
-                            SplashViewModel.RequestType.TODAY,
-                            FirebaseStorage.getInstance(),
-                            getCountryCode(locale),
-                            forceRefresh,
-                        )
+                        splashViewModel.setNewUpdate(true)
+                        RLog.d("SPLASH", "1111111newUpdate : $newUpdate")
                     }
                 },
                 onDismiss = {},

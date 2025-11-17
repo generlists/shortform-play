@@ -15,6 +15,13 @@
     <string name="select_shortform_country_title">Choisissez votre pays pour les vidéos courtes!</string>
     <string name="select_country_korea">🇰🇷\u00A0 Corée du Sud</string>
     <string name="select_country_usa">🇺🇸\u00A0 États-Unis</string>
+    <string name="select_country_japan">🇯🇵\u00A0 Japon</string>
+    <string name="select_country_tailand">🇹🇭\u00A0 Thaïlande</string>
+    <string name="select_country_indonesia">🇮🇩\u00A0 Indonésie</string>
+    <string name="select_country_taiwan">🇹🇼\u00A0 Taïwan</string>
+    <string name="select_country_canada_en">🇨🇦\u00A0 Canada(en)</string>
+    <string name="select_country_canada_fr">🇨🇦\u00A0 Canada(fr)</string>
+
     <string name="setting_select_shortform_country_description">Changer de pays redémarrera l\'application.</string>
     <string name="setting_select_shortform_country">Région des vidéos courtes</string>
     <string name="select_country_description">Vous pouvez changer de pays dans ⚙️ Paramètres → Région des vidéos courtes.</string>

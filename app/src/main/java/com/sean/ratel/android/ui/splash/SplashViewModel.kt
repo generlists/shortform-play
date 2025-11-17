@@ -27,6 +27,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -67,6 +68,9 @@ class SplashViewModel
         private val _authCheck = MutableStateFlow(0)
         val authCheck = _authCheck
 
+        private val _newUpdate = MutableStateFlow<Boolean>(true)
+        val newUpdate = _newUpdate.asStateFlow()
+
         init {
             viewModelScope.launch {
                 prefs.updateTokenCache()
@@ -81,7 +85,7 @@ class SplashViewModel
                         when (val result = integrityManager.requestIntegrityToken(hash)) {
                             is IntegrityManager.IntegrityResult.Success -> {
                                 // 정상 처리
-                                RLog.d("KKKKKKKKK", "Integrity token: ${result.token}")
+                                RLog.d("auth", "Integrity token: ${result.token}")
                                 val authResult =
                                     safeApiCall {
                                         autoRepository.exchange(
@@ -120,11 +124,6 @@ class SplashViewModel
                             is IntegrityManager.IntegrityResult.Failure -> {
                                 RLog.e(TAG, "Integrity failed: ${result.errorCode}")
                                 _authCheck.value = result.errorCode
-//                        if (result.errorCode == StandardIntegrityErrorCode.CANNOT_BIND_TO_SERVICE) {
-//                            _authCheck.value = result.errorCode
-//                        } else {
-//                            _uiEvent.emit(UiEvent.ShowErrorMessage("Integrity check failed"))
-//                        }
                             }
                         }
                     }
@@ -148,6 +147,7 @@ class SplashViewModel
                 } else {
                     String.format(DEFAULT_URL, countryCode)
                 }
+
             youTubeRepository
                 .requestYouTubeVideos(
                     requestType,
@@ -155,6 +155,7 @@ class SplashViewModel
                     countryCode,
                     forceRefresh,
                 ).collect { response ->
+                    RLog.d("OKJSP", "shortformList itemSize : ${response.itemSize}")
 
                     _shortformList.value = Pair(response.shortformList, response.itemSize)
 
@@ -247,8 +248,21 @@ class SplashViewModel
 
         suspend fun getLocale(): String = settingRepository.getLocale()
 
+        fun loadNewUpdate() {
+            viewModelScope.launch {
+                _newUpdate.value = settingRepository.getNewUpdate()
+            }
+        }
+
         suspend fun setLocale(locale: String) {
             settingRepository.setLocale(locale)
+        }
+
+        fun setNewUpdate(update: Boolean) {
+            viewModelScope.launch {
+                settingRepository.setNewUpdate(update)
+                _newUpdate.value = update
+            }
         }
 
         fun setAuthCheck(check: Int) {
