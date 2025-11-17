@@ -14,6 +14,13 @@
     <string name="select_shortform_country_title">เลือกประเทศสำหรับรับชมวิดีโอสั้นของคุณ!</string>
     <string name="select_country_korea">🇰🇷\u00A0 เกาหลีใต้</string>
     <string name="select_country_usa">🇺🇸\u00A0 สหรัฐอเมริกา</string>
+    <string name="select_country_japan">🇯🇵\u00A0 ญี่ปุ่น</string>
+    <string name="select_country_tailand">🇹🇭\u00A0  ไทย</string>
+    <string name="select_country_indonesia">🇮🇩\u00A0 อินโดนีเซีย</string>
+    <string name="select_country_taiwan">🇹🇼\u00A0 ไต้หวัน</string>
+    <string name="select_country_canada_en">🇨🇦\u00A0 แคนาดา(en)</string>
+    <string name="select_country_canada_fr">🇨🇦\u00A0 แคนาดา(fr)</string>
+
     <string name="setting_select_shortform_country_description">การเปลี่ยนประเทศจะทำให้แอปรีสตาร์ท</string>
     <string name="setting_select_shortform_country">ภูมิภาควิดีโอสั้น</string>
     <string name="select_country_description">คุณสามารถเปลี่ยนประเทศได้ที่ ⚙️ การตั้งค่า → ภูมิภาควิดีโอสั้น</string>

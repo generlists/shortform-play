@@ -14,6 +14,13 @@
     <string name="select_shortform_country_title">ショートフォームの視聴国を選択してください！</string>
     <string name="select_country_korea">🇰🇷\u00A0 韓国</string>
     <string name="select_country_usa">🇺🇸\u00A0 アメリカ</string>
+    <string name="select_country_japan">🇯🇵\u00A0 にほん</string>
+    <string name="select_country_tailand">🇹🇭\u00A0 タイ</string>
+    <string name="select_country_indonesia">🇮🇩\u00A0 インドネシア</string>
+    <string name="select_country_taiwan">🇹🇼\u00A0 台湾</string>
+    <string name="select_country_canada_en">🇨🇦\u00A0 カナダ(en)</string>
+    <string name="select_country_canada_fr">🇨🇦\u00A0 カナダ(fr)</string>
+
     <string name="setting_select_shortform_country_description">視聴国を変更するとアプリが再起動されます。</string>
     <string name="setting_select_shortform_country">ショートフォーム地域</string>
     <string name="select_country_description">⚙️ 設定 → ショートフォーム地域 で視聴国を変更できます。</string>

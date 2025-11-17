@@ -258,6 +258,10 @@ class YouTubeRepository
             youtubeSearchPrefence.removeSuggestKeyWord(removeItem)
         }
 
+        suspend fun clearDataByKeyPattern(pattern: String) {
+            shortsJson.clearDataByKeyPattern(pattern)
+        }
+
         companion object {
             private const val JSON_SAVE_KEY = "%s/shortform-play/shorts_main_list_%s.json"
             private const val JSON_REMOVE_KEY = "/shorts_main_list"

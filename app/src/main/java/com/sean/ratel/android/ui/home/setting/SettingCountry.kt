@@ -72,6 +72,11 @@ private fun ShortFormCountry(
         listOf(
             Pair(stringResource(R.string.select_country_korea), "KR"),
             Pair(stringResource(R.string.select_country_usa), "US"),
+            Pair(stringResource(R.string.select_country_japan), "JP"),
+            Pair(stringResource(R.string.select_country_taiwan), "TW"),
+            Pair(stringResource(R.string.select_country_indonesia), "ID"),
+            Pair(stringResource(R.string.select_country_tailand), "TH"),
+            Pair(stringResource(R.string.select_country_canada_en), "CA"),
         )
     var locale by remember { mutableStateOf("KR") }
     val coroutineScope = rememberCoroutineScope()
@@ -157,8 +162,11 @@ private fun ShortFormCountry(
                                 GASettingAnalytics.Param.COUNTY_CODE to countryCode,
                             ),
                     )
-                    locale = countryCode
+
                     coroutineScope.launch {
+                        viewModel?.removeLocalCache("shorts_main_list_$locale.json")
+                        viewModel?.removeLocalCache("shorts_trailer_list_$locale.json")
+                        locale = countryCode
                         viewModel?.setLocale(countryCode)
                         newActivity(context)
                     }

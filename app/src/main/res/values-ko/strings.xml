@@ -14,6 +14,13 @@
     <string name="select_shortform_country_title">숏폼 시청 국가를 선택해요!</string>
     <string name="select_country_korea">🇰🇷\u00A0 대한 민국</string>
     <string name="select_country_usa">🇺🇸\u00A0 미국</string>
+    <string name="select_country_japan">🇯🇵\u00A0 일본</string>
+    <string name="select_country_tailand">🇹🇭\u00A0 태국</string>
+    <string name="select_country_indonesia">🇮🇩\u00A0 인도네시아</string>
+    <string name="select_country_taiwan">🇹🇼\u00A0 대만</string>
+    <string name="select_country_canada_en">🇨🇦\u00A0 캐나다(en)</string>
+    <string name="select_country_canada_fr">🇨🇦\u00A0 캐나다(fr)</string>
+
     <string name="setting_select_shortform_country">숏폼 시청국가</string>
     <string name="setting_select_shortform_country_description">시청국가 변경시 앱이 앱이 재 시작합니다.</string>
     <string name="select_country_description">시청 국가는 ⚙️ 셋팅-> 숏폼 시청국가 에서 변경할 수 있습니다.</string>
