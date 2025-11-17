@@ -219,6 +219,7 @@ fun KeyWordSearchGridItemList(
 ) {
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
     val index = searchViewModel.moreIndex.collectAsState()
+    val searchComplete = searchViewModel.searchDataComplete.collectAsState()
 
     val isAtBottom = listState.isAtBottom()
     val context = LocalContext.current
@@ -251,7 +252,7 @@ fun KeyWordSearchGridItemList(
     }
 
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.weight(1f)) {
+        Box(Modifier.weight(0.85f)) {
             LazyColumn(
                 modifier =
                     Modifier
@@ -318,6 +319,7 @@ fun KeyWordSearchGridItemList(
         Box(
             Modifier
                 .fillMaxWidth()
+                .weight(0.15f)
                 .then(
                     if (adBannerLoadingComplete.value.first) {
                         Modifier
@@ -330,7 +332,9 @@ fun KeyWordSearchGridItemList(
                 ),
             contentAlignment = Alignment.BottomStart,
         ) {
-            LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.BOTTOM)
+            if (!searchComplete.value) {
+                LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.BOTTOM)
+            }
         }
     }
 }

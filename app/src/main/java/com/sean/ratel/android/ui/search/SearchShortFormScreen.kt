@@ -148,7 +148,7 @@ fun SearchComposeUi(
                                 LoadingArea(true)
                                 LocalSoftwareKeyboardController.current?.hide()
                             }
-                            is UiState.Success<*> -> {
+                            is UiState.Success<SearchShortsResponse> -> {
                                 LaunchedEffect(searchDataComplete.value) {
                                     if (searchViewModel.searchDataComplete.value) {
                                         uiState.value = SearchUiState.Result
