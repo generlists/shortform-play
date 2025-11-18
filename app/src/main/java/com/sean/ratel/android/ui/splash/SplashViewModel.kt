@@ -80,51 +80,64 @@ class SplashViewModel
 
                 if (token == null || autoRepository.isExpired(token)) {
                     if (isNetWorkAvailable(context)) {
-                        val hash = autoRepository.getRequestHash()
+                        try {
+                            val hash = autoRepository.getRequestHash()
 
-                        when (val result = integrityManager.requestIntegrityToken(hash)) {
-                            is IntegrityManager.IntegrityResult.Success -> {
-                                // 정상 처리
-                                RLog.d("auth", "Integrity token: ${result.token}")
-                                val authResult =
-                                    safeApiCall {
-                                        autoRepository.exchange(
-                                            IntegrityExchangeReq(
-                                                context.packageName,
-                                                result.token,
-                                                hash,
-                                            ),
-                                        )
-                                    }
-
-                                when (authResult) {
-                                    is ApiResult.Success -> {
-                                        val data = authResult.data
-                                        val accessToken = data.access_token
-                                        val expiresIn = data.expires_in ?: (24 * 3600L)
-                                        accessToken?.let {
-                                            prefs.saveAccessToken(accessToken, expiresIn)
-                                            prefs.updateTokenCache()
+                            when (val result = integrityManager.requestIntegrityToken(hash)) {
+                                is IntegrityManager.IntegrityResult.Success -> {
+                                    // 정상 처리
+                                    RLog.d("auth", "Integrity token: ${result.token}")
+                                    val authResult =
+                                        safeApiCall {
+                                            autoRepository.exchange(
+                                                IntegrityExchangeReq(
+                                                    context.packageName,
+                                                    result.token,
+                                                    hash,
+                                                ),
+                                            )
                                         }
-                                        RLog.d("auth", "Access Token 갱신 성공: expires in $expiresIn 초")
-                                    }
 
-                                    is ApiResult.Error -> {
-                                        RLog.e("auth", "서버 응답 오류(${authResult.code}): ${authResult.message}")
-                                    }
+                                    when (authResult) {
+                                        is ApiResult.Success -> {
+                                            val data = authResult.data
+                                            val accessToken = data.access_token
+                                            val expiresIn = data.expires_in ?: (24 * 3600L)
+                                            accessToken?.let {
+                                                prefs.saveAccessToken(accessToken, expiresIn)
+                                                prefs.updateTokenCache()
+                                            }
+                                            RLog.d(
+                                                "auth",
+                                                "Access Token 갱신 성공: expires in $expiresIn 초",
+                                            )
+                                        }
 
-                                    is ApiResult.Exception -> {
-                                        RLog.e("auth", "기타 네트워크 예외: ${authResult.e.localizedMessage}")
-                                    }
+                                        is ApiResult.Error -> {
+                                            RLog.e(
+                                                "auth",
+                                                "서버 응답 오류(${authResult.code}): ${authResult.message}",
+                                            )
+                                        }
 
-                                    else -> Unit
+                                        is ApiResult.Exception -> {
+                                            RLog.e(
+                                                "auth",
+                                                "기타 네트워크 예외: ${authResult.e.localizedMessage}",
+                                            )
+                                        }
+
+                                        else -> Unit
+                                    }
+                                }
+
+                                is IntegrityManager.IntegrityResult.Failure -> {
+                                    RLog.e(TAG, "Integrity failed: ${result.errorCode}")
+                                    _authCheck.value = result.errorCode
                                 }
                             }
-
-                            is IntegrityManager.IntegrityResult.Failure -> {
-                                RLog.e(TAG, "Integrity failed: ${result.errorCode}")
-                                _authCheck.value = result.errorCode
-                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
                         }
                     }
                 }
