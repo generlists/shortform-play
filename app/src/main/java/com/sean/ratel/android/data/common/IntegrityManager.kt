@@ -76,47 +76,51 @@ class IntegrityManager
             }
 
         suspend fun headerRefreshToken(): Pair<String, Long>? {
-            val hashResponse = authApi.getRequestHash()
-            val hash = hashResponse.request_hash
+            try {
+                val hashResponse = authApi.getRequestHash()
+                val hash = hashResponse.request_hash
 
-            when (val result = requestIntegrityToken(hash)) {
-                is IntegrityResult.Success -> {
-                    val callResult =
-                        safeApiCall {
-                            authApi.exchange(
-                                IntegrityExchangeReq(
-                                    appContext.packageName,
-                                    result.token,
-                                    hash,
-                                ),
-                            )
-                        }
-                    when (callResult) {
-                        is ApiResult.Success -> {
-                            RLog.d(TAG, "서버 응답 성공: ${callResult.data}")
-                            val data = callResult.data
-                            val accessToken = data.access_token
-                            val expiresIn = data.expires_in ?: (24 * 3600L)
-                            accessToken?.let {
-                                authTokenPreference.saveAccessToken(accessToken, expiresIn)
-                                authTokenPreference.updateTokenCache()
-                                return it to expiresIn
+                when (val result = requestIntegrityToken(hash)) {
+                    is IntegrityResult.Success -> {
+                        val callResult =
+                            safeApiCall {
+                                authApi.exchange(
+                                    IntegrityExchangeReq(
+                                        appContext.packageName,
+                                        result.token,
+                                        hash,
+                                    ),
+                                )
                             }
-                            RLog.d(TAG, "Access Token 갱신 성공: expires in $expiresIn 초")
-                        }
+                        when (callResult) {
+                            is ApiResult.Success -> {
+                                RLog.d(TAG, "서버 응답 성공: ${callResult.data}")
+                                val data = callResult.data
+                                val accessToken = data.access_token
+                                val expiresIn = data.expires_in ?: (24 * 3600L)
+                                accessToken?.let {
+                                    authTokenPreference.saveAccessToken(accessToken, expiresIn)
+                                    authTokenPreference.updateTokenCache()
+                                    return it to expiresIn
+                                }
+                                RLog.d(TAG, "Access Token 갱신 성공: expires in $expiresIn 초")
+                            }
 
-                        is ApiResult.Error -> {
-                            RLog.e(TAG, "서버 응답 오류(${callResult.code}): ${callResult.message}")
-                        }
+                            is ApiResult.Error -> {
+                                RLog.e(TAG, "서버 응답 오류(${callResult.code}): ${callResult.message}")
+                            }
 
-                        is ApiResult.Exception -> {
-                            RLog.e(TAG, "기타 네트워크 예외: ${callResult.e.localizedMessage}")
-                        }
+                            is ApiResult.Exception -> {
+                                RLog.e(TAG, "기타 네트워크 예외: ${callResult.e.localizedMessage}")
+                            }
 
-                        else -> Unit
+                            else -> Unit
+                        }
                     }
+                    else -> Unit
                 }
-                else -> Unit
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
 
             return null
