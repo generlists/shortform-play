@@ -52,9 +52,10 @@ import kotlinx.coroutines.delay
 fun TopSearchBar(
     modifier: Modifier,
     loading: Boolean,
-    query: String,
+    query: MutableState<String>,
     queryChange: (String) -> Unit,
     fromSuggestion: MutableState<Boolean>,
+    fromDeepLink: MutableState<Boolean>,
     historyBack: () -> Unit,
 ) {
     val isCancelButton = remember { mutableStateOf(false) }
@@ -121,6 +122,7 @@ fun TopSearchBar(
                     },
                     Modifier,
                     fromSuggestion,
+                    fromDeepLink,
                 )
             }
             if (isCancelButton.value) {
@@ -139,19 +141,20 @@ fun TopSearchBar(
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun SearchTextField(
-    query: String,
+    query: MutableState<String>,
     searchLoading: Boolean,
     onQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     fromSuggestion: MutableState<Boolean>,
+    fromDeepLink: MutableState<Boolean>,
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
 
     LaunchedEffect(fromSuggestion.value) {
-        if (fromSuggestion.value) {
-            val text = query
+        if (fromSuggestion.value || fromDeepLink.value) {
+            val text = query.value
             textFieldValue =
                 textFieldValue.copy(
                     text = text,
@@ -161,11 +164,14 @@ fun SearchTextField(
             fromSuggestion.value = false
         }
     }
-    LaunchedEffect(Unit) {
-        delay(100) // Compose 구성 안정 후 요청
-        focusRequester.requestFocus()
-        keyboardController?.show()
+    if (!fromDeepLink.value) {
+        LaunchedEffect(Unit) {
+            delay(100) // Compose 구성 안정 후 요청
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
     }
+
     Box(
         modifier =
             modifier
@@ -174,7 +180,7 @@ fun SearchTextField(
                 .background(APP_BACKGROUND),
         contentAlignment = Alignment.CenterStart,
     ) {
-        if (query.isEmpty()) {
+        if (query.value.isEmpty()) {
             Text(
                 text = stringResource(R.string.search_topbar_hint),
                 color = Color.Gray,

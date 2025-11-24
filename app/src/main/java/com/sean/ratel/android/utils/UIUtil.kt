@@ -11,6 +11,7 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.ads.AdSize
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -372,5 +373,16 @@ object UIUtil {
         } else {
             result.take(totalCount)
         }
+    }
+
+    fun getEndFragment(
+        context: Context,
+        viewPager2: ViewPager2?,
+    ): YouTubeEndFragment? {
+        val fragmentManager =
+            (context as FragmentActivity).supportFragmentManager
+        val itemId = viewPager2?.adapter?.getItemId(viewPager2.currentItem)
+        val tag = "f$itemId"
+        return fragmentManager.findFragmentByTag(tag) as? YouTubeEndFragment
     }
 }

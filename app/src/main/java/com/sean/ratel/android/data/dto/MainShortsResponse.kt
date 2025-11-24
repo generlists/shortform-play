@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MainShortsResponse(
     val shortformList: MainShortFormList,
-    val itemSize: Int = 7,
+    val itemSize: Int = 0,
 ) : Parcelable
 
 @Keep

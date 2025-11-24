@@ -12,20 +12,31 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.data.android.UnifiedLinkHandler
+import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.APP_MANAGER
+import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.HOME
+import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SEARCH
+import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SETTING
+import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHARE
+import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHORTFORM
+import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.YOUTUBE
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.navigation.Destination.Screen.Companion.BASE_DEEPLINK_URL
 import com.sean.ratel.android.ui.pip.PipAction
+import com.sean.ratel.android.utils.PhoneUtil
+import com.sean.ratel.android.utils.UIUtil.getEndFragment
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 import com.sean.ratel.player.core.util.launch
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,6 +54,9 @@ import javax.inject.Inject
 @Suppress("DEPRECATION")
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+    @Inject
+    lateinit var unifiedLinkHandler: UnifiedLinkHandler
+
     val mainViewModel by viewModels<MainViewModel>()
     val adViewModel by viewModels<AdViewModel>()
 
@@ -115,7 +129,7 @@ class MainActivity : FragmentActivity() {
                 Pair(pipClick, viewPager2)
             }.collect { (pipClick, viewPager2) ->
                 if (pipClick.first) {
-                    currentFragment = getEndFragment(viewPager2)
+                    currentFragment = getEndFragment(this@MainActivity, viewPager2)
                 }
             }
         }
@@ -175,6 +189,8 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
+        // deep link
+        deepLink()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -197,6 +213,7 @@ class MainActivity : FragmentActivity() {
                 videoId,
             )
         }
+        deepLink()
     }
 
     @Deprecated("Deprecated in Java")
@@ -309,12 +326,77 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    private fun getEndFragment(viewPager2: ViewPager2?): YouTubeEndFragment? {
-        val fragmentManager =
-            (this@MainActivity as FragmentActivity).supportFragmentManager
-        val itemId = viewPager2?.adapter?.getItemId(viewPager2.currentItem)
-        val tag = "f$itemId"
-        return fragmentManager.findFragmentByTag(tag) as? YouTubeEndFragment
+    private fun setUnifiedLinkHandler(intent: Intent?) {
+        RLog.d("deepLink", "setUnifiedLinkHandler $intent")
+        if (intent?.data == null) return
+
+        launch {
+            // 이벤트 등록
+            unifiedLinkHandler.setOnDeepLinkHandler { appLinkeInfo ->
+                val deepLinkType = appLinkeInfo.deepLinkType
+                val viewType = appLinkeInfo.type
+                val route = appLinkeInfo.route
+                val param = appLinkeInfo.extraParam
+                when (deepLinkType) {
+                    HOME, SETTING, SHORTFORM, APP_MANAGER -> {
+                        RLog.d("deepLink", "HOME route : $route, videoId : $param , viewType : $viewType")
+
+                        viewType?.let {
+                            mainViewModel.setViewType(viewType)
+                            mainViewModel.navigator.navigateTo(route)
+                        }
+                    }
+                    YOUTUBE -> {
+                        RLog.d("deepLink", "YOUTUBE route : $route, videoId : $param , viewType : $viewType")
+                        param?.let {
+                            mainViewModel.goEndContent(route, viewType ?: ViewType.DeepLinkVideo, 0, null, param)
+                        }
+                    }
+                    SEARCH -> {
+                        PhoneUtil.searchButton(this@MainActivity, param)
+                    }
+                    SHARE -> {
+                        RLog.d("deepLink", "SHARE route : $route, videoId : $param , viewType : $viewType")
+                        mainViewModel.goEndContent(route, appLinkeInfo.type ?: ViewType.DeepLinkVideo, 0, null, param)
+                    }
+                }
+            }
+
+            mainViewModel.mainShorts.collect { mainShorts ->
+                mainShorts.second
+                    .takeIf { it > 0 }
+                    ?.run {
+                        RLog.d("deepLink", "$this")
+                        mainViewModel.setSearchCategoryShortFormVieo()
+                        unifiedLinkHandler.goDeepLinKPage(this@MainActivity, intent)
+                    }
+            }
+        }
+    }
+
+    private fun deepLink() {
+        launch {
+            val deepLineUrl = intent.data
+            val value = mainViewModel.getInstallRerere()
+            RLog.d("deepLink", "deepLineUrl : $deepLineUrl")
+            if (deepLineUrl == null) {
+                RLog.d("deepLink", "value : $value")
+                value?.let {
+                    RLog.d("deepLink", "value : $it")
+                    setUnifiedLinkHandler(intent)
+                } ?: run {
+                    unifiedLinkHandler.setReferer(this@MainActivity, {
+                        mainViewModel.setInstallReferer(it)
+                        val referer = it.substringAfter("path=")
+                        val intent = Intent(Intent.ACTION_VIEW)
+                        intent.data = "$BASE_DEEPLINK_URL$referer".toUri()
+                        setUnifiedLinkHandler(intent)
+                    })
+                }
+            } else {
+                setUnifiedLinkHandler(intent)
+            }
+        }
     }
 
     companion object {

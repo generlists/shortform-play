@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.toolbox
 
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
@@ -74,6 +75,9 @@ fun AppManagerView(
     mainViewModel: MainViewModel?,
     adViewModel: AdViewModel,
 ) {
+    BackHandler(enabled = true) {
+        mainViewModel?.runNavigationBack()
+    }
     val data = remember { viewModel.contents }
     var filterAction by remember { mutableIntStateOf(-1) }
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()

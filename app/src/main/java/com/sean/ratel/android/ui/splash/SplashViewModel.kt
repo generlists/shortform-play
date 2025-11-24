@@ -48,7 +48,7 @@ class SplashViewModel
         private val integrityManager: IntegrityManager,
     ) : ViewModel() {
         private val _shortformList =
-            MutableStateFlow(Pair(MainShortFormList(), 7))
+            MutableStateFlow(Pair(MainShortFormList(), 0))
         val shortformList: StateFlow<Pair<MainShortFormList, Int>> = _shortformList
 
         private val _trendShortsList = MutableStateFlow(TrendsShortFormList())

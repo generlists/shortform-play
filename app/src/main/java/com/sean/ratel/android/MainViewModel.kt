@@ -15,6 +15,7 @@ import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.data.log.GALog
+import com.sean.ratel.android.data.repository.InstallRefererRepository
 import com.sean.ratel.android.data.repository.RecentVideoRepository
 import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
 import com.sean.ratel.android.ui.home.ViewType
@@ -39,7 +40,11 @@ class MainViewModel
         val gaLog: GALog,
         val recentVideoRepository: RecentVideoRepository,
         val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
+        val installRefererRepository: InstallRefererRepository,
     ) : ViewModel() {
+        private val _isInstallReferer = MutableStateFlow<String?>(null)
+        val isInstallReferer: StateFlow<String?> = _isInstallReferer
+
         // FAB 가시성을 관리하는 상태
         private val _isDebugVisible = MutableStateFlow(false)
         val isDebugVisible: StateFlow<Boolean> = _isDebugVisible
@@ -244,7 +249,7 @@ class MainViewModel
                         )
                     }
                 }
-                ViewType.SearchShortsVideo -> {
+                ViewType.SearchShortsVideo, ViewType.DeepLinkVideo -> {
                     videoId?.let {
                         navigator.navigateTo(
                             Destination.YouTube.dynamicRoute(it),
@@ -309,7 +314,8 @@ class MainViewModel
             route: String? = null,
             recreate: Boolean = false,
         ) {
-            navigator.navigateBack(recreate)
+            if (_viewType.value == ViewType.DeepLinkVideo) goMainHome() else navigator.navigateBack(false)
+
             _tabClicked.value = null
             if (isCurrentPageMoreView() && route != Destination.YouTube.route) {
                 _moreButtonClicked.value = null
@@ -319,9 +325,7 @@ class MainViewModel
         }
 
         fun goMainHome() {
-            viewModelScope.launch {
-                navigator.navigateTo(Destination.Home.route, true)
-            }
+            navigator.navigateTo(Destination.Home.Main.route)
         }
 
         fun sendGALog(
@@ -474,8 +478,16 @@ class MainViewModel
             RLog.d(TAG, "zipList : ${zipList.keys}")
         }
 
+        fun setInstallReferer(path: String) {
+            viewModelScope.launch {
+                installRefererRepository.setInstallReferer(path)
+            }
+        }
+
+        suspend fun getInstallRerere(): String? = installRefererRepository.getInstallReferer()
+
         companion object {
-            private const val MAIN_ITEM_COUNT = 7
+            private const val MAIN_ITEM_COUNT = 0
             private const val TAG = "MainViewModel"
         }
     }

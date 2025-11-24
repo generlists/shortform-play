@@ -33,7 +33,7 @@ object STRINGS {
     const val URL_MY_PACKAGE_NAME: String = "com.sean.ratel.android"
 
     @Suppress("ktlint:standard:function-naming")
-    fun YOUTUBE_APP_BY_VIDEO_ID(videoId: String): String = "https://www.youtube.com/shorts/$videoId"
+    fun YOUTUBE_APP_BY_VIDEO_ID(videoId: String): String = "https://shortform-play.ai/share?vid=$videoId"
 
     @Suppress("ktlint:standard:function-naming")
     fun YOUTUBE_APP_BY_CHANNEL_ID(channelId: String): String = "https://m.youtube.com/channel/$channelId"

@@ -60,6 +60,32 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+            <!--새로 추가되는 App Links (Deep Link) 필터 -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <!-- shortform-play.ai/shorts/... 패턴 처리 -->
+                <data android:scheme="https" />
+                <data android:host="shortform-play.ai" />
+                <data android:pathPattern="/main" />
+                <data android:pathPattern="/setting" />
+                <data android:pathPattern="/shortform" />
+                <data android:pathPattern="/search" />
+                <data android:pathPrefix="/youtube" />
+                <data android:pathPattern="/share" />
+
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="shortformplay" />
+            </intent-filter>
+
 
         </activity>
         <activity

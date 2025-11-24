@@ -58,8 +58,16 @@ object PhoneUtil {
         context.startActivity(shareIntent)
     }
 
-    fun searchButton(context: Context) {
-        val intent = Intent(context, SearchActivity::class.java)
+    fun searchButton(
+        context: Context,
+        query: String? = null,
+    ) {
+        val intent =
+            Intent(context, SearchActivity::class.java).apply {
+                query?.let {
+                    putExtra("query", query)
+                }
+            }
 
         val options =
             ActivityOptionsCompat.makeCustomAnimation(
@@ -78,6 +86,15 @@ object PhoneUtil {
         } catch (e: PackageManager.NameNotFoundException) {
             e.printStackTrace()
             "Unknown"
+        }
+
+    fun getAppVersionCode(context: Context): Long =
+        try {
+            val packageInfo = context.packageManager.getPackageInfo(STRINGS.URL_MY_PACKAGE_NAME, 0)
+            packageInfo.longVersionCode
+        } catch (e: PackageManager.NameNotFoundException) {
+            e.printStackTrace()
+            0L
         }
 
     fun getEnvironment(): String = "Model : ${Build.MODEL}\nOS Version : ${Build.VERSION.RELEASE}\nAPI Level : ${Build.VERSION.SDK_INT}"

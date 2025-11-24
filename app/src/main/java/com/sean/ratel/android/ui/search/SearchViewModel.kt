@@ -87,6 +87,9 @@ class SearchViewModel
         private val _isSuggestLoading = MutableStateFlow(true)
         val isSuggestLoading: StateFlow<Boolean> = _isSuggestLoading
 
+        private val _deepLinkQuery = MutableStateFlow<String?>(null)
+        val deepLinkQuery: StateFlow<String?> = _deepLinkQuery
+
         init {
             requestSaveSuggestResultList()
             requestLocale()
@@ -101,7 +104,6 @@ class SearchViewModel
             lastVideoId: String? = null,
         ) {
             var startTime = System.currentTimeMillis()
-            RLog.d("SSSSSSSSSS", "requestYouTubeSearchResult query : $query, position : $position  _sessionId :${_sessionId.value}")
 
             viewModelScope.launch {
                 if (query != lastSearchQuery) {
@@ -240,6 +242,10 @@ class SearchViewModel
         fun setMorEVent(moreIndex: Int): Int {
             _moreIndex.value = moreIndex
             return _moreIndex.value
+        }
+
+        fun setDeepLinkQuery(query: String?) {
+            _deepLinkQuery.value = query
         }
 
         fun moreContent(
