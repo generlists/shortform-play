@@ -32,6 +32,8 @@ object Destination {
 
     data object Regal : Screen("setting/regal")
 
+    data object DeepLink : Screen("deeplink")
+
     data object Home : Screen("home") {
         data object Main : Screen("home/main") {
             data object PoplarShortFormMore : Screen("home/main/shortformMore")
@@ -63,7 +65,7 @@ object Destination {
         baseRoute: String,
     ) {
         companion object {
-            const val BASE_DEEPLINK_URL = "app://splay"
+            const val BASE_DEEPLINK_URL = "shortformplay://"
         }
 
         open val route = baseRoute

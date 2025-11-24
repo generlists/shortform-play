@@ -190,6 +190,7 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
 
     implementation(libs.material)
+    implementation(libs.com.android.installreferrer)
 
     // hilt
     implementation(libs.google.hilt.android)

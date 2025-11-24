@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.shortform
 
+import androidx.activity.compose.BackHandler
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -97,6 +98,10 @@ fun ShortForm(
     viewModel: ShortFormViewModel,
     adViewModel: AdViewModel,
 ) {
+    BackHandler(enabled = true) {
+        mainViewModel.runNavigationBack()
+    }
+
     val data = viewModel.categoryByContents.collectAsState()
     ShortFormView(modifier, data.value, mainViewModel, viewModel, adViewModel)
     val coroutine = rememberCoroutineScope()

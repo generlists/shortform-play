@@ -1,6 +1,7 @@
 package com.sean.ratel.android
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
@@ -48,5 +49,18 @@ class SearchActivity : FragmentActivity() {
             actionName = GASplashAnalytics.Action.VIEW,
             parameter = mapOf(),
         )
+
+        deeLink(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        deeLink(intent)
+    }
+
+    private fun deeLink(intent: Intent?) {
+        val query = intent?.getStringExtra("query")
+
+        searchViewModel.setDeepLinkQuery(query)
     }
 }

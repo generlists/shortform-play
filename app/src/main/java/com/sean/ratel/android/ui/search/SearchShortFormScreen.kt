@@ -50,9 +50,10 @@ fun SearchComposeUi(
         val searchDataComplete = searchViewModel.searchDataComplete.collectAsState()
         val searchSuggestComplete = searchViewModel.searchSuggestComplete.collectAsState()
         val currentLocale by searchViewModel.currentLocale.collectAsState()
-
+        val deepLinkQuery = searchViewModel.deepLinkQuery.collectAsState()
         val uiState = rememberSaveable { mutableStateOf(SearchUiState.UserSuggest) }
         val fromSelection = remember { mutableStateOf(false) }
+        val fromDeeplink = remember { mutableStateOf(false) }
         val sessionId by searchViewModel.sessionId.collectAsState()
         val searchRetryState = searchViewModel.searchRetry.collectAsState()
         val searchLoading = searchViewModel.searchLoading.collectAsState()
@@ -66,11 +67,12 @@ fun SearchComposeUi(
                 TopSearchBar(
                     Modifier,
                     searchLoading.value,
-                    query.value,
+                    query,
                     queryChange = { q ->
                         query.value = q
                     },
                     fromSelection,
+                    fromDeepLink = fromDeeplink,
                     historyBack = {
                         searchViewModel.requestResetSession(sessionId)
                         finish()
@@ -88,7 +90,11 @@ fun SearchComposeUi(
                         .background(APP_BACKGROUND)
                         .padding(innerPaddingModifier),
             ) {
-                RLog.d("SearchComposeUi", "current uiState: ${uiState.value}")
+                deepLinkQuery.value?.let {
+                    uiState.value = SearchUiState.DeepLink
+                    fromDeeplink.value = true
+                }
+
                 when (uiState.value) {
                     // 처음 저장된 자동완성 리스트
                     SearchUiState.UserSuggest -> {
@@ -140,7 +146,30 @@ fun SearchComposeUi(
                             }
                         }
                     }
+                    SearchUiState.DeepLink -> {
+                        val locale = localeFromCountryCode(currentLocale)
+                        query.value = (deepLinkQuery.value ?: "") + ""
 
+                        searchViewModel.setDeepLinkQuery(null)
+
+                        val keyword = "${query.value} + ${
+                            getAppLocaleByStringResource(
+                                context,
+                                currentLocale,
+                            )
+                        }"
+
+                        fromDeeplink.value = true
+
+                        searchViewModel.requestYouTubeSearchResult(
+                            context,
+                            keyword,
+                            0,
+                            locale.country,
+                            locale.toLanguageTag(),
+                        )
+                        uiState.value = SearchUiState.Searching
+                    }
                     // 로딩 중 (검색 요청)
                     SearchUiState.Searching -> {
                         when (apiState.value) {
@@ -187,7 +216,9 @@ fun SearchComposeUi(
             }
 
             LaunchedEffect(query.value) {
-                if (query.value.isNotEmpty() && uiState.value != SearchUiState.Searching) {
+                if (query.value.isNotEmpty() && deepLinkQuery.value?.isNotEmpty() == true && uiState.value != SearchUiState.Searching) {
+                    uiState.value = SearchUiState.DeepLink
+                } else if (query.value.isNotEmpty() && uiState.value != SearchUiState.Searching) {
                     uiState.value = SearchUiState.TypingSuggest
                 } else if (query.value.isEmpty() && uiState.value != SearchUiState.Searching) {
                     uiState.value = SearchUiState.UserSuggest
@@ -232,4 +263,5 @@ enum class SearchUiState {
     TypingSuggest, // 타이핑 중
     Searching, // 로딩 중
     Result, // 결과 표시
+    DeepLink, // 딥링크로 들어올 경우
 }

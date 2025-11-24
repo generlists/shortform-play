@@ -4,7 +4,7 @@ ktlint = "12.1.1"
 android-core = "1.13.1"
 android-splash = "1.0.1"
 android-appcompat = "1.6.1"
-
+installreferrer ="2.2"
 
 lifecycle = "2.5.1"
 lifecycleprocess = "2.8.3"
@@ -118,6 +118,7 @@ google-oauth-client-jetty = { module = "com.google.oauth-client:google-oauth-cli
 google-accompanist-drawablepainter= { module = "com.google.accompanist:accompanist-drawablepainter", version.ref = "google-accompanist-drawable"}
 google-accompanist-systemuicontroller= { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "google-accompanist-systemuicontroller"}
 google-play-integrity = { module = "com.google.android.play:integrity", version.ref = "google-integrity"}
+com-android-installreferrer = { module = "com.android.installreferrer:installreferrer", version.ref = "installreferrer"}
 
 #admob
 google-play-service-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "google-ad"}

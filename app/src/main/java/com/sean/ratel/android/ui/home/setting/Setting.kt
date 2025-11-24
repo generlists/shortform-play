@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.setting
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -46,6 +47,10 @@ fun SettingView(
 ) {
     val context = LocalContext.current
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
+
+    BackHandler(enabled = true) {
+        mainViewModel?.runNavigationBack()
+    }
     Scaffold(
         Modifier.padding(insetPaddingValue),
         topBar = {

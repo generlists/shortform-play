@@ -30,8 +30,6 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.UIUtil.findCurrentFragment
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 private const val TAG = "YouTubeContentEnd"
@@ -121,6 +119,7 @@ fun YouTubeContentEnd(
         } else if (mainViewModel.itemClicked.value == Destination.Home.ShortForm.route) {
             youTubeContentEndViewModel.setShortFormVideoData(selectedIndex)
         } else if (mainViewModel.itemClicked.value == Destination.Search.route) {
+            RLog.d("deepLink", "search $selectedVideoId")
             searchRequestLoading.value = true
 
             selectedVideoId?.let {
@@ -129,6 +128,17 @@ fun YouTubeContentEnd(
                     categoryShortsList,
                 )
             }
+        }
+    }
+    if (mainViewModel.itemClicked.value == Destination.DeepLink.route) {
+        RLog.d("deepLink", "search $selectedVideoId")
+        searchRequestLoading.value = true
+
+        selectedVideoId?.let {
+            youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
+                it,
+                categoryShortsList,
+            )
         }
     }
 
@@ -245,7 +255,7 @@ private fun getEndData(
         ViewType.RecentlyWatch -> youTubeContentEndViewModel.watchList.value
         ViewType.MainTrendShorts -> youTubeContentEndViewModel.mainTrendShortsList.value
         ViewType.TrendShortsMore -> youTubeContentEndViewModel.moreTrendShortsList.value
-        ViewType.SearchShortsVideo -> youTubeContentEndViewModel.searchShots.value
+        ViewType.SearchShortsVideo, ViewType.DeepLinkVideo -> youTubeContentEndViewModel.searchShots.value
         else -> null
     }
 
@@ -373,7 +383,7 @@ fun FragmentContainer(
     // 초기화
     BackHandler(enabled = true) {
         viewPager.adapter = null
-        mainViewModel.runNavigationBack(Destination.YouTube.route)
+        mainViewModel.runNavigationBack()
         corutineScope.launch {
             mainViewModel.setRecentVideo()
             mainViewModel.setPIPClick(Pair(false, null))
@@ -384,7 +394,7 @@ fun FragmentContainer(
         viewPager.adapter = null
         mainViewModel.setEndBack(false)
         LaunchedEffect(Unit) {
-            CoroutineScope(Dispatchers.IO).launch {
+            corutineScope.launch {
                 mainViewModel.setRecentVideo()
                 mainViewModel.setPIPClick(Pair(false, null))
             }
