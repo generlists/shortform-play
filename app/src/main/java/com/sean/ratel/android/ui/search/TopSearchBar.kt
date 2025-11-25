@@ -41,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
@@ -63,7 +64,7 @@ fun TopSearchBar(
     Row(
         Modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(56.dp).padding(end = 20.dp)
             .background(APP_BACKGROUND),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -126,9 +127,11 @@ fun TopSearchBar(
                 )
             }
             if (isCancelButton.value) {
+
                 SearchCancelButton(
                     modifier,
                     { q ->
+                        RLog.d("hbungshin","xxxxxx query : ${q}")
                         isCancelButton.value = q.isNotEmpty()
                         queryChange("")
                     },
@@ -152,8 +155,7 @@ fun SearchTextField(
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
 
-    LaunchedEffect(fromSuggestion.value) {
-        if (fromSuggestion.value || fromDeepLink.value) {
+        if ((fromSuggestion.value || fromDeepLink.value) || query.value.isEmpty()) {
             val text = query.value
             textFieldValue =
                 textFieldValue.copy(
@@ -163,7 +165,7 @@ fun SearchTextField(
                 )
             fromSuggestion.value = false
         }
-    }
+
     if (!fromDeepLink.value) {
         LaunchedEffect(Unit) {
             delay(100) // Compose 구성 안정 후 요청
