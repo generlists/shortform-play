@@ -2,6 +2,8 @@ package com.sean.ratel.android.data.dto
 
 import android.os.Parcelable
 import androidx.annotation.Keep
+import com.sean.ratel.android.data.common.STRINGS.SERVICE_RENEWAL_START_DATE
+import com.sean.ratel.android.data.common.STRINGS.SERVICE_START_DATE
 import kotlinx.parcelize.Parcelize
 
 @Keep
@@ -27,14 +29,27 @@ data class TrendsShortFormList(
 @Keep
 @Parcelize
 data class MainShortFormList(
+    override val startDate: String = SERVICE_START_DATE,
+    override val legacyEndDate: String = SERVICE_RENEWAL_START_DATE,
     val topFiveList: TopFiveList = TopFiveList(),
     val editorPickList: EditorPickList = EditorPickList(),
     val shortformVideoList: ShortFormVideoList = ShortFormVideoList(),
     val channelVideoList: ChannelVideoList = ChannelVideoList(),
     val channelSubscriptionList: ChannelSubscriptionList = ChannelSubscriptionList(),
     val channelSubscriptionUpList: ChannelSubscriptionUpList = ChannelSubscriptionUpList(),
-    val shortformRecommendList: RecommendList = RecommendList(),
-) : Parcelable
+    override val shortformRecommendList: RecommendList = RecommendList(),
+    val trendShortsList: TrendsShortFormList = TrendsShortFormList(),
+) : Parcelable,
+    DailySearchList
+
+@Keep
+@Parcelize
+data class MainShortFormLegacyList(
+    override val startDate: String,
+    override val legacyEndDate: String,
+    override val shortformRecommendList: RecommendList = RecommendList(),
+) : Parcelable,
+    DailySearchList
 
 @Keep
 @Parcelize

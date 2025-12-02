@@ -200,19 +200,39 @@ class MainActivity : FragmentActivity() {
         val target = intent.getStringExtra("target")
         val videoId = intent.getStringExtra("videoId")
         val viewType = intent.getStringExtra("viewType")
+        val selectedIndex = intent.getIntExtra("selectedIndex", 0)
+        val categoryKey = intent.getStringExtra("categoryKey")
 
-        RLog.d(TAG, "target : $target , videoId : $videoId , viewType : $viewType")
-
-        if (target == "youtube_end" && videoId != null && viewType == ViewType.SearchShortsVideo.name) {
-            mainViewModel.setSearchCategoryShortFormVieo()
-            mainViewModel.goEndContent(
-                Destination.Search.route,
-                ViewType.SearchShortsVideo,
-                0,
-                null,
-                videoId,
-            )
+        RLog.d(
+            "deepLink",
+            "target : $target , videoId : $videoId , viewType : $viewType , categoryKey$categoryKey selectedIndex : $selectedIndex",
+        )
+        when (viewType) {
+            ViewType.SearchShortsVideo.name -> {
+                if (target == "youtube_end" && videoId != null) {
+                    mainViewModel.setSearchCategoryShortFormVieo()
+                    mainViewModel.goEndContent(
+                        Destination.Search.route,
+                        ViewType.SearchShortsVideo,
+                        0,
+                        null,
+                        videoId,
+                    )
+                }
+            }
+            ViewType.SearchShortsDaily.name -> {
+                if (target == "youtube_end" && categoryKey != null) {
+                    mainViewModel.goEndContent(
+                        Destination.Search.route,
+                        ViewType.SearchShortsDaily,
+                        selectedIndex,
+                        null,
+                        videoId,
+                    )
+                }
+            }
         }
+
         deepLink()
     }
 

@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.search
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,7 +7,6 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -21,18 +19,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -58,23 +52,22 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
-import com.sean.ratel.android.data.common.RemoteConfig
-import com.sean.ratel.android.data.common.RemoteConfig.RANDOM_GA_END_SIZE
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
-import com.sean.ratel.android.data.dto.SearchResultModel
+import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.data.dto.ShortsChannelModel
+import com.sean.ratel.android.data.dto.ShortsVideoModel
+import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdBannerLocation
@@ -86,100 +79,113 @@ import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
-import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun KeyWordSearchListScreen(
-    query: String,
+fun DailySearchResultScreen(
     adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
 ) {
-    KeyWordSearchDisplayUi(query, adViewModel, searchViewModel)
+    KeyWordSearchDisplayUi(adViewModel, searchViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun KeyWordSearchDisplayUi(
-    query: String,
     adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
 ) {
-    val currentData = searchViewModel.shortsSearchList.collectAsState()
-
-    Scaffold(
-        containerColor = APP_BACKGROUND,
-    ) { innerPadding ->
-        val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
-        val adBannerSize =
-            adViewModel.adBannerLoadingCompleteAndGetAdSize
-                .collectAsState()
-                .value.second
-        var moreLoading by remember { mutableStateOf(false) }
-        val scrollPosition = remember { mutableStateOf(0) }
-        val scrollOffset = remember { mutableStateOf(0) }
-
-        val listState =
-            rememberLazyListState(
-                initialFirstVisibleItemIndex = scrollPosition.value,
-                initialFirstVisibleItemScrollOffset = scrollOffset.value,
+    val currentData = searchViewModel.dailyCurrentSearchShortformList.collectAsState()
+    if (currentData.value.isEmpty()) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                "데이터가 없습니다.",
+                modifier =
+                    Modifier
+                        .wrapContentSize()
+                        .padding(start = 5.dp),
+                // Text의 크기를 내용에 맞게 설정
+                fontSize = 15.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
             )
+        }
+    } else {
+        Scaffold(
+            containerColor = APP_BACKGROUND,
+        ) { innerPadding ->
+            val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
+            val adBannerSize =
+                adViewModel.adBannerLoadingCompleteAndGetAdSize
+                    .collectAsState()
+                    .value.second
+            var moreLoading by remember { mutableStateOf(false) }
+            val scrollPosition = remember { mutableStateOf(0) }
+            val scrollOffset = remember { mutableStateOf(0) }
 
-        if (currentData.value.isNotEmpty()) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .background(APP_BACKGROUND)
-                    .padding(
-                        start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
-                        end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
-                        bottom = 0.dp,
-                        top = 0.dp,
-                    ),
-            ) {
-                KeyWordSearchGridItemView(
-                    query,
-                    currentData.value,
-                    adViewModel,
-                    searchViewModel,
-                    loading = { load ->
-                        moreLoading = load
-                    },
-                    listState,
+            val listState =
+                rememberLazyListState(
+                    initialFirstVisibleItemIndex = scrollPosition.value,
+                    initialFirstVisibleItemScrollOffset = scrollOffset.value,
                 )
-            }
-        }
 
-        LaunchedEffect(Unit) {
-            listState.scrollToItem(0)
-        }
-
-        RLog.d("KKKKKKKKK", "moreLoading : $moreLoading , adBannerSize :$adBannerSize ,  bottomBarHeight : $bottomBarHeight $")
-        if (moreLoading) {
-            Box(
-                Modifier
-                    .fillMaxSize()
-                    .padding(bottom = (adBannerSize + bottomBarHeight).dp + REMAIN_AD_MARGIN)
-                    .background(Color.Transparent),
-                contentAlignment = Alignment.BottomCenter,
-            ) {
+            if (currentData.value.isNotEmpty()) {
                 Box(
                     Modifier
-                        .fillMaxWidth()
-                        .height(64.dp)
-                        .background(Color.Transparent),
-                    contentAlignment = Alignment.Center,
+                        .fillMaxSize()
+                        .background(APP_BACKGROUND)
+                        .padding(
+                            start = innerPadding.calculateStartPadding(LayoutDirection.Ltr),
+                            end = innerPadding.calculateEndPadding(LayoutDirection.Ltr),
+                            bottom = 0.dp,
+                            top = 0.dp,
+                        ),
                 ) {
-                    CircularProgressIndicator(
-                        Modifier
-                            .size(18.dp)
-                            .padding(1.dp),
-                        strokeWidth = 3.dp,
-                        color = APP_TEXT_COLOR,
+                    DailySearchGridItemView(
+                        currentData.value,
+                        adViewModel,
+                        searchViewModel,
+                        loading = { load ->
+                            moreLoading = load
+                        },
+                        listState,
                     )
+                }
+            }
+
+            LaunchedEffect(Unit) {
+                listState.scrollToItem(0)
+            }
+
+            RLog.d(
+                "KKKKKKKKK",
+                "moreLoading : $moreLoading , adBannerSize :$adBannerSize ,  bottomBarHeight : $bottomBarHeight $",
+            )
+            if (moreLoading) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .padding(bottom = (adBannerSize + bottomBarHeight).dp + REMAIN_AD_MARGIN)
+                        .background(Color.Transparent),
+                    contentAlignment = Alignment.BottomCenter,
+                ) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(64.dp)
+                            .background(Color.Transparent),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(
+                            Modifier
+                                .size(18.dp)
+                                .padding(1.dp),
+                            strokeWidth = 3.dp,
+                            color = APP_TEXT_COLOR,
+                        )
+                    }
                 }
             }
         }
@@ -188,9 +194,8 @@ fun KeyWordSearchDisplayUi(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun KeyWordSearchGridItemView(
-    query: String,
-    data: List<SearchResultModel>,
+fun DailySearchGridItemView(
+    data: List<MainShortsModel>,
     adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
     loading: (Boolean) -> Unit,
@@ -203,15 +208,14 @@ fun KeyWordSearchGridItemView(
             .padding(top = 10.dp)
             .wrapContentHeight(),
     ) {
-        KeyWordSearchGridItemList(query, data, adViewModel, searchViewModel, loading, listState)
+        KeyWordSearchGridItemList(data, adViewModel, searchViewModel, loading, listState)
     }
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun KeyWordSearchGridItemList(
-    query: String,
-    items: List<SearchResultModel>,
+    items: List<MainShortsModel>,
     adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
     loading: (Boolean) -> Unit,
@@ -220,34 +224,37 @@ fun KeyWordSearchGridItemList(
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
     val index = searchViewModel.moreIndex.collectAsState()
     val searchComplete = searchViewModel.searchDataComplete.collectAsState()
+    val currentCategory = searchViewModel.selectedCategory.collectAsState()
 
     val isAtBottom = listState.isAtBottom()
-    val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
     RLog.d(
         "KeywordSearch",
-        "isAtBottom : $isAtBottom , maxMoreIndex : ${
-            searchViewModel.maxMoreIndex(
-                SearchType.VideoSearch,
-            )
-        } , index.value : ${index.value}",
+        "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex(
+            SearchType.ArchiveSearch,
+        )} , index.value : ${index.value}",
     )
     LaunchedEffect(isAtBottom) {
         if (isAtBottom) {
-            //   RLog.d("KKKKKKKKK", "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex()} , index.value : ${index.value},  hasNext : ${searchViewModel.hasNext.value}")
-            if (searchViewModel.maxMoreIndex(SearchType.VideoSearch) > index.value && searchViewModel.hasNext.value) {
-                loading(true)
-                // searchViewModel.setMorEVent(index.value + 1)
-                searchViewModel.moreContent(context, index.value + 1, query, complete = {
+            RLog.d(
+                "KKKKKKKKK",
+                "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex(
+                    SearchType.ArchiveSearch,
+                )} , index.value : ${index.value}}",
+            )
+            if (searchViewModel.maxMoreIndex(SearchType.ArchiveSearch) > index.value) {
+                searchViewModel.dailyMoreContent(index.value + 1, complete = {
+                    loading(true)
                     coroutine.launch {
                         loading(false)
                         listState.animateScrollBy(50f)
                         searchViewModel.setMorEVent(index.value + 1)
                     }
                 })
+
                 searchViewModel.sendGALog(
                     screenName = GASplashAnalytics.SCREEN_NAME.get(SEARCH_SCREEN) ?: "",
-                    eventName = GASplashAnalytics.Event.SEARCH_MORE_VIEW,
+                    eventName = GASplashAnalytics.Event.SEARCH__DAILY_MORE_VIEW,
                     actionName = GASplashAnalytics.Action.VIEW,
                     parameter =
                         mapOf(
@@ -259,7 +266,7 @@ fun KeyWordSearchGridItemList(
     }
 
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.weight(0.85f)) {
+        Box(Modifier.weight(0.80f)) {
             LazyColumn(
                 modifier =
                     Modifier
@@ -268,14 +275,14 @@ fun KeyWordSearchGridItemList(
                 state = listState,
             ) {
                 var i = 0
-                item(key = items[i].videoId) {
+                item(key = items[i].itemPosition) {
                     while (i < items.size) {
                         if (i + 2 < items.size) {
                             Row(
                                 Modifier.padding(vertical = 1.5.dp, horizontal = 3.dp),
                                 horizontalArrangement = Arrangement.spacedBy(1.5.dp),
                             ) {
-                                GridItemBoxRow(
+                                DailyGridItemBoxRow(
                                     rowSize = 3,
                                     items =
                                         listOf(
@@ -284,13 +291,14 @@ fun KeyWordSearchGridItemList(
                                             items[i + 2].apply { itemPosition = i + 2 },
                                         ),
                                     searchViewModel = searchViewModel,
+                                    currentCategory = currentCategory.value,
                                 )
                             }
 
                             i += 3
                         } else {
                             val remainCount = (items.size) - i
-                            val list = mutableListOf<SearchResultModel>()
+                            val list = mutableListOf<MainShortsModel>()
 
                             for (r in 0 until remainCount) {
                                 list.add(
@@ -302,15 +310,16 @@ fun KeyWordSearchGridItemList(
                             val blankItem = (3 - list.size)
                             if (blankItem > 0) {
                                 for (b in 0 until blankItem) {
-                                    list.add(SearchResultModel(items.size - blankItem - b))
+                                    list.add(MainShortsModel(items.size - blankItem - b))
                                 }
                             }
 
                             if (remainCount < 3) {
-                                GridItemBoxRow(
+                                DailyGridItemBoxRow(
                                     rowSize = 3,
                                     items = list,
                                     searchViewModel = searchViewModel,
+                                    currentCategory = currentCategory.value,
                                 )
                             }
 
@@ -321,12 +330,15 @@ fun KeyWordSearchGridItemList(
             }
         }
         val bottomPadding =
-            adBannerLoadingComplete.value.second.dp + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() +
+            adBannerLoadingComplete.value.second.dp +
+                WindowInsets.navigationBars
+                    .asPaddingValues()
+                    .calculateBottomPadding() +
                 STRINGS.REMAIN_AD_MARGIN
         Box(
             Modifier
                 .fillMaxWidth()
-                .weight(0.15f)
+                .weight(0.2f)
                 .then(
                     if (adBannerLoadingComplete.value.first) {
                         Modifier
@@ -339,16 +351,16 @@ fun KeyWordSearchGridItemList(
                 ),
             contentAlignment = Alignment.BottomStart,
         ) {
-            if (!searchComplete.value) {
-                LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.BOTTOM)
-            }
+            // if (!searchComplete.value) {
+            LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.BOTTOM)
+            //  }
         }
     }
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun KeyWordGideVideoArea(shortVideoModel: SearchResultModel?) {
+fun DailyGideVideoArea(shortVideoModel: ShortsVideoModel?) {
     val videoTitle = shortVideoModel?.title ?: ""
 
     Text(
@@ -381,13 +393,13 @@ fun KeyWordGideVideoArea(shortVideoModel: SearchResultModel?) {
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun KeyWorldGridChannelArea(
+fun DailyGridChannelArea(
     modifier: Modifier,
-    channel: SearchResultModel?,
+    channel: ShortsChannelModel?,
 ) {
-    val channelThumbnail = channel?.channelThumbnail ?: ""
+    val channelThumbnail = channel?.channelThumbNail ?: ""
 
-    val channelTitle = channel?.channelName ?: ""
+    val channelTitle = channel?.channelTitle ?: ""
 
     Row(
         modifier
@@ -452,10 +464,11 @@ fun KeyWorldGridChannelArea(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun GridItemBoxRow(
+fun DailyGridItemBoxRow(
     rowSize: Int,
-    items: List<SearchResultModel>,
-    searchViewModel: SearchViewModel?,
+    items: List<MainShortsModel>,
+    searchViewModel: SearchViewModel,
+    currentCategory: YouTubeCategory,
 ) {
     Row(
         // 좌우 패딩 추가
@@ -464,44 +477,48 @@ fun GridItemBoxRow(
         horizontalArrangement = Arrangement.spacedBy(1.5.dp),
     ) {
         for (i in 0 until rowSize) {
-            val searchVideoModel = items[i]
+            val shortVideoModel = items[i].shortsVideoModel
+            val shortChannelModel = items[i].shortsChannelModel
             val position = items[i].itemPosition
 
-            val videoThumbnail = items[i].thumbnail
-            val views = searchVideoModel.views ?: ""
-            val uploadedTime = searchVideoModel.uploadedTime ?: ""
+            val videoThumbnail = items[i].shortsVideoModel?.thumbNail
+            val videoDuration = shortVideoModel?.duration ?: "00:00"
             val context = LocalContext.current
 
             Box(
-                Modifier
-                    .weight(1f)
-                    .clickable {
-                        RLog.d(
-                            "KKKKKK",
-                            "position : $position" +
-                                "title :${searchVideoModel.title} ,  videoId : ${items[i].videoId}",
-                        )
-                        searchViewModel?.goEndContent(
-                            context,
-                            Destination.Search.route,
-                            ViewType.SearchShortsVideo,
-                            items[i].videoId ?: "",
-                        )
-                        if (Random.nextInt(RemoteConfig.getRemoteConfigIntValue(RANDOM_GA_END_SIZE)) == 0) {
-                            searchViewModel?.sendGALog(
-                                screenName = GASplashAnalytics.SCREEN_NAME.get(SEARCH_SCREEN) ?: "",
-                                eventName = GASplashAnalytics.Event.SELECT_SEARCH_ITEM_CLICK,
-                                actionName = GASplashAnalytics.Action.SELECT,
-                                parameter =
-                                    mapOf(
-                                        GASplashAnalytics.Param.VIDEO_ID to (
-                                            items[i].videoId
-                                                ?: ""
+                Modifier.weight(1f)
+
+                    then (
+                        if (shortVideoModel != null) {
+                            Modifier.clickable {
+                                RLog.d(
+                                    "deepLink",
+                                    "position : $position viewType  " +
+                                        "title :${shortVideoModel.title} ,  videoId : ${items[i].shortsVideoModel?.videoId}",
+                                )
+
+                                searchViewModel.goEndContent(
+                                    context = context,
+                                    route = Destination.Search.route,
+                                    viewType = ViewType.SearchShortsDaily,
+                                    videoId = shortVideoModel.videoId,
+                                    selectedIndex = position,
+                                    categoryKey = currentCategory.categoryKey,
+                                )
+                                searchViewModel.sendGALog(
+                                    screenName = GASplashAnalytics.SCREEN_NAME.get(SEARCH_SCREEN) ?: "",
+                                    eventName = GASplashAnalytics.Event.SELECT_SEARCH_DAILY_ITEM_CLICK,
+                                    actionName = GASplashAnalytics.Action.CLICK,
+                                    parameter =
+                                        mapOf(
+                                            GASplashAnalytics.Param.VIDEO_ID to (items[i].shortsVideoModel?.videoId ?: ""),
                                         ),
-                                    ),
-                            )
+                                )
+                            }
+                        } else {
+                            Modifier
                         }
-                    },
+                    ),
             ) {
                 if (videoThumbnail?.isNotEmpty() == true) {
                     Surface(
@@ -541,64 +558,35 @@ fun GridItemBoxRow(
                         Modifier
                             .background(Background_op_20)
                             .align(Alignment.BottomEnd)
-                            .padding(
-                                top = 7.dp,
-                            ),
+                            .padding(top = 7.dp),
                     ) {
-                        KeyWordGideVideoArea(searchVideoModel)
-                        KeyWorldGridChannelArea(modifier = Modifier, searchVideoModel)
+                        DailyGideVideoArea(shortVideoModel)
+                        DailyGridChannelArea(modifier = Modifier, shortChannelModel)
 
-                        Column(
+                        Box(
                             modifier =
                                 Modifier
-                                    .fillMaxWidth()
-                                    .wrapContentHeight()
-                                    .padding(top = 5.dp)
+                                    .wrapContentSize()
+                                    .padding(top = 5.dp, bottom = 7.dp, end = 7.dp)
                                     .background(
                                         brush =
-                                            Brush.verticalGradient(
+                                            Brush.horizontalGradient(
                                                 colors =
                                                     listOf(
-                                                        Color.Black.copy(alpha = 0.0f),
-                                                        Color.Black.copy(alpha = 0.4f),
-                                                        Color.Black.copy(alpha = 0.7f),
+                                                        // 진한 검은색
+                                                        Color.LightGray.copy(alpha = 0.3f),
+                                                        // 투명
+                                                        Color.Black,
                                                     ),
                                             ),
-                                    ),
+                                    ).align(Alignment.End),
                         ) {
                             Text(
-                                text = views,
-                                Modifier
-                                    .wrapContentSize()
-                                    .padding(start = 7.dp, bottom = 2.dp)
-                                    .align(Alignment.Start),
+                                text = videoDuration,
                                 fontFamily = FontFamily.SansSerif,
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 12.sp,
-                                color = Color.White,
-                                style =
-                                    TextStyle(
-                                        shadow =
-                                            Shadow(
-                                                color = Color.Black,
-                                                // 그림자의 위치 (x, y)
-                                                offset = Offset(2f, 2f),
-                                                // 그림자의 흐림 정도
-                                                blurRadius = 4f,
-                                            ),
-                                    ),
-                            )
-                            Text(
-                                text = uploadedTime,
-                                Modifier
-                                    .wrapContentSize()
-                                    .padding(start = 7.dp, bottom = 7.dp)
-                                    .align(Alignment.Start),
-                                fontFamily = FontFamily.SansSerif,
-                                fontStyle = FontStyle.Normal,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = 12.sp,
+                                fontSize = 15.sp,
                                 color = Color.White,
                                 style =
                                     TextStyle(
@@ -620,80 +608,25 @@ fun GridItemBoxRow(
     }
 }
 
-@Suppress("ktlint:standard:function-naming")
-@Composable
-fun RetryButton(retry: () -> Unit) {
-    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(top = 56.dp + insetPaddingValue)
-                .background(Color.Transparent),
-        contentAlignment = Alignment.Center,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(APP_BACKGROUND),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(
-                onClick = retry,
-                modifier =
-                    Modifier
-                        .wrapContentWidth()
-                        .height(50.dp),
-                shape = RoundedCornerShape(12.dp),
-                colors =
-                    ButtonDefaults.buttonColors(
-                        backgroundColor = Color.Transparent,
-                    ),
-                border = BorderStroke(2.dp, Color(0xFFADFF2F)),
-                contentPadding = PaddingValues(horizontal = 24.dp, vertical = 8.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.api_error_retry),
-                    color = Color(0xFFADFF2F),
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    fontFamily = FontFamily.SansSerif,
-                    style =
-                        TextStyle(
-                            shadow =
-                                Shadow(
-                                    color = Color.Black.copy(alpha = 0.6f),
-                                    offset = Offset(2f, 2f),
-                                    blurRadius = 4f,
-                                ),
-                        ),
-                )
-            }
-        }
-    }
-}
-
-@Suppress("ktlint:standard:function-naming")
-@Preview(showBackground = true)
-@Composable
-fun SearchResultPreView() {
-    RatelappTheme {
-        val s1 =
-            SearchResultModel(
-                0,
-                "감스트",
-                "감스트 앞에서 그 옷을 입었더니.. 흑백 챌린지",
-                "https://www.youtube.com/shorts/uRCZx7uhRv8",
-                "uRCZx7uhRv8",
-                "https://i.ytimg.com/vi/uRCZx7uhRv8/hqdefault.jpg",
-                "SOONIGROUP [수니그룹]",
-                null,
-                "https://yt3.ggpht.com/ZSuwLWQmRwB-ZbFL0S6KRYzdOp_L9iEQV1AWFfYHMKLOO4twN4MyvRRBn4CB6RT1I4pXFwTl=s68-c-k-c0x00ffffff-no-rj",
-                "조회수 796만회",
-                "11개월 전",
-            )
-        // KeyWordSearchGridItemList(listOf(s1),null,null,{},LazyListState(),{})
-    }
-}
+// @Suppress("ktlint:standard:function-naming")
+// @Preview(showBackground = true)
+// @Composable
+// fun SearchResultPreView() {
+//    RatelappTheme {
+//        val s1 =
+//            SearchResultModel(
+//                0,
+//                "감스트",
+//                "감스트 앞에서 그 옷을 입었더니.. 흑백 챌린지",
+//                "https://www.youtube.com/shorts/uRCZx7uhRv8",
+//                "uRCZx7uhRv8",
+//                "https://i.ytimg.com/vi/uRCZx7uhRv8/hqdefault.jpg",
+//                "SOONIGROUP [수니그룹]",
+//                null,
+//                "https://yt3.ggpht.com/ZSuwLWQmRwB-ZbFL0S6KRYzdOp_L9iEQV1AWFfYHMKLOO4twN4MyvRRBn4CB6RT1I4pXFwTl=s68-c-k-c0x00ffffff-no-rj",
+//                "조회수 796만회",
+//                "11개월 전",
+//            )
+//        // KeyWordSearchGridItemList(listOf(s1),null,null,{},LazyListState(),{})
+//    }
+// }

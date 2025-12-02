@@ -98,6 +98,10 @@ class SettingViewModel
             youTubeRepository.clearDataByKeyPattern(patternKey)
         }
 
+        suspend fun removeCategory() {
+            youTubeRepository.removeCategory()
+        }
+
         fun sendGALog(
             event: String,
             route: String? = null,

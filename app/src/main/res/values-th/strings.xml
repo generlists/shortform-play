@@ -157,4 +157,13 @@
     <string name="api_empty_error">ดึงข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง!</string>
     <string name="api_error_retry">ลองอีกครั้ง</string>
 
+    <string name="search_type_keyword">ค้นหาด้วยคีย์เวิร์ด</string>
+    <string name="search_type_daily">ชอร์ตประจำวัน</string>
+    <string name="youtube_category_all">All</string>
+    <string name="search_date">📆 วันที่</string>
+    <string name="search_category">⚡ หมวดหมู่</string>
+    <string name="search_daily_reset">รีเซ็ต</string>
+    <string name="search_daily_apply">นำไปใช้</string>
+    <string name="search_select_date">เลือกวันที่!</string>
+
 </resources>

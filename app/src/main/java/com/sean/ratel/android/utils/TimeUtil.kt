@@ -23,10 +23,23 @@ object TimeUtil {
         return date.format(formatter)
     }
 
-    fun formatTimestamp(timestamp: Long): String {
+    fun formatTimestamp(
+        timestamp: Long,
+        format: String,
+    ): String {
         val date = Date(timestamp * 1000) // Convert to milliseconds
-        val dateFormat = SimpleDateFormat("yy-MM-dd", Locale.getDefault())
+        val dateFormat = SimpleDateFormat(format, Locale.getDefault())
         return dateFormat.format(date)
+    }
+
+    /** 날짜 포맷 */
+    fun millisToDateString(millis: Long): String {
+        val date =
+            Instant
+                .ofEpochMilli(millis)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate()
+        return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     }
 
     fun formatYouTubeDuration(duration: String): String {

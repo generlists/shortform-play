@@ -152,4 +152,13 @@
     <string name="api_empty_error">데이터를 가져오는데 실패 재시도 해주세요!</string>
     <string name="api_error_retry">재시도</string>
 
+    <string name="search_type_keyword">키워드 검색</string>
+    <string name="search_type_daily">데일리 쇼츠</string>
+    <string name="youtube_category_all">전체</string>
+    <string name="search_date">📆 날짜</string>
+    <string name="search_category">⚡ 카테고리</string>
+    <string name="search_daily_reset">초기화</string>
+    <string name="search_daily_apply">적용</string>
+    <string name="search_select_date">검색할 날짜를 선택해주세요!</string>
+
 </resources>

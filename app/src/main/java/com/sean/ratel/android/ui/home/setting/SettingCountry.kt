@@ -166,6 +166,7 @@ private fun ShortFormCountry(
                     coroutineScope.launch {
                         viewModel?.removeLocalCache("shorts_main_list_$locale.json")
                         viewModel?.removeLocalCache("shorts_trailer_list_$locale.json")
+                        viewModel?.removeCategory()
                         locale = countryCode
                         viewModel?.setLocale(countryCode)
                         newActivity(context)

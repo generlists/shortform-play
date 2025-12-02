@@ -20,10 +20,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -176,9 +176,14 @@ private fun UserSuggestsItems(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
+            .background(APP_BACKGROUND)
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(color = Color.White.copy(alpha = 0.2f)),
+                indication =
+                    ripple(
+                        bounded = true,
+                        color = Color.White.copy(alpha = 0.2f),
+                    ),
             ) {
                 selectItem(item.searchKeyword)
                 searchViewModel.sendGALog(
@@ -190,8 +195,7 @@ private fun UserSuggestsItems(
                             GASplashAnalytics.Param.VIDEO_ID to (item.videoId ?: ""),
                         ),
                 )
-            }.background(Color.Black)
-            .padding(horizontal = 8.dp, vertical = 6.dp),
+            }.padding(horizontal = 8.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         // 왼쪽 썸네일 + 텍스트

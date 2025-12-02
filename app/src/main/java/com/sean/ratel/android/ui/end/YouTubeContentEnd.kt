@@ -42,6 +42,7 @@ fun YouTubeContentEnd(
 ) {
     val selectedIndex by remember { mainViewModel.selectedIndex }
     val selectedVideoId by remember { mainViewModel.selectVideoId }
+    val currentCategory = remember { mainViewModel.currentCategory }
     val categoryShortsList by mainViewModel.categoryByContents.collectAsState()
     val searchShortsVideo by youTubeContentEndViewModel.searchShots.collectAsState()
     val searchRequestLoading = remember { mutableStateOf(false) }
@@ -119,17 +120,34 @@ fun YouTubeContentEnd(
         } else if (mainViewModel.itemClicked.value == Destination.Home.ShortForm.route) {
             youTubeContentEndViewModel.setShortFormVideoData(selectedIndex)
         } else if (mainViewModel.itemClicked.value == Destination.Search.route) {
-            RLog.d("deepLink", "search $selectedVideoId")
-            searchRequestLoading.value = true
+            RLog.d(
+                "deepLink",
+                "search $selectedVideoId , viewType : ${mainViewModel.viewType.value} , currentCategory : ${currentCategory.value}",
+            )
+            when (mainViewModel.viewType.value) {
+                ViewType.SearchShortsVideo -> {
+                    searchRequestLoading.value = true
 
-            selectedVideoId?.let {
-                youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
-                    it,
-                    categoryShortsList,
-                )
+                    selectedVideoId?.let {
+                        youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
+                            it,
+                            categoryShortsList,
+                        )
+                    }
+                }
+                ViewType.SearchShortsDaily -> {
+                    val dailyShorts =
+                        mainViewModel.currentDailyShorts(currentCategory.value, selectedIndex)
+                    dailyShorts?.let {
+                        youTubeContentEndViewModel.searchDailyShortsData(it)
+                    }
+                }
+
+                else -> Unit
             }
         }
     }
+
     if (mainViewModel.itemClicked.value == Destination.DeepLink.route) {
         RLog.d("deepLink", "search $selectedVideoId")
         searchRequestLoading.value = true
@@ -193,6 +211,7 @@ fun DisplayUI(
     val mainTrendsShorts by youTubeContentEndViewModel.mainTrendShortsList.collectAsState()
     val moreTrendsShorts by youTubeContentEndViewModel.moreTrendShortsList.collectAsState()
     val searchShortsVideo by youTubeContentEndViewModel.searchShots.collectAsState()
+    val searchDailyShortsVideo by youTubeContentEndViewModel.searchDailyShorts.collectAsState()
     val activity = LocalContext.current as FragmentActivity
 
     if ((
@@ -209,7 +228,8 @@ fun DisplayUI(
         recommendList.isNotEmpty() ||
         categoryShortFromVideo.isNotEmpty() ||
         watchList.isNotEmpty() ||
-        searchShortsVideo.isNotEmpty()
+        searchShortsVideo.isNotEmpty() ||
+        searchDailyShortsVideo.isNotEmpty()
     ) {
         val endList =
             getEndData(mainViewModel.viewType.collectAsState().value, youTubeContentEndViewModel)
@@ -256,6 +276,7 @@ private fun getEndData(
         ViewType.MainTrendShorts -> youTubeContentEndViewModel.mainTrendShortsList.value
         ViewType.TrendShortsMore -> youTubeContentEndViewModel.moreTrendShortsList.value
         ViewType.SearchShortsVideo, ViewType.DeepLinkVideo -> youTubeContentEndViewModel.searchShots.value
+        ViewType.SearchShortsDaily -> youTubeContentEndViewModel.searchDailyShorts.value
         else -> null
     }
 
@@ -387,6 +408,7 @@ fun FragmentContainer(
         corutineScope.launch {
             mainViewModel.setRecentVideo()
             mainViewModel.setPIPClick(Pair(false, null))
+            mainViewModel.clearSearchData()
         }
     }
 
@@ -397,6 +419,7 @@ fun FragmentContainer(
             corutineScope.launch {
                 mainViewModel.setRecentVideo()
                 mainViewModel.setPIPClick(Pair(false, null))
+                mainViewModel.clearSearchData()
             }
         }
     }

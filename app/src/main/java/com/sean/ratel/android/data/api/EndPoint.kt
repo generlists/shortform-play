@@ -7,4 +7,6 @@ object EndPoint {
     const val SEARCH_SUGGEST = "search/suggest"
     const val AUTH_HASH = " attestation/request-hash"
     const val AUTH_INTEGRITY = "auth/integrity"
+    const val CATEGORY = "search/category"
+    const val DAILY_SHORTS = "search/daily"
 }

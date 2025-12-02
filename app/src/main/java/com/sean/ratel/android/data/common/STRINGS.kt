@@ -32,6 +32,9 @@ object STRINGS {
 
     const val URL_MY_PACKAGE_NAME: String = "com.sean.ratel.android"
 
+    const val SERVICE_START_DATE = "20241029"
+    const val SERVICE_RENEWAL_START_DATE = "20241207"
+
     @Suppress("ktlint:standard:function-naming")
     fun YOUTUBE_APP_BY_VIDEO_ID(videoId: String): String = "https://shortform-play.ai/share?vid=$videoId"
 

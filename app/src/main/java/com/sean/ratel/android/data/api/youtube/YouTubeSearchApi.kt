@@ -1,10 +1,12 @@
 package com.sean.ratel.android.data.api.youtube
 
+import com.google.gson.JsonElement
 import com.sean.ratel.android.data.api.EndPoint
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.SearchShortsResponse
 import com.sean.ratel.android.data.dto.SearchShortsSuggestResponse
 import com.sean.ratel.android.data.dto.SessionResetRes
+import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -35,4 +37,15 @@ interface YouTubeSearchApi {
     suspend fun requestResetSession(
         @Query("sessionId") sessionId: String,
     ): SessionResetRes
+
+    @GET(EndPoint.CATEGORY)
+    suspend fun requestYouTubeCategory(
+        @Query("region") region: String,
+    ): Map<String, String>
+
+    @GET(EndPoint.DAILY_SHORTS)
+    suspend fun requestDailyShortsSearch(
+        @Query("date") data: String,
+        @Query("region") region: String,
+    ): Response<JsonElement>
 }
