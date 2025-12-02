@@ -151,4 +151,13 @@
     <string name="api_empty_error">データの取得に失敗しました。もう一度お試しください！</string>
     <string name="api_error_retry">再試行</string>
 
+    <string name="search_type_keyword">キーワード検索</string>
+    <string name="search_type_daily">デイリーショート</string>
+    <string name="youtube_category_all">All</string>
+    <string name="search_date">📆 日付</string>
+    <string name="search_select_date">日付を選択してください！</string>
+    <string name="search_category">⚡ カテゴリー</string>
+    <string name="search_daily_reset">初期化</string>
+    <string name="search_daily_apply">適用</string>
+
 </resources>

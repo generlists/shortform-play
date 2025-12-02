@@ -17,6 +17,7 @@ import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.InstallRefererRepository
 import com.sean.ratel.android.data.repository.RecentVideoRepository
+import com.sean.ratel.android.data.repository.SearchResultDataRepository
 import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -41,6 +42,7 @@ class MainViewModel
         val recentVideoRepository: RecentVideoRepository,
         val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
         val installRefererRepository: InstallRefererRepository,
+        private val searchResultsRepository: SearchResultDataRepository,
     ) : ViewModel() {
         private val _isInstallReferer = MutableStateFlow<String?>(null)
         val isInstallReferer: StateFlow<String?> = _isInstallReferer
@@ -134,6 +136,10 @@ class MainViewModel
                 mutableMapOf(),
             )
         val categoryByContents: StateFlow<Map<String, List<MainShortsModel>>> = _categoryByContents
+
+
+        private val _currentCategory = MutableStateFlow<String>("0")
+        val currentCategory: MutableStateFlow<String> = _currentCategory
 
         fun setPIPClick(pipClick: Pair<Boolean, ViewPager2?>) {
             _pipClick.value = pipClick
@@ -250,6 +256,14 @@ class MainViewModel
                     }
                 }
                 ViewType.SearchShortsVideo, ViewType.DeepLinkVideo -> {
+                    videoId?.let {
+                        navigator.navigateTo(
+                            Destination.YouTube.dynamicRoute(it),
+                            false,
+                        )
+                    }
+                }
+                ViewType.SearchShortsDaily -> {
                     videoId?.let {
                         navigator.navigateTo(
                             Destination.YouTube.dynamicRoute(it),
@@ -478,10 +492,59 @@ class MainViewModel
             RLog.d(TAG, "zipList : ${zipList.keys}")
         }
 
+        fun setSearchCategoryDailyShortFormVieo(dailySearch: List<MainShortsModel>) {
+            searchResultsRepository.setResults(dailySearch)
+            RLog.d("deeplink", "sizesizesizesize : ${searchResultsRepository.getResults()?.size}")
+        }
+
+        fun currentDailyShorts(
+            category: String,
+            selectedIndex: Int,
+        ): List<MainShortsModel>? {
+            // 전체
+            if (category == "0") {
+                val list =
+                    searchResultsRepository.getResults()?.let {
+                        it
+                            .filter { it.shortsVideoModel != null }
+                            .distinctBy { it.shortsVideoModel?.videoId }
+                    }
+
+                val headVideoList =
+                    list?.subList(selectedIndex.coerceAtLeast(0), list.size)
+                val tailVideoList =
+                    list?.subList(0, selectedIndex.coerceAtMost(list.size))
+                if (headVideoList != null && tailVideoList != null) {
+                    return headVideoList + tailVideoList
+                }
+            } else {
+                val list =
+                    searchResultsRepository.getResults()?.let {
+                        it
+                            .filter { it.shortsVideoModel != null && (it.shortsVideoModel?.category == category) }
+                            .distinctBy { it.shortsVideoModel?.videoId }
+                    }
+                val headVideoList =
+                    list?.subList(selectedIndex.coerceAtLeast(0), list.size)
+                val tailVideoList =
+                    list?.subList(0, selectedIndex.coerceAtMost(list.size))
+
+                _currentCategory.value = category
+                if (headVideoList != null && tailVideoList != null) {
+                    return headVideoList + tailVideoList
+                }
+            }
+            return null
+        }
+
         fun setInstallReferer(path: String) {
             viewModelScope.launch {
                 installRefererRepository.setInstallReferer(path)
             }
+        }
+
+        fun clearSearchData() {
+            searchResultsRepository.clearCache()
         }
 
         suspend fun getInstallRerere(): String? = installRefererRepository.getInstallReferer()
@@ -489,5 +552,6 @@ class MainViewModel
         companion object {
             private const val MAIN_ITEM_COUNT = 0
             private const val TAG = "MainViewModel"
+            private const val INIT_MAX_SIZE = 30
         }
     }

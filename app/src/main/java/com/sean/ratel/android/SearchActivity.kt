@@ -13,7 +13,7 @@ import androidx.fragment.app.FragmentActivity
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
-import com.sean.ratel.android.ui.search.SearchComposeUi
+import com.sean.ratel.android.ui.search.SearchScreen
 import com.sean.ratel.android.ui.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -36,15 +36,15 @@ class SearchActivity : FragmentActivity() {
         }
 
         setContent {
-            SearchComposeUi(
+            SearchScreen(
                 searchViewModel,
                 adViewModel,
+                mainViewModel,
                 finish = { finish() },
             )
         }
-
         searchViewModel.sendGALog(
-            screenName = GASplashAnalytics.SCREEN_NAME.get(SEARCH_SCREEN) ?: "",
+            screenName = GASplashAnalytics.SCREEN_NAME[SEARCH_SCREEN] ?: "",
             eventName = GASplashAnalytics.Event.SEARCH_VIEW,
             actionName = GASplashAnalytics.Action.VIEW,
             parameter = mapOf(),

@@ -2,6 +2,7 @@ package com.sean.ratel.android.ui.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -11,9 +12,11 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -136,9 +139,17 @@ private fun SuggestsItems(
         Modifier
             .wrapContentSize()
             .background(APP_BACKGROUND)
-            .clickable(onClick = {
-                selectItem(item)
-            }),
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication =
+                    ripple(
+                        bounded = true,
+                        color = Color.White.copy(alpha = 0.2f),
+                    ),
+                onClick = {
+                    selectItem(item)
+                },
+            ),
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(

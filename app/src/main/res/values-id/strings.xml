@@ -161,4 +161,14 @@
     <string name="api_unknown_error">Terjadi kesalahan yang tidak diketahui.</string>
     <string name="api_empty_error">Gagal mengambil data. Silakan coba lagi!</string>
     <string name="api_error_retry">Coba Lagi</string>
+
+
+    <string name="search_type_keyword">Pencarian Kata Kunci</string>
+    <string name="search_type_daily">Shorts Harian</string>
+    <string name="youtube_category_all">All</string>
+    <string name="search_date">📆 Tanggal</string>
+    <string name="search_select_date">Pilih tanggal!</string>
+    <string name="search_category">⚡ Kategori</string>
+    <string name="search_daily_reset">Reset</string>
+    <string name="search_daily_apply">Terapkan</string>
 </resources>

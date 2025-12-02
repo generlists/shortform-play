@@ -113,14 +113,14 @@ fun RankingHorizontalScrollView(
             "(${
                 String.format(
                     stringResource(R.string.base_date),
-                    TimeUtil.formatTimestamp(it),
+                    TimeUtil.formatTimestamp(it,"yy-MM-dd"),
                 )
             })"
         } ?: run {
             "(${
                 String.format(
                     stringResource(R.string.base_date),
-                    TimeUtil.formatTimestamp(System.currentTimeMillis()),
+                    TimeUtil.formatTimestamp(System.currentTimeMillis(),"yy-MM-dd"),
                 )
             })"
         }

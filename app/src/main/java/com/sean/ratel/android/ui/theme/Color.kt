@@ -14,6 +14,9 @@ val Pink40 = Color(0xFF7D5260)
 val APP_BACKGROUND = Color.Black
 val APP_TEXT_COLOR = Color(0xFFABFF43)
 val APP_SUBTITLE_TEXT_COLOR = Color(0xFF989A9F)
+val APP_SEARCH_BOTTOM_CONTAIN_COLOR = Color(0xFF000000)
+val APP_SEARCH_BOTTOM_SCRIM_COLOR = Color(0xAA000000)
+
 val Background = Color(android.graphics.Color.parseColor("#F6F6F6"))
 val Background_op_20 = Color(android.graphics.Color.parseColor("#33000000"))
 val IMAGE_FLOW_DOT_BACKGROUND = Color(android.graphics.Color.parseColor("#888888"))

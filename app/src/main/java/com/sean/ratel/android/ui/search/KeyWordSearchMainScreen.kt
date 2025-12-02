@@ -61,8 +61,7 @@ fun SearchComposeUi(
         Scaffold(
             modifier =
                 Modifier
-                    .background(APP_BACKGROUND)
-                    .padding(top = insetPaddingValue),
+                    .background(APP_BACKGROUND),
             topBar = {
                 TopSearchBar(
                     Modifier,
@@ -100,7 +99,13 @@ fun SearchComposeUi(
                     SearchUiState.UserSuggest -> {
                         UserSuggestListScreen(adViewModel, searchViewModel) { userSelect ->
                             val locale = localeFromCountryCode(currentLocale)
-                            val keyword = "$userSelect + ${getAppLocaleByStringResource(context, currentLocale)}"
+                            val keyword = "$userSelect + ${
+                                getAppLocaleByStringResource(
+                                    context,
+                                    currentLocale,
+                                    R.string.main_shorts_post_fix,
+                                )
+                            }"
                             query.value = userSelect
                             fromSelection.value = true
 
@@ -136,12 +141,24 @@ fun SearchComposeUi(
                                 adViewModel,
                                 searchViewModel,
                             ) { suggest ->
-                                val newKeyword = "$suggest + ${getAppLocaleByStringResource(context, currentLocale)}"
+                                val newKeyword = "$suggest + ${
+                                    getAppLocaleByStringResource(
+                                        context,
+                                        currentLocale,
+                                        R.string.main_shorts_post_fix,
+                                    )
+                                }"
                                 query.value = suggest
                                 fromSelection.value = true
                                 RLog.d("SearchComposeUi", "클릭 자동완성 아이템 : ${uiState.value}")
 
-                                searchViewModel.requestYouTubeSearchResult(context, newKeyword, 0, locale.country, locale.toLanguageTag())
+                                searchViewModel.requestYouTubeSearchResult(
+                                    context,
+                                    newKeyword,
+                                    0,
+                                    locale.country,
+                                    locale.toLanguageTag(),
+                                )
                                 uiState.value = SearchUiState.Searching
                             }
                         }
@@ -156,6 +173,7 @@ fun SearchComposeUi(
                             getAppLocaleByStringResource(
                                 context,
                                 currentLocale,
+                                R.string.main_shorts_post_fix,
                             )
                         }"
 
@@ -229,7 +247,7 @@ fun SearchComposeUi(
         if (searchRetryState.value) {
             RetryButton {
                 val locale = localeFromCountryCode(currentLocale)
-                val newKeyword = "${query.value} + ${getAppLocaleByStringResource(context, currentLocale)}"
+                val newKeyword = "${query.value} + ${getAppLocaleByStringResource(context, currentLocale,R.string.main_shorts_post_fix)}"
                 fromSelection.value = true
                 searchViewModel.requestYouTubeSearchResult(context, newKeyword, 0, locale.country, locale.toLanguageTag())
                 uiState.value = SearchUiState.Searching

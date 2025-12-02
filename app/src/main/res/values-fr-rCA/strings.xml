@@ -164,4 +164,14 @@
     <string name="api_empty_error">Échec du chargement des données. Veuillez réessayer !</string>
     <string name="api_error_retry">Réessayer</string>
 
+
+    <string name="search_type_keyword">Recherche par mots-clés</string>
+    <string name="search_type_daily">Shorts du jour</string>
+    <string name="youtube_category_all">All</string>
+    <string name="search_date">📆 Date</string>
+    <string name="search_select_date">Sélectionnez une date !</string>
+    <string name="search_category">⚡ Catégorie</string>
+    <string name="search_daily_reset">Réinitialiser</string>
+    <string name="search_daily_apply">Appliquer</string>
+
 </resources>

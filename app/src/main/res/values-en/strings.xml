@@ -154,4 +154,13 @@
     <string name="api_empty_error">Failed to fetch data. Please try again!</string>
     <string name="api_error_retry">Retry</string>
 
+    <string name="search_type_keyword">Keyword Search</string>
+    <string name="search_type_daily">Daily Shorts</string>
+    <string name="youtube_category_all">All</string>
+    <string name="search_date">📆 Date</string>
+    <string name="search_select_date">Select a date!</string>
+    <string name="search_category">⚡ Category</string>
+    <string name="search_daily_reset">Reset</string>
+    <string name="search_daily_apply">Apply</string>
+
 </resources>

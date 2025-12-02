@@ -37,8 +37,8 @@ android {
         applicationId = "com.sean.ratel.android"
         minSdk = 28
         targetSdk = 35
-        versionCode = 10070
-        versionName = "1.0.7"
+        versionCode = 10080
+        versionName = "1.0.8"
         testInstrumentationRunner = "com.sean.ratel.android.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -182,6 +182,7 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.compose.material3.material3)
     // Datastore
     implementation(libs.androidx.datastore.preferences)
 

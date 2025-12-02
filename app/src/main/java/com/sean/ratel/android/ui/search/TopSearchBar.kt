@@ -41,7 +41,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
@@ -64,30 +63,11 @@ fun TopSearchBar(
     Row(
         Modifier
             .fillMaxWidth()
-            .height(56.dp).padding(end = 20.dp)
+            .height(56.dp)
+            .padding(start = 20.dp, end = 20.dp)
             .background(APP_BACKGROUND),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(
-            onClick = historyBack,
-            modifier =
-                Modifier
-                    .size(32.dp)
-                    .align(Alignment.CenterVertically)
-                    // 아이콘 크기 설정
-                    .padding(start = 5.dp),
-        ) {
-            Image(
-                // 이미지 리소스
-                painter = painterResource(id = R.drawable.ic_back),
-                contentDescription = "Back Icon",
-                modifier =
-                    Modifier
-                        .height(32.dp)
-                        .width(32.dp),
-            )
-        }
-
         Box(
             Modifier
                 .height(38.dp)
@@ -127,11 +107,9 @@ fun TopSearchBar(
                 )
             }
             if (isCancelButton.value) {
-
                 SearchCancelButton(
                     modifier,
                     { q ->
-                        RLog.d("hbungshin","xxxxxx query : ${q}")
                         isCancelButton.value = q.isNotEmpty()
                         queryChange("")
                     },
@@ -155,16 +133,16 @@ fun SearchTextField(
     val keyboardController = LocalSoftwareKeyboardController.current
     var textFieldValue by remember { mutableStateOf(TextFieldValue()) }
 
-        if ((fromSuggestion.value || fromDeepLink.value) || query.value.isEmpty()) {
-            val text = query.value
-            textFieldValue =
-                textFieldValue.copy(
-                    text = text,
-                    selection = TextRange(text.length),
-                    composition = null,
-                )
-            fromSuggestion.value = false
-        }
+    if ((fromSuggestion.value || fromDeepLink.value) || query.value.isEmpty()) {
+        val text = query.value
+        textFieldValue =
+            textFieldValue.copy(
+                text = text,
+                selection = TextRange(text.length),
+                composition = null,
+            )
+        fromSuggestion.value = false
+    }
 
     if (!fromDeepLink.value) {
         LaunchedEffect(Unit) {

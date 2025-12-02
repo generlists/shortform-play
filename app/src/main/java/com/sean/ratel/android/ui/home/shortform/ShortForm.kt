@@ -552,6 +552,7 @@ fun ScrollableTabBar() {
         // 탭 바의 좌우 여백
         edgePadding = 8.dp,
         indicator = {},
+        divider = {},
     ) {
         tabs.forEachIndexed { index, item ->
             Tab(

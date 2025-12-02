@@ -274,7 +274,8 @@ object UIUtil {
     fun getAppLocaleByStringResource(
         context: Context,
         countryCode: String,
-    ) = getLocalizedString(context, R.string.main_shorts_post_fix, countryCode)
+        res: Int,
+    ) = getLocalizedString(context, res, countryCode)
 
     fun getLocalizedString(
         context: Context,

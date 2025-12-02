@@ -106,6 +106,9 @@ YouTubeContentEndViewModel
         private val _uiState = MutableStateFlow<UiState<MainShortsModel>>(UiState.Idle)
         val uiState: StateFlow<UiState<MainShortsModel>> = _uiState
 
+        private val _searchDailyShorts = MutableStateFlow<List<MainShortsModel>>(emptyList())
+        val searchDailyShorts: StateFlow<List<MainShortsModel>> = _searchDailyShorts
+
         fun setAdLoading(loading: Boolean) {
             _isAdLoading.value = loading
         }
@@ -136,6 +139,10 @@ YouTubeContentEndViewModel
 
         fun setRecentlyWatchData(items: List<MainShortsModel>) {
             _recentlyWatchList.value = items
+        }
+
+        fun searchDailyShortsData(items: List<MainShortsModel>) {
+            _searchDailyShorts.value = items
         }
 
         fun setImageFlowData() {
