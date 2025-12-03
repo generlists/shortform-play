@@ -38,6 +38,7 @@ import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SEARCH_BOTTOM_CONTAIN_COLOR
 import com.sean.ratel.android.ui.theme.APP_SEARCH_BOTTOM_SCRIM_COLOR
+import com.sean.ratel.android.ui.theme.APP_SEARCH_LINE_COLOR
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -74,7 +75,7 @@ fun DailySearchFilterBottomSheet(
                     .fillMaxWidth()
                     .background(APP_BACKGROUND)
                     .verticalScroll(rememberScrollState())
-                    .padding(16.dp),
+                    .padding(top = 16.dp, start = 16.dp, end = 16.dp, bottom = 4.dp),
         ) {
             RLog.d("bottomsheet", "startMillis : $startDate")
 
@@ -152,13 +153,12 @@ private fun BottomSheetContent(
                 .padding(16.dp),
     ) {
         DatePickerCompose(pickerState)
-        Spacer(Modifier.height(20.dp))
 
         Box(
             Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(Color.LightGray),
+                .background(APP_SEARCH_LINE_COLOR),
             contentAlignment = Alignment.BottomCenter,
         ) {}
         Spacer(Modifier.height(20.dp))
@@ -187,7 +187,7 @@ private fun BottomSheetContent(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(150.dp)
                     .verticalScroll(scrollState),
         ) {
             CategoryRowLayoutCompose(
@@ -197,7 +197,7 @@ private fun BottomSheetContent(
             )
         }
 
-        Spacer(Modifier.height(15.dp))
+        Spacer(Modifier.height(20.dp))
 
         DailyBottomButtonCompose(
             initialSelectDate = initialSelectDate,
@@ -206,7 +206,6 @@ private fun BottomSheetContent(
             onCategorySelected = selectedCategory,
             onApply = onApply,
         )
-        Spacer(Modifier.height(10.dp))
     }
 }
 

@@ -266,7 +266,7 @@ fun KeyWordSearchGridItemList(
     }
 
     Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.weight(0.80f)) {
+        Box(Modifier.weight(0.83f)) {
             LazyColumn(
                 modifier =
                     Modifier
@@ -338,7 +338,7 @@ fun KeyWordSearchGridItemList(
         Box(
             Modifier
                 .fillMaxWidth()
-                .weight(0.2f)
+                .weight(0.17f)
                 .then(
                     if (adBannerLoadingComplete.value.first) {
                         Modifier

@@ -16,6 +16,7 @@ val APP_TEXT_COLOR = Color(0xFFABFF43)
 val APP_SUBTITLE_TEXT_COLOR = Color(0xFF989A9F)
 val APP_SEARCH_BOTTOM_CONTAIN_COLOR = Color(0xFF000000)
 val APP_SEARCH_BOTTOM_SCRIM_COLOR = Color(0xAA000000)
+val APP_SEARCH_LINE_COLOR = Color(0xFF989A9F)
 
 val Background = Color(android.graphics.Color.parseColor("#F6F6F6"))
 val Background_op_20 = Color(android.graphics.Color.parseColor("#33000000"))
