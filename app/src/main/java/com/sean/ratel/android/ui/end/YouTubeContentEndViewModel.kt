@@ -431,16 +431,16 @@ YouTubeContentEndViewModel
                         }
 
                         is ApiResult.Success -> {
-                            response.data.shortsVideoModel?.let {
-                                val categoryName =
-                                    it.categoryName
+                            _searchShots.value = listOf<MainShortsModel>()
 
-                                val updatedList: List<MainShortsModel> =
-                                    buildList {
-                                        add(response.data)
-                                        categoryShorts[categoryName]?.let { addAll(it) }
-                                    }
-                                _searchShots.value = updatedList
+                            response.data.shortsVideoModel?.let {
+                                val categoryName = it.categoryName
+                                val updatedList: List<MainShortsModel>? =
+                                    categoryShorts[categoryName]
+
+                                updatedList?.let {
+                                    _searchShots.value = it + response.data
+                                }
                             } ?: run {
                                 _searchShots.value = categoryShorts.values.flatMap { it }
                             }

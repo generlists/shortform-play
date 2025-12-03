@@ -352,14 +352,17 @@ class MainActivity : FragmentActivity() {
 
         launch {
             // 이벤트 등록
-            unifiedLinkHandler.setOnDeepLinkHandler { appLinkeInfo ->
-                val deepLinkType = appLinkeInfo.deepLinkType
-                val viewType = appLinkeInfo.type
-                val route = appLinkeInfo.route
-                val param = appLinkeInfo.extraParam
+            unifiedLinkHandler.setOnDeepLinkHandler { appLinkInfo ->
+                val deepLinkType = appLinkInfo.deepLinkType
+                val viewType = appLinkInfo.type
+                val route = appLinkInfo.route
+                val param1 = appLinkInfo.extraParam1
+                val param2 = appLinkInfo.extraParam2
+                val param3 = appLinkInfo.extraParam3
+                val param4 = appLinkInfo.extraParam4
                 when (deepLinkType) {
                     HOME, SETTING, SHORTFORM, APP_MANAGER -> {
-                        RLog.d("deepLink", "HOME route : $route, videoId : $param , viewType : $viewType")
+                        RLog.d("deepLink", "HOME route : $route, videoId : $param1 , viewType : $viewType")
 
                         viewType?.let {
                             mainViewModel.setViewType(viewType)
@@ -367,17 +370,18 @@ class MainActivity : FragmentActivity() {
                         }
                     }
                     YOUTUBE -> {
-                        RLog.d("deepLink", "YOUTUBE route : $route, videoId : $param , viewType : $viewType")
-                        param?.let {
-                            mainViewModel.goEndContent(route, viewType ?: ViewType.DeepLinkVideo, 0, null, param)
+                        RLog.d("deepLink", "YOUTUBE route : $route, videoId : $param1 , viewType : $viewType")
+                        param1?.let {
+                            mainViewModel.goEndContent(route, viewType ?: ViewType.DeepLinkVideo, 0, null, param1)
                         }
                     }
                     SEARCH -> {
-                        PhoneUtil.searchButton(this@MainActivity, param)
+                        RLog.d("deeplink", "tab : $param2 query : $param1 , date : $param3 , category : $param4")
+                        PhoneUtil.searchButton(this@MainActivity, param1, param2, param3, param4)
                     }
                     SHARE -> {
-                        RLog.d("deepLink", "SHARE route : $route, videoId : $param , viewType : $viewType")
-                        mainViewModel.goEndContent(route, appLinkeInfo.type ?: ViewType.DeepLinkVideo, 0, null, param)
+                        RLog.d("YouTubeContentEnd", "SHARE route : $route, videoId : $param1 , viewType : $viewType")
+                        mainViewModel.goEndContent(route, appLinkInfo.type ?: ViewType.DeepLinkVideo, 0, null, param1)
                     }
                 }
             }

@@ -24,6 +24,7 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GAKeys.CATEGORY_NAME
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
@@ -35,6 +36,9 @@ import com.sean.ratel.android.ui.search.DailySearchResultScreen
 import com.sean.ratel.android.ui.search.SearchFilterActions
 import com.sean.ratel.android.ui.search.SearchViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import java.time.LocalDate
+import java.time.ZoneOffset
+import java.time.format.DateTimeFormatter
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -50,6 +54,10 @@ fun SearchFilterScreen(
     val categories = searchViewModel.youtubeCategory.collectAsState()
     val context = LocalContext.current
     val dailySearchAll = searchViewModel.dailySearchShortformList.collectAsState()
+    val deepLinkSearch = searchViewModel.deepLinkTab.collectAsState()
+    val deepLinkDate = searchViewModel.deepLinkDate.collectAsState()
+    val deepLinkCategory = searchViewModel.getFindCategory(searchViewModel.deepLinkCategory.collectAsState().value)
+    val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMdd")
     RLog.d("KKKKKK", "categoryName : $selectedCategory")
     RLog.d("KKKKKK", "categories : $categories")
 
@@ -79,7 +87,7 @@ fun SearchFilterScreen(
             if (showFilterSheet) {
                 SearchFilterScreen({
                     showFilterSheet = it
-                }, searchViewModel, mainViewModel)
+                }, searchViewModel)
             }
 
             when (apiState.value) {
@@ -97,6 +105,17 @@ fun SearchFilterScreen(
                 else -> Unit
             }
         }
+        LaunchedEffect(deepLinkSearch.value) {
+            deepLinkSearch.value?.let {
+                val date =
+                    LocalDate
+                        .parse(deepLinkDate.value, dateFormatter)
+                        .atStartOfDay()
+                        .toInstant(ZoneOffset.UTC)
+                        .toEpochMilli()
+                applyDailySearch(context, searchViewModel, {}, date, deepLinkCategory)
+            }
+        }
     }
 }
 
@@ -105,7 +124,6 @@ fun SearchFilterScreen(
 fun SearchFilterScreen(
     showFilterSheet: (Boolean) -> Unit,
     searchViewModel: SearchViewModel,
-    mainViewModel: MainViewModel,
 ) {
     val selectedDate by searchViewModel.selectedDate.collectAsState()
     val categories = searchViewModel.youtubeCategory.collectAsState()
@@ -137,12 +155,14 @@ fun SearchFilterScreen(
             },
             onApply = { date, category ->
 
-                searchViewModel.resetData()
-                showFilterSheet(false)
-
-                date?.let {
-                    searchViewModel.onDateSelected(context, it, category)
-                }
+//                searchViewModel.resetData()
+//                showFilterSheet(false)
+// 1764547200000
+//                date?.let {
+//                    searchViewModel.onDateSelected(context, it, category)
+//                }
+                RLog.d("deeplink", "date : $date")
+                applyDailySearch(context, searchViewModel, showFilterSheet, date, category)
                 gaSend(
                     searchViewModel,
                     GASplashAnalytics.Event.SELECT_SEARCH_DAILY_FILTER_APPLY_BTN_CLICK,
@@ -193,4 +213,19 @@ private fun gaSend(
         actionName = actionName,
         parameter = if (categoryName != null) mapOf<String, String>(CATEGORY_NAME to categoryName) else mapOf(),
     )
+}
+
+private fun applyDailySearch(
+    context: Context,
+    searchViewModel: SearchViewModel,
+    showFilterSheet: (Boolean) -> Unit,
+    date: Long?,
+    category: YouTubeCategory?,
+) {
+    searchViewModel.resetData()
+    showFilterSheet(false)
+
+    date?.let {
+        searchViewModel.onDateSelected(context, it, category ?: searchViewModel.getInitCategory())
+    }
 }

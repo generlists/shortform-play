@@ -61,11 +61,27 @@ object PhoneUtil {
     fun searchButton(
         context: Context,
         query: String? = null,
+        tab: String? = null,
+        date: String? = null,
+        category: String? = null,
     ) {
         val intent =
             Intent(context, SearchActivity::class.java).apply {
-                query?.let {
-                    putExtra("query", query)
+                when (tab) {
+                    "keyword" -> {
+                        query?.let {
+                            putExtra("query", query)
+                            putExtra("tab", tab)
+                            putExtra("date", date)
+                            putExtra("category", category)
+                        }
+                    }
+                    "daily" -> {
+                        putExtra("tab", tab)
+                        putExtra("date", date)
+                        putExtra("category", category)
+                    }
+                    else -> Unit
                 }
             }
 

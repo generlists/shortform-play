@@ -29,7 +29,7 @@ class UnifiedLinkHandler
             RLog.d(
                 "deepLink",
                 "onDeepLinkCallback : $onDeepLinkCallback " +
-                    "route : ${deepLinkInfo.deepLinkType}route, type ${deepLinkInfo.type}type , videoId : ${deepLinkInfo.extraParam}",
+                    "route : ${deepLinkInfo.deepLinkType}route, type ${deepLinkInfo.type}type , videoId : ${deepLinkInfo.extraParam1}",
             )
             onDeepLinkCallback?.invoke(deepLinkInfo)
         }
@@ -96,13 +96,22 @@ class UnifiedLinkHandler
                             videoId,
                         )
                     }
+                    // https://shortform-play.ai/search?t=keyword&q=아이유&v=10070
+                    //  https://shortform-play.ai/search?t=daily&d=20251020&c=0&v=10080
                     SEARCH -> {
+                        val tab = deepLinkUri?.getQueryParameter("t")
                         val query = deepLinkUri?.getQueryParameter("q")
+                        val date = deepLinkUri?.getQueryParameter("d")
+                        val category = deepLinkUri?.getQueryParameter("c")
+                        RLog.d("deeplink", "tab : $tab query : $query , date : $date , category : $category")
                         DeepLinkInfo(
                             SEARCH,
                             Destination.DeepLink.route,
                             ViewType.DeepLinkVideo,
                             query,
+                            tab,
+                            date,
+                            category,
                         )
                     }
                     SHARE -> {
@@ -168,5 +177,8 @@ data class DeepLinkInfo(
     val deepLinkType: String,
     val route: String,
     val type: ViewType? = null,
-    val extraParam: String? = null,
+    val extraParam1: String? = null,
+    val extraParam2: String? = null,
+    val extraParam3: String? = null,
+    val extraParam4: String? = null,
 )
