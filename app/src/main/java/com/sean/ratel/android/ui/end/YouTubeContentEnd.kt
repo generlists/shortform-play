@@ -51,7 +51,7 @@ fun YouTubeContentEnd(
 
     val apiState = youTubeContentEndViewModel.uiState.collectAsState()
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(itemClicked) {
         youTubeContentEndViewModel.mainShortsData(mainViewModel.mainShorts.value)
         youTubeContentEndViewModel.mainTrendShortsData(mainViewModel.mainTrendShortsList.value)
         youTubeContentEndViewModel.moreTrendShortsData(
@@ -119,9 +119,10 @@ fun YouTubeContentEnd(
             }
         } else if (mainViewModel.itemClicked.value == Destination.Home.ShortForm.route) {
             youTubeContentEndViewModel.setShortFormVideoData(selectedIndex)
+            RLog.d(TAG, "ShortForm $selectedVideoId ,  size : ${categoryShortsList.size}")
         } else if (mainViewModel.itemClicked.value == Destination.Search.route) {
             RLog.d(
-                "deepLink",
+                TAG,
                 "search $selectedVideoId , viewType : ${mainViewModel.viewType.value} , currentCategory : ${currentCategory.value}",
             )
             when (mainViewModel.viewType.value) {
@@ -145,18 +146,16 @@ fun YouTubeContentEnd(
 
                 else -> Unit
             }
-        }
-    }
+        } else if (mainViewModel.itemClicked.value == Destination.DeepLink.route && !searchRequestLoading.value) {
+            RLog.d("YouTubeContentEnd", "deeplinkkkk $selectedVideoId ,  size : ${categoryShortsList.size}")
+            searchRequestLoading.value = true
 
-    if (mainViewModel.itemClicked.value == Destination.DeepLink.route) {
-        RLog.d("deepLink", "search $selectedVideoId")
-        searchRequestLoading.value = true
-
-        selectedVideoId?.let {
-            youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
-                it,
-                categoryShortsList,
-            )
+            selectedVideoId?.let {
+                youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
+                    it,
+                    categoryShortsList,
+                )
+            }
         }
     }
 
@@ -170,10 +169,12 @@ fun YouTubeContentEnd(
 
             is UiState.Success<*> -> {
                 LoadingArea(false)
+                searchRequestLoading.value = false
             }
 
             is UiState.Error -> {
                 LoadingArea(false)
+                searchRequestLoading.value = false
                 Toast
                     .makeText(
                         LocalContext.current,
@@ -248,7 +249,10 @@ fun DisplayUI(
             }
         }
         mainViewModel.setPIPButtonClickState(false)
-        mainViewModel.setItemClicked(null, 0)
+
+        if (endList != null && endList.isNotEmpty()) {
+            mainViewModel.setItemClicked(null, 0)
+        }
     } else {
         RLog.e(TAG, "No data available in mainShortsList")
     }

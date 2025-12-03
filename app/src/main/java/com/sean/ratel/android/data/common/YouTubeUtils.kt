@@ -3,6 +3,7 @@ package com.sean.ratel.android.data.common
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import com.sean.ratel.android.utils.PhoneUtil.getAppVersionCode
 
 object YouTubeUtils {
     /**
@@ -49,7 +50,7 @@ object YouTubeUtils {
         context: Context,
         videoId: String,
     ) {
-        val videoUrl = STRINGS.YOUTUBE_APP_BY_VIDEO_ID(videoId)
+        val videoUrl = STRINGS.YOUTUBE_SHARE_ID(videoId, getAppVersionCode(context))
         val sendIntent =
             Intent().apply {
                 action = Intent.ACTION_SEND

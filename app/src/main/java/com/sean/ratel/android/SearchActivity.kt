@@ -10,6 +10,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
@@ -60,7 +61,14 @@ class SearchActivity : FragmentActivity() {
 
     private fun deeLink(intent: Intent?) {
         val query = intent?.getStringExtra("query")
-
-        searchViewModel.setDeepLinkQuery(query)
+        val tab = intent?.getStringExtra("tab")
+        val date = intent?.getStringExtra("date")
+        val category = intent?.getStringExtra("category")
+        RLog.d("deeplink", "query : $query , date : $date ,  tab : $tab , category :  $category")
+        when (tab) {
+            "keyword" -> searchViewModel.setDeepLinkQuery(query)
+            "daily" -> searchViewModel.setDeepLinkTab(tab, date, category)
+            else -> searchViewModel.setDeepLinkQuery(query)
+        }
     }
 }

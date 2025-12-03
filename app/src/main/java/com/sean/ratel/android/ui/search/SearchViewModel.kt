@@ -117,8 +117,17 @@ class SearchViewModel
         private val _isSuggestLoading = MutableStateFlow(true)
         val isSuggestLoading: StateFlow<Boolean> = _isSuggestLoading
 
+        private val _deepLinkTab = MutableStateFlow<String?>(null)
+        val deepLinkTab: StateFlow<String?> = _deepLinkTab
+
         private val _deepLinkQuery = MutableStateFlow<String?>(null)
         val deepLinkQuery: StateFlow<String?> = _deepLinkQuery
+
+        private val _deepLinkDate = MutableStateFlow<String?>(null)
+        val deepLinkDate: StateFlow<String?> = _deepLinkDate
+
+        private val _deepLinkCategory = MutableStateFlow<String?>(null)
+        val deepLinkCategory: StateFlow<String?> = _deepLinkCategory
 
         // 선택된 날짜 (yyyy-MM-dd 같은 포맷으로 관리해도 좋고, millis로 관리해도 되고)
         private val _selectedDate = MutableStateFlow<String?>(null)
@@ -285,6 +294,16 @@ class SearchViewModel
 
         fun setDeepLinkQuery(query: String?) {
             _deepLinkQuery.value = query
+        }
+
+        fun setDeepLinkTab(
+            tab: String?,
+            date: String?,
+            categoryName: String?,
+        ) {
+            _deepLinkTab.value = tab
+            _deepLinkDate.value = date
+            _deepLinkCategory.value = categoryName
         }
 
         fun moreContent(
@@ -492,15 +511,18 @@ class SearchViewModel
                                     _dailyUiState.value =
                                         UiState.Error(context.getString(R.string.api_empty_error))
                                 }
+                                setDeepLinkTab(null, null, null)
                                 val endTime = System.currentTimeMillis() - startTime
                                 RLog.d("SearchViewModel", "endTime : ${endTime / 1000} 초")
                             }
 
                             is ApiResult.Exception -> {
-                                RLog.d("KKKKK", "message : ${response.e.message}")
+                                RLog.d(TAG, "message : ${response.e.message}")
                                 _dailyUiState.value =
-                                    response.e.message?.let { UiState.Error(it) } ?: UiState.Error("")
+                                    response.e.message?.let { UiState.Error(it) }
+                                        ?: UiState.Error("")
                                 _searchLoading.value = false
+                                setDeepLinkTab(null, null, null)
                             }
 
                             else -> Unit
@@ -700,6 +722,9 @@ class SearchViewModel
                 "0",
                 getAppLocaleByStringResource(context, _currentLocale.value, R.string.youtube_category_all),
             )
+
+        fun getFindCategory(categoryKey: String?): YouTubeCategory? =
+            _youtubeCategory.value.map { it }.find { it.categoryKey == categoryKey }
 
         companion object {
             private const val TAG = "SearchViewModel"

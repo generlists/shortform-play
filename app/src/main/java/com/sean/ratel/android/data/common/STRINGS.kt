@@ -36,7 +36,20 @@ object STRINGS {
     const val SERVICE_RENEWAL_START_DATE = "20241207"
 
     @Suppress("ktlint:standard:function-naming")
-    fun YOUTUBE_APP_BY_VIDEO_ID(videoId: String): String = "https://shortform-play.ai/share?vid=$videoId"
+    fun YOUTUBE_APP_BY_VIDEO_ID(videoId: String): String = "https://www.youtube.com/shorts/$videoId"
+
+    @Suppress("ktlint:standard:function-naming")
+    fun YOUTUBE_SHARE_ID(
+        videoId: String,
+        versionCode: Long? = null,
+    ): String =
+        if (versionCode ==
+            null
+        ) {
+            "https://shortform-play.ai/share?vid=$videoId"
+        } else {
+            "https://shortform-play.ai/share?vid=$videoId&v=$versionCode"
+        }
 
     @Suppress("ktlint:standard:function-naming")
     fun YOUTUBE_APP_BY_CHANNEL_ID(channelId: String): String = "https://m.youtube.com/channel/$channelId"

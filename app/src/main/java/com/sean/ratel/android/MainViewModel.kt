@@ -137,7 +137,6 @@ class MainViewModel
             )
         val categoryByContents: StateFlow<Map<String, List<MainShortsModel>>> = _categoryByContents
 
-
         private val _currentCategory = MutableStateFlow<String>("0")
         val currentCategory: MutableStateFlow<String> = _currentCategory
 

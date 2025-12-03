@@ -159,7 +159,12 @@ fun ScrollableTabBar(
     selectedIndx: (Int) -> Unit,
 ) {
     val tabs = remember { SearchTabs.entries.toTypedArray().asList() }
-    var selectedTabIndex by remember { mutableStateOf(0) }
+    val deepLinkTab by searchViewModel.deepLinkTab.collectAsState()
+    var selectedTabIndex by remember { mutableStateOf(if (deepLinkTab != null) 1 else 0) }
+    RLog.d("deepLink", "selectedTabIndex : $selectedTabIndex ,  deepLinkTab $deepLinkTab")
+    if (deepLinkTab != null) {
+        selectedIndx(1)
+    }
 
     TabRow(
         selectedTabIndex = selectedTabIndex,
