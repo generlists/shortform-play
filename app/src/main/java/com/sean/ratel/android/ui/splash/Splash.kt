@@ -68,17 +68,25 @@ private fun SplashView() {
     val statusBarPadding = StatusBarHeight()
 
     Box(
-        Modifier.fillMaxSize().background(APP_BACKGROUND).offset(y = -statusBarPadding),
+        Modifier
+            .fillMaxSize()
+            .background(APP_BACKGROUND)
+            .offset(y = -statusBarPadding),
         contentAlignment = Alignment.Center,
     ) {
         LottieLoader(
-            Modifier.wrapContentSize().width(240.dp).height(240.dp),
+            Modifier
+                .wrapContentSize()
+                .width(240.dp)
+                .height(240.dp),
             rawRes = R.raw.splash,
             forever = true,
         )
     }
     Box(
-        Modifier.fillMaxSize().padding(bottom = 30.dp),
+        Modifier
+            .fillMaxSize()
+            .padding(bottom = 30.dp),
         contentAlignment = Alignment.BottomCenter,
     ) {
         Image(
@@ -114,6 +122,8 @@ private fun NetworkAlert(splashViewModel: SplashViewModel) {
 private fun AuthCheckAlert(splashViewModel: SplashViewModel) {
     val context = LocalContext.current
     val showDialog = splashViewModel.authCheck.collectAsState()
+
+    RLog.d("SPLASH", "showDialog : $showDialog")
 
     if (showDialog.value != 0) {
         ShortFormCommonAlertDialog(

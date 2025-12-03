@@ -75,8 +75,8 @@ class SplashViewModel
             viewModelScope.launch {
                 prefs.updateTokenCache()
                 val token = prefs.getAccessToken()
-                RLog.d("auth", "init splash $token")
-                RLog.d("auth", "isExpired ${autoRepository.isExpired(token)}")
+                RLog.d("SPLASH", "init splash $token")
+                RLog.d("SPLASH", "isExpired ${autoRepository.isExpired(token)}")
 
                 if (token == null || autoRepository.isExpired(token)) {
                     if (isNetWorkAvailable(context)) {
@@ -86,7 +86,7 @@ class SplashViewModel
                             when (val result = integrityManager.requestIntegrityToken(hash)) {
                                 is IntegrityManager.IntegrityResult.Success -> {
                                     // 정상 처리
-                                    RLog.d("auth", "Integrity token: ${result.token}")
+                                    RLog.d("SPLASH", "Integrity token: ${result.token}")
                                     val authResult =
                                         safeApiCall {
                                             autoRepository.exchange(
@@ -108,21 +108,21 @@ class SplashViewModel
                                                 prefs.updateTokenCache()
                                             }
                                             RLog.d(
-                                                "auth",
+                                                "SPLASH",
                                                 "Access Token 갱신 성공: expires in $expiresIn 초",
                                             )
                                         }
 
                                         is ApiResult.Error -> {
                                             RLog.e(
-                                                "auth",
+                                                "SPLASH",
                                                 "서버 응답 오류(${authResult.code}): ${authResult.message}",
                                             )
                                         }
 
                                         is ApiResult.Exception -> {
                                             RLog.e(
-                                                "auth",
+                                                "SPLASH",
                                                 "기타 네트워크 예외: ${authResult.e.localizedMessage}",
                                             )
                                         }
@@ -132,7 +132,7 @@ class SplashViewModel
                                 }
 
                                 is IntegrityManager.IntegrityResult.Failure -> {
-                                    RLog.e(TAG, "Integrity failed: ${result.errorCode}")
+                                    RLog.e("SPLASH", "Integrity failed: ${result.errorCode}")
                                     _authCheck.value = result.errorCode
                                 }
                             }
