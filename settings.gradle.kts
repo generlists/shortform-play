@@ -38,7 +38,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        // oss-licenses-plugin 클래스패스 추가 //8.2.2 gradle 때문에 일부 class path 로 이동(build.gradle.kts)
+        // oss-licenses-plugin 클래스패스 추가 // 8.2.2 gradle 때문에 일부 class path 로 이동(build.gradle.kts)
         //target 35 agp 8.6.0 로 업그레이드
         classpath("com.android.tools.build:gradle:8.6.0")
         classpath("com.google.android.gms:oss-licenses-plugin:0.10.5")
