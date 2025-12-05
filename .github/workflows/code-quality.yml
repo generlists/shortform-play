@@ -1,0 +1,57 @@
+name: Code Quality
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+      - feature/*
+  pull_request:
+    branches:
+      - main
+      - develop
+
+jobs:
+  quality-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: gradle
+
+      - name: Grant execute permissions
+        run: chmod +x ./gradlew
+
+      # ---------------------------
+      # 1) ktlint
+      # ---------------------------
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck --stacktrace
+
+#      # ---------------------------
+#      # 2) detekt
+#      # ---------------------------
+#      - name: Run detekt
+#        run: ./gradlew detekt --stacktrace
+#
+#      # ---------------------------
+#      # 3) Android Lint
+#      # ---------------------------
+#      - name: Run Android Lint
+#        run: ./gradlew lint --stacktrace
+#
+#      # ---------------------------
+#      # 4) SonarQube analysis
+#      # ---------------------------
+#      - name: SonarQube Scan
+#        run: ./gradlew sonar --info
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#          SONAR_HOST_URL: https://sonarcloud.io
