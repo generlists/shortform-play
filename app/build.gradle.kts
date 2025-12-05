@@ -52,45 +52,140 @@ android {
             storePassword = "android"
         }
         create("release") {
-            storeFile = file(localProperties.getProperty("ANDROID_KEYSTORE_PATH") as String)
-            storePassword = localProperties.getProperty("ANDROID_STORE_PASS") as String
-            keyAlias = localProperties.getProperty("ANDROID_KEY_ALIAS") as String
-            keyPassword = localProperties.getProperty("ANDROID_KEY_PASS") as String
+
+            if (localProperties.getProperty("ANDROID_KEYSTORE_PATH").isNullOrBlank()) {
+                println("Release signing disabled (no keystore)")
+            } else {
+                storeFile = file(localProperties.getProperty("ANDROID_KEYSTORE_PATH") as String)
+            }
+            if (localProperties.getProperty("ANDROID_STORE_PASS").isNullOrBlank()) {
+                println("Release signing disabled (no pass)")
+            } else {
+                storePassword = localProperties.getProperty("ANDROID_STORE_PASS") as String
+            }
+            if (localProperties.getProperty("ANDROID_KEY_ALIAS").isNullOrBlank()) {
+                println("Release signing disabled (no alias)")
+            } else {
+                keyAlias = localProperties.getProperty("ANDROID_KEY_ALIAS") as String
+            }
+            if (localProperties.getProperty("ANDROID_KEY_PASS").isNullOrBlank()) {
+                println("Release signing disabled (no key pass )")
+            } else {
+                keyPassword = localProperties.getProperty("ANDROID_KEY_PASS") as String
+            }
         }
     }
 
     buildTypes {
         debug {
 
-            buildConfigField("String", "FIREBASE_BASE_URL", "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"")
-            buildConfigField("String", "SHORTFORM_PLAY_BASE_URL", "\"${localProperties.getProperty("SHORTFORM_PLAY_BASE_URL")}\"")
-            buildConfigField("String", "GOOGLE_CLOUD_PROJECT_NUMBER", "\"${localProperties.getProperty("GOOGLE_CLOUD_PROJECT_NUMBER")}\"")
+            buildConfigField(
+                "String",
+                "FIREBASE_BASE_URL",
+                "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"",
+            )
+            buildConfigField(
+                "String",
+                "SHORTFORM_PLAY_BASE_URL",
+                "\"${localProperties.getProperty("SHORTFORM_PLAY_BASE_URL")}\"",
+            )
+            buildConfigField(
+                "String",
+                "GOOGLE_CLOUD_PROJECT_NUMBER",
+                "\"${localProperties.getProperty("GOOGLE_CLOUD_PROJECT_NUMBER")}\"",
+            )
             // admob
-            buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("DEBUG_BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("DEBUG_NATIVE_AD_UNIT_ID")}\"")
-            buildConfigField("String", "ADAPTIVE_BANNER_UNIT_ID", "\"${localProperties.getProperty("DEBUG_ADAPTIVE_BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "INTERSTITIALAd_UNIT_ID", "\"${localProperties.getProperty("DEBUG_INTERSTITIALAd_UNIT_ID")}\"")
-            buildConfigField("String", "Ad_OPEN_UNIT_ID", "\"${localProperties.getProperty("DEBUG_Ad_OPEN_UNIT_ID")}\"")
+            buildConfigField(
+                "String",
+                "BANNER_UNIT_ID",
+                "\"${localProperties.getProperty("DEBUG_BANNER_UNIT_ID")}\"",
+            )
+            buildConfigField(
+                "String",
+                "NATIVE_AD_UNIT_ID",
+                "\"${localProperties.getProperty("DEBUG_NATIVE_AD_UNIT_ID")}\"",
+            )
+            buildConfigField(
+                "String",
+                "ADAPTIVE_BANNER_UNIT_ID",
+                "\"${localProperties.getProperty("DEBUG_ADAPTIVE_BANNER_UNIT_ID")}\"",
+            )
+            buildConfigField(
+                "String",
+                "INTERSTITIALAd_UNIT_ID",
+                "\"${localProperties.getProperty("DEBUG_INTERSTITIALAd_UNIT_ID")}\"",
+            )
+            buildConfigField(
+                "String",
+                "Ad_OPEN_UNIT_ID",
+                "\"${localProperties.getProperty("DEBUG_Ad_OPEN_UNIT_ID")}\"",
+            )
 
-            buildConfigField("String", "MY_EMAIL_ACCOUNT", "\"${localProperties.getProperty("MY_EMAIL_ACCOUNT")}\"")
-            buildConfigField("String", "NOTICES_URL", "\"${localProperties.getProperty("NOTICES_URL")}\"")
-            buildConfigField("String", "NOTICES_URL_EN", "\"${localProperties.getProperty("NOTICES_URL_EN")}\"")
-            buildConfigField("String", "REGAL_URL", "\"${localProperties.getProperty("REGAL_URL")}\"")
-            buildConfigField("String", "REGAL_URL_EN", "\"${localProperties.getProperty("REGAL_URL_EN")}\"")
+            buildConfigField(
+                "String",
+                "MY_EMAIL_ACCOUNT",
+                "\"${localProperties.getProperty("MY_EMAIL_ACCOUNT")}\"",
+            )
+            buildConfigField(
+                "String",
+                "NOTICES_URL",
+                "\"${localProperties.getProperty("NOTICES_URL")}\"",
+            )
+            buildConfigField(
+                "String",
+                "NOTICES_URL_EN",
+                "\"${localProperties.getProperty("NOTICES_URL_EN")}\"",
+            )
+            buildConfigField(
+                "String",
+                "REGAL_URL",
+                "\"${localProperties.getProperty("REGAL_URL")}\"",
+            )
+            buildConfigField(
+                "String",
+                "REGAL_URL_EN",
+                "\"${localProperties.getProperty("REGAL_URL_EN")}\"",
+            )
 
             manifestPlaceholders["validator"] = "false"
-            manifestPlaceholders["admobAppId"] = localProperties.getProperty("debug_admobAppId")
+
+            manifestPlaceholders["admobAppId"] =
+                localProperties.getProperty(
+                    "debug_admobAppId",
+                    "ca-app-pub-3940256099942544~3347511713",
+                )
+
             signingConfig = signingConfigs.getByName("debug")
         }
         release {
 
-            buildConfigField("String", "FIREBASE_BASE_URL", "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"")
-            buildConfigField("String", "SHORTFORM_PLAY_BASE_URL", "\"${localProperties.getProperty("SHORTFORM_PLAY_BASE_URL")}\"")
-            buildConfigField("String", "GOOGLE_CLOUD_PROJECT_NUMBER", "\"${localProperties.getProperty("GOOGLE_CLOUD_PROJECT_NUMBER")}\"")
+            buildConfigField(
+                "String",
+                "FIREBASE_BASE_URL",
+                "\"${localProperties.getProperty("FIREBASE_BASE_URL")}\"",
+            )
+            buildConfigField(
+                "String",
+                "SHORTFORM_PLAY_BASE_URL",
+                "\"${localProperties.getProperty("SHORTFORM_PLAY_BASE_URL")}\"",
+            )
+            buildConfigField(
+                "String",
+                "GOOGLE_CLOUD_PROJECT_NUMBER",
+                "\"${localProperties.getProperty("GOOGLE_CLOUD_PROJECT_NUMBER")}\"",
+            )
 
             // admob
-            buildConfigField("String", "BANNER_UNIT_ID", "\"${localProperties.getProperty("RELEASE_DEBUG_BANNER_UNIT_ID")}\"")
-            buildConfigField("String", "NATIVE_AD_UNIT_ID", "\"${localProperties.getProperty("RELEASE_DEBUG_NATIVE_AD_UNIT_ID")}\"")
+            buildConfigField(
+                "String",
+                "BANNER_UNIT_ID",
+                "\"${localProperties.getProperty("RELEASE_DEBUG_BANNER_UNIT_ID")}\"",
+            )
+            buildConfigField(
+                "String",
+                "NATIVE_AD_UNIT_ID",
+                "\"${localProperties.getProperty("RELEASE_DEBUG_NATIVE_AD_UNIT_ID")}\"",
+            )
             buildConfigField(
                 "String",
                 "ADAPTIVE_BANNER_UNIT_ID",
@@ -101,13 +196,37 @@ android {
                 "INTERSTITIALAd_UNIT_ID",
                 "\"${localProperties.getProperty("RELEASE_DEBUG_INTERSTITIALAd_UNIT_ID")}\"",
             )
-            buildConfigField("String", "Ad_OPEN_UNIT_ID", "\"${localProperties.getProperty("RELEASE_DEBUG_Ad_OPEN_UNIT_ID")}\"")
+            buildConfigField(
+                "String",
+                "Ad_OPEN_UNIT_ID",
+                "\"${localProperties.getProperty("RELEASE_DEBUG_Ad_OPEN_UNIT_ID")}\"",
+            )
 
-            buildConfigField("String", "MY_EMAIL_ACCOUNT", "\"${localProperties.getProperty("MY_EMAIL_ACCOUNT")}\"")
-            buildConfigField("String", "NOTICES_URL", "\"${localProperties.getProperty("NOTICES_URL")}\"")
-            buildConfigField("String", "NOTICES_URL_EN", "\"${localProperties.getProperty("NOTICES_URL_EN")}\"")
-            buildConfigField("String", "REGAL_URL", "\"${localProperties.getProperty("REGAL_URL")}\"")
-            buildConfigField("String", "REGAL_URL_EN", "\"${localProperties.getProperty("REGAL_URL_EN")}\"")
+            buildConfigField(
+                "String",
+                "MY_EMAIL_ACCOUNT",
+                "\"${localProperties.getProperty("MY_EMAIL_ACCOUNT")}\"",
+            )
+            buildConfigField(
+                "String",
+                "NOTICES_URL",
+                "\"${localProperties.getProperty("NOTICES_URL")}\"",
+            )
+            buildConfigField(
+                "String",
+                "NOTICES_URL_EN",
+                "\"${localProperties.getProperty("NOTICES_URL_EN")}\"",
+            )
+            buildConfigField(
+                "String",
+                "REGAL_URL",
+                "\"${localProperties.getProperty("REGAL_URL")}\"",
+            )
+            buildConfigField(
+                "String",
+                "REGAL_URL_EN",
+                "\"${localProperties.getProperty("REGAL_URL_EN")}\"",
+            )
 
             isMinifyEnabled = true
             proguardFiles(
@@ -115,7 +234,8 @@ android {
                 "proguard-rules.pro",
             )
             manifestPlaceholders["validator"] = "false"
-            manifestPlaceholders["admobAppId"] = localProperties.getProperty("release_admobAppId")
+            manifestPlaceholders["admobAppId"] =
+                localProperties.getProperty("release_admobAppId", "")
             signingConfig = signingConfigs.getByName("release")
         }
     }
