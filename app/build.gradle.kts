@@ -96,10 +96,12 @@ android {
             buildConfigField("String", "REGAL_URL_EN", "\"${localProperties.getProperty("REGAL_URL_EN")}\"")
 
             manifestPlaceholders["validator"] = "false"
+
             manifestPlaceholders["admobAppId"] = localProperties.getProperty(
                 "debug_admobAppId",
-                "ca-app-pub-3940256099942544~3347511713"
+                "ca-app-pub-3940256099942544~3347511713",
             )
+
             signingConfig = signingConfigs.getByName("debug")
         }
         release {
