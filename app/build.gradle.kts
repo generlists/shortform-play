@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import java.util.Properties
 
 plugins {
@@ -52,10 +53,27 @@ android {
             storePassword = "android"
         }
         create("release") {
-            storeFile = file(localProperties.getProperty("ANDROID_KEYSTORE_PATH") as String)
-            storePassword = localProperties.getProperty("ANDROID_STORE_PASS") as String
-            keyAlias = localProperties.getProperty("ANDROID_KEY_ALIAS") as String
-            keyPassword = localProperties.getProperty("ANDROID_KEY_PASS") as String
+
+            if (localProperties.getProperty("ANDROID_KEYSTORE_PATH").isNullOrBlank()) {
+                println("Release signing disabled (no keystore)")
+            } else {
+                storeFile = file(localProperties.getProperty("ANDROID_KEYSTORE_PATH") as String)
+            }
+            if (localProperties.getProperty("ANDROID_STORE_PASS").isNullOrBlank()) {
+                println("Release signing disabled (no pass)")
+            } else {
+                storePassword = localProperties.getProperty("ANDROID_STORE_PASS") as String
+            }
+            if (localProperties.getProperty("ANDROID_KEY_ALIAS").isNullOrBlank()) {
+                println("Release signing disabled (no alias)")
+            } else {
+                keyAlias = localProperties.getProperty("ANDROID_KEY_ALIAS") as String
+            }
+            if (localProperties.getProperty("ANDROID_KEY_PASS").isNullOrBlank()) {
+                println("Release signing disabled (no key pass )")
+            } else {
+                keyPassword = localProperties.getProperty("ANDROID_KEY_PASS") as String
+            }
         }
     }
 
