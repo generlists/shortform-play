@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.utils.loadPropertyFromResources
 import java.util.Properties
 
 plugins {
@@ -97,7 +96,10 @@ android {
             buildConfigField("String", "REGAL_URL_EN", "\"${localProperties.getProperty("REGAL_URL_EN")}\"")
 
             manifestPlaceholders["validator"] = "false"
-            manifestPlaceholders["admobAppId"] = localProperties.getProperty("debug_admobAppId","ca-app-pub-3940256099942544~3347511713")
+            manifestPlaceholders["admobAppId"] = localProperties.getProperty(
+                "debug_admobAppId",
+                "ca-app-pub-3940256099942544~3347511713"
+            )
             signingConfig = signingConfigs.getByName("debug")
         }
         release {
@@ -133,7 +135,8 @@ android {
                 "proguard-rules.pro",
             )
             manifestPlaceholders["validator"] = "false"
-            manifestPlaceholders["admobAppId"] = localProperties.getProperty("release_admobAppId","")
+            manifestPlaceholders["admobAppId"] =
+                localProperties.getProperty("release_admobAppId", "")
             signingConfig = signingConfigs.getByName("release")
         }
     }
