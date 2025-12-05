@@ -97,7 +97,8 @@ android {
 
             manifestPlaceholders["validator"] = "false"
 
-            manifestPlaceholders["admobAppId"] = localProperties.getProperty(
+            manifestPlaceholders["admobAppId"] =
+                localProperties.getProperty(
                 "debug_admobAppId",
                 "ca-app-pub-3940256099942544~3347511713",
             )
