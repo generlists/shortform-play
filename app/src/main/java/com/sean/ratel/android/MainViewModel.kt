@@ -488,7 +488,7 @@ class MainViewModel
 
             _categoryByContents.value = zipList
 
-            RLog.d(TAG, "zipList : ${zipList.keys}")
+            RLog.d("OKKKKKKKK", "zipList : ${zipList.keys}")
         }
 
         fun setSearchCategoryDailyShortFormVieo(dailySearch: List<MainShortsModel>) {
