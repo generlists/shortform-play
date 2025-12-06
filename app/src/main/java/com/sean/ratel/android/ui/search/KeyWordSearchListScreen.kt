@@ -486,6 +486,7 @@ fun GridItemBoxRow(
                             Destination.Search.route,
                             ViewType.SearchShortsVideo,
                             items[i].videoId ?: "",
+                            position,
                         )
                         if (Random.nextInt(RemoteConfig.getRemoteConfigIntValue(RANDOM_GA_END_SIZE)) == 0) {
                             searchViewModel?.sendGALog(
