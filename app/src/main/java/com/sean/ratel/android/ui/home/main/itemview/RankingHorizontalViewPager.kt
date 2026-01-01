@@ -80,6 +80,13 @@ fun RankingHorizontalScrollView(
     channelSubscriptionData: ChannelSubscriptionList,
     channelSubscriptionUpData: ChannelSubscriptionUpList,
 ) {
+    if (channelSearchData.searchList.isEmpty() ||
+        channelSubscriptionData.subscriptionList.isEmpty() ||
+        channelSubscriptionUpData.subscriptionUpList.isEmpty()
+    ) {
+        return
+    }
+
     val page = mainViewModel.channelCurrentPager.collectAsState(initial = 0)
     val pagerState =
         rememberPagerState(pageCount = {
