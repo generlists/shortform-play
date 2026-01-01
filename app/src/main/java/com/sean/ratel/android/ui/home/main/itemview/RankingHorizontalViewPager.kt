@@ -80,6 +80,11 @@ fun RankingHorizontalScrollView(
     channelSubscriptionData: ChannelSubscriptionList,
     channelSubscriptionUpData: ChannelSubscriptionUpList,
 ) {
+    if (channelSearchData.searchList.isEmpty()
+        || channelSubscriptionData.subscriptionList.isEmpty()
+        || channelSubscriptionUpData.subscriptionUpList.isEmpty()
+    ) return
+
     val page = mainViewModel.channelCurrentPager.collectAsState(initial = 0)
     val pagerState =
         rememberPagerState(pageCount = {
@@ -361,7 +366,8 @@ private fun RankingTitleArea(
                                     Destination.Home.Main.RankingChannelMore.route,
                                     viewType,
                                 )
-                            }.wrapContentHeight(),
+                            }
+                            .wrapContentHeight(),
                         fontFamily = FontFamily.SansSerif,
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.Normal,
@@ -554,7 +560,8 @@ fun Item(
                     items[index].shortsChannelModel?.channelId,
                     items[index].shortsVideoModel?.videoId,
                 )
-            }.padding(start = 7.dp, top = 7.dp, bottom = 7.dp),
+            }
+            .padding(start = 7.dp, top = 7.dp, bottom = 7.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         val channel = items[index].shortsChannelModel
