@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.main.itemview
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +20,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,9 +71,7 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
-import com.sean.ratel.android.ui.theme.MAIN_TITLE_UNDER_LINE
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import com.sean.ratel.android.utils.UIUtil
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -76,45 +79,57 @@ fun HomeRecommendList(
     mainViewModel: MainViewModel,
     recommendList: RecommendList,
 ) {
-    TitleArea(mainViewModel, recommendList.title)
-    val list = recommendList.recommendList
-    val items =
-        if (list.isNotEmpty()) {
-            list.subList(
-                0,
-                RemoteConfig.getRemoteConfigIntValue(MAX_RECOMMEND_SIZE),
-            )
-        } else {
-            return
-        }
-    var i = 0
-    while (i < items.size) {
-        if (i + 2 < items.size) {
-            RecommendItemBoxRow(
-                3,
-                listOf(
-                    items[i].apply { itemPosition = i },
-                    items[i + 1].apply { itemPosition = i + 1 },
-                    items[i + 2].apply { itemPosition = i + 2 },
-                ),
-                mainViewModel,
-            )
-            i += 3
-        } else {
-            val isOdd = isOddMainList(i)
-            if (i == items.size - 1) {
+    Card(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Spacer(Modifier.height(8.dp))
+        TitleArea(mainViewModel, recommendList.title)
+        Spacer(Modifier.height(8.dp))
+        val list = recommendList.recommendList
+        val items =
+            if (list.isNotEmpty()) {
+                list.subList(
+                    0,
+                    RemoteConfig.getRemoteConfigIntValue(MAX_RECOMMEND_SIZE),
+                )
+            } else {
+                return@Card
+            }
+        var i = 0
+        while (i < items.size) {
+            if (i + 1 < items.size) {
                 RecommendItemBoxRow(
-                    3,
+                    2,
                     listOf(
-                        items[i].apply { itemPosition = items.size - 2 },
-                        items[i].apply { itemPosition = items.size - 1 },
-                        MainShortsModel(items.size - 1),
+                        items[i].apply { itemPosition = i },
+                        items[i + 1].apply { itemPosition = i + 1 },
                     ),
                     mainViewModel,
-                    isLastOdd = isOdd,
                 )
+                i += 2
+            } else {
+                val isOdd = isOddMainList(i)
+                if (i == items.size - 1) {
+                    RecommendItemBoxRow(
+                        2,
+                        listOf(
+                            items[i].apply { itemPosition = items.size - 1 },
+                            // items[i].apply { itemPosition = items.size - 1 },
+                            MainShortsModel(items.size - 1),
+                        ),
+                        mainViewModel,
+                        isLastOdd = isOdd,
+                    )
+                }
+                i += 1
             }
-            i += 1
         }
     }
 }
@@ -131,22 +146,15 @@ private fun TitleArea(
     Box(
         Modifier
             .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(start = 10.dp, bottom = 20.dp, top = 20.dp),
+            .wrapContentHeight(),
+        //   .padding(start = 10.dp, bottom = 20.dp, top = 20.dp),
         contentAlignment = Alignment.BottomStart,
     ) {
-        Box(
-            Modifier
-                .width(UIUtil.pixelToDp(context, textWidth).dp)
-                .height(8.dp)
-                .background(MAIN_TITLE_UNDER_LINE),
-            contentAlignment = Alignment.BottomCenter,
-        ) {}
         Row(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(bottom = 2.5.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -227,8 +235,8 @@ fun RecommendItemBoxRow(
 ) {
     Row(
         // 좌우 패딩 추가
-        Modifier.padding(vertical = 1.5.dp, horizontal = 5.dp),
-        horizontalArrangement = Arrangement.spacedBy(3.dp),
+        Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         for (i in 0 until rowSize) {
             val shortVideoModel = remember { items[i].shortsVideoModel }
@@ -307,6 +315,7 @@ fun RecommendItemBoxRow(
                                 R.drawable.vertical_background,
                                 R.drawable.vertical_background,
                                 R.drawable.vertical_background,
+                                imageLoader = viewModel?.imageLoader,
                             )
                         }
                     }
@@ -325,7 +334,7 @@ fun RecommendItemBoxRow(
                         },
                     ) {
                         VideoArea(shortVideoModel)
-                        ChannelArea(modifier = Modifier, shortChannelModel)
+                        ChannelArea(modifier = Modifier, shortChannelModel, viewModel)
 
                         Box(
                             modifier =
@@ -389,7 +398,7 @@ fun VideoArea(shortVideoModel: ShortsVideoModel?) {
         fontFamily = FontFamily.SansSerif,
         fontStyle = FontStyle.Normal,
         fontWeight = FontWeight.SemiBold,
-        fontSize = 12.sp,
+        fontSize = 13.sp,
         color = Color.White,
         maxLines = 2,
         overflow = TextOverflow.Ellipsis,
@@ -412,6 +421,7 @@ fun VideoArea(shortVideoModel: ShortsVideoModel?) {
 fun ChannelArea(
     modifier: Modifier,
     channel: ShortsChannelModel?,
+    viewModel: MainViewModel?,
 ) {
     val channelThumbnail =
         rememberSaveable(channel) {
@@ -451,6 +461,7 @@ fun ChannelArea(
                 R.drawable.ic_play_icon,
                 R.drawable.ic_play_icon,
                 R.drawable.ic_play_icon,
+                imageLoader = viewModel?.imageLoader,
             )
         }
         Text(
@@ -463,7 +474,7 @@ fun ChannelArea(
             fontFamily = FontFamily.SansSerif,
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.SemiBold,
-            fontSize = 11.sp,
+            fontSize = 10.sp,
             color = Color.White,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

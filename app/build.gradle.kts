@@ -1,15 +1,16 @@
 import java.util.Properties
 
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
-    id("com.google.dagger.hilt.android")
-    id("com.google.devtools.ksp")
-    id("com.google.gms.google-services")
-    id("kotlin-parcelize")
-    id("com.google.android.gms.oss-licenses-plugin")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.hilt.android)
+    alias(libs.plugins.google.play.service)
+    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.ktlint)
+    alias(libs.plugins.aboutlibraries)
 }
 
 ktlint {
@@ -31,12 +32,12 @@ if (localFile.exists()) {
 
 android {
     namespace = "com.sean.ratel.android"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.sean.ratel.android"
         minSdk = 28
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 10082
         versionName = "1.0.8.2"
         testInstrumentationRunner = "com.sean.ratel.android.HiltTestRunner"
@@ -324,7 +325,8 @@ dependencies {
     implementation(libs.google.play.service.ads)
 
     // oss
-    implementation(libs.google.play.service.oss)
+//    implementation(libs.google.play.service.oss)
+    implementation(libs.aboutlibraries.compose.m3)
 
     // Network
     implementation(platform(libs.squareup.okhttp.bom))
@@ -338,6 +340,7 @@ dependencies {
     // image
     implementation(libs.coil)
     implementation(libs.coil.compose)
+    implementation(libs.coil.video)
     implementation(libs.lottie.compose)
 
     // Firebase

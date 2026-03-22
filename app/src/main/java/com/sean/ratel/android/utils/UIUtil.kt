@@ -16,7 +16,6 @@ import com.google.android.gms.ads.AdSize
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.sean.player.utils.log.RLog
-import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.MAIN_AD_KEY
 import com.sean.ratel.android.data.common.RemoteConfig.MAIN_SHORTFORM_KEY
@@ -100,50 +99,80 @@ object UIUtil {
         if (locale.language == "ko") {
             // 한국어일 때: 천, 백만, 십억 단위로 표시
             when {
-                number < 1000 -> number.toString() // 1,000 미만
-                number in 1000..999999 ->
+                number < 1000 -> {
+                    number.toString()
+                }
+
+                // 1,000 미만
+                number in 1000..999999 -> {
                     String.format(
                         locale,
                         "%.1f천",
                         number / 1000.0,
-                    ) // 1,000 이상 1,000,000 미만 (천 단위)
-                number in 1000000..999999999 ->
+                    )
+                }
+
+                // 1,000 이상 1,000,000 미만 (천 단위)
+                number in 1000000..999999999 -> {
                     String.format(
                         locale,
                         "%.1f백만",
                         number / 1000000.0,
-                    ) // 1,000,000 이상 1,000,000,000 미만 (백만 단위)
-                number >= 1000000000 ->
+                    )
+                }
+
+                // 1,000,000 이상 1,000,000,000 미만 (백만 단위)
+                number >= 1000000000 -> {
                     String.format(
                         locale,
                         "%.1f십억",
                         number / 1000000000.0,
-                    ) // 1,000,000,000 이상 (십억 단위)
-                else -> number.toString()
+                    )
+                }
+
+                // 1,000,000,000 이상 (십억 단위)
+                else -> {
+                    number.toString()
+                }
             }
         } else {
             // 한국어가 아닐 때: K, M, B 단위로 표시
             when {
-                number < 1000 -> number.toString() // 1,000 미만
-                number in 1000..999999 ->
+                number < 1000 -> {
+                    number.toString()
+                }
+
+                // 1,000 미만
+                number in 1000..999999 -> {
                     String.format(
                         locale,
                         "%.1fK",
                         number / 1000.0,
-                    ) // 1,000 이상 1,000,000 미만 (K 단위)
-                number in 1000000..999999999 ->
+                    )
+                }
+
+                // 1,000 이상 1,000,000 미만 (K 단위)
+                number in 1000000..999999999 -> {
                     String.format(
                         locale,
                         "%.1fM",
                         number / 1000000.0,
-                    ) // 1,000,000 이상 1,000,000,000 미만 (M 단위)
-                number >= 1000000000 ->
+                    )
+                }
+
+                // 1,000,000 이상 1,000,000,000 미만 (M 단위)
+                number >= 1000000000 -> {
                     String.format(
                         locale,
                         "%.1fB",
                         number / 1000000000.0,
-                    ) // 1,000,000,000 이상 (B 단위)
-                else -> number.toString()
+                    )
+                }
+
+                // 1,000,000,000 이상 (B 단위)
+                else -> {
+                    number.toString()
+                }
             }
         }
 

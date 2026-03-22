@@ -80,7 +80,8 @@
     <string name="setting_app_opensource_not_produce">Lisensi open source hanya tersedia di versi rilis aplikasi.</string>
 
     <string name="pip_memory_error">Memori rendah</string>
-
+    <string name="setting_dev_other_app">Aplikasi lain dari developer ini</string>
+    <string name="setting_dev_other_app_name">Video Scrap</string>
     <!-- Pengelola Aplikasi -->
     <string name="app_manager">Pengelola Aplikasi</string>
     <string name="app_manager_detail">Tampilkan dan kelola informasi aplikasi di perangkat Anda.</string>
@@ -102,7 +103,7 @@
     <string name="device_update_sort">Urutkan menurut Pembaruan</string>
     <string name="device_name_sort">Urutkan menurut Nama</string>
     <string name="device_size_sort">Urutkan menurut Ukuran</string>
-
+    <string name="open_license">Lisensi Open Source</string>
 
 
     <string name="short_form_end">VidPendek</string>

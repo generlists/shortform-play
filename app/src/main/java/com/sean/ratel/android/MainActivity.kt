@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -78,7 +77,7 @@ class MainActivity : FragmentActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        // requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
 
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
@@ -142,11 +141,13 @@ class MainActivity : FragmentActivity() {
                         currentFragment?.pipButtonState()
                         pipButtonState.tryEmit(0)
                     }
+
                     PipAction.PLAY.intentExtraValue -> {
                         currentFragment?.play()
                         currentFragment?.pipButtonState()
                         pipButtonState.tryEmit(0)
                     }
+
                     PipAction.SKIP_PREVIOUS.intentExtraValue -> {
                         val currentIndex = currentFragment?.pager?.currentItem ?: 0
                         if (currentIndex == 0) {
@@ -163,6 +164,7 @@ class MainActivity : FragmentActivity() {
                         }
                         pipButtonState.tryEmit(0)
                     }
+
                     PipAction.SKIP_NEXT.intentExtraValue -> {
                         val totalSize = currentFragment?.pager?.adapter?.itemCount ?: 0
                         val index = currentFragment?.pager?.currentItem ?: 0
@@ -220,6 +222,7 @@ class MainActivity : FragmentActivity() {
                     )
                 }
             }
+
             ViewType.SearchShortsDaily.name -> {
                 if (target == "youtube_end" && categoryKey != null) {
                     mainViewModel.goEndContent(
@@ -369,16 +372,19 @@ class MainActivity : FragmentActivity() {
                             mainViewModel.navigator.navigateTo(route)
                         }
                     }
+
                     YOUTUBE -> {
                         RLog.d("deepLink", "YOUTUBE route : $route, videoId : $param1 , viewType : $viewType")
                         param1?.let {
                             mainViewModel.goEndContent(route, viewType ?: ViewType.DeepLinkVideo, 0, null, param1)
                         }
                     }
+
                     SEARCH -> {
                         RLog.d("deeplink", "tab : $param2 query : $param1 , date : $param3 , category : $param4")
                         PhoneUtil.searchButton(this@MainActivity, param1, param2, param3, param4)
                     }
+
                     SHARE -> {
                         RLog.d("YouTubeContentEnd", "SHARE route : $route, videoId : $param1 , viewType : $viewType")
                         mainViewModel.goEndContent(route, appLinkInfo.type ?: ViewType.DeepLinkVideo, 0, null, param1)

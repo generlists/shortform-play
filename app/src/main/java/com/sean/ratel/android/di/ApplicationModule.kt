@@ -1,10 +1,17 @@
 package com.sean.ratel.android.di
 
 import android.content.Context
+import android.graphics.Bitmap
 import androidx.annotation.OptIn
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import coil.ImageLoader
+import coil.decode.VideoFrameDecoder
+import coil.disk.DiskCache
+import coil.memory.MemoryCache
+import coil.request.CachePolicy
+import coil.size.Precision
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
@@ -95,4 +102,33 @@ object ApplicationModule {
 
     @Provides
     fun provideYouTubePlayerTracker(): YouTubePlayerTracker = YouTubePlayerTracker()
+
+    @Provides
+    @Singleton
+    fun provideImageLoader(
+        @ApplicationContext context: Context,
+    ): ImageLoader =
+        ImageLoader
+            .Builder(context)
+            .memoryCache {
+                MemoryCache
+                    .Builder(context)
+                    .maxSizePercent(0.25) // 앱 가용 메모리의 25%까지 캐시 허용
+                    .build()
+            }.diskCache {
+                DiskCache
+                    .Builder()
+                    .directory(context.cacheDir.resolve("image_cache"))
+                    .maxSizeBytes(512L * 1024 * 1024)
+                    .build()
+            }.components {
+                add(VideoFrameDecoder.Factory())
+            }.respectCacheHeaders(false)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .precision(Precision.INEXACT)
+            .bitmapConfig(Bitmap.Config.RGB_565)
+            .crossfade(500)
+            .allowHardware(true)
+            .build()
 }

@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
@@ -22,9 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sean.ratel.android.data.common.RemoteConfig
-import com.sean.ratel.android.ui.ad.AdBannerLocation
 import com.sean.ratel.android.ui.ad.AdViewModel
-import com.sean.ratel.android.ui.ad.LoadBanner
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.home.HomeBottomBar
 import com.sean.ratel.android.ui.home.HomeTopBar
@@ -58,11 +55,10 @@ fun ShortFormPlayApp(
 
         Scaffold(
             contentWindowInsets = WindowInsets.safeDrawing,
-            modifier = Modifier.imePadding().background(APP_BACKGROUND),
             topBar = {
                 if (isTopViewVisible) {
                     HomeTopBar(
-                        Modifier.background(Color.Transparent).padding(top = insetPaddingValue),
+                        modifier = Modifier.padding(top = insetPaddingValue),
                         mainViewModel,
                         currentRoute,
                         historyBack = {
@@ -103,7 +99,7 @@ fun ShortFormPlayApp(
                 adMobInitialComplete &&
                 RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
             ) {
-                LoadBanner(currentRoute, adViewModel, AdBannerLocation.BOTTOM)
+                //  LoadBanner(currentRoute, adViewModel, AdBannerLocation.BOTTOM)
             }
 
             FullScreenToggleView(currentRoute)

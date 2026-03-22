@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -26,7 +27,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,7 +66,6 @@ import com.sean.ratel.android.ui.progress.LoadingPlaceholder
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
-import com.sean.ratel.android.ui.theme.Background_op_80
 import com.sean.ratel.android.utils.ComposeUtil.ViewBottomMargin
 
 private const val TAG = "AppManagerView"
@@ -80,16 +83,15 @@ fun AppManagerView(
     }
     val data = remember { viewModel.contents }
     var filterAction by remember { mutableIntStateOf(-1) }
-    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     val isLoaded by viewModel.appListLoaded.collectAsState()
+    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
 
-    when {
-        !isLoaded -> LoadingPlaceholder(loading = true)
-        data.isEmpty() -> LoadingPlaceholder(loading = false)
-        else -> {}
-    }
-
-    Column(Modifier.fillMaxSize().padding(insetPaddingValue)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(Color.Transparent)
+            .padding(top = insetPaddingValue.calculateTopPadding()),
+    ) {
         TopNavigationBar(
             titleResourceId = R.string.app_manager,
             historyBack = { mainViewModel?.runNavigationBack() },
@@ -107,17 +109,36 @@ fun AppManagerView(
                     stringResource(R.string.device_size_sort),
                 ),
         )
-        Box(
-            modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .background(APP_BACKGROUND),
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(Color.Transparent),
         ) {
-            ItemList(data, viewModel, adViewModel)
+            Spacer(Modifier.height(16.dp))
+
+            Box(
+                modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(APP_BACKGROUND),
+            ) {
+                ItemList(data, viewModel, adViewModel)
+            }
         }
     }
     FilterAppList(filterAction, viewModel)
     ViewBottomMargin(adViewModel)
+    when {
+        !isLoaded -> {
+            LoadingPlaceholder(loading = true)
+        }
+
+        data.isEmpty() -> {
+            LoadingPlaceholder(loading = false)
+        }
+
+        else -> {}
+    }
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -134,8 +155,7 @@ fun ItemList(
         RLog.d(TAG, "size ${items.size}")
         LazyColumn(
             Modifier
-                .wrapContentSize()
-                .background(Color.Transparent)
+                .fillMaxSize()
                 .then(
                     if (adBannerLoadingComplete.value.first) {
                         Modifier
@@ -149,6 +169,7 @@ fun ItemList(
         ) {
             items(count = items.size) { index ->
                 AppListItem(items[index], viewModel)
+                Spacer(Modifier.height(16.dp))
             }
         }
     }
@@ -202,119 +223,128 @@ private fun AppListItem(
             viewModel.appDelete(appDeleteLauncher, appManagerInfo?.packageName ?: "")
         }
     }
-
-    Box(
+    Card(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
-                .clickable(onClick = {
-                    viewModel.goStore(
-                        context,
-                        URL_GOOGLE_PLAY_APP(
-                            appManagerInfo?.packageName ?: URL_MY_PACKAGE_NAME,
-                        ),
-                        title ?: "",
-                    )
-                })
-                .background(APP_BACKGROUND),
-        // Box 내에서 정렬
-        contentAlignment = Alignment.CenterStart,
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Row(
+        Box(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight(),
-            // Row 내에서 수직 중앙 정렬
-            verticalAlignment = Alignment.CenterVertically,
+                    .wrapContentHeight()
+                    .clickable(onClick = {
+                        viewModel.goStore(
+                            context,
+                            URL_GOOGLE_PLAY_APP(
+                                appManagerInfo?.packageName ?: URL_MY_PACKAGE_NAME,
+                            ),
+                            title ?: "",
+                        )
+                    }),
+            // Box 내에서 정렬
+            contentAlignment = Alignment.CenterStart,
         ) {
             Row(
-                Modifier
-                    .wrapContentSize()
-                    .padding(start = 10.dp, top = 10.dp, bottom = 10.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                // Row 내에서 수직 중앙 정렬
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box {
-                    Surface(
-                        shape = RoundedCornerShape(6.dp),
-                    ) {
-                        icon?.let {
-                            Image(
-                                painter = DrawablePainter(it),
-                                contentDescription = null,
-                                modifier =
-                                    Modifier
-                                        .width(48.dp)
-                                        .height(48.dp)
-                                        .aspectRatio(1f),
-                            )
-                        } ?: run {
-                            // placeholderIcon?.let{ DrawablePainter(placeholderIcon)}
-                            DrawablePainter(placeholderIcon!!)
+                Row(
+                    Modifier
+                        .wrapContentSize()
+                        .padding(16.dp),
+                ) {
+                    Box {
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                        ) {
+                            icon?.let {
+                                Image(
+                                    painter = DrawablePainter(it),
+                                    contentDescription = null,
+                                    modifier =
+                                        Modifier
+                                            .width(48.dp)
+                                            .height(48.dp)
+                                            .aspectRatio(1f),
+                                )
+                            } ?: run {
+                                // placeholderIcon?.let{ DrawablePainter(placeholderIcon)}
+                                DrawablePainter(placeholderIcon!!)
+                            }
                         }
                     }
                 }
-            }
-            Column(Modifier.padding(start = 10.dp)) {
-                Text(
-                    title.toString(),
-                    // 한 줄로 제한
-                    maxLines = 1,
-                    // 말줄임표 처리
-                    overflow = TextOverflow.Ellipsis,
-                    modifier =
-                        Modifier
-                            .wrapContentSize()
-                            .padding(bottom = 5.dp),
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                )
-                Row(Modifier) {
+                Column(Modifier.padding(start = 10.dp)) {
                     Text(
-                        text =
-                            stringResource(R.string.device_manager_apk_size).format(
-                                appManagerInfo?.apkSize ?: "",
-                            ),
-                        fontSize = 10.sp,
+                        title.toString(),
+                        // 한 줄로 제한
+                        maxLines = 1,
+                        // 말줄임표 처리
+                        overflow = TextOverflow.Ellipsis,
+                        modifier =
+                            Modifier
+                                .wrapContentSize()
+                                .padding(bottom = 5.dp),
+                        fontSize = 15.sp,
                         fontWeight = FontWeight.Bold,
-                        color = APP_TEXT_COLOR,
+                        color = Color.White,
                     )
+                    Row(Modifier) {
+                        Text(
+                            text =
+                                stringResource(R.string.device_manager_apk_size).format(
+                                    appManagerInfo?.apkSize ?: "",
+                                ),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = APP_TEXT_COLOR,
+                        )
 
-                    Text(
-                        text =
-                            stringResource(R.string.device_manager_update_time).format(
-                                appManagerInfo?.lastUpdateTime ?: "",
-                            ),
-                        modifier = Modifier.padding(start = 20.dp),
-                        fontSize = 10.sp,
-                        color = APP_SUBTITLE_TEXT_COLOR,
+                        Text(
+                            text =
+                                stringResource(R.string.device_manager_update_time).format(
+                                    appManagerInfo?.lastUpdateTime ?: "",
+                                ),
+                            modifier = Modifier.padding(start = 20.dp),
+                            fontSize = 10.sp,
+                            color = APP_SUBTITLE_TEXT_COLOR,
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.weight(1f)) // TitleBox와 IconButton 사이에 여백 추가
+                DropDownMenuComposable(
+                    APP_SUBTITLE_TEXT_COLOR,
+                    Icons.Filled.MoreVert,
+                    modifer = Modifier,
+                ) { menuExpanded, onMenuDismiss ->
+                    AppItem(
+                        menuExpanded = menuExpanded,
+                        appDetail = {
+                            viewModel.goDetailAppInfo(
+                                context,
+                                appManagerInfo?.packageName ?: URL_MY_PACKAGE_NAME,
+                            )
+                            onMenuDismiss()
+                        },
+                        onShouldDeleteAppChanged = { newState ->
+                            shouldDeleteApp = newState
+                            deleteResult = appManagerInfo?.packageName
+                            onMenuDismiss()
+                        },
+                        onMenuDismiss = onMenuDismiss,
                     )
                 }
-            }
-
-            Spacer(modifier = Modifier.weight(1f)) // TitleBox와 IconButton 사이에 여백 추가
-            DropDownMenuComposable(
-                Background_op_80,
-                Icons.Filled.MoreVert,
-                modifer = Modifier,
-            ) { menuExpanded, onMenuDismiss ->
-                AppItem(
-                    menuExpanded = menuExpanded,
-                    appDetail = {
-                        viewModel.goDetailAppInfo(
-                            context,
-                            appManagerInfo?.packageName ?: URL_MY_PACKAGE_NAME,
-                        )
-                        onMenuDismiss()
-                    },
-                    onShouldDeleteAppChanged = { newState ->
-                        shouldDeleteApp = newState
-                        deleteResult = appManagerInfo?.packageName
-                        onMenuDismiss()
-                    },
-                    onMenuDismiss = onMenuDismiss,
-                )
             }
         }
     }

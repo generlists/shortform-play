@@ -21,6 +21,9 @@ private val DarkColorScheme =
         primary = Purple80,
         secondary = PurpleGrey80,
         tertiary = Pink80,
+        outline = Color(0xCC2C2C2E),
+        outlineVariant = Color(0xFF1C1C1E),
+        surfaceContainerLow = Color(0xFFB0B0B0),
     )
 
 private val LightColorScheme =
@@ -37,6 +40,9 @@ private val LightColorScheme =
     onBackground = Color(0xFF1C1B1F),
     onSurface = Color(0xFF1C1B1F),
      */
+        outline = Color(0xCC2C2C2E),
+        outlineVariant = Color(0xFF1C1C1E),
+        surfaceContainerLow = Color(0xFFB0B0B0),
     )
 
 @Suppress("ktlint:standard:function-naming")
@@ -44,7 +50,7 @@ private val LightColorScheme =
 fun RatelappTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
     val colorScheme =
@@ -54,8 +60,13 @@ fun RatelappTheme(
                 if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
             }
 
-            darkTheme -> DarkColorScheme
-            else -> LightColorScheme
+            darkTheme -> {
+                DarkColorScheme
+            }
+
+            else -> {
+                LightColorScheme
+            }
         }
 
     MaterialTheme(

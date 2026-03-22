@@ -94,6 +94,7 @@ fun HomeBottomBar(
             currentRoute != Destination.Notices.route &&
             currentRoute != Destination.Setting.route &&
             currentRoute != Destination.SettingAppManagerDetail.route &&
+            currentRoute != Destination.SettingAppLicense.route &&
             currentRoute != Destination.Home.Main.PoplarShortFormMore.route &&
             currentRoute != Destination.Home.Main.EditorPickMore.route &&
             currentRoute != Destination.Home.Main.RankingChannelMore.route &&

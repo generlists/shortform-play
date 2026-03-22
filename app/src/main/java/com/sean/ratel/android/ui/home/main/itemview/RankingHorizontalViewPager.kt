@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.main.itemview
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.background
@@ -7,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,6 +21,10 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -59,13 +65,10 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
-import com.sean.ratel.android.ui.theme.MAIN_TITLE_UNDER_LINE
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.TimeUtil
-import com.sean.ratel.android.utils.UIUtil
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import com.sean.ratel.android.utils.UIUtil.formatNumberWithCommas
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -120,106 +123,120 @@ fun RankingHorizontalScrollView(
             "(${
                 String.format(
                     stringResource(R.string.base_date),
-                    TimeUtil.formatTimestamp(it,"yy-MM-dd"),
+                    TimeUtil.formatTimestamp(it, "yy-MM-dd"),
                 )
             })"
         } ?: run {
             "(${
                 String.format(
                     stringResource(R.string.base_date),
-                    TimeUtil.formatTimestamp(System.currentTimeMillis(),"yy-MM-dd"),
+                    TimeUtil.formatTimestamp(System.currentTimeMillis(), "yy-MM-dd"),
                 )
             })"
         }
-
-    Column(
-        Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-    ) {
-        RankingTitleArea(
-            period = period,
-            mainViewModel,
-            20.sp,
-            stringResource(R.string.main_ranking_label),
-            start = 10.dp,
-            end = 0.dp,
-            top = 25.dp,
-            bottom = 20.dp,
-        )
-    }
-
-    Box(
+    Card(
         modifier =
             Modifier
-                .fillMaxSize(),
-        contentAlignment = Alignment.Center,
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
-            HorizontalPager(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                pageSpacing = 3.dp,
-                state = pagerState,
-            ) { index ->
-                val rankingIndex = index % (pageSize)
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
+        ) {
+            Spacer(Modifier.height(8.dp))
+            RankingTitleArea(
+                period = period,
+                mainViewModel,
+                20.sp,
+                stringResource(R.string.main_ranking_label),
+                start = 0.dp,
+                end = 0.dp,
+                top = 0.dp,
+                bottom = 0.dp,
+            )
+        }
 
-                Box(
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
+                HorizontalPager(
                     modifier =
                         Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(12.dp)),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    when (rankingIndex) {
-                        0 ->
-                            PagerList(
-                                mainViewModel,
-                                rankingIndex,
-                                channelSearchTitle,
-                                channelSearchList,
-                            )
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                    pageSpacing = 3.dp,
+                    state = pagerState,
+                ) { index ->
+                    val rankingIndex = index % (pageSize)
 
-                        1 ->
-                            PagerList(
-                                mainViewModel,
-                                rankingIndex,
-                                channelSubscriptionTitle,
-                                channelSubscriptionList,
-                            )
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(12.dp)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        when (rankingIndex) {
+                            0 -> {
+                                PagerList(
+                                    mainViewModel,
+                                    rankingIndex,
+                                    channelSearchTitle,
+                                    channelSearchList,
+                                )
+                            }
 
-                        2 ->
-                            PagerList(
-                                mainViewModel,
-                                rankingIndex,
-                                channelSubscriptionUpTitle,
-                                channelSubscriptionUpList,
-                            )
+                            1 -> {
+                                PagerList(
+                                    mainViewModel,
+                                    rankingIndex,
+                                    channelSubscriptionTitle,
+                                    channelSubscriptionList,
+                                )
+                            }
+
+                            2 -> {
+                                PagerList(
+                                    mainViewModel,
+                                    rankingIndex,
+                                    channelSubscriptionUpTitle,
+                                    channelSubscriptionUpList,
+                                )
+                            }
+                        }
                     }
                 }
             }
         }
-    }
 
-    LaunchedEffect(
-        key1 = pagerState,
-        block = {
-            var initPage = Int.MAX_VALUE
+        LaunchedEffect(
+            key1 = pagerState,
+            block = {
+                var initPage = Int.MAX_VALUE
 
-            while (initPage % pageSize != 0) {
-                initPage++
-            }
-            pagerState.scrollToPage(page.value)
-        },
-    )
-    LaunchedEffect(pagerState) {
-        snapshotFlow { pagerState.currentPage }
-            .distinctUntilChanged() // 페이지 변경 이벤트만 수신
-            .collect { currentPage ->
-                mainViewModel.setChannelPager(currentPage)
-            }
+                while (initPage % pageSize != 0) {
+                    initPage++
+                }
+                pagerState.scrollToPage(page.value)
+            },
+        )
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }
+                .distinctUntilChanged() // 페이지 변경 이벤트만 수신
+                .collect { currentPage ->
+                    mainViewModel.setChannelPager(currentPage)
+                }
+        }
     }
 }
 
@@ -244,24 +261,19 @@ private fun RankingTitleArea(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(start = start, end = end, bottom = bottom, top = top),
+            .padding(
+                start = if (subTitle) 16.dp else 0.dp,
+                end = end,
+                bottom = if (subTitle) 16.dp else 0.dp,
+                top = top,
+            ),
         contentAlignment = Alignment.BottomStart,
     ) {
-        if (!subTitle) {
-            Box(
-                Modifier
-                    .width(UIUtil.pixelToDp(context, textWidth).dp)
-                    .height(8.dp)
-                    .background(MAIN_TITLE_UNDER_LINE),
-                contentAlignment = Alignment.BottomCenter,
-            ) {}
-        }
-
         Row(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .then(if (!subTitle) Modifier.padding(bottom = 2.5.dp) else Modifier),
+                .then(if (!subTitle) Modifier.padding(16.dp) else Modifier),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -283,10 +295,11 @@ private fun RankingTitleArea(
                             textWidth = textLayoutResult.size.width.toFloat() // 렌더링된 픽셀 크기
                         },
                         style =
+
                             TextStyle(
                                 shadow =
                                     Shadow(
-                                        color = Color.Black,
+                                        color = if (subTitle) Color.Black else Color.White,
                                         // 그림자의 위치 (x, y)
                                         offset = Offset(2f, 2f),
                                         // 그림자의 흐림 정도
@@ -299,7 +312,7 @@ private fun RankingTitleArea(
                             Modifier
                                 .fillMaxWidth()
                                 .wrapContentHeight()
-                                .padding(top = 2.5.dp, end = 7.dp),
+                                .padding(top = 8.dp, end = 7.dp),
                             contentAlignment = Alignment.CenterEnd,
                         ) {
                             Text(
@@ -316,7 +329,7 @@ private fun RankingTitleArea(
                                     TextStyle(
                                         shadow =
                                             Shadow(
-                                                color = Color.White,
+                                                color = Color.Black,
                                                 // 그림자의 위치 (x, y)
                                                 offset = Offset(2f, 2f),
                                                 // 그림자의 흐림 정도
@@ -333,7 +346,7 @@ private fun RankingTitleArea(
                     Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(end = 7.dp),
+                        .padding(end = 23.dp),
                     contentAlignment = Alignment.CenterEnd,
                 ) {
                     Text(
@@ -423,84 +436,74 @@ fun ItemList(
     rankingIndex: Int,
     items: List<MainShortsModel>,
 ) {
-    Column(
-        Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .background(APP_BACKGROUND),
+    val color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)
+    Card(
+        modifier =
+            Modifier
+                .fillMaxWidth(),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .fillMaxWidth(),
         ) {
-            Box(
-                Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .background(APP_BACKGROUND),
-            )
-            Row(
+            Column(
                 Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                    .background(APP_BACKGROUND),
-                verticalAlignment = Alignment.CenterVertically,
+                    .wrapContentHeight(),
             ) {
-                Text(
-                    stringResource(R.string.main_rank_order),
-                    Modifier
-                        .padding(5.dp)
-                        .weight(0.1f)
-                        .wrapContentSize(),
-                    fontFamily = FontFamily.SansSerif,
-                    fontStyle = FontStyle.Normal,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 10.sp,
-                    color = Color.White,
-                )
-                Box(
-                    Modifier
-                        .wrapContentSize()
-                        .weight(0.3f),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        stringResource(R.string.main_rank_channel),
-                        Modifier.wrapContentSize(),
-                        fontFamily = FontFamily.SansSerif,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 10.sp,
-                        color = Color.White,
-                    )
-                }
-
                 Row(
                     Modifier
-                        .wrapContentSize()
-                        .weight(0.2f),
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        if (rankingIndex == 0) {
-                            stringResource(
-                                R.string.main_rank_search,
-                            )
-                        } else {
-                            stringResource(R.string.main_rank_subscription)
-                        },
+                        stringResource(R.string.main_rank_order),
                         Modifier
-                            .wrapContentSize()
-                            .weight(1f),
+                            .padding(5.dp)
+                            .weight(0.1f)
+                            .wrapContentSize(),
                         fontFamily = FontFamily.SansSerif,
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
                         fontSize = 10.sp,
                         color = Color.White,
                     )
-                    if (rankingIndex == 2) {
+                    Box(
+                        Modifier
+                            .wrapContentSize()
+                            .weight(0.3f),
+                        contentAlignment = Alignment.Center,
+                    ) {
                         Text(
-                            stringResource(R.string.main_rank_new),
+                            stringResource(R.string.main_rank_channel),
+                            Modifier.wrapContentSize(),
+                            fontFamily = FontFamily.SansSerif,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 10.sp,
+                            color = Color.White,
+                        )
+                    }
+
+                    Row(
+                        Modifier
+                            .wrapContentSize()
+                            .weight(0.2f),
+                    ) {
+                        Text(
+                            if (rankingIndex == 0) {
+                                stringResource(
+                                    R.string.main_rank_search,
+                                )
+                            } else {
+                                stringResource(R.string.main_rank_subscription)
+                            },
                             Modifier
                                 .wrapContentSize()
                                 .weight(1f),
@@ -510,13 +513,31 @@ fun ItemList(
                             fontSize = 10.sp,
                             color = Color.White,
                         )
+                        if (rankingIndex == 2) {
+                            Text(
+                                stringResource(R.string.main_rank_new),
+                                Modifier
+                                    .wrapContentSize()
+                                    .weight(1f),
+                                fontFamily = FontFamily.SansSerif,
+                                fontStyle = FontStyle.Normal,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 10.sp,
+                                color = Color.White,
+                            )
+                        }
                     }
                 }
             }
-        }
-
-        for (index in items.indices) {
-            Item(index, rankingIndex, mainViewModel, items)
+            Divider(
+                Modifier
+                    .height(1.5.dp)
+                    .fillMaxWidth(),
+                color = color,
+            )
+            for (index in items.indices) {
+                Item(index, rankingIndex, mainViewModel, items)
+            }
         }
     }
 }
@@ -533,7 +554,7 @@ fun Item(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(APP_BACKGROUND)
+            .background(MaterialTheme.colorScheme.outlineVariant)
             .clickable {
                 val viewType =
                     if (rankingIndex ==

@@ -98,11 +98,6 @@
             >
         </activity>
 
-        <activity
-            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
-            android:theme="@style/OssLicenseDarkBarsTheme" >
-        </activity>
-
     </application>
 
 </manifest>

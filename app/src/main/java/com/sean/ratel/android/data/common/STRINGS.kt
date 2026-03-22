@@ -31,6 +31,7 @@ object STRINGS {
     fun URLUPDATE_GOOGLE_PLAY_WEB(appTitle: String): String = "https://play.google.com/store/search?q=$appTitle&c=apps"
 
     const val URL_MY_PACKAGE_NAME: String = "com.sean.ratel.android"
+    const val URL_MY_OTHER_PACKAGE_NAME: String = "so.smartlab.video.scrap.pro"
 
     const val SERVICE_START_DATE = "20241029"
     const val SERVICE_RENEWAL_START_DATE = "20241207"

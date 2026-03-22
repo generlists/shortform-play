@@ -78,7 +78,8 @@
     <string name="setting_app_opensource_not_produce">Les licences open source sont fournies uniquement pour la version de production.</string>
 
     <string name="pip_memory_error">erreur de mémoire faible</string>
-
+    <string name="setting_dev_other_app">Autres applications de ce développeur</string>
+    <string name="setting_dev_other_app_name">Video Scrap</string>
     <!-- Gestion d'application -->
     <string name="app_manager">Gestionnaire d’applis</string>
     <string name="app_manager_detail">Afficher et gérer les informations des applis sur votre appareil.</string>
@@ -99,6 +100,7 @@
     <string name="device_update_sort">Par mise à jour</string>
     <string name="device_name_sort">Par nom</string>
     <string name="device_size_sort">Par taille</string>
+    <string name="open_license">Licence Open Source</string>
 
     <!-- Fin de lecture / partage -->
     <string name="short_form_end">Vidéos courtes</string>

@@ -24,6 +24,7 @@ import com.sean.ratel.android.ui.home.main.Main
 import com.sean.ratel.android.ui.home.main.MainMoreViewModel
 import com.sean.ratel.android.ui.home.main.MainVideoViewModel
 import com.sean.ratel.android.ui.home.setting.Setting
+import com.sean.ratel.android.ui.home.setting.SettingOpenSourceLicensesScreen
 import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.home.setting.SettingsAppManager
 import com.sean.ratel.android.ui.home.shortform.ShortForm
@@ -202,6 +203,9 @@ fun NavGraph(
         composable(Destination.SettingAppManagerDetail.route) {
             val viewModel: SettingViewModel = hiltViewModel(key = SettingViewModel.TAG)
             SettingsAppManager(viewModel, mainViewModel, adViewModel)
+        }
+        composable(Destination.SettingAppLicense.route) {
+            SettingOpenSourceLicensesScreen(modifier)
         }
     }
 }

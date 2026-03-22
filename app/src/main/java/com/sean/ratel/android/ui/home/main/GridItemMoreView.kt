@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.main
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,7 +26,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -325,15 +329,16 @@ private fun SetTitle(
     LaunchedEffect(Unit) {
         mainViewModel.viewType.collect {
             when (it) {
-                ViewType.PopularSearchShortForm ->
+                ViewType.PopularSearchShortForm -> {
                     moreViewModel.setGridShortFormTitle(
                         String.format(
                             "%s",
                             "$popularTitle(${context.getString(R.string.main_more_search)})",
                         ),
                     )
+                }
 
-                ViewType.PopularLikeShortForm ->
+                ViewType.PopularLikeShortForm -> {
                     moreViewModel.setGridShortFormTitle(
                         (
                             String.format(
@@ -342,8 +347,9 @@ private fun SetTitle(
                             )
                         ),
                     )
+                }
 
-                ViewType.PopularCommentShortForm ->
+                ViewType.PopularCommentShortForm -> {
                     moreViewModel.setGridShortFormTitle(
                         (
                             String.format(
@@ -352,17 +358,23 @@ private fun SetTitle(
                             )
                         ),
                     )
+                }
 
-                ViewType.EditorPick ->
+                ViewType.EditorPick -> {
                     moreViewModel.setGridShortFormTitle(editorTitle)
+                }
 
-                ViewType.Recommend ->
+                ViewType.Recommend -> {
                     moreViewModel.setGridShortFormTitle(recommendTitle)
+                }
 
-                ViewType.TrendShortsMore ->
+                ViewType.TrendShortsMore -> {
                     moreViewModel.setGridShortFormTitle(trendShortsTitle)
+                }
 
-                else -> moreViewModel.setGridShortFormTitle(popularTitle)
+                else -> {
+                    moreViewModel.setGridShortFormTitle(popularTitle)
+                }
             }
         }
     }
@@ -379,16 +391,27 @@ fun GridItemView(
     listState: LazyListState,
 ) {
     // 로딩이 끝나면 ShortsItemList 표시
-    Column(
-        Modifier
-            .fillMaxSize(),
-    ) {
-        Box(
+    Card(
+        modifier =
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+    ) {
+        Column(
+            Modifier
+                .fillMaxSize(),
         ) {
-            GridItemList(data, mainViewModel, moreViewModel, adViewModel, loading, listState)
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+            ) {
+                GridItemList(data, mainViewModel, moreViewModel, adViewModel, loading, listState)
+            }
         }
     }
 }
@@ -459,6 +482,7 @@ fun GridItemList(
         modifier =
             Modifier
                 .fillMaxSize()
+                .padding(top = 16.dp, bottom = 16.dp)
                 .then(
                     if (adBannerLoadingComplete.value.first) {
                         Modifier.padding(
@@ -648,9 +672,8 @@ fun GridItemBoxRow(
 ) {
     Row(
         // 좌우 패딩 추가
-        Modifier.padding(vertical = 1.5.dp, horizontal = 3.dp),
-//        // 아이템 간 간격 7dp
-        horizontalArrangement = Arrangement.spacedBy(1.5.dp),
+        Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         for (i in 0 until rowSize) {
             val shortVideoModel = items[i].shortsVideoModel
@@ -752,8 +775,7 @@ fun GridItemBoxRow(
                                                         Color.Black,
                                                     ),
                                             ),
-                                    )
-                                    .align(Alignment.End),
+                                    ).align(Alignment.End),
                         ) {
                             Text(
                                 text = videoDuration,

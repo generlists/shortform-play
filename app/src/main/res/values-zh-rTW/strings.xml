@@ -73,7 +73,8 @@
     <string name="setting_app_email_not_found">找不到電子郵件應用程式。</string>
     <string name="setting_app_opensource_not_produce">本應用的開源授權僅提供於實際發佈版本中。</string>
     <string name="pip_memory_error">記憶體不足錯誤</string>
-
+    <string name="setting_dev_other_app">這位開發者的其他應用程式</string>
+    <string name="setting_dev_other_app_name">Video Scrap</string>
     <!--App Manager -->
     <string name="app_manager">應用管理員</string>
     <string name="app_manager_detail">顯示並管理您裝置上的應用資訊。</string>
@@ -91,7 +92,7 @@
     <string name="device_update_sort">按更新排序</string>
     <string name="device_name_sort">按名稱排序</string>
     <string name="device_size_sort">按容量排序</string>
-
+    <string name="open_license">開源授權條款</string>
 
     <string name="short_form_end">短影音播放</string>
     <string name="short_form_app_share">快把「短影音播放」App 分享給朋友吧！</string>
