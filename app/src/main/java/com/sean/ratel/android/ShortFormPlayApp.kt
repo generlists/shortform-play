@@ -99,7 +99,7 @@ fun ShortFormPlayApp(
                 adMobInitialComplete &&
                 RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
             ) {
-                //  LoadBanner(currentRoute, adViewModel, AdBannerLocation.BOTTOM)
+                // LoadBanner(currentRoute, adViewModel, AdBannerLocation.BOTTOM)
             }
 
             FullScreenToggleView(currentRoute)

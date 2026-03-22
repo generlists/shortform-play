@@ -27,8 +27,8 @@ class MainMoreViewModel
     constructor(
         val navigator: Navigator,
     ) : ViewModel() {
-        private val _currentDataList = MutableStateFlow<MutableList<MainShortsModel>>(mutableListOf())
-        val currentDataList: StateFlow<MutableList<MainShortsModel>> = _currentDataList
+        private val _currentDataList = MutableStateFlow<List<MainShortsModel>>(emptyList())
+        val currentDataList: StateFlow<List<MainShortsModel>> = _currentDataList
 
         private val _popularShortsFormMoreList =
             MutableStateFlow<ShortFormVideoList>(ShortFormVideoList())
@@ -121,8 +121,7 @@ class MainMoreViewModel
                             ) // 리스트를 30개씩 나눔
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
-
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
                 ViewType.PopularLikeShortForm -> {
@@ -134,7 +133,7 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
                 ViewType.PopularCommentShortForm -> {
@@ -146,7 +145,7 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
                 ViewType.EditorPick -> {
@@ -158,11 +157,11 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
                 ViewType.Recommend -> {
-                    val list =
+                    val list: List<MainShortsModel>? =
                         _recommendMoreList.value.recommendList
                             .chunked(
                                 INIT_MAX_SIZE,
@@ -170,7 +169,7 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
                 ViewType.ChannelSearchRanking -> {
@@ -182,7 +181,7 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
                 ViewType.ChannelLikeRanking -> {
@@ -194,7 +193,7 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
                 ViewType.SubscriptionRanking -> {
@@ -206,7 +205,7 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
                 ViewType.SubscriptionRankingUp -> {
@@ -222,8 +221,9 @@ class MainMoreViewModel
                         "size : ${list?.size}  oriinal size : ${_subscriptionUpMoreList.value.subscriptionUpList.size}",
                     )
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
+
                 ViewType.RecentlyWatch -> {
                     val list =
                         _recentlyWatchMoreList.value
@@ -233,12 +233,13 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
 
-                    list?.let { _currentDataList.value.addAll(it) }
+                    list?.let { _currentDataList.value += list }
                 }
 
-                else -> Unit
+                else -> {
+                    emptyList<MainShortsModel>()
+                }
             }
-
             return null
         }
 
@@ -301,6 +302,7 @@ class MainMoreViewModel
                             .subList(0, INIT_MAX_SIZE)
                             .toMutableList()
                 }
+
                 ViewType.RecentlyWatch -> {
                     if (recentlyWatchList != null) {
                         _recentlyWatchMoreList.value = recentlyWatchList
@@ -317,7 +319,9 @@ class MainMoreViewModel
                     }
                 }
 
-                else -> Unit
+                else -> {
+                    Unit
+                }
             }
         }
 
@@ -333,8 +337,8 @@ class MainMoreViewModel
                     ?.get(filterKey)
                     ?.toMutableList() ?: mutableListOf<MainShortsModel>()
 
-            _currentDataList.value.clear()
-            _currentDataList.value.addAll(dataList)
+            _currentDataList.value = emptyList<MainShortsModel>()
+            _currentDataList.value += dataList
             _initScroll.value = true
             _moreIndex.value = 0
         }
@@ -383,8 +387,8 @@ class MainMoreViewModel
                         }
                     }
                 _currentFilter = filter
-                _currentDataList.value.clear()
-                _currentDataList.value.addAll(dataList)
+                _currentDataList.value = emptyList<MainShortsModel>()
+                _currentDataList.value += dataList
                 _initScroll.value = true
                 _moreIndex.value = 0
             }
@@ -423,8 +427,8 @@ class MainMoreViewModel
                         }
                     }
                 _currentFilter = filter
-                _currentDataList.value.clear()
-                _currentDataList.value.addAll(dataList)
+                _currentDataList.value = emptyList<MainShortsModel>()
+                _currentDataList.value += dataList
                 _initScroll.value = true
                 _moreIndex.value = 0
             }
