@@ -73,7 +73,8 @@
     <string name="setting_app_email_not_found">이메일 클라이언트를 찾을 수 없습니다.</string>
     <string name="setting_app_opensource_not_produce">앱에 사용된 오픈소스 라이선스 내용은 실배포 버전에만 제공됩니다.</string>
     <string name="pip_memory_error">메모리 부족 오류</string>
-
+    <string name="setting_dev_other_app">개발자 다른 앱</string>
+    <string name="setting_dev_other_app_name">Video Scrap</string>
     <!--App Manager -->
     <string name="app_manager">앱 매니저</string>
     <string name="app_manager_detail">내 디바이스 내의 앱 정보를 보여주고 관리합니다.</string>
@@ -91,7 +92,7 @@
     <string name="device_update_sort">업데이트순</string>
     <string name="device_name_sort">이름순</string>
     <string name="device_size_sort">용량순</string>
-
+    <string name="open_license">오픈소스 라이센스</string>
 
 
     <string name="short_form_end">숏폼 플레이</string>

@@ -1,7 +1,6 @@
 package com.sean.ratel.android.utils
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -19,12 +18,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.oss.licenses.OssLicensesMenuActivity
 import com.sean.ratel.android.R
 import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.MY_EMAIL_ACCOUNT
-import com.sean.ratel.core.BuildConfig
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.math.ceil
@@ -76,12 +73,16 @@ object PhoneUtil {
                             putExtra("category", category)
                         }
                     }
+
                     "daily" -> {
                         putExtra("tab", tab)
                         putExtra("date", date)
                         putExtra("category", category)
                     }
-                    else -> Unit
+
+                    else -> {
+                        Unit
+                    }
                 }
             }
 
@@ -140,21 +141,6 @@ object PhoneUtil {
             context.startActivity(intent)
         } else {
             Toast.makeText(context, R.string.setting_app_email_not_found, Toast.LENGTH_SHORT).show()
-        }
-    }
-
-    fun goAppSettingsOpenSourceLicense(context: Context) {
-        if (BuildConfig.DEBUG) {
-            Toast
-                .makeText(
-                    context,
-                    R.string.setting_app_opensource_not_produce,
-                    Toast.LENGTH_SHORT,
-                ).show()
-        } else {
-            val intent = Intent(context, OssLicensesMenuActivity::class.java)
-            OssLicensesMenuActivity.setActivityTitle(context.getString(R.string.setting_app_openSource))
-            (context as Activity).startActivity(intent)
         }
     }
 

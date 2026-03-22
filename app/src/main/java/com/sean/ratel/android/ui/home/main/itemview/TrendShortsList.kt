@@ -1,13 +1,16 @@
 package com.sean.ratel.android.ui.home.main.itemview
 
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +23,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -60,10 +66,8 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
-import com.sean.ratel.android.ui.theme.MAIN_TITLE_UNDER_LINE
 import com.sean.ratel.android.ui.theme.THUMBNAIL_BACKGROUND
 import com.sean.ratel.android.utils.ComposeUtil.pxToDp
-import com.sean.ratel.android.utils.UIUtil
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -80,101 +84,103 @@ fun TrendShortsList(
             .toList()
             .takeIf { it.isNotEmpty() }
             ?.firstOrNull()
-
-    Column(
+    Card(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(start = 10.dp, bottom = 20.dp, top = 20.dp),
-            contentAlignment = Alignment.BottomStart,
-        ) {
-            Box(
-                Modifier
-                    .width(UIUtil.pixelToDp(context, textWidth).dp)
-                    .height(8.dp)
-                    .background(MAIN_TITLE_UNDER_LINE),
-                contentAlignment = Alignment.BottomCenter,
-            ) {}
-            Row(
+        Column(
+            modifier =
                 Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                    .wrapContentHeight()
-                    .padding(bottom = 2.5.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .wrapContentHeight(),
+        ) {
+            Spacer(Modifier.height(8.dp))
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                contentAlignment = Alignment.BottomStart,
             ) {
-                Box(
-                    Modifier
-                        .wrapContentSize(),
-                ) {
-                    Text(
-                        text = stringResource(R.string.main_trends_shorts_title),
-                        Modifier
-                            .wrapContentSize(),
-                        fontFamily = FontFamily.SansSerif,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                        color = Color.White,
-                        onTextLayout = { textLayoutResult: TextLayoutResult ->
-                            textWidth = textLayoutResult.size.width.toFloat() // 렌더링된 픽셀 크기
-                        },
-                        style =
-                            TextStyle(
-                                shadow =
-                                    Shadow(
-                                        color = Color.White,
-                                        // 그림자의 위치 (x, y)
-                                        offset = Offset(2f, 2f),
-                                        // 그림자의 흐림 정도
-                                        blurRadius = 4f,
-                                    ),
-                            ),
-                    )
-                }
-                Box(
+                Row(
                     Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(end = 7.dp),
-                    contentAlignment = Alignment.CenterEnd,
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(
-                        stringResource(R.string.main_more),
+                    Box(
                         Modifier
-                            .wrapContentWidth()
-                            .wrapContentHeight()
-                            .clickable {
-                                viewModel.goMoreContent(
-                                    Destination.Home.Main.TrendShortsMore.route,
-                                    ViewType.TrendShortsMore,
-                                    initDataKey,
-                                )
-                                // 로딩바
-                                viewModel.setIsHomeVisible(true)
-                                viewModel.sendGALog(
-                                    Event.SCREEN_VIEW,
-                                    Destination.Home.Main.TrendShortsMore.route,
-                                    ViewType.MainTrendShorts,
-                                )
+                            .wrapContentSize(),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.main_trends_shorts_title),
+                            Modifier
+                                .wrapContentSize(),
+                            fontFamily = FontFamily.SansSerif,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 20.sp,
+                            color = Color.White,
+                            onTextLayout = { textLayoutResult: TextLayoutResult ->
+                                textWidth = textLayoutResult.size.width.toFloat() // 렌더링된 픽셀 크기
                             },
-                        fontFamily = FontFamily.SansSerif,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 15.sp,
-                        color = APP_TEXT_COLOR,
-                    )
+                            style =
+                                TextStyle(
+                                    shadow =
+                                        Shadow(
+                                            color = Color.White,
+                                            // 그림자의 위치 (x, y)
+                                            offset = Offset(2f, 2f),
+                                            // 그림자의 흐림 정도
+                                            blurRadius = 4f,
+                                        ),
+                                ),
+                        )
+                    }
+                    Box(
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .padding(end = 7.dp),
+                        contentAlignment = Alignment.CenterEnd,
+                    ) {
+                        Text(
+                            stringResource(R.string.main_more),
+                            Modifier
+                                .wrapContentWidth()
+                                .wrapContentHeight()
+                                .clickable {
+                                    viewModel.goMoreContent(
+                                        Destination.Home.Main.TrendShortsMore.route,
+                                        ViewType.TrendShortsMore,
+                                        initDataKey,
+                                    )
+                                    // 로딩바
+                                    viewModel.setIsHomeVisible(true)
+                                    viewModel.sendGALog(
+                                        Event.SCREEN_VIEW,
+                                        Destination.Home.Main.TrendShortsMore.route,
+                                        ViewType.MainTrendShorts,
+                                    )
+                                },
+                            fontFamily = FontFamily.SansSerif,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 15.sp,
+                            color = APP_TEXT_COLOR,
+                        )
+                    }
                 }
             }
-        }
 
-        RowsList(viewModel, trendShorts)
+            RowsList(viewModel, trendShorts)
+        }
     }
 }
 
@@ -192,14 +198,15 @@ fun RowsList(
     Box(
         Modifier
             .fillMaxSize()
-            .padding(start = 5.dp, end = 5.dp),
+            .padding(vertical = 16.dp),
         contentAlignment = Alignment.CenterEnd,
     ) {
         LazyRow(
             Modifier.fillMaxSize(),
             listState,
             // 가로 항목 간 간격 설정
-            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             // 가로 스크롤은 너비를 채우지만, 스크롤 가능
         ) {
             items(items.size) { index ->
@@ -239,7 +246,10 @@ fun RowsList(
                         if (LocalInspectionMode.current) {
                             val context = LocalContext.current
                             val placeholderDrawable =
-                                AppCompatResources.getDrawable(context, R.drawable.ad_native_default_background)
+                                AppCompatResources.getDrawable(
+                                    context,
+                                    R.drawable.ad_native_default_background,
+                                )
                             placeholderDrawable?.let {
                                 Image(
                                     // 로컬 이미지
@@ -256,12 +266,8 @@ fun RowsList(
                                 )
                             }
                         } else {
-                            //   실제 앱에서는 네트워크 이미지 사용
                             videoThumbnail?.let {
                                 NetworkImage(
-                                    url = it,
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Fit,
                                     modifier =
                                         Modifier
                                             .width(pxToDp(480).dp)
@@ -269,6 +275,12 @@ fun RowsList(
                                             .background(
                                                 THUMBNAIL_BACKGROUND,
                                             ),
+                                    imageLoader = mainViewModel.imageLoader,
+                                    url = it,
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Fit,
+                                    placeholderRes = R.drawable.horizontal_image_holder,
+                                    loadComplete = {},
                                 )
                             }
                         }
@@ -337,6 +349,7 @@ fun RowsList(
                                         R.drawable.ic_play_icon,
                                         R.drawable.ic_play_icon,
                                         R.drawable.ic_play_icon,
+                                        imageLoader = mainViewModel.imageLoader,
                                     )
                                 }
                             }

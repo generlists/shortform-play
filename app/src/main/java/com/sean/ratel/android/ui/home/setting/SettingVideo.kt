@@ -4,17 +4,20 @@ import android.content.Intent
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +28,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -50,20 +52,27 @@ fun SettingsVideo(viewModel: SettingViewModel?) {
         Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .background(Color.White),
+            .background(Color.Black),
     ) {
         SettingVideoTitle()
-        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
-        SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_AUTO_PLAY)
-        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
-        SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_LOOP_PLAY)
-        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
-        SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_PIP_PLAY)
-        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
-        SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_SOUND)
-        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
-        SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_WIFI_STATE)
-        Spacer(Modifier.background(Color.Black).height(3.dp).fillMaxWidth())
+        Card(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(16.dp),
+            shape = RoundedCornerShape(12.dp),
+            // 테두리도 살짝 투명도를 주어 번지는 배경과 연결
+            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        ) {
+            SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_AUTO_PLAY)
+            SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_LOOP_PLAY)
+            SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_PIP_PLAY)
+            SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_SOUND)
+            SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_WIFI_STATE)
+        }
     }
 }
 
@@ -101,6 +110,7 @@ private fun SettingsVideo(
         }
     Row(
         Modifier
+            .padding(horizontal = 20.dp, vertical = 16.dp)
             .fillMaxWidth()
             .wrapContentHeight(),
         verticalAlignment = Alignment.CenterVertically,
@@ -108,18 +118,17 @@ private fun SettingsVideo(
         Row(
             Modifier
                 .wrapContentSize()
-                .background(APP_BACKGROUND)
                 .clickable(onClick = { }),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(Modifier.padding(start = 5.dp, top = 5.dp)) {
+            Column(Modifier.weight(0.8f)) {
                 Text(
                     stringResource(item.mainTitle),
-                    fontSize = 15.sp,
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Normal,
                     color = Color.White,
-                    modifier = Modifier.padding(top = 2.dp),
+                    modifier = Modifier,
                 )
                 Text(
                     stringResource(item.description ?: 0),
@@ -127,13 +136,14 @@ private fun SettingsVideo(
                     fontWeight = FontWeight.Bold,
                     fontStyle = FontStyle.Normal,
                     color = APP_SUBTITLE_TEXT_COLOR,
-                    modifier = Modifier.padding(top = 2.dp, bottom = 5.dp),
+                    modifier = Modifier.padding(top = 2.dp),
                 )
             }
             Box(
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
+                    .weight(0.2f)
                     .padding(end = 15.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
@@ -178,7 +188,7 @@ private fun SettingsVideo(
             }
         }
 
-        Spacer(Modifier.height(5.dp))
+        // Spacer(Modifier.height(5.dp))
     }
 }
 
@@ -190,12 +200,11 @@ private fun SettingVideoTitle() {
             .fillMaxWidth()
             .wrapContentHeight()
             .background(APP_BACKGROUND)
-            .alpha(0.9f)
-            .padding(start = 5.dp, top = 3.dp, bottom = 3.dp),
+            .padding(20.dp),
     ) {
         Text(
             stringResource(R.string.setting_play),
-            fontSize = 12.sp,
+            fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal,
             color = Color.White,
@@ -210,7 +219,9 @@ suspend fun gettingPlayOption(
     when (item) {
         // SettingsItems.SERVICE_VIDEO_AUTO_PLAY-> return viewModel?.getAutoPlay()?:true
         SettingsItems.SERVICE_VIDEO_LOOP_PLAY -> return viewModel?.getLoopPlay() ?: true
+
         SettingsItems.SERVICE_VIDEO_WIFI_STATE -> return viewModel?.getWifiOnlyPlay() ?: true
+
         else -> return false
     }
 }

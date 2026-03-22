@@ -202,7 +202,6 @@ fun InitialDataAndAD(
             if (authCheck > 0) return@collect
             RLog.d("SPLASH", "main : $main trends : $trends")
             if (main && trends) {
-                delay(1500)
                 showSplash = false
                 delay(500)
                 adViewModel.goMainHome()
@@ -233,7 +232,7 @@ fun InitialDataAndAD(
                     coroutineScope.launch {
                         splashViewModel.setLocale(countryCode)
                         splashViewModel.setNewUpdate(true)
-                        RLog.d("SPLASH", "1111111newUpdate : $newUpdate")
+                        RLog.d("SPLASH", "newUpdate : $newUpdate")
                     }
                 },
                 onDismiss = {},
@@ -259,7 +258,7 @@ fun InitialDataAndAD(
 
     AnimatedVisibility(
         visible = showSplash,
-        exit = fadeOut(animationSpec = tween(durationMillis = 300)),
+        exit = fadeOut(animationSpec = tween(durationMillis = 500)),
     ) {
         SplashView()
     }

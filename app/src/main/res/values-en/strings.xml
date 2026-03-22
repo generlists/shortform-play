@@ -73,6 +73,8 @@
     <string name="setting_app_email_not_found">Email client not found.</string>
     <string name="setting_app_opensource_not_produce">The open source license used in the app is provided only for the actual distribution version.</string>
     <string name="pip_memory_error">low memory error</string>
+    <string name="setting_dev_other_app">More apps by this developer</string>
+    <string name="setting_dev_other_app_name">Video Scrap</string>
 
     <!--App Manager -->
     <string name="app_manager">App Manager</string>
@@ -91,7 +93,7 @@
     <string name="device_update_sort">Update</string>
     <string name="device_name_sort">Name</string>
     <string name="device_size_sort">capacity</string>
-
+    <string name="open_license">OpenSource License</string>
 
 
     <string name="short_form_end">ShortForm Play</string>

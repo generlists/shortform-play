@@ -80,6 +80,7 @@ fun SettingView(
             item { SettingsCountry(viewModel) }
             item { SettingsVideo(viewModel) }
             item { SettingsApp(viewModel) }
+            item { SettingsDevOtherApp(viewModel) }
             item { ViewBottomMargin(adViewModel) }
             item { Spacer(Modifier.height(64.dp)) }
         }

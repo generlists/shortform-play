@@ -1,5 +1,10 @@
 [versions]
-ktlint = "12.1.1"
+agp = "8.12.3"
+kotlin = "2.0.21"
+hilt = "2.49"
+okhttp3 = "4.9.3"
+ksp = "2.0.21-1.0.25"
+google-play-service="4.4.4"
 
 android-core = "1.13.1"
 android-splash = "1.0.1"
@@ -22,7 +27,7 @@ datastore = "1.1.1"
 fragmentktx ="1.6.1"
 
 
-hilt = "2.49"
+
 hiltKtx = "1.2.0"
 
 
@@ -40,7 +45,7 @@ google-integrity ="1.5.0"
 
 
 retrofit2 = "2.9.0"
-okhttp3 = "4.9.3"
+
 
 
 crashlytics = "3.0.2"
@@ -55,21 +60,28 @@ lottie = "6.3.0"
 
 
 
+
+java-jwt="4.4.0"
+aboutlibraries = "10.10.0"
+ktlint = "12.1.1"
+
 junit = "4.13.2"
 junit-ext = "1.1.5"
 espresso = "3.5.1"
-java-jwt="4.4.0"
-
 
 shortform-play ="0.0.0.2"
+google-admob="0.0.1-SNAPSHOT"
 
 [libraries]
 ai-shortformplay ={ module = "ai.shortform-play.sdk.ratel.player.android:player-core", version.ref = "shortform-play" }
+so-smartlab-sdk-common-ad-android ={ module = "so.smartlab.sdk.common:ad-android", version.ref = "google-admob" }
+
+androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "android-core" }
 
 
 com-auth-java-jwt = { module = "com.auth0:java-jwt", version.ref = "java-jwt" }
 
-androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "android-core" }
+
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "android-splash" }
 androidx-appcompat-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "android-appcompat" }
 
@@ -142,7 +154,7 @@ squareup-okhttp-logging = { module = "com.squareup.okhttp3:logging-interceptor"}
 coil = { module = "io.coil-kt:coil", version.ref = "coil"}
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil"}
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie"}
-
+coil-video = { module = "io.coil-kt:coil-video", version.ref = "coil"}
 
 
 # Firebase
@@ -154,7 +166,7 @@ firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.
 firebase-auth = { module = "com.google.firebase:firebase-auth"}
 firebase-storage = { module = "com.google.firebase:firebase-storage"}
 
-
+aboutlibraries-compose-m3 = { group = "com.mikepenz", name = "aboutlibraries-compose-m3", version.ref = "aboutlibraries" }
 
 
 
@@ -173,5 +185,14 @@ google-hilt-test = { module = "com.google.dagger:hilt-android-testing", version.
 
 
 [plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+devtools-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+google-play-service = { id = "com.google.gms.google-services", version.ref = "google-play-service" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
+aboutlibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutlibraries" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-parcelize = { id = "kotlin-parcelize" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }

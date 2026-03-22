@@ -78,7 +78,8 @@
     <string name="setting_app_opensource_not_produce">แอปนี้แสดงสิทธิ์โอเพ่นซอร์สเฉพาะในเวอร์ชันที่เผยแพร่เท่านั้น</string>
 
     <string name="pip_memory_error">หน่วยความจำต่ำ</string>
-
+    <string name="setting_dev_other_app">แอปอื่นๆ จากนักพัฒนารายนี้</string>
+    <string name="setting_dev_other_app_name">Video Scrap</string>
     <!-- ผู้จัดการแอป -->
     <string name="app_manager">ตัวจัดการแอป</string>
     <string name="app_manager_detail">แสดงและจัดการข้อมูลแอปในอุปกรณ์ของคุณ</string>
@@ -96,7 +97,7 @@
     <string name="device_update_sort">เรียงตามการอัปเดต</string>
     <string name="device_name_sort">เรียงตามชื่อ</string>
     <string name="device_size_sort">เรียงตามขนาด</string>
-
+    <string name="open_license">ใบอนุญาตโอเพนซอร์ส</string>
 
 
     <string name="short_form_end">วิดีโอสั้นเพลย์</string>

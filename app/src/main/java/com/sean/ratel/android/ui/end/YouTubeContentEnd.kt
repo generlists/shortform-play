@@ -73,35 +73,48 @@ fun YouTubeContentEnd(
             itemClicked == Destination.Home.Main.TrendShortsMore.route
         ) {
             when (mainViewModel.viewType.value) {
-                ViewType.ImageFlow -> youTubeContentEndViewModel.setImageFlowData()
+                ViewType.ImageFlow -> {
+                    youTubeContentEndViewModel.setImageFlowData()
+                }
+
                 ViewType.PopularSearchShortForm,
                 ViewType.PopularLikeShortForm,
                 ViewType.PopularCommentShortForm,
-                ->
+                -> {
                     youTubeContentEndViewModel.setPopularShortFormData(
                         mainViewModel.viewType.value,
                         selectedIndex,
                     )
+                }
 
-                ViewType.EditorPick -> youTubeContentEndViewModel.setEditorPickData(selectedIndex)
-                ViewType.Recommend -> youTubeContentEndViewModel.setRecommendData(selectedIndex)
+                ViewType.EditorPick -> {
+                    youTubeContentEndViewModel.setEditorPickData(selectedIndex)
+                }
+
+                ViewType.Recommend -> {
+                    youTubeContentEndViewModel.setRecommendData(selectedIndex)
+                }
+
                 ViewType.ChannelSearchRanking,
                 ViewType.ChannelLikeRanking,
-                ->
+                -> {
                     youTubeContentEndViewModel.setChannelRankingData(
                         mainViewModel.viewType.value,
                         selectedIndex,
                     )
+                }
 
-                ViewType.SubscriptionRanking ->
+                ViewType.SubscriptionRanking -> {
                     youTubeContentEndViewModel.setSubscriptionRankingData(
                         selectedIndex,
                     )
+                }
 
-                ViewType.SubscriptionRankingUp ->
+                ViewType.SubscriptionRankingUp -> {
                     youTubeContentEndViewModel.setSubscriptionRankingUpData(
                         selectedIndex,
                     )
+                }
 
                 ViewType.RecentlyWatch -> {
                     youTubeContentEndViewModel.setWatchData(selectedIndex)
@@ -115,7 +128,9 @@ fun YouTubeContentEnd(
                     selectedVideoId?.let { youTubeContentEndViewModel.setMoreTendShortsData(it) }
                 }
 
-                else -> Unit
+                else -> {
+                    Unit
+                }
             }
         } else if (mainViewModel.itemClicked.value == Destination.Home.ShortForm.route) {
             youTubeContentEndViewModel.setShortFormVideoData(selectedIndex)
@@ -136,6 +151,7 @@ fun YouTubeContentEnd(
                         )
                     }
                 }
+
                 ViewType.SearchShortsDaily -> {
                     val dailyShorts =
                         mainViewModel.currentDailyShorts(currentCategory.value, selectedIndex)
@@ -144,7 +160,9 @@ fun YouTubeContentEnd(
                     }
                 }
 
-                else -> Unit
+                else -> {
+                    Unit
+                }
             }
         } else if (mainViewModel.itemClicked.value == Destination.DeepLink.route && !searchRequestLoading.value) {
             RLog.d("YouTubeContentEnd", "deeplinkkkk $selectedVideoId ,  size : ${categoryShortsList.size}")
@@ -263,25 +281,64 @@ private fun getEndData(
     youTubeContentEndViewModel: YouTubeContentEndViewModel,
 ): List<MainShortsModel>? =
     when (viewType) {
-        ViewType.ImageFlow -> youTubeContentEndViewModel.imageFlowShortsList.value
+        ViewType.ImageFlow -> {
+            youTubeContentEndViewModel.imageFlowShortsList.value
+        }
+
         ViewType.PopularSearchShortForm,
         ViewType.PopularLikeShortForm,
         ViewType.PopularCommentShortForm,
-        ->
+        -> {
             youTubeContentEndViewModel.popularShortsFormList.value
+        }
 
-        ViewType.EditorPick -> youTubeContentEndViewModel.editorPickList.value
-        ViewType.Recommend -> youTubeContentEndViewModel.recommendShortsList.value
-        ViewType.ChannelSearchRanking, ViewType.ChannelLikeRanking -> youTubeContentEndViewModel.channelRankingList.value
-        ViewType.SubscriptionRanking -> youTubeContentEndViewModel.subscriptionRankingList.value
-        ViewType.SubscriptionRankingUp -> youTubeContentEndViewModel.subscriptionRankingUpList.value
-        ViewType.ShortFormVideo -> youTubeContentEndViewModel.shortFormVideoList.value
-        ViewType.RecentlyWatch -> youTubeContentEndViewModel.watchList.value
-        ViewType.MainTrendShorts -> youTubeContentEndViewModel.mainTrendShortsList.value
-        ViewType.TrendShortsMore -> youTubeContentEndViewModel.moreTrendShortsList.value
-        ViewType.SearchShortsVideo, ViewType.DeepLinkVideo -> youTubeContentEndViewModel.searchShots.value
-        ViewType.SearchShortsDaily -> youTubeContentEndViewModel.searchDailyShorts.value
-        else -> null
+        ViewType.EditorPick -> {
+            youTubeContentEndViewModel.editorPickList.value
+        }
+
+        ViewType.Recommend -> {
+            youTubeContentEndViewModel.recommendShortsList.value
+        }
+
+        ViewType.ChannelSearchRanking, ViewType.ChannelLikeRanking -> {
+            youTubeContentEndViewModel.channelRankingList.value
+        }
+
+        ViewType.SubscriptionRanking -> {
+            youTubeContentEndViewModel.subscriptionRankingList.value
+        }
+
+        ViewType.SubscriptionRankingUp -> {
+            youTubeContentEndViewModel.subscriptionRankingUpList.value
+        }
+
+        ViewType.ShortFormVideo -> {
+            youTubeContentEndViewModel.shortFormVideoList.value
+        }
+
+        ViewType.RecentlyWatch -> {
+            youTubeContentEndViewModel.watchList.value
+        }
+
+        ViewType.MainTrendShorts -> {
+            youTubeContentEndViewModel.mainTrendShortsList.value
+        }
+
+        ViewType.TrendShortsMore -> {
+            youTubeContentEndViewModel.moreTrendShortsList.value
+        }
+
+        ViewType.SearchShortsVideo, ViewType.DeepLinkVideo -> {
+            youTubeContentEndViewModel.searchShots.value
+        }
+
+        ViewType.SearchShortsDaily -> {
+            youTubeContentEndViewModel.searchDailyShorts.value
+        }
+
+        else -> {
+            null
+        }
     }
 
 @Suppress("ktlint:standard:function-naming")

@@ -56,7 +56,7 @@ class SettingViewModel
             PhoneUtil.openBrowsere(context, url)
         }
 
-        fun goAppSettingsOpenSourceLicense(context: Context) = PhoneUtil.goAppSettingsOpenSourceLicense(context)
+        fun goAppSettingsOpenSourceLicense() = navigator.navigateTo(Destination.SettingAppLicense.route)
 
         suspend fun getAutoPlay(): Boolean = settingRepository.getAutoPlay()
 

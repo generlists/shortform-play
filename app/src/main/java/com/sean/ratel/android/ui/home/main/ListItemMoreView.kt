@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.main
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.animateScrollBy
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
@@ -24,7 +26,11 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -204,7 +210,7 @@ fun ListItemDisplayUi(
                                 fontFamily = FontFamily.SansSerif,
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 color = APP_TEXT_COLOR,
                             )
                             Text(
@@ -216,7 +222,7 @@ fun ListItemDisplayUi(
                                 fontFamily = FontFamily.SansSerif,
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
-                                fontSize = 10.sp,
+                                fontSize = 12.sp,
                                 color = APP_TEXT_COLOR,
                             )
                         }
@@ -328,15 +334,16 @@ private fun SetTitle(
     LaunchedEffect(Unit) {
         mainViewModel.viewType.collect {
             when (it) {
-                ViewType.ChannelSearchRanking ->
+                ViewType.ChannelSearchRanking -> {
                     moreViewModel.setListItemMoreTitle(
                         String.format(
                             "%s",
                             "$channelSearchRanking(${context.getString(R.string.main_more_search)})",
                         ),
                     )
+                }
 
-                ViewType.ChannelLikeRanking ->
+                ViewType.ChannelLikeRanking -> {
                     moreViewModel.setListItemMoreTitle(
                         (
                             String.format(
@@ -345,17 +352,23 @@ private fun SetTitle(
                             )
                         ),
                     )
+                }
 
-                ViewType.SubscriptionRanking ->
+                ViewType.SubscriptionRanking -> {
                     moreViewModel.setListItemMoreTitle(subscription)
+                }
 
-                ViewType.SubscriptionRankingUp ->
+                ViewType.SubscriptionRankingUp -> {
                     moreViewModel.setListItemMoreTitle(subscripionUp)
+                }
 
-                ViewType.RecentlyWatch ->
+                ViewType.RecentlyWatch -> {
                     moreViewModel.setListItemMoreTitle(context.getString(R.string.main_recent_watch_video))
+                }
 
-                else -> moreViewModel.setListItemMoreTitle(channelSearchRanking)
+                else -> {
+                    moreViewModel.setListItemMoreTitle(channelSearchRanking)
+                }
             }
         }
     }
@@ -422,105 +435,125 @@ fun ListItemList(
             loading(false)
         }
     }
-    Column(
-        Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .background(APP_BACKGROUND),
+    Card(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Column(
             Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .fillMaxWidth(),
         ) {
-            Row(
+            val color = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)
+            Column(
                 Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                    .background(APP_BACKGROUND),
-                verticalAlignment = Alignment.CenterVertically,
+                    .wrapContentHeight(),
             ) {
-                Text(
-                    stringResource(R.string.main_rank_order),
-                    Modifier
-                        .padding(5.dp)
-                        .weight(0.1f)
-                        .wrapContentSize(),
-                    fontFamily = FontFamily.SansSerif,
-                    fontStyle = FontStyle.Normal,
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 10.sp,
-                    color = Color.White,
-                )
-                Box(Modifier.wrapContentSize().weight(0.3f), contentAlignment = Alignment.Center) {
-                    Text(
-                        stringResource(R.string.main_rank_channel),
-                        Modifier.wrapContentSize(),
-                        fontFamily = FontFamily.SansSerif,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 10.sp,
-                        color = Color.White,
-                    )
-                }
-
                 Row(
                     Modifier
-                        .wrapContentSize()
-                        .weight(0.2f),
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(start = 5.dp),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        if (viewType == ViewType.ChannelSearchRanking) {
-                            stringResource(
-                                R.string.main_rank_search,
-                            )
-                        } else {
-                            stringResource(R.string.main_rank_subscription)
-                        },
+                        stringResource(R.string.main_rank_order),
                         Modifier
-                            .wrapContentSize()
-                            .weight(1f),
+                            .padding(5.dp)
+                            .weight(0.1f)
+                            .wrapContentSize(),
                         fontFamily = FontFamily.SansSerif,
                         fontStyle = FontStyle.Normal,
                         fontWeight = FontWeight.SemiBold,
-                        fontSize = 10.sp,
+                        fontSize = 12.sp,
                         color = Color.White,
                     )
-                    if (viewType == ViewType.SubscriptionRankingUp) {
+                    Box(
+                        Modifier.wrapContentSize().weight(0.3f),
+                        contentAlignment = Alignment.Center,
+                    ) {
                         Text(
-                            stringResource(R.string.main_rank_new),
+                            stringResource(R.string.main_rank_channel),
+                            Modifier.wrapContentSize(),
+                            fontFamily = FontFamily.SansSerif,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp,
+                            color = Color.White,
+                        )
+                    }
+
+                    Row(
+                        Modifier
+                            .wrapContentSize()
+                            .weight(0.2f),
+                    ) {
+                        Text(
+                            if (viewType == ViewType.ChannelSearchRanking) {
+                                stringResource(
+                                    R.string.main_rank_search,
+                                )
+                            } else {
+                                stringResource(R.string.main_rank_subscription)
+                            },
                             Modifier
                                 .wrapContentSize()
                                 .weight(1f),
                             fontFamily = FontFamily.SansSerif,
                             fontStyle = FontStyle.Normal,
                             fontWeight = FontWeight.SemiBold,
-                            fontSize = 10.sp,
-                            color = APP_TEXT_COLOR,
+                            fontSize = 12.sp,
+                            color = Color.White,
                         )
+                        if (viewType == ViewType.SubscriptionRankingUp) {
+                            Text(
+                                stringResource(R.string.main_rank_new),
+                                Modifier
+                                    .wrapContentSize()
+                                    .weight(1f),
+                                fontFamily = FontFamily.SansSerif,
+                                fontStyle = FontStyle.Normal,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 10.sp,
+                                color = APP_TEXT_COLOR,
+                            )
+                        }
                     }
                 }
+                Divider(
+                    Modifier
+                        .height(1.5.dp)
+                        .fillMaxWidth(),
+                    color = color,
+                )
             }
-        }
 
-        items.let {
-            LazyColumn(
-                Modifier
-                    .fillMaxSize()
-                    .then(
-                        if (adBannerLoadingComplete.value.first) {
-                            Modifier
-                                .padding(
-                                    bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp + REMAIN_AD_MARGIN,
-                                ).background(APP_BACKGROUND)
-                        } else {
-                            Modifier
-                        },
-                    ),
-                state = listState,
-            ) {
-                items(count = items.size) { index ->
-                    ListItem(viewType, route, index, items[index], mainViewModel, moreViewModel)
+            items.let {
+                LazyColumn(
+                    Modifier
+                        .fillMaxSize()
+                        .then(
+                            if (adBannerLoadingComplete.value.first) {
+                                Modifier
+                                    .padding(
+                                        bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp + REMAIN_AD_MARGIN,
+                                    )
+                            } else {
+                                Modifier
+                            },
+                        ),
+                    state = listState,
+                ) {
+                    items(count = items.size) { index ->
+                        ListItem(viewType, route, index, items[index], mainViewModel, moreViewModel)
+                    }
                 }
             }
         }
@@ -541,7 +574,6 @@ fun ListItem(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .background(APP_BACKGROUND)
             .clickable {
                 mainViewModel?.goEndContent(
                     route,
@@ -585,6 +617,7 @@ fun ListItem(
                 R.drawable.ic_play_icon,
                 R.drawable.ic_play_icon,
                 R.drawable.ic_play_icon,
+                imageLoader = mainViewModel?.imageLoader,
             )
             Text(
                 text =
@@ -730,7 +763,7 @@ fun RecentlyWatchItemList(
         LazyColumn(
             Modifier
                 .fillMaxSize()
-                .padding(top = 5.dp, bottom = 5.dp)
+                .padding(top = 16.dp)
                 .then(
                     if (adBannerLoadingComplete.value.first) {
                         Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp + REMAIN_AD_MARGIN)
@@ -749,6 +782,7 @@ fun RecentlyWatchItemList(
                     mainViewModel,
                     moreViewModel,
                 )
+                Spacer(Modifier.height(16.dp))
             }
         }
     }
@@ -766,156 +800,167 @@ private fun RecentlyWatchItems(
 ) {
     val duration = timeToFloat(item?.shortsVideoModel?.duration ?: "00:01")
     val progress = (item?.saveTime ?: 0.1f) / duration
-
-    Row(
+    Card(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(top = 2.dp, bottom = 2.dp)
-                .background(APP_BACKGROUND)
-                .clickable {
-                    mainViewModel?.goEndContent(
-                        route,
-                        viewType,
-                        index,
-                    )
-                    mainViewModel?.sendGALog(
-                        Event.SCREEN_VIEW,
-                        Destination.YouTube.dynamicRoute(item?.shortsChannelModel?.channelId ?: ""),
-                        moreViewModel?.getConvertViewType(viewType),
-                        item?.shortsChannelModel?.channelId,
-                        item?.shortsVideoModel?.videoId,
-                    )
-                },
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically,
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Box(
-            Modifier
-                .wrapContentHeight()
-                .weight(0.7f),
-            contentAlignment = Alignment.BottomEnd,
-        ) {
-            Box(
-                Modifier
-                    .wrapContentHeight(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Surface(
-                    shape = RoundedCornerShape(6.dp),
-                ) {
-                    NetworkImage(
-                        url = item?.shortsVideoModel?.thumbNail ?: "",
-                        contentDescription = null,
-                        modifier =
-                            Modifier
-                                .aspectRatio(1.7f)
-                                .wrapContentHeight(),
-                    )
-                }
-            }
-
-            Column(Modifier.wrapContentSize(), horizontalAlignment = Alignment.End) {
-                Box(
-                    modifier =
-                        Modifier
-                            .wrapContentSize()
-                            .padding(top = 5.dp, bottom = 7.dp, end = 7.dp)
-                            .background(
-                                brush =
-                                    Brush.horizontalGradient(
-                                        colors =
-                                            listOf(
-                                                // 진한 검은색
-                                                Color.LightGray.copy(alpha = 0.3f),
-                                                // 투명
-                                                Color.Black,
-                                            ),
-                                    ),
-                            ),
-                    contentAlignment = Alignment.BottomEnd,
-                ) {
-                    Text(
-                        text = item?.shortsVideoModel?.duration ?: "00:00",
-                        fontFamily = FontFamily.SansSerif,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 12.sp,
-                        color = Color.White,
-                        style =
-                            TextStyle(
-                                shadow =
-                                    Shadow(
-                                        color = Color.Black,
-                                        // 그림자의 위치 (x, y)
-                                        offset = Offset(2f, 2f),
-                                        // 그림자의 흐림 정도
-                                        blurRadius = 4f,
-                                    ),
-                            ),
-                    )
-                }
-                BottomSeekBar(
-                    progress = progress,
-                    onSeekChanged = { _ ->
-                    },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth(),
-                )
-            }
-        }
-
-        Column(
-            Modifier
-                .weight(1f)
-                .wrapContentHeight()
-                .padding(start = 5.dp, end = 7.dp),
-        ) {
-            Text(
-                text = item?.shortsVideoModel?.title ?: "title",
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontSize = 15.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-            )
-            Row(
+        Row(
+            modifier =
                 Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(top = 5.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                    .padding(top = 2.dp, bottom = 2.dp)
+                    .clickable {
+                        mainViewModel?.goEndContent(
+                            route,
+                            viewType,
+                            index,
+                        )
+                        mainViewModel?.sendGALog(
+                            Event.SCREEN_VIEW,
+                            Destination.YouTube.dynamicRoute(
+                                item?.shortsChannelModel?.channelId ?: "",
+                            ),
+                            moreViewModel?.getConvertViewType(viewType),
+                            item?.shortsChannelModel?.channelId,
+                            item?.shortsVideoModel?.videoId,
+                        )
+                    },
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(
+                Modifier
+                    .wrapContentHeight()
+                    .weight(0.7f),
+                contentAlignment = Alignment.BottomEnd,
             ) {
-                NetworkImage(
-                    url = item?.shortsChannelModel?.channelThumbNail ?: "",
-                    contentDescription = null,
-                    modifier =
-                        Modifier
-                            .clip(CircleShape)
-                            .width(24.dp)
-                            .height(24.dp),
-                    ContentScale.Fit,
-                    R.drawable.ic_play_icon,
-                    R.drawable.ic_play_icon,
-                    R.drawable.ic_play_icon,
-                )
+                Box(
+                    Modifier
+                        .wrapContentHeight(),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(6.dp),
+                    ) {
+                        NetworkImage(
+                            url = item?.shortsVideoModel?.thumbNail ?: "",
+                            contentDescription = null,
+                            modifier =
+                                Modifier
+                                    .aspectRatio(1.7f)
+                                    .wrapContentHeight(),
+                        )
+                    }
+                }
+
+                Column(Modifier.wrapContentSize(), horizontalAlignment = Alignment.End) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .wrapContentSize()
+                                .padding(top = 5.dp, bottom = 7.dp, end = 7.dp)
+                                .background(
+                                    brush =
+                                        Brush.horizontalGradient(
+                                            colors =
+                                                listOf(
+                                                    // 진한 검은색
+                                                    Color.LightGray.copy(alpha = 0.3f),
+                                                    // 투명
+                                                    Color.Black,
+                                                ),
+                                        ),
+                                ),
+                        contentAlignment = Alignment.BottomEnd,
+                    ) {
+                        Text(
+                            text = item?.shortsVideoModel?.duration ?: "00:00",
+                            fontFamily = FontFamily.SansSerif,
+                            fontStyle = FontStyle.Normal,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 12.sp,
+                            color = Color.White,
+                            style =
+                                TextStyle(
+                                    shadow =
+                                        Shadow(
+                                            color = Color.Black,
+                                            // 그림자의 위치 (x, y)
+                                            offset = Offset(2f, 2f),
+                                            // 그림자의 흐림 정도
+                                            blurRadius = 4f,
+                                        ),
+                                ),
+                        )
+                    }
+                    BottomSeekBar(
+                        progress = progress,
+                        onSeekChanged = { _ ->
+                        },
+                        modifier =
+                            Modifier
+                                .fillMaxWidth(),
+                    )
+                }
+            }
+
+            Column(
+                Modifier
+                    .weight(1f)
+                    .wrapContentHeight()
+                    .padding(start = 5.dp, end = 7.dp),
+            ) {
                 Text(
-                    item?.shortsChannelModel?.channelTitle ?: "title",
-                    // 한 줄로 제한
+                    text = item?.shortsVideoModel?.title ?: "title",
                     maxLines = 1,
-                    // 말줄임표 처리
                     overflow = TextOverflow.Ellipsis,
-                    modifier =
-                        Modifier
-                            .wrapContentSize()
-                            .padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
-                    fontSize = 10.sp,
+                    fontSize = 15.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.White,
+                    textAlign = TextAlign.Center,
                 )
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    NetworkImage(
+                        url = item?.shortsChannelModel?.channelThumbNail ?: "",
+                        contentDescription = null,
+                        modifier =
+                            Modifier
+                                .clip(CircleShape)
+                                .width(24.dp)
+                                .height(24.dp),
+                        ContentScale.Fit,
+                        R.drawable.thumb_placeholder,
+                        R.drawable.thumb_placeholder,
+                        R.drawable.thumb_placeholder,
+                        imageLoader = mainViewModel?.imageLoader,
+                    )
+                    Text(
+                        item?.shortsChannelModel?.channelTitle ?: "title",
+                        // 한 줄로 제한
+                        maxLines = 1,
+                        // 말줄임표 처리
+                        overflow = TextOverflow.Ellipsis,
+                        modifier =
+                            Modifier
+                                .wrapContentSize()
+                                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                    )
+                }
             }
         }
     }

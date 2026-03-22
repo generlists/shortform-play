@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.viewpager2.widget.ViewPager2
+import coil.ImageLoader
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.sean.player.utils.log.RLog
@@ -38,6 +39,7 @@ class MainViewModel
     @Inject
     constructor(
         val navigator: Navigator,
+        val imageLoader: ImageLoader,
         val gaLog: GALog,
         val recentVideoRepository: RecentVideoRepository,
         val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
@@ -143,7 +145,7 @@ class MainViewModel
         fun setPIPClick(pipClick: Pair<Boolean, ViewPager2?>) {
             _pipClick.value = pipClick
             _isTopViewVisible.value = !pipClick.first && !isCurrentPageMoreView()
-            RLog.d(TAG, "_pipClick : ${ _pipClick.value},  _isTopViewVisible : ${ _isTopViewVisible.value}")
+            RLog.d("MainViewModel", "_pipClick : ${ _pipClick.value},  _isTopViewVisible : ${ _isTopViewVisible.value}")
         }
 
         fun setViewPager(viewPager2: ViewPager2?) {
@@ -254,6 +256,7 @@ class MainViewModel
                         )
                     }
                 }
+
                 ViewType.SearchShortsVideo, ViewType.DeepLinkVideo -> {
                     videoId?.let {
                         navigator.navigateTo(
@@ -262,6 +265,7 @@ class MainViewModel
                         )
                     }
                 }
+
                 ViewType.SearchShortsDaily -> {
                     videoId?.let {
                         navigator.navigateTo(
@@ -270,7 +274,10 @@ class MainViewModel
                         )
                     }
                 }
-                else -> Unit
+
+                else -> {
+                    Unit
+                }
             }
         }
 
@@ -283,6 +290,10 @@ class MainViewModel
             _moreButtonClicked.value = route
             _moreTrendShortsKey.value = trendsShortsKey
             navigator.navigateTo(route, false)
+        }
+
+        fun setSettingDetailClick(route: String) {
+            _moreButtonClicked.value = route
         }
 
         fun goSettingView() {

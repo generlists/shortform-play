@@ -2,6 +2,7 @@ package com.sean.ratel.android.ui.home.shortform
 
 import androidx.activity.compose.BackHandler
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,6 +10,7 @@ import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,8 +27,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -157,23 +162,35 @@ fun VerticalScrollWithHorizontalItems(
     val categorySize = items.values.size
     val targetIndexList =
         remember { validationIndex(Destination.Home.ShortForm.route, categorySize) }
+    var adVisibility by remember { mutableStateOf(false) }
 
     LazyColumn(
         // 세로 스크롤 전체 화면 채우기
-        modifier = Modifier.fillMaxSize().background(APP_BACKGROUND),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(APP_BACKGROUND),
         // 세로 항목 간 간격 설정
         verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
-        itemsIndexed(items.values.toList()) { index, _ ->
-
-            if (targetIndexList.contains(index) &&
+        val list = items.values.toList()
+        itemsIndexed(list) { index, _ ->
+            val adIndex = targetIndexList.contains(index)
+            if (adIndex &&
                 RemoteConfig.getRemoteConfigBooleanValue(
                     RemoteConfig.BANNER_AD_VISIBILITY,
                 )
             ) {
                 InLineAdaptiveBanner(adViewModel)
+                Spacer(Modifier.height(8.dp))
             }
             ShortFormList(index, mainViewModel, items, viewModel)
+
+            targetIndexList.forEach {
+                if (index + 1 != it) {
+                    Spacer(Modifier.height(32.dp))
+                }
+            }
         }
     }
 }
@@ -189,43 +206,53 @@ fun ShortFormList(
     val categoryTitle = remember { items.keys.toList() }
 
     val categoryList = items.values.toList()
-
-    Column(
+    Card(
         modifier =
             Modifier
                 .fillMaxWidth()
-                // 각 세로 항목은 가로로 꽉 채움
-                .wrapContentHeight(),
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Box(Modifier.background(APP_BACKGROUND)) {
-            Text(
-                text =
-                    categoryList[currentIndex][0].shortsVideoModel?.categoryName
-                        ?: stringResource(R.string.etc),
+        Column(
+            modifier =
                 Modifier
-                    .padding(start = 7.dp, top = 7.dp, bottom = 7.dp)
                     .fillMaxWidth()
+                    // 각 세로 항목은 가로로 꽉 채움
                     .wrapContentHeight(),
-                fontFamily = FontFamily.SansSerif,
-                fontStyle = FontStyle.Normal,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                color = Color.White,
-                style =
-                    TextStyle(
-                        shadow =
-                            Shadow(
-                                color = Color.Black,
-                                // 그림자의 위치 (x, y)
-                                offset = Offset(2f, 2f),
-                                // 그림자의 흐림 정도
-                                blurRadius = 4f,
-                            ),
-                    ),
-            )
-        }
+        ) {
+            Spacer(Modifier.height(8.dp))
+            Box(Modifier.padding(16.dp)) {
+                Text(
+                    text =
+                        categoryList[currentIndex][0].shortsVideoModel?.categoryName
+                            ?: stringResource(R.string.etc),
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                    fontFamily = FontFamily.SansSerif,
+                    fontStyle = FontStyle.Normal,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    style =
+                        TextStyle(
+                            shadow =
+                                Shadow(
+                                    color = Color.White,
+                                    // 그림자의 위치 (x, y)
+                                    offset = Offset(2f, 2f),
+                                    // 그림자의 흐림 정도
+                                    blurRadius = 4f,
+                                ),
+                        ),
+                )
+            }
 
-        RowCategoryList(currentIndex, categoryTitle, categoryList, viewModel, mainViewModel)
+            RowCategoryList(currentIndex, categoryTitle, categoryList, viewModel, mainViewModel)
+        }
     }
 
     val size = items.size
@@ -296,12 +323,19 @@ fun RowCategoryList(
         }
     }
 
-    Box(Modifier.fillMaxSize().background(APP_BACKGROUND), contentAlignment = Alignment.CenterEnd) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .fillMaxSize()
+            .padding(vertical = 16.dp),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
         LazyRow(
             Modifier.fillMaxSize(),
             listState,
             // 가로 항목 간 간격 설정
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
             // 가로 스크롤은 너비를 채우지만, 스크롤 가능
         ) {
             items(items.size) { index ->
@@ -334,7 +368,10 @@ fun RowCategoryList(
                         if (LocalInspectionMode.current) {
                             val context = LocalContext.current
                             val placeholderDrawable =
-                                AppCompatResources.getDrawable(context, R.drawable.ad_native_default_background)
+                                AppCompatResources.getDrawable(
+                                    context,
+                                    R.drawable.ad_native_default_background,
+                                )
                             placeholderDrawable?.let {
                                 Image(
                                     // 로컬 이미지
@@ -356,7 +393,7 @@ fun RowCategoryList(
                                 NetworkImage(
                                     url = it,
                                     contentDescription = null,
-                                    contentScale = ContentScale.Fit,
+                                    contentScale = ContentScale.FillHeight,
                                     modifier =
                                         Modifier
                                             .width(pxToDp(480).dp)
@@ -364,6 +401,7 @@ fun RowCategoryList(
                                             .background(
                                                 THUMBNAIL_BACKGROUND,
                                             ),
+                                    imageLoader = mainViewModel.imageLoader,
                                 )
                             }
                         }
@@ -432,6 +470,7 @@ fun RowCategoryList(
                                         R.drawable.ic_play_icon,
                                         R.drawable.ic_play_icon,
                                         R.drawable.ic_play_icon,
+                                        imageLoader = mainViewModel.imageLoader,
                                     )
                                 }
                             }

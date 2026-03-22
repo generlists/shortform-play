@@ -45,9 +45,6 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
-import kotlin.collections.List
-import kotlin.collections.chunked
-import kotlin.collections.shuffled
 import kotlin.random.Random
 
 @HiltViewModel

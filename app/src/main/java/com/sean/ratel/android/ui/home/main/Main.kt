@@ -1,12 +1,12 @@
 package com.sean.ratel.android.ui.home.main
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -211,6 +211,7 @@ fun ShortsItemList(
 ) {
     val adFail = adViewModel.adNativeFail.collectAsState().value
     val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val adMobInitialComplete by adViewModel.adMobInitialComplete.collectAsState()
 
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
@@ -219,23 +220,24 @@ fun ShortsItemList(
     LaunchedEffect(isFirstItemVisible) {
         if (isFirstItemVisible) {
             // 첫 번째 아이템이 보일 때 처리할 작업
-            delay(500)
+            delay(50)
             viewModel.setIsHomeVisible(false)
         }
     }
     val size = itemSize - 2 + RemoteConfig.getRemoteConfigIntValue(MAX_RECOMMEND_SIZE)
+
     LazyColumn(
         modifier =
             Modifier
-                .fillMaxSize()
-                .then(
-                    if (adBannerLoadingComplete.value.first == true) {
-                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp)
-                    } else {
-                        Modifier
-                    },
-                ),
-        verticalArrangement = Arrangement.spacedBy(7.dp),
+                .fillMaxSize(),
+//                .then(
+//                    if (adBannerLoadingComplete.value.first == true) {
+//                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp)
+//                    } else {
+//                        Modifier
+//                    },
+//                ),
+        // verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         var i = 0
         val targetIndexList = validationIndex(Destination.Home.Main.route, size)
@@ -247,6 +249,7 @@ fun ShortsItemList(
 
                 if (i == 0) {
                     AutoScrollImagePager(viewModel, topFiveData)
+                    Spacer(Modifier.height(8.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECENTLY_WATCH_ORDER) && adFail != null) ||
@@ -254,6 +257,7 @@ fun ShortsItemList(
                     adFail == null
                 ) {
                     RecentVideoWatchList(viewModel)
+                    Spacer(Modifier.height(32.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TRENDS_SHORTS_ORDER) && adFail != null) ||
@@ -261,12 +265,14 @@ fun ShortsItemList(
                     adFail == null
                 ) {
                     TrendShortsList(viewModel, trendShortsData)
+                    Spacer(Modifier.height(32.dp))
                 }
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.POPULAR_ORDER) && adFail != null) ||
                     i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.POPULAR_ORDER) + 1 &&
                     adFail == null
                 ) {
                     PopularShortFormPager(viewModel, shortFormSearchData)
+                    Spacer(Modifier.height(32.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.EDITOR_PICK_ORDER) && adFail != null) ||
@@ -274,6 +280,7 @@ fun ShortsItemList(
                     adFail == null
                 ) {
                     EditorPickHorizontalList(viewModel, editorPickData)
+                    Spacer(Modifier.height(32.dp))
                 }
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.DAILY_RANKING_ORDER) && adFail != null) ||
                     i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.DAILY_RANKING_ORDER) + 1 &&
@@ -286,6 +293,7 @@ fun ShortsItemList(
                         channelSubscriptionData,
                         channelSubscriptionUpData,
                     )
+                    Spacer(Modifier.height(32.dp))
                 }
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECOMMEND_SHORTFORM_ORDER) && adFail != null) ||
                     i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECOMMEND_SHORTFORM_ORDER) + 1 &&
@@ -295,6 +303,7 @@ fun ShortsItemList(
                         mainViewModel = viewModel,
                         recommendList = recommendShortFormData,
                     )
+                    Spacer(Modifier.height(32.dp))
                 }
                 i++
             }

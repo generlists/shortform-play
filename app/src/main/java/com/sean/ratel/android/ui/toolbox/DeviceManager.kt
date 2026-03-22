@@ -1,22 +1,29 @@
 package com.sean.ratel.android.ui.toolbox
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.End
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -44,8 +51,21 @@ fun PhoneAppList(viewModel: SettingViewModel?) {
             .background(APP_BACKGROUND),
     ) {
         PhoneManagerTitle()
-        ToolBox.entries.forEach { toolBox ->
-            PhoneManagerItem(viewModel, toolBox)
+        Card(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(16.dp),
+            shape = RoundedCornerShape(12.dp),
+            // 테두리도 살짝 투명도를 주어 번지는 배경과 연결
+            border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        ) {
+            ToolBox.entries.forEach { toolBox ->
+                PhoneManagerItem(viewModel, toolBox)
+            }
         }
     }
 }
@@ -59,11 +79,11 @@ private fun PhoneManagerTitle() {
             .wrapContentHeight()
             .background(APP_BACKGROUND)
             .alpha(0.9f)
-            .padding(start = 5.dp),
+            .padding(20.dp),
     ) {
         Text(
             stringResource(R.string.device_manager_title),
-            fontSize = 12.sp,
+            fontSize = 13.sp,
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal,
             color = Color.White,
@@ -80,15 +100,12 @@ private fun PhoneManagerItem(
     Column(
         Modifier
             .wrapContentHeight()
-            .fillMaxWidth()
-            .background(APP_BACKGROUND),
+            .fillMaxWidth(),
     ) {
-        Spacer(Modifier.height(5.dp))
-
         Row(
             Modifier
+                .padding(horizontal = 20.dp, vertical = 16.dp)
                 .wrapContentSize()
-                .background(APP_BACKGROUND)
                 .clickable(onClick = { runDetailPage(item, viewModel) }),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -98,12 +115,11 @@ private fun PhoneManagerItem(
                 contentDescription = "App List",
                 modifier =
                     Modifier
-                        .padding(start = 5.dp)
                         .height(32.dp)
                         .width(32.dp),
             )
 
-            Column(Modifier.padding(start = 5.dp, top = 5.dp)) {
+            Column(Modifier.padding(start = 10.dp)) {
                 Text(
                     stringResource(item.mainTitle),
                     fontSize = 15.sp,
@@ -111,8 +127,7 @@ private fun PhoneManagerItem(
                     fontStyle = FontStyle.Normal,
                     color = Color.White,
                     modifier =
-                        Modifier
-                            .padding(top = 2.dp),
+                    Modifier,
                 )
                 Text(
                     stringResource(item.description),
@@ -122,29 +137,24 @@ private fun PhoneManagerItem(
                     color = APP_SUBTITLE_TEXT_COLOR,
                     modifier =
                         Modifier
-                            .padding(top = 2.dp, bottom = 10.dp),
+                            .padding(top = 2.dp),
                 )
             }
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(end = 15.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .padding(end = 18.dp)
+                    .wrapContentHeight(),
+                horizontalAlignment = Alignment.End,
             ) {
-                Image(
-                    // 이미지 리소스
-                    painter = painterResource(id = R.drawable.ic_link_index),
-                    contentDescription = "Link",
-                    modifier =
-                        Modifier
-                            .height(32.dp)
-                            .width(32.dp)
-                            .align(End),
+                Icon(
+                    imageVector = Icons.Default.ChevronRight,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.surfaceDim,
+                    modifier = Modifier.size(20.dp),
                 )
             }
         }
-        Spacer(Modifier.height(5.dp))
     }
 }
 
@@ -177,7 +187,9 @@ fun runDetailPage(
 //            )
 //        }
 
-        else -> Unit
+        else -> {
+            Unit
+        }
     }
 }
 

@@ -72,7 +72,8 @@
     <string name="setting_app_email_not_found">メールクライアントが見つかりません。</string>
     <string name="setting_app_opensource_not_produce">アプリで使用されているオープンソースライセンスは、実際の配布バージョンにのみ提供されます。</string>
     <string name="pip_memory_error">メモリ不足エラー</string>
-
+    <string name="setting_dev_other_app">この開発者の他のアプリ</string>
+    <string name="setting_dev_other_app_name">Video Scrap</string>
     <!-- アプリマネージャー -->
     <string name="app_manager">アプリマネージャー</string>
     <string name="app_manager_detail">お使いのデバイスでアプリ情報を表示および管理します。</string>
@@ -90,7 +91,7 @@
     <string name="device_update_sort">更新順</string>
     <string name="device_name_sort">名前順</string>
     <string name="device_size_sort">容量順</string>
-
+    <string name="open_license">オープンソースライセンス</string>
 
 
     <string name="short_form_end">ショートフォームプレイ</string>
