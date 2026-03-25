@@ -2,6 +2,7 @@ package com.sean.ratel.android.ui.splash
 
 import android.content.Context
 import android.net.Uri
+import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
@@ -116,8 +117,14 @@ class SplashViewModel
                                         is ApiResult.Error -> {
                                             RLog.e(
                                                 "SPLASH",
-                                                "서버 응답 오류(${authResult.code}): ${authResult.message}",
+                                                "응답 오류(${authResult.code}): ${authResult.message}",
                                             )
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    "권한 응답 오류(${authResult.code}): ${authResult.message}",
+                                                    Toast.LENGTH_SHORT,
+                                                ).show()
                                         }
 
                                         is ApiResult.Exception -> {
@@ -125,9 +132,17 @@ class SplashViewModel
                                                 "SPLASH",
                                                 "기타 네트워크 예외: ${authResult.e.localizedMessage}",
                                             )
+                                            Toast
+                                                .makeText(
+                                                    context,
+                                                    "권한 서버 예외:${authResult.e.localizedMessage}",
+                                                    Toast.LENGTH_SHORT,
+                                                ).show()
                                         }
 
-                                        else -> Unit
+                                        else -> {
+                                            Unit
+                                        }
                                     }
                                 }
 

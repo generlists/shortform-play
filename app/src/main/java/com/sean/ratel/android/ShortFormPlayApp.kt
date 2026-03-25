@@ -3,9 +3,12 @@ package com.sean.ratel.android
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
@@ -15,12 +18,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sean.ratel.android.data.common.RemoteConfig
+import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.home.HomeBottomBar
@@ -30,6 +37,7 @@ import com.sean.ratel.android.ui.navigation.NavGraph
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import so.smartlab.common.ad.admob.data.model.AdMobInitState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -44,7 +52,7 @@ fun ShortFormPlayApp(
 
         val isTopViewVisible by mainViewModel.isTopViewVisible.collectAsState() // recomposition 이 일어나지않으면 값이 안바뀌므로 stateFlow 로 선언
 
-        val adMobInitialComplete by adViewModel.adMobInitialComplete.collectAsState()
+        val adMobInitialComplete by mainViewModel.adMobinitState.collectAsState()
 
         val isHomeVisible by mainViewModel.isHomeVisible.collectAsState()
 
@@ -78,7 +86,12 @@ fun ShortFormPlayApp(
             floatingActionButtonPosition = FabPosition.End,
         ) { innerPaddingModifier ->
 
-            Column(modifier = Modifier.fillMaxSize().background(APP_BACKGROUND)) {
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(APP_BACKGROUND),
+            ) {
                 NavGraph(
                     navController = navController,
                     modifier = Modifier.padding(innerPaddingModifier),
@@ -86,6 +99,7 @@ fun ShortFormPlayApp(
                     finish = finish,
                 )
             }
+            ShadowBottomLayer(route = currentRoute)
 
             if ((
                     currentRoute != Destination.Splash.route &&
@@ -96,10 +110,10 @@ fun ShortFormPlayApp(
                         currentRoute != Destination.Notices.route &&
                         currentRoute != Destination.Regal.route
                 ) &&
-                adMobInitialComplete &&
+                adMobInitialComplete is AdMobInitState.InitComplete &&
                 RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
             ) {
-                // LoadBanner(currentRoute, adViewModel, AdBannerLocation.BOTTOM)
+                AdBannerView(context, currentRoute)
             }
 
             FullScreenToggleView(currentRoute)
@@ -124,6 +138,36 @@ fun ShortFormPlayApp(
             ) {
                 LoadingPlaceholder(loading = isHomeVisible)
             }
+        }
+    }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
+private fun ShadowBottomLayer(route: String) {
+    if (
+        route == Destination.Home.Main.route ||
+        route == Destination.Home.ShortForm.route ||
+        route == Destination.Setting.route
+    ) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+            Spacer(
+                Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(
+                        brush =
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        Color.Transparent,
+                                        Color.White.copy(alpha = 0.3f),
+                                        Color.White.copy(alpha = 0.4f),
+                                        Color.White.copy(alpha = 0.5f),
+                                    ),
+                            ),
+                    ),
+            )
         }
     }
 }

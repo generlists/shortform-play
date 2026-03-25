@@ -165,7 +165,7 @@
     <string name="api_unknown_error">Une erreur inconnue s’est produite.</string>
     <string name="api_empty_error">Échec du chargement des données. Veuillez réessayer !</string>
     <string name="api_error_retry">Réessayer</string>
-
+    <string name="api_error_data_not_found">Aucune donnée trouvée</string>
 
     <string name="search_type_keyword">Recherche par mots-clés</string>
     <string name="search_type_daily">Shorts du jour</string>

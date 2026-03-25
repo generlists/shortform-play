@@ -44,6 +44,7 @@ class SearchActivity : FragmentActivity() {
                 finish = { finish() },
             )
         }
+        mainViewModel.initAdMobSDK(this)
         searchViewModel.sendGALog(
             screenName = GASplashAnalytics.SCREEN_NAME[SEARCH_SCREEN] ?: "",
             eventName = GASplashAnalytics.Event.SEARCH_VIEW,

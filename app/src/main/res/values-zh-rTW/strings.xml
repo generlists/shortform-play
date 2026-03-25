@@ -150,7 +150,7 @@
     <string name="api_unknown_error">發生未知錯誤。</string>
     <string name="api_empty_error">資料取得失敗，請再試一次！</string>
     <string name="api_error_retry">重試</string>
-
+    <string name="api_error_data_not_found">沒有找到資料</string>
     <string name="search_type_keyword">	關鍵字搜尋</string>
     <string name="search_type_daily">每日 Shorts</string>
     <string name="youtube_category_all">All</string>

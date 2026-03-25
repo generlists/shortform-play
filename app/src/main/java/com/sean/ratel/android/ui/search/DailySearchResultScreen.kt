@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.search
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,15 +9,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -27,7 +25,10 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -52,6 +53,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -60,9 +62,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
-import com.sean.ratel.android.data.common.STRINGS
+import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsChannelModel
@@ -70,9 +74,8 @@ import com.sean.ratel.android.data.dto.ShortsVideoModel
 import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdBannerLocation
+import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
-import com.sean.ratel.android.ui.ad.LoadBanner
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -81,6 +84,7 @@ import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.launch
+import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -96,12 +100,25 @@ fun DailySearchResultScreen(
 fun KeyWordSearchDisplayUi(
     adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val currentData = searchViewModel.dailyCurrentSearchShortformList.collectAsState()
+    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
+    var adSize by remember { mutableStateOf(64) }
+    adSize =
+        when {
+            adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
+                (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
+            }
+
+            else -> {
+                0
+            }
+        }
     if (currentData.value.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
-                "데이터가 없습니다.",
+                stringResource(R.string.api_error_data_not_found),
                 modifier =
                     Modifier
                         .wrapContentSize()
@@ -117,10 +134,7 @@ fun KeyWordSearchDisplayUi(
             containerColor = APP_BACKGROUND,
         ) { innerPadding ->
             val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
-            val adBannerSize =
-                adViewModel.adBannerLoadingCompleteAndGetAdSize
-                    .collectAsState()
-                    .value.second
+
             var moreLoading by remember { mutableStateOf(false) }
             val scrollPosition = remember { mutableStateOf(0) }
             val scrollOffset = remember { mutableStateOf(0) }
@@ -160,14 +174,14 @@ fun KeyWordSearchDisplayUi(
             }
 
             RLog.d(
-                "KKKKKKKKK",
-                "moreLoading : $moreLoading , adBannerSize :$adBannerSize ,  bottomBarHeight : $bottomBarHeight $",
+                "Sarch",
+                "moreLoading : $moreLoading  ,  bottomBarHeight : $bottomBarHeight $",
             )
             if (moreLoading) {
                 Box(
                     Modifier
                         .fillMaxSize()
-                        .padding(bottom = (adBannerSize + bottomBarHeight).dp + REMAIN_AD_MARGIN)
+                        .padding(bottom = (adSize + bottomBarHeight).dp + REMAIN_AD_MARGIN)
                         .background(Color.Transparent),
                     contentAlignment = Alignment.BottomCenter,
                 ) {
@@ -202,13 +216,24 @@ fun DailySearchGridItemView(
     listState: LazyListState,
 ) {
     // 로딩이 끝나면 ShortsItemList 표시
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .padding(top = 10.dp)
-            .wrapContentHeight(),
+    Card(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 0.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        KeyWordSearchGridItemList(data, adViewModel, searchViewModel, loading, listState)
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+                .wrapContentHeight(),
+        ) {
+            KeyWordSearchGridItemList(data, adViewModel, searchViewModel, loading, listState)
+        }
     }
 }
 
@@ -220,14 +245,26 @@ fun KeyWordSearchGridItemList(
     searchViewModel: SearchViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
+    val context = LocalContext.current as SearchActivity
     val index = searchViewModel.moreIndex.collectAsState()
     val searchComplete = searchViewModel.searchDataComplete.collectAsState()
     val currentCategory = searchViewModel.selectedCategory.collectAsState()
+    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
 
     val isAtBottom = listState.isAtBottom()
     val coroutine = rememberCoroutineScope()
+    var adSize by remember { mutableStateOf(64) }
+    when {
+        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
+            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
+        }
+
+        else -> {
+            adSize = 0
+        }
+    }
     RLog.d(
         "KeywordSearch",
         "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex(
@@ -265,96 +302,94 @@ fun KeyWordSearchGridItemList(
         }
     }
 
-    Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(Modifier.weight(0.83f)) {
-            LazyColumn(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(APP_BACKGROUND),
-                state = listState,
-            ) {
-                var i = 0
-                item(key = items[i].itemPosition) {
-                    while (i < items.size) {
-                        if (i + 2 < items.size) {
-                            Row(
-                                Modifier.padding(vertical = 1.5.dp, horizontal = 3.dp),
-                                horizontalArrangement = Arrangement.spacedBy(1.5.dp),
-                            ) {
-                                DailyGridItemBoxRow(
-                                    rowSize = 3,
-                                    items =
-                                        listOf(
-                                            items[i].apply { itemPosition = i },
-                                            items[i + 1].apply { itemPosition = i + 1 },
-                                            items[i + 2].apply { itemPosition = i + 2 },
-                                        ),
-                                    searchViewModel = searchViewModel,
-                                    currentCategory = currentCategory.value,
-                                )
-                            }
-
-                            i += 3
-                        } else {
-                            val remainCount = (items.size) - i
-                            val list = mutableListOf<MainShortsModel>()
-
-                            for (r in 0 until remainCount) {
-                                list.add(
-                                    items[r].apply {
-                                        itemPosition = (items.size - 1) - remainCount - r
-                                    },
-                                )
-                            }
-                            val blankItem = (3 - list.size)
-                            if (blankItem > 0) {
-                                for (b in 0 until blankItem) {
-                                    list.add(MainShortsModel(items.size - blankItem - b))
-                                }
-                            }
-
-                            if (remainCount < 3) {
-                                DailyGridItemBoxRow(
-                                    rowSize = 3,
-                                    items = list,
-                                    searchViewModel = searchViewModel,
-                                    currentCategory = currentCategory.value,
-                                )
-                            }
-
-                            i += 3
+    Box(Modifier.fillMaxSize()) {
+        LazyColumn(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(bottom = adSize.dp),
+            state = listState,
+        ) {
+            var i = 0
+            item(key = items[i].itemPosition) {
+                while (i < items.size) {
+                    if (i + 2 < items.size) {
+                        Row(
+                            Modifier.padding(vertical = 1.5.dp, horizontal = 3.dp),
+                            horizontalArrangement = Arrangement.spacedBy(1.5.dp),
+                        ) {
+                            DailyGridItemBoxRow(
+                                rowSize = 3,
+                                items =
+                                    listOf(
+                                        items[i].apply { itemPosition = i },
+                                        items[i + 1].apply { itemPosition = i + 1 },
+                                        items[i + 2].apply { itemPosition = i + 2 },
+                                    ),
+                                searchViewModel = searchViewModel,
+                                currentCategory = currentCategory.value,
+                            )
                         }
+
+                        i += 3
+                    } else {
+                        val remainCount = (items.size) - i
+                        val list = mutableListOf<MainShortsModel>()
+
+                        for (r in 0 until remainCount) {
+                            list.add(
+                                items[r].apply {
+                                    itemPosition = (items.size - 1) - remainCount - r
+                                },
+                            )
+                        }
+                        val blankItem = (3 - list.size)
+                        if (blankItem > 0) {
+                            for (b in 0 until blankItem) {
+                                list.add(MainShortsModel(items.size - blankItem - b))
+                            }
+                        }
+
+                        if (remainCount < 3) {
+                            DailyGridItemBoxRow(
+                                rowSize = 3,
+                                items = list,
+                                searchViewModel = searchViewModel,
+                                currentCategory = currentCategory.value,
+                            )
+                        }
+
+                        i += 3
                     }
                 }
             }
         }
-        val bottomPadding =
-            adBannerLoadingComplete.value.second.dp +
-                WindowInsets.navigationBars
-                    .asPaddingValues()
-                    .calculateBottomPadding() +
-                STRINGS.REMAIN_AD_MARGIN
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .weight(0.17f)
-                .then(
-                    if (adBannerLoadingComplete.value.first) {
-                        Modifier
-                            .height(
-                                bottomPadding,
-                            )
-                    } else {
-                        Modifier
-                    },
-                ),
-            contentAlignment = Alignment.BottomStart,
-        ) {
-            // if (!searchComplete.value) {
-            LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.BOTTOM)
-            //  }
-        }
+    }
+//        val bottomPadding =
+//            adBannerLoadingComplete.value.second.dp +
+//                WindowInsets.navigationBars
+//                    .asPaddingValues()
+//                    .calculateBottomPadding() +
+//                STRINGS.REMAIN_AD_MARGIN
+    Box(
+        Modifier
+            .fillMaxSize(),
+//                .then(
+//                    if (adBannerLoadingComplete.value.first) {
+//                        Modifier
+//                            .height(
+//                                bottomPadding,
+//                            )
+//                    } else {
+//                        Modifier
+//                    },
+//                ),
+        contentAlignment = Alignment.BottomCenter,
+    ) {
+        // if (!searchComplete.value) {
+        // LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.BOTTOM)
+        AdBannerView(context, Destination.Search.route)
+        //  }
     }
 }
 
@@ -469,12 +504,12 @@ fun DailyGridItemBoxRow(
     items: List<MainShortsModel>,
     searchViewModel: SearchViewModel,
     currentCategory: YouTubeCategory,
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     Row(
         // 좌우 패딩 추가
-        Modifier.padding(vertical = 1.5.dp, horizontal = 3.dp),
-//        // 아이템 간 간격 7dp
-        horizontalArrangement = Arrangement.spacedBy(1.5.dp),
+        Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         for (i in 0 until rowSize) {
             val shortVideoModel = items[i].shortsVideoModel
@@ -542,14 +577,14 @@ fun DailyGridItemBoxRow(
                             NetworkImage(
                                 url = videoThumbnail,
                                 contentDescription = null,
+                                imageLoader = mainViewModel.imageLoader,
                                 modifier =
                                     Modifier
                                         .aspectRatio(0.5625f)
                                         .fillMaxSize(),
                                 contentScale = ContentScale.Crop,
-                                R.drawable.vertical_background,
-                                R.drawable.vertical_background,
-                                R.drawable.vertical_background,
+                                placeholderRes = R.drawable.vertical_background,
+                                loadComplete = {},
                             )
                         }
                     }

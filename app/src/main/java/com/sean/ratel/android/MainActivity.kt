@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -28,7 +29,6 @@ import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHORTFOR
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.YOUTUBE
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.ui.ad.AdViewModel
-import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -42,6 +42,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import so.smartlab.common.ad.admob.data.GoogleMobileAdsConsentManager
 import javax.inject.Inject
 
 /**
@@ -77,8 +78,6 @@ class MainActivity : FragmentActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
-        // requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
@@ -97,10 +96,11 @@ class MainActivity : FragmentActivity() {
 
         adViewModel.setForceClearCache(intent.getBooleanExtra("clear_cache", false))
 
+        Log.d("hbungshin", "canRequestAds : ${googleMobileAdsConsentManager.canRequestAds}")
         googleMobileAdsConsentManager.gatherConsent(this) { error ->
             if (error != null) RLog.d(TAG, "${error.errorCode}: ${error.message}")
 
-            if (googleMobileAdsConsentManager.canRequestAds) adViewModel.initAdMob(this)
+            if (googleMobileAdsConsentManager.canRequestAds) mainViewModel.initAdMobSDK(this)
 
             if (googleMobileAdsConsentManager.isPrivacyOptionsRequired) {
                 mainViewModel.setPrivacyOptionMenu(
@@ -108,7 +108,7 @@ class MainActivity : FragmentActivity() {
                 )
             }
         }
-        if (googleMobileAdsConsentManager.canRequestAds) adViewModel.initAdMob(this)
+        if (googleMobileAdsConsentManager.canRequestAds) mainViewModel.initAdMobSDK(this)
 
         setContent {
             ShortFormPlayApp(
@@ -318,9 +318,11 @@ class MainActivity : FragmentActivity() {
 
                 if (pipClick.first) {
                     val currentIndex = pipClick.second?.currentItem ?: 0
-                    val fragmentManager = (this@MainActivity as FragmentActivity).supportFragmentManager
+                    val fragmentManager =
+                        (this@MainActivity as FragmentActivity).supportFragmentManager
                     val itemId = viewPager2?.adapter?.getItemId(currentIndex)
-                    val fragment = fragmentManager.findFragmentByTag("f$itemId") as? YouTubeEndFragment
+                    val fragment =
+                        fragmentManager.findFragmentByTag("f$itemId") as? YouTubeEndFragment
                     if (hasPipPermission()) {
                         fragment?.onClickPipButton()
                         currentItem.value = pipClick.second?.currentItem ?: 0
@@ -365,7 +367,10 @@ class MainActivity : FragmentActivity() {
                 val param4 = appLinkInfo.extraParam4
                 when (deepLinkType) {
                     HOME, SETTING, SHORTFORM, APP_MANAGER -> {
-                        RLog.d("deepLink", "HOME route : $route, videoId : $param1 , viewType : $viewType")
+                        RLog.d(
+                            "deepLink",
+                            "HOME route : $route, videoId : $param1 , viewType : $viewType",
+                        )
 
                         viewType?.let {
                             mainViewModel.setViewType(viewType)
@@ -374,20 +379,41 @@ class MainActivity : FragmentActivity() {
                     }
 
                     YOUTUBE -> {
-                        RLog.d("deepLink", "YOUTUBE route : $route, videoId : $param1 , viewType : $viewType")
+                        RLog.d(
+                            "deepLink",
+                            "YOUTUBE route : $route, videoId : $param1 , viewType : $viewType",
+                        )
                         param1?.let {
-                            mainViewModel.goEndContent(route, viewType ?: ViewType.DeepLinkVideo, 0, null, param1)
+                            mainViewModel.goEndContent(
+                                route,
+                                viewType ?: ViewType.DeepLinkVideo,
+                                0,
+                                null,
+                                param1,
+                            )
                         }
                     }
 
                     SEARCH -> {
-                        RLog.d("deeplink", "tab : $param2 query : $param1 , date : $param3 , category : $param4")
+                        RLog.d(
+                            "deeplink",
+                            "tab : $param2 query : $param1 , date : $param3 , category : $param4",
+                        )
                         PhoneUtil.searchButton(this@MainActivity, param1, param2, param3, param4)
                     }
 
                     SHARE -> {
-                        RLog.d("YouTubeContentEnd", "SHARE route : $route, videoId : $param1 , viewType : $viewType")
-                        mainViewModel.goEndContent(route, appLinkInfo.type ?: ViewType.DeepLinkVideo, 0, null, param1)
+                        RLog.d(
+                            "YouTubeContentEnd",
+                            "SHARE route : $route, videoId : $param1 , viewType : $viewType",
+                        )
+                        mainViewModel.goEndContent(
+                            route,
+                            appLinkInfo.type ?: ViewType.DeepLinkVideo,
+                            0,
+                            null,
+                            param1,
+                        )
                     }
                 }
             }

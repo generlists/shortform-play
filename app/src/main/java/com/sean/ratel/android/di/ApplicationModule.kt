@@ -20,11 +20,18 @@ import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
+import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.android.permission.PermissionManager
 import com.sean.ratel.android.data.android.permission.PermissionProvider
+import com.sean.ratel.android.data.common.AppAdsConfig
+import com.sean.ratel.android.di.qualifier.AdOpenUnitId
+import com.sean.ratel.android.di.qualifier.AdaptiveBannerUnitId
+import com.sean.ratel.android.di.qualifier.AdmobUnitId
+import com.sean.ratel.android.di.qualifier.BannerUnitId
+import com.sean.ratel.android.di.qualifier.InterstitialUnitId
+import com.sean.ratel.android.di.qualifier.NativeAdUnitId
 import com.sean.ratel.android.di.qualifier.RemoteIntervalTime
-import com.sean.ratel.android.ui.ad.AppOpenAdManager
-import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
+import com.sean.ratel.android.di.qualifier.TestHashId
 import com.sean.ratel.player.core.domain.api.UserAgentProvider
 import dagger.Module
 import dagger.Provides
@@ -32,6 +39,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.UnstableApi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import so.smartlab.common.ad.admob.data.repository.AdsConfigProvider
+import java.util.Optional
 import javax.inject.Singleton
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "shorform-play")
@@ -59,17 +68,20 @@ object ApplicationModule {
     @OptIn(UnstableApi::class)
     fun providePermissionManagerr(): PermissionProvider = PermissionManager()
 
-    @Provides
-    @Singleton
-    @OptIn(UnstableApi::class)
-    fun provideGoogleMobileAdsConsentManager(
-        @ApplicationContext context: Context,
-    ): GoogleMobileAdsConsentManager = GoogleMobileAdsConsentManager(context)
-
-    @Provides
-    @OptIn(UnstableApi::class)
-    fun providerAppOpenAdManager(googleMobileAdsConsentManager: GoogleMobileAdsConsentManager): AppOpenAdManager =
-        AppOpenAdManager(googleMobileAdsConsentManager)
+//    @Provides
+//    @Singleton
+//    @OptIn(UnstableApi::class)
+//    fun provideGoogleMobileAdsConsentManager(
+//        @ApplicationContext context: Context,
+//        @TEST_HASH_ID  hashId: String,
+//    ): GoogleMobileAdsConsentManager = GoogleMobileAdsConsentManager(context)
+//
+//    @Provides
+//    @OptIn(UnstableApi::class)
+//    fun providerAppOpenAdManager(
+//        googleMobileAdsConsentManager: GoogleMobileAdsConsentManager
+//    ): AppOpenAdManager =
+//        AppOpenAdManager(googleMobileAdsConsentManager)
 
     @Provides
     @Singleton
@@ -131,4 +143,65 @@ object ApplicationModule {
             .crossfade(500)
             .allowHardware(true)
             .build()
+
+    @Provides
+    @Singleton
+    fun provideADSdkConfigProvider(
+        @ApplicationContext context: Context,
+        @AdmobUnitId admobId: String,
+        @BannerUnitId banner: String,
+        @AdaptiveBannerUnitId adaptiveUnitId: String,
+        @NativeAdUnitId nativeUnitId: String,
+        @AdOpenUnitId openId: String,
+        @InterstitialUnitId interstitialId: String,
+    ): AdsConfigProvider =
+        AppAdsConfig(
+            admobId,
+            "12345",
+            banner,
+            adaptiveUnitId,
+            nativeUnitId,
+            openId,
+            interstitialId,
+        )
+
+    // 옵셔널 추가로 필요
+    @Provides
+    @Singleton
+    fun provideOptionalAdsConfigProvider(provider: AdsConfigProvider): Optional<AdsConfigProvider> = Optional.of(provider)
+
+    @Provides
+    @Singleton
+    @AdmobUnitId
+    fun provideAdMobId(): String = BuildConfig.admobAppId
+
+    @Provides
+    @Singleton
+    @BannerUnitId
+    fun provideBannerId(): String = BuildConfig.BANNER_UNIT_ID
+
+    @Provides
+    @Singleton
+    @AdaptiveBannerUnitId
+    fun provideAdaptiveBannerId(): String = BuildConfig.ADAPTIVE_BANNER_UNIT_ID
+
+    @Provides
+    @Singleton
+    @AdOpenUnitId
+    fun provideAdOpenUnitId(): String = BuildConfig.Ad_OPEN_UNIT_ID
+
+    @Provides
+    @Singleton
+    @NativeAdUnitId
+    fun provideNativeBannerId(): String = BuildConfig.NATIVE_AD_UNIT_ID
+
+    @Provides
+    @Singleton
+    @InterstitialUnitId
+    fun provideInterstitialAdId(): String = BuildConfig.INTERSTITIALAd_UNIT_ID
+
+    @Provides
+    @Singleton
+    @TestHashId
+    fun provideTestHashId(): String = "12345"
 }

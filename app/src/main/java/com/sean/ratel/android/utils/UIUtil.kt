@@ -77,16 +77,6 @@ object UIUtil {
     fun findCurrentFragment(
         context: Context,
         position: Int,
-    ) {
-        val fragmentManager = (context as FragmentActivity).supportFragmentManager
-        val fragmentTag = "f$position"
-        val fragment = fragmentManager.findFragmentByTag(fragmentTag)
-        if (fragment is YouTubeEndFragment) fragment.updateSelectPosition()
-    }
-
-    fun findCurrentFragment(
-        context: Context,
-        position: Int,
         pageScrollState: YouTubeContentEndViewModel.PageScrollState,
     ) {
         RLog.d("Utils", "$context ,  $position , $pageScrollState")

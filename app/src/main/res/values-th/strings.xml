@@ -157,7 +157,7 @@
     <string name="api_unknown_error">เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ</string>
     <string name="api_empty_error">ดึงข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง!</string>
     <string name="api_error_retry">ลองอีกครั้ง</string>
-
+    <string name="api_error_data_not_found">ไม่พบข้อมูล</string>
     <string name="search_type_keyword">ค้นหาด้วยคีย์เวิร์ด</string>
     <string name="search_type_daily">ชอร์ตประจำวัน</string>
     <string name="youtube_category_all">All</string>

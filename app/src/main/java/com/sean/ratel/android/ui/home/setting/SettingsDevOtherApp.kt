@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -58,7 +57,6 @@ fun SettingsDevOtherApp(viewModel: SettingViewModel?) {
             .fillMaxWidth()
             .background(APP_BACKGROUND),
     ) {
-        val context = LocalContext.current
         Title()
         DevOtherAppSection()
     }
@@ -94,7 +92,7 @@ fun SettingGridRow(
         ),
 ) {
     val context = LocalContext.current
-    // val  statisticArgs = LocalStatisticsArgs.current
+
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         contentPadding = PaddingValues(16.dp),
@@ -128,11 +126,15 @@ fun SettingGridRow(
                             .wrapContentHeight()
                             .padding(5.dp),
                 ) {
-                    Box(modifier = Modifier.wrapContentSize()) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth().wrapContentHeight(),
+                        contentAlignment = Alignment.Center,
+                    ) {
                         Box(
                             modifier =
                                 Modifier
-                                    .size(72.dp)
+                                    .wrapContentSize()
+                                    .padding(top = 5.dp)
                                     .clip(CircleShape),
                             contentAlignment = Alignment.Center,
                         ) {
@@ -150,14 +152,16 @@ fun SettingGridRow(
 
                     Spacer(modifier = Modifier.height(5.dp))
 
-                    Text(
-                        text = gridList[index].appName,
-                        color = Color.White,
-                        modifier = Modifier.wrapContentSize(),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = gridList[index].appName,
+                            color = Color.White,
+                            modifier = Modifier.wrapContentSize(),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                 }
                 Spacer(modifier = Modifier.height(10.dp))
             }

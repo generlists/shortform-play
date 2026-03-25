@@ -147,6 +147,11 @@ android {
                 "REGAL_URL_EN",
                 "\"${localProperties.getProperty("REGAL_URL_EN")}\"",
             )
+            buildConfigField(
+                "String",
+                "admobAppId",
+                "\"${localProperties.getProperty("debug_admobAppId")}\"",
+            )
 
             manifestPlaceholders["validator"] = "false"
 
@@ -228,6 +233,11 @@ android {
                 "REGAL_URL_EN",
                 "\"${localProperties.getProperty("REGAL_URL_EN")}\"",
             )
+            buildConfigField(
+                "String",
+                "admobAppId",
+                "\"${localProperties.getProperty("release_admobAppId")}\"",
+            )
 
             isMinifyEnabled = true
             proguardFiles(
@@ -240,21 +250,18 @@ android {
             signingConfig = signingConfigs.getByName("release")
         }
     }
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 
     buildFeatures {
         compose = true
         buildConfig = true
         viewBinding = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlin {
+        jvmToolchain(11)
     }
     packaging {
         resources {
@@ -278,7 +285,10 @@ dependencies {
 //    implementation(project(":ui"))
 //    implementation(project(":utils"))
 
+    implementation(libs.androidx.material3)
+
     implementation(libs.ai.shortformplay)
+    implementation(libs.so.smartlab.sdk.common.ad.android)
     // androidx
     // Lifecycle
     implementation(libs.androidx.core.ktx)

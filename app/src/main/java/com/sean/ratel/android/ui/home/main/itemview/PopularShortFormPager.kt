@@ -109,10 +109,11 @@ fun PopularShortFormPager(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(count = Int.MAX_VALUE) { index ->
-                    val item = shortFormSearchList[index % shortFormSearchList.size]
+                    val selectedIndex = index % shortFormSearchList.size
+                    val item = shortFormSearchList[selectedIndex]
                     PopularVideoItem(
                         viewModel,
-                        index,
+                        selectedIndex,
                         item,
                     )
                 }

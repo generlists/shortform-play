@@ -8,6 +8,7 @@ import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -68,7 +69,6 @@ import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
-import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsChannelModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
@@ -85,6 +85,7 @@ import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -170,10 +171,10 @@ fun GridDisplayUi(
         containerColor = APP_BACKGROUND,
     ) { innerPadding ->
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
-        val adBannerSize =
-            adViewModel.adBannerLoadingCompleteAndGetAdSize
-                .collectAsState()
-                .value.second
+
+        val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
+        var adSize by remember { mutableStateOf(64) }
+
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = remember { mutableStateOf(0) }
         val scrollOffset = remember { mutableStateOf(0) }
@@ -185,6 +186,17 @@ fun GridDisplayUi(
                 initialFirstVisibleItemIndex = scrollPosition.value,
                 initialFirstVisibleItemScrollOffset = scrollOffset.value,
             )
+
+        adSize =
+            when {
+                adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
+                    (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
+                }
+
+                else -> {
+                    0
+                }
+            }
         // 초기 로딩시
         if (title.value.isEmpty()) {
             SetTitle(
@@ -214,8 +226,8 @@ fun GridDisplayUi(
                     listState,
                 )
                 if (viewType == ViewType.TrendShortsMore) {
-                    Box(Modifier.wrapContentSize()) {
-                        TrendShortsMenuButton(adViewModel, Modifier, true, onclick = {
+                    Box(Modifier.fillMaxSize().padding(bottom = adSize.dp)) {
+                        TrendShortsMenuButton(mainViewModel, Modifier, true, onclick = {
                             showBottomSheet = true
                         })
                     }
@@ -245,7 +257,7 @@ fun GridDisplayUi(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = (adBannerSize + bottomBarHeight).dp)
+                    .padding(bottom = (adSize + bottomBarHeight).dp)
                     .background(Color.Transparent),
                 contentAlignment = Alignment.BottomCenter,
             ) {
@@ -401,17 +413,12 @@ fun GridItemView(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Column(
+        Box(
             Modifier
-                .fillMaxSize(),
+                .fillMaxWidth()
+                .wrapContentHeight(),
         ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-            ) {
-                GridItemList(data, mainViewModel, moreViewModel, adViewModel, loading, listState)
-            }
+            GridItemList(data, mainViewModel, moreViewModel, loading, listState)
         }
     }
 }
@@ -422,18 +429,17 @@ fun GridItemList(
     items: List<MainShortsModel>,
     viewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
-    adViewModel: AdViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,
 ) {
-    val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
-    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     val index = moreViewModel.moreIndex.collectAsState()
     val viewType = viewModel.viewType.collectAsState()
     val route = viewModel.moreButtonClicked.value
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
     }
+    val adFixedBannerState by viewModel.fixedBannerState.collectAsState()
+    var adSize by remember { mutableStateOf(64) }
 
     LaunchedEffect(isFirstItemVisible) {
         if (isFirstItemVisible) {
@@ -477,79 +483,84 @@ fun GridItemList(
             loading(false)
         }
     }
+    adSize =
+        when {
+            adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
+                (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
+            }
 
-    LazyColumn(
+            else -> {
+                0
+            }
+        }
+    Box(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(top = 16.dp, bottom = 16.dp)
-                .then(
-                    if (adBannerLoadingComplete.value.first) {
-                        Modifier.padding(
-                            bottom =
-                                adBannerLoadingComplete.value.second.dp + insetPaddingValue.calculateTopPadding().value.dp +
-                                    REMAIN_AD_MARGIN,
-                        )
-                    } else {
-                        Modifier
-                    },
-                ),
-        state = listState,
+                .padding(top = 16.dp, bottom = adSize.dp),
     ) {
-        var i = 0
-        item(key = items[i].itemPosition) {
-            while (i < items.size) {
-                if (i + 2 < items.size) {
-                    Row(
-                        Modifier.padding(vertical = 1.5.dp, horizontal = 3.dp),
-                        horizontalArrangement = Arrangement.spacedBy(1.5.dp),
-                    ) {
-                        GridItemBoxRow(
-                            rowSize = 3,
-                            route = route ?: Destination.Home.Main.route,
-                            viewType = viewType.value,
-                            items =
-                                listOf(
-                                    items[i].apply { itemPosition = i },
-                                    items[i + 1].apply { itemPosition = i + 1 },
-                                    items[i + 2].apply { itemPosition = i + 2 },
-                                ),
-                            viewModel = viewModel,
-                            moreViewModel = moreViewModel,
-                        )
-                    }
-
-                    i += 3
-                } else {
-                    val remainCount = (items.size) - i
-                    val list = mutableListOf<MainShortsModel>()
-
-                    for (r in 0 until remainCount) {
-                        list.add(
-                            items[r].apply {
-                                itemPosition = (items.size - 1) - remainCount - r
-                            },
-                        )
-                    }
-                    val blankItem = (3 - list.size)
-                    if (blankItem > 0) {
-                        for (b in 0 until blankItem) {
-                            list.add(MainShortsModel(items.size - blankItem - b))
+        LazyColumn(
+            modifier =
+                Modifier
+                    .fillMaxSize(),
+            state = listState,
+            contentPadding = PaddingValues(bottom = adSize.dp),
+        ) {
+            var i = 0
+            item(key = items[i].itemPosition) {
+                while (i < items.size) {
+                    if (i + 2 < items.size) {
+                        Row(
+                            Modifier.padding(vertical = 1.5.dp, horizontal = 3.dp),
+                            horizontalArrangement = Arrangement.spacedBy(1.5.dp),
+                        ) {
+                            GridItemBoxRow(
+                                rowSize = 3,
+                                route = route ?: Destination.Home.Main.route,
+                                viewType = viewType.value,
+                                items =
+                                    listOf(
+                                        items[i].apply { itemPosition = i },
+                                        items[i + 1].apply { itemPosition = i + 1 },
+                                        items[i + 2].apply { itemPosition = i + 2 },
+                                    ),
+                                viewModel = viewModel,
+                                moreViewModel = moreViewModel,
+                            )
                         }
-                    }
 
-                    if (remainCount < 3) {
-                        GridItemBoxRow(
-                            rowSize = 3,
-                            route = route ?: Destination.Home.Main.route,
-                            viewType = viewType.value,
-                            items = list,
-                            viewModel = viewModel,
-                            moreViewModel = moreViewModel,
-                        )
-                    }
+                        i += 3
+                    } else {
+                        val remainCount = (items.size) - i
+                        val list = mutableListOf<MainShortsModel>()
 
-                    i += 3
+                        for (r in 0 until remainCount) {
+                            list.add(
+                                items[r].apply {
+                                    itemPosition = (items.size - 1) - remainCount - r
+                                },
+                            )
+                        }
+                        val blankItem = (3 - list.size)
+                        if (blankItem > 0) {
+                            for (b in 0 until blankItem) {
+                                list.add(MainShortsModel(items.size - blankItem - b))
+                            }
+                        }
+
+                        if (remainCount < 3) {
+                            GridItemBoxRow(
+                                rowSize = 3,
+                                route = route ?: Destination.Home.Main.route,
+                                viewType = viewType.value,
+                                items = list,
+                                viewModel = viewModel,
+                                moreViewModel = moreViewModel,
+                            )
+                        }
+
+                        i += 3
+                    }
                 }
             }
         }
@@ -737,15 +748,15 @@ fun GridItemBoxRow(
                             // 실제 앱에서는 네트워크 이미지 사용
                             NetworkImage(
                                 url = videoThumbnail,
+                                imageLoader = viewModel.imageLoader,
                                 contentDescription = null,
                                 modifier =
                                     Modifier
                                         .aspectRatio(0.5625f)
                                         .fillMaxSize(),
                                 contentScale = ContentScale.Crop,
-                                R.drawable.vertical_background,
-                                R.drawable.vertical_background,
-                                R.drawable.vertical_background,
+                                placeholderRes = R.drawable.vertical_background,
+                                loadComplete = {},
                             )
                         }
                     }
