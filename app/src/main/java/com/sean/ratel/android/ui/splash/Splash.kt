@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.google.firebase.storage.FirebaseStorage
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
@@ -49,17 +50,19 @@ import com.sean.ratel.android.utils.UIUtil.getCountryCode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import so.smartlab.common.ad.admob.data.model.AdMobInitState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun Splash(
     splashViewModel: SplashViewModel,
     adViewModel: AdViewModel,
+    mainViewModel: MainViewModel,
 ) {
     BackHandler { splashViewModel.navigator.finish() }
     NetworkAlert(splashViewModel)
     AuthCheckAlert(splashViewModel)
-    InitialDataAndAD(adViewModel, splashViewModel)
+    InitialDataAndAD(mainViewModel, adViewModel, splashViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -91,7 +94,7 @@ private fun SplashView() {
     ) {
         Image(
             painterResource(R.drawable.splash_text),
-            contentDescription = "Text",
+            contentDescription = "splash",
             modifier = Modifier.wrapContentSize(),
         )
     }
@@ -172,20 +175,20 @@ fun qnaResource(context: Context): String {
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun InitialDataAndAD(
+    mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
     splashViewModel: SplashViewModel,
 ) {
     var showSplash by remember { mutableStateOf(true) }
     var locale by remember { mutableStateOf("") }
     val coroutineScope = rememberCoroutineScope()
-    val isAMobInitialComplete by remember { mutableStateOf(adViewModel.adMobInitialComplete) }
-    val isAdComplete = isAMobInitialComplete.collectAsState().value
+    val isAdComplete by mainViewModel.adMobinitState.collectAsState()
     val options = getShortFormCountry(LocalContext.current)
-    val forceRefresh = adViewModel.forceClearCache.collectAsState().value
+    val forceRefresh by adViewModel.forceClearCache.collectAsState()
     val authCheck by splashViewModel.authCheck.collectAsState()
     val newUpdate by splashViewModel.newUpdate.collectAsState()
 
-    LaunchedEffect(isAMobInitialComplete) {
+    LaunchedEffect(isAdComplete) {
         coroutineScope.launch {
             locale = splashViewModel.getLocale()
             splashViewModel.loadNewUpdate()
@@ -210,7 +213,7 @@ fun InitialDataAndAD(
     }
 
     RLog.d("SPLASH", "isAdComplete : $isAdComplete newUpdate : $newUpdate, locale : $locale")
-    if (isAdComplete) {
+    if (isAdComplete is AdMobInitState.InitComplete) {
         if (locale.isEmpty() || !newUpdate) {
             RLog.d("SPLASH", "newUpdate : $newUpdate")
             ShortFormSelectDialog(

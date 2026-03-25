@@ -17,9 +17,11 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import so.smartlab.common.ad.admob.AdsSdk
 import javax.inject.Inject
 
 @Suppress("ktlint:standard:property-naming")
@@ -33,6 +35,7 @@ YouTubeContentEndViewModel
         private val youTubeEndUserRepository: YouTubeEndUserRepository,
         private val youtueRepository: YouTubeRepository,
         private val settingRepository: SettingRepository,
+        private val adsSdk: AdsSdk,
     ) : ViewModel() {
         private val _mainFromShorts =
             MutableStateFlow<Pair<MainShortFormList, Int>>(
@@ -108,6 +111,20 @@ YouTubeContentEndViewModel
 
         private val _searchDailyShorts = MutableStateFlow<List<MainShortsModel>>(emptyList())
         val searchDailyShorts: StateFlow<List<MainShortsModel>> = _searchDailyShorts
+
+        private var interstitialCollectJob: Job? = null
+
+        // private var adProcessing = false
+        private val _adProcessing = MutableStateFlow<Map<Int, Boolean>>(mapOf<Int, Boolean>())
+        val adProcessing: StateFlow<Map<Int, Boolean>> = _adProcessing
+
+        fun setAdProcessing(loading: Int) {
+            _adProcessing.value += mapOf<Int, Boolean>(loading to true)
+        }
+
+        fun clearAdProcessing() {
+            _adProcessing.value = emptyMap<Int, Boolean>()
+        }
 
         fun setAdLoading(loading: Boolean) {
             _isAdLoading.value = loading
@@ -451,9 +468,18 @@ YouTubeContentEndViewModel
                                 response.e.message?.let { UiState.Error(it) } ?: UiState.Error("")
                         }
 
-                        else -> Unit
+                        else -> {
+                            Unit
+                        }
                     }
                 }
+        }
+
+        private val _rightMenuWidth = mutableStateOf(50)
+        val rightMenuWidth = _rightMenuWidth
+
+        fun setRightButtonWidth(width: Int) {
+            _rightMenuWidth.value = width
         }
 
         companion object {

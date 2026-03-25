@@ -155,6 +155,7 @@
     <string name="api_unknown_error">An unknown error occurred.</string>
     <string name="api_empty_error">Failed to fetch data. Please try again!</string>
     <string name="api_error_retry">Retry</string>
+    <string name="api_error_data_not_found">No Data Founded</string>
 
     <string name="search_type_keyword">Keyword Search</string>
     <string name="search_type_daily">Daily Shorts</string>

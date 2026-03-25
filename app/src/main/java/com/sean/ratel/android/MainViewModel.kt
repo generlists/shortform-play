@@ -1,6 +1,6 @@
 package com.sean.ratel.android
 
-import android.widget.Toast
+import android.app.Activity
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -19,18 +19,21 @@ import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.InstallRefererRepository
 import com.sean.ratel.android.data.repository.RecentVideoRepository
 import com.sean.ratel.android.data.repository.SearchResultDataRepository
-import com.sean.ratel.android.ui.ad.GoogleMobileAdsConsentManager
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import so.smartlab.common.ad.admob.AdsSdk
+import so.smartlab.common.ad.admob.data.model.AdMobBannerState
+import so.smartlab.common.ad.admob.data.model.AdMobInitState
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -42,9 +45,9 @@ class MainViewModel
         val imageLoader: ImageLoader,
         val gaLog: GALog,
         val recentVideoRepository: RecentVideoRepository,
-        val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
         val installRefererRepository: InstallRefererRepository,
         private val searchResultsRepository: SearchResultDataRepository,
+        val adsSdk: AdsSdk,
     ) : ViewModel() {
         private val _isInstallReferer = MutableStateFlow<String?>(null)
         val isInstallReferer: StateFlow<String?> = _isInstallReferer
@@ -145,7 +148,10 @@ class MainViewModel
         fun setPIPClick(pipClick: Pair<Boolean, ViewPager2?>) {
             _pipClick.value = pipClick
             _isTopViewVisible.value = !pipClick.first && !isCurrentPageMoreView()
-            RLog.d("MainViewModel", "_pipClick : ${ _pipClick.value},  _isTopViewVisible : ${ _isTopViewVisible.value}")
+            RLog.d(
+                "MainViewModel",
+                "_pipClick : ${_pipClick.value},  _isTopViewVisible : ${_isTopViewVisible.value}",
+            )
         }
 
         fun setViewPager(viewPager2: ViewPager2?) {
@@ -338,7 +344,13 @@ class MainViewModel
             route: String? = null,
             recreate: Boolean = false,
         ) {
-            if (_viewType.value == ViewType.DeepLinkVideo) goMainHome() else navigator.navigateBack(false)
+            if (_viewType.value == ViewType.DeepLinkVideo) {
+                goMainHome()
+            } else {
+                navigator.navigateBack(
+                    false,
+                )
+            }
 
             _tabClicked.value = null
             if (isCurrentPageMoreView() && route != Destination.YouTube.route) {
@@ -415,11 +427,11 @@ class MainViewModel
         }
 
         fun runPrivacyOptionMenu(activity: MainActivity) {
-            googleMobileAdsConsentManager.showPrivacyOptionsForm(activity) { formError ->
-                if (formError != null) {
-                    Toast.makeText(activity, formError.message, Toast.LENGTH_SHORT).show()
-                }
-            }
+//            googleMobileAdsConsentManager.showPrivacyOptionsForm(activity) { formError ->
+//                if (formError != null) {
+//                    Toast.makeText(activity, formError.message, Toast.LENGTH_SHORT).show()
+//                }
+//            }
         }
 
         suspend fun setWatchVideoList() {
@@ -558,6 +570,82 @@ class MainViewModel
         }
 
         suspend fun getInstallRerere(): String? = installRefererRepository.getInstallReferer()
+
+        private val _adMobinitState = MutableStateFlow<AdMobInitState>(AdMobInitState.Idle)
+        val adMobinitState: StateFlow<AdMobInitState> = _adMobinitState
+
+        private val _fixedBannerState = MutableStateFlow<AdMobBannerState>(AdMobBannerState.Idle)
+        val fixedBannerState: StateFlow<AdMobBannerState> = _fixedBannerState
+
+        private val _adaptiveInlineBannerState =
+            MutableStateFlow<AdMobBannerState>(AdMobBannerState.Idle)
+        val adaptiveInlineBannerState: StateFlow<AdMobBannerState> = _adaptiveInlineBannerState
+
+        private var interstitialCollectJob: Job? = null
+        private var mainBannerCollectJob: Job? = null
+        private var inLineAdaptiveCollectJob: Job? = null
+
+        fun initAdMobSDK(activity: Activity) {
+            adsSdk.initAdMob(activity)
+
+            viewModelScope.launch {
+                adsSdk.adInitState.collect { state ->
+                    RLog.d("adMobInitState", "initAdMobSDK $state")
+                    setInitAdMobState(state)
+                }
+            }
+        }
+
+        fun setInitAdMobState(state: AdMobInitState) {
+            _adMobinitState.value = state
+        }
+
+        fun setFixedBannerState(state: AdMobBannerState) {
+            _fixedBannerState.value = state
+        }
+
+        fun setAdaptiveInLineBannerState(state: AdMobBannerState) {
+            _adaptiveInlineBannerState.value = state
+        }
+
+        fun requestBannerAdView(
+            activity: Activity,
+            admobBannerId: String,
+        ) {
+            mainBannerCollectJob?.cancel()
+
+            mainBannerCollectJob =
+                viewModelScope.launch {
+                    adsSdk.requestBannerAdView(
+                        activity,
+                        admobBannerId,
+                        BuildConfig.BANNER_UNIT_ID,
+                    )
+                }
+            viewModelScope.launch {
+                adsSdk.adFixedBannerState.collect { state ->
+                    state[admobBannerId]?.let {
+                        setFixedBannerState(it)
+                    }
+                }
+            }
+        }
+
+        fun requestInLineBannerAdView(activity: Activity) {
+            inLineAdaptiveCollectJob?.cancel()
+            inLineAdaptiveCollectJob =
+                viewModelScope.launch {
+                    adsSdk.requestInLineBannerAdView(
+                        activity,
+                        BuildConfig.ADAPTIVE_BANNER_UNIT_ID,
+                    )
+                }
+            viewModelScope.launch {
+                adsSdk.adAdaptiveBannerState.collect { state ->
+                    setAdaptiveInLineBannerState(state)
+                }
+            }
+        }
 
         companion object {
             private const val MAIN_ITEM_COUNT = 0

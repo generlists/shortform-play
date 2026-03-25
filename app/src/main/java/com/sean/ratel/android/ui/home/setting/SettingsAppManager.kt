@@ -22,7 +22,6 @@ import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.ui.toolbox.PhoneAppList
-import com.sean.ratel.android.utils.ComposeUtil.ViewBottomMargin
 import com.sean.ratel.android.utils.PhoneUtil
 
 @Suppress("ktlint:standard:function-naming")
@@ -69,7 +68,6 @@ fun SettingsAppManagerView(
         ) {
             SettingsAppDetail(viewModel = viewModel)
             PhoneAppList(viewModel)
-            ViewBottomMargin(adViewModel)
         }
     }
 }

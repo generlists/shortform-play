@@ -265,6 +265,7 @@ fun AutoScrollImagePager(
                                     .fillMaxWidth()
                                     .wrapContentHeight(),
                             imageLoader = mainViewModel?.imageLoader,
+                            placeholderRes = R.drawable.image_flow_loading,
                             loadComplete = {},
                         )
 

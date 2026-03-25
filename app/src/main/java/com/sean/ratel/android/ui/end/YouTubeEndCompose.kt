@@ -1,6 +1,8 @@
 package com.sean.ratel.android.ui.end
 
+import android.app.Activity
 import android.content.Context
+import android.content.res.Configuration
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +27,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -42,7 +45,10 @@ import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,6 +60,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.YouTubeUtils
@@ -71,9 +81,15 @@ import java.util.Locale
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun EndBottomContents(mainShortsModel: MainShortsModel?) {
+fun EndBottomContents(
+    mainShortsModel: MainShortsModel?,
+    youTubeContentEndViewModel: YouTubeContentEndViewModel = hiltViewModel(),
+) {
     val channelModel = remember { mainShortsModel?.shortsChannelModel }
     val videoModel = remember { mainShortsModel?.shortsVideoModel }
+    val rightMenuWidth by remember { youTubeContentEndViewModel.rightMenuWidth }
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 
     val channelThumbnail =
         remember(channelModel) {
@@ -82,6 +98,7 @@ fun EndBottomContents(mainShortsModel: MainShortsModel?) {
     Box(
         Modifier
             .fillMaxWidth()
+            .padding(end = if (isLandscape) rightMenuWidth.dp else 0.dp)
             .wrapContentHeight()
             .clickable {},
     ) {
@@ -194,15 +211,16 @@ fun EndBottomContents(mainShortsModel: MainShortsModel?) {
             }
             Box(
                 Modifier
-                    .width(480.dp)
+                    .fillMaxWidth()
                     .wrapContentHeight(),
+                contentAlignment = Alignment.CenterStart,
             ) {
                 Text(
                     videoModel?.title ?: "",
                     Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(start = 15.dp, top = 10.dp)
+                        .padding(start = 15.dp, top = 10.dp, end = 15.dp)
                         .background(Color.Transparent),
                     fontFamily = FontFamily.SansSerif,
                     fontStyle = FontStyle.Normal,
@@ -286,8 +304,12 @@ fun RightContentArea(
     val coroutine = rememberCoroutineScope()
 
     LaunchedEffect(like || disLike) {
-        like = youTubeContentEndViewModel?.getLikeDisLikeVideo("like${mainShortsModel?.shortsVideoModel?.videoId}") ?: false
-        disLike = youTubeContentEndViewModel?.getLikeDisLikeVideo("disLike${mainShortsModel?.shortsVideoModel?.videoId}") ?: false
+        like =
+            youTubeContentEndViewModel?.getLikeDisLikeVideo("like${mainShortsModel?.shortsVideoModel?.videoId}")
+                ?: false
+        disLike =
+            youTubeContentEndViewModel?.getLikeDisLikeVideo("disLike${mainShortsModel?.shortsVideoModel?.videoId}")
+                ?: false
         sound = youTubeContentEndViewModel?.getSoundOff() ?: false
     }
 
@@ -297,10 +319,20 @@ fun RightContentArea(
             .fillMaxWidth(),
         contentAlignment = Alignment.BottomEnd,
     ) {
+        val density = LocalDensity.current
         Column(
             Modifier
                 .wrapContentSize()
-                .padding(end = 10.dp, bottom = 10.dp),
+                .padding(end = 10.dp, bottom = 10.dp)
+                .onGloballyPositioned { coordinates ->
+                    val rightMenuHeight =
+                        with(density) {
+                            coordinates.size.width
+                                .toDp()
+                                .value
+                        }
+                    youTubeContentEndViewModel?.setRightButtonWidth(rightMenuHeight.toInt())
+                },
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             rightMenu.forEach { item ->
@@ -459,9 +491,15 @@ private fun disPlayRightMenu(
             formatNumberByLocale(commentCount.toLongOrNull() ?: 0, locale)
         }
 
-        YouTubeEndContentRightMenu.DisLike -> stringResource(R.string.end_dislike)
-        YouTubeEndContentRightMenu.Share -> stringResource(R.string.end_share)
-        YouTubeEndContentRightMenu.Sound ->
+        YouTubeEndContentRightMenu.DisLike -> {
+            stringResource(R.string.end_dislike)
+        }
+
+        YouTubeEndContentRightMenu.Share -> {
+            stringResource(R.string.end_share)
+        }
+
+        YouTubeEndContentRightMenu.Sound -> {
             if (sound) {
                 stringResource(R.string.end_sound_off)
             } else {
@@ -469,6 +507,7 @@ private fun disPlayRightMenu(
                     R.string.end_sound_on,
                 )
             }
+        }
     }
 }
 
@@ -514,6 +553,7 @@ private suspend fun toggleRightEvent(
             youTubeContentEndViewModel?.setSoundOff(!sound)
             onChanged(like, disLike, !sound)
         }
+
         YouTubeEndContentRightMenu.Comment -> {
             mainShortsModel?.shortsVideoModel?.videoId?.let {
                 YouTubeUtils.goYouTubeAppByVideoId(
@@ -522,6 +562,7 @@ private suspend fun toggleRightEvent(
                 )
             }
         }
+
         YouTubeEndContentRightMenu.Share -> {
             mainShortsModel?.shortsVideoModel?.videoId?.let {
                 YouTubeUtils.shareVideo(context, it)
@@ -550,7 +591,9 @@ private fun setImageView(
             return if (sound) painterResource(item.selectedResourceId) else painterResource(item.unSelectedResourceId)
         }
 
-        else -> return painterResource(item.unSelectedResourceId)
+        else -> {
+            return painterResource(item.unSelectedResourceId)
+        }
     }
 }
 
@@ -575,6 +618,32 @@ private fun PlayControllerSeekBarPreView() {
             30f,
             {},
         )
+    }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
+fun SystemNavigationShowHideScreen() {
+    val context = LocalContext.current
+    val activity = context as? Activity ?: return
+    val isLandscape =
+        LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    DisposableEffect(isLandscape) {
+        val controller =
+            WindowCompat.getInsetsController(activity.window, activity.window.decorView)
+
+        if (isLandscape) {
+            controller.systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+            controller.hide(WindowInsetsCompat.Type.navigationBars())
+        } else {
+            controller.show(WindowInsetsCompat.Type.navigationBars())
+        }
+
+        onDispose {
+            controller.show(WindowInsetsCompat.Type.navigationBars())
+        }
     }
 }
 

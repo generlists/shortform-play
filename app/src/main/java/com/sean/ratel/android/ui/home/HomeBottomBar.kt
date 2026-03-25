@@ -162,7 +162,7 @@ private fun HomeBottomBarView(
                     .wrapContentHeight()
                     .align(Alignment.Center)
                     .windowInsetsBottomHeight(
-                        WindowInsets.navigationBars.add(WindowInsets(bottom = 56.dp)),
+                        WindowInsets.navigationBars.add(WindowInsets(bottom = 64.dp)),
                     ).onGloballyPositioned { coordinates ->
                         val bottomVarHeight =
                             with(density) {

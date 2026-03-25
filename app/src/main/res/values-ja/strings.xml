@@ -151,7 +151,7 @@
     <string name="api_unknown_error">不明なエラーが発生しました。</string>
     <string name="api_empty_error">データの取得に失敗しました。もう一度お試しください！</string>
     <string name="api_error_retry">再試行</string>
-
+    <string name="api_error_data_not_found">データが見つかりません</string>
     <string name="search_type_keyword">キーワード検索</string>
     <string name="search_type_daily">デイリーショート</string>
     <string name="youtube_category_all">All</string>

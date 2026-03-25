@@ -176,6 +176,7 @@ fun YouTubeContentEnd(
             }
         }
     }
+    SystemNavigationShowHideScreen()
 
     DisplayUI(youTubeContentEndViewModel, mainViewModel, searchRequestLoading.value)
 

@@ -1,6 +1,7 @@
 package com.sean.ratel.android.data.common
 
 import android.content.Context
+import android.widget.Toast
 import com.google.android.play.core.integrity.IntegrityManagerFactory
 import com.google.android.play.core.integrity.StandardIntegrityException
 import com.google.android.play.core.integrity.StandardIntegrityManager
@@ -112,15 +113,27 @@ class IntegrityManager
 
                             is ApiResult.Exception -> {
                                 RLog.e(TAG, "기타 네트워크 예외: ${callResult.e.localizedMessage}")
+                                Toast
+                                    .makeText(
+                                        appContext,
+                                        "기타 네트워크 예외: ${callResult.e.localizedMessage}",
+                                        Toast.LENGTH_LONG,
+                                    ).show()
                             }
 
-                            else -> Unit
+                            else -> {
+                                Unit
+                            }
                         }
                     }
-                    else -> Unit
+
+                    else -> {
+                        Unit
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+                Toast.makeText(appContext, "예외: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
             }
 
             return null

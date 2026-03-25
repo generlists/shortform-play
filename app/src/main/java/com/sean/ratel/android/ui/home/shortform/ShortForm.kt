@@ -75,7 +75,7 @@ import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.YouTubeUtils.getCategoryName
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.ad.AdViewModel
-import com.sean.ratel.android.ui.ad.InLineAdaptiveBanner
+import com.sean.ratel.android.ui.ad.AdaptiveBanner
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.common.preview.ShortsVideoParameterProvider
 import com.sean.ratel.android.ui.home.ViewType
@@ -163,6 +163,13 @@ fun VerticalScrollWithHorizontalItems(
     val targetIndexList =
         remember { validationIndex(Destination.Home.ShortForm.route, categorySize) }
     var adVisibility by remember { mutableStateOf(false) }
+    val bannerVisible =
+        remember {
+            RemoteConfig.getRemoteConfigBooleanValue(
+                RemoteConfig.BANNER_AD_VISIBILITY,
+            )
+        }
+    val adIndexSet = remember(targetIndexList) { targetIndexList.toSet() }
 
     LazyColumn(
         // 세로 스크롤 전체 화면 채우기
@@ -175,13 +182,11 @@ fun VerticalScrollWithHorizontalItems(
     ) {
         val list = items.values.toList()
         itemsIndexed(list) { index, _ ->
-            val adIndex = targetIndexList.contains(index)
-            if (adIndex &&
-                RemoteConfig.getRemoteConfigBooleanValue(
-                    RemoteConfig.BANNER_AD_VISIBILITY,
-                )
-            ) {
-                InLineAdaptiveBanner(adViewModel)
+            val shouldShowAd = bannerVisible && adIndexSet.contains(index)
+            if (shouldShowAd) {
+                adViewModel?.let {
+                    AdaptiveBanner(mainViewModel, it)
+                }
                 Spacer(Modifier.height(8.dp))
             }
             ShortFormList(index, mainViewModel, items, viewModel)

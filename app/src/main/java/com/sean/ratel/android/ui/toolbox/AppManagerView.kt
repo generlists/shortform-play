@@ -55,7 +55,6 @@ import com.google.accompanist.drawablepainter.DrawablePainter
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
-import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
 import com.sean.ratel.android.data.domain.model.toolbox.AppManagerInfo
@@ -66,7 +65,6 @@ import com.sean.ratel.android.ui.progress.LoadingPlaceholder
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
-import com.sean.ratel.android.utils.ComposeUtil.ViewBottomMargin
 
 private const val TAG = "AppManagerView"
 
@@ -89,7 +87,6 @@ fun AppManagerView(
     Box(
         Modifier
             .fillMaxSize()
-            .background(Color.Transparent)
             .padding(top = insetPaddingValue.calculateTopPadding()),
     ) {
         TopNavigationBar(
@@ -114,7 +111,7 @@ fun AppManagerView(
                 .fillMaxSize()
                 .background(Color.Transparent),
         ) {
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(32.dp))
 
             Box(
                 modifier
@@ -127,7 +124,6 @@ fun AppManagerView(
         }
     }
     FilterAppList(filterAction, viewModel)
-    ViewBottomMargin(adViewModel)
     when {
         !isLoaded -> {
             LoadingPlaceholder(loading = true)
@@ -148,24 +144,12 @@ fun ItemList(
     viewModel: AppManagerViewModel,
     adViewModel: AdViewModel,
 ) {
-    val adBannerLoadingComplete = adViewModel.adBannerLoadingCompleteAndGetAdSize.collectAsState()
-    val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-
     items?.let {
         RLog.d(TAG, "size ${items.size}")
         LazyColumn(
             Modifier
                 .fillMaxSize()
-                .then(
-                    if (adBannerLoadingComplete.value.first) {
-                        Modifier
-                            .padding(
-                                bottom = adBannerLoadingComplete.value.second.dp + insetPaddingValue.value.dp + STRINGS.REMAIN_AD_MARGIN,
-                            ).background(APP_BACKGROUND)
-                    } else {
-                        Modifier
-                    },
-                ),
+                .padding(top = 16.dp),
         ) {
             items(count = items.size) { index ->
                 AppListItem(items[index], viewModel)
