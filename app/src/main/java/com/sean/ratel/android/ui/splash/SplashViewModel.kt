@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.data.android.permission.PermissionManager
 import com.sean.ratel.android.data.api.ApiResult
 import com.sean.ratel.android.data.api.ApiResult.Loading.safeApiCall
 import com.sean.ratel.android.data.common.IntegrityManager
@@ -42,6 +43,7 @@ class SplashViewModel
         @ApplicationContext private val context: Context,
         val navigator: Navigator,
         val gaLog: GALog,
+        val permissionManager: PermissionManager,
         private val youTubeRepository: YouTubeRepository,
         private val settingRepository: SettingRepository,
         private val autoRepository: AuthRepository,
@@ -66,7 +68,7 @@ class SplashViewModel
 
         private val _retryCount = MutableStateFlow(0)
 
-        private val _authCheck = MutableStateFlow(0)
+        private val _authCheck = MutableStateFlow<Int?>(null)
         val authCheck = _authCheck
 
         private val _newUpdate = MutableStateFlow<Boolean>(true)
@@ -112,6 +114,7 @@ class SplashViewModel
                                                 "SPLASH",
                                                 "Access Token 갱신 성공: expires in $expiresIn 초",
                                             )
+                                            _authCheck.value = 0
                                         }
 
                                         is ApiResult.Error -> {
@@ -155,6 +158,8 @@ class SplashViewModel
                             e.printStackTrace()
                         }
                     }
+                } else {
+                    _authCheck.value = 0
                 }
             }
         }

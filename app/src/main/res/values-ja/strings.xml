@@ -74,6 +74,7 @@
     <string name="pip_memory_error">メモリ不足エラー</string>
     <string name="setting_dev_other_app">この開発者の他のアプリ</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+
     <!-- アプリマネージャー -->
     <string name="app_manager">アプリマネージャー</string>
     <string name="app_manager_detail">お使いのデバイスでアプリ情報を表示および管理します。</string>
@@ -151,7 +152,6 @@
     <string name="api_unknown_error">不明なエラーが発生しました。</string>
     <string name="api_empty_error">データの取得に失敗しました。もう一度お試しください！</string>
     <string name="api_error_retry">再試行</string>
-    <string name="api_error_data_not_found">データが見つかりません</string>
     <string name="search_type_keyword">キーワード検索</string>
     <string name="search_type_daily">デイリーショート</string>
     <string name="youtube_category_all">All</string>
@@ -161,4 +161,20 @@
     <string name="search_daily_reset">初期化</string>
     <string name="search_daily_apply">適用</string>
 
+    <!-- 1.0.9 -->
+    <string name="app_notification">通知</string>
+    <string name="setting_push_management">プッシュ通知</string>
+    <string name="setting_push_description">さまざまなお知らせに関する通知を受け取ります。</string>
+    <string name="setting_push_app_update">アプリの更新</string>
+    <string name="setting_push_video_upload">コンテンツのアップロード</string>
+    <string name="setting_push_recommend">おすすめ動画</string>
+    <string name="api_error_data_not_found">データが見つかりません</string>
+    <string name="notification_list_description">通知は最大200件まで内部ストレージに保存され、200件を超えると古い順に自動削除されます。</string>
+    <string name="notification_no_data">通知がありません。</string>
+    <string name="notification_update">更新</string>
+    <string name="notification_upload">アップロード</string>
+    <string name="notification_recommend">おすすめ</string>
+    <string name="notification_force_update">[必須アップデート]</string>
+    <string name="notification_today">今日</string>
+    <string name="notification_yesterday">昨日</string>
 </resources>

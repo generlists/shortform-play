@@ -227,4 +227,13 @@ object PhoneUtil {
             context.startActivity(fallbackIntent)
         }
     }
+
+    fun qnaResource(context: Context): String {
+        val str = StringBuilder()
+        str.append("App Version : ")
+        str.append(PhoneUtil.getAppVersionName(context))
+        str.append("\n")
+        str.append(PhoneUtil.getEnvironment())
+        return str.toString()
+    }
 }

@@ -29,6 +29,8 @@ import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.home.setting.SettingsAppManager
 import com.sean.ratel.android.ui.home.shortform.ShortForm
 import com.sean.ratel.android.ui.home.shortform.ShortFormViewModel
+import com.sean.ratel.android.ui.push.NotificationScreen
+import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.splash.Splash
 import com.sean.ratel.android.ui.splash.SplashViewModel
 import com.sean.ratel.android.ui.toolbox.AppManagerView
@@ -47,6 +49,8 @@ fun NavGraph(
     // val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
     val activity = LocalContext.current as MainActivity
     val mainViewModel: MainViewModel = ViewModelProvider(activity)[MainViewModel::class.java]
+    val pushViewModel: PushViewModel = ViewModelProvider(activity)[PushViewModel::class.java]
+
     val adViewModel: AdViewModel = ViewModelProvider(activity)[AdViewModel::class.java]
     val mainVideoModel: MainVideoViewModel =
         ViewModelProvider(activity)[MainVideoViewModel::class.java]
@@ -81,7 +85,7 @@ fun NavGraph(
     ) {
         // Splash
         composable(Destination.Splash.route) {
-            Splash(splashViewModel, adViewModel, mainViewModel)
+            Splash(splashViewModel, adViewModel, mainViewModel, pushViewModel)
         }
 
         // Home
@@ -115,7 +119,7 @@ fun NavGraph(
                 enterTransition = { EnterTransition.None },
             ) {
                 val viewModel: SettingViewModel = hiltViewModel(key = SettingViewModel.TAG)
-                Setting(viewModel, mainViewModel, adViewModel)
+                Setting(viewModel, mainViewModel, adViewModel, pushViewModel)
             }
         }
         // End
@@ -206,6 +210,16 @@ fun NavGraph(
         }
         composable(Destination.SettingAppLicense.route) {
             SettingOpenSourceLicensesScreen(modifier)
+        }
+
+        composable(
+            Destination.Notifcation.route,
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
+            NotificationScreen(modifier, mainViewModel, pushViewModel)
         }
     }
 }

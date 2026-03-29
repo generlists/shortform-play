@@ -1,17 +1,22 @@
 package com.sean.ratel.android.data.android.permission
 
-import android.content.Context
-import androidx.activity.result.ActivityResultLauncher
-import dagger.hilt.android.qualifiers.ActivityContext
+import androidx.activity.compose.ManagedActivityResultLauncher
 
 interface PermissionProvider {
     fun requestPermissions(
-        permissionLauncher: ActivityResultLauncher<Array<String>>,
-        permissions: Array<String>,
+        permissionLauncher: ManagedActivityResultLauncher<String, Boolean>,
+        permissions: String,
     )
 
-    fun handlePermissionResult(
-        @ActivityContext activity: Context,
-        permissions: Map<String, Boolean>,
-    ): PermissionManager.PermissionState
+    fun has(permission: String): Boolean
+
+    fun shouldShowRationale(permission: String): Boolean
+
+    fun requiredPermissions(): String
+
+    fun openAppSettings()
+
+    suspend fun consumeOpenedSettings(): Boolean
+
+    suspend fun markOpenedSettings()
 }

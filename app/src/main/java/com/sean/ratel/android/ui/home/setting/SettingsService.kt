@@ -36,13 +36,17 @@ import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import java.util.Locale
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun SettingsService(viewModel: SettingViewModel?) {
+fun SettingsService(
+    viewModel: SettingViewModel?,
+    pushViewModel: PushViewModel,
+) {
     Column(
         Modifier
             .wrapContentHeight()
@@ -65,6 +69,7 @@ fun SettingsService(viewModel: SettingViewModel?) {
             SettingsService(SettingsItems.SERVICE_TITLE_NOTICE, viewModel)
             SettingsService(SettingsItems.SERVICE_TITLE_QNA, viewModel)
             SettingsService(SettingsItems.SERVICE_TITLE_REGAL, viewModel)
+            SettingPush(SettingsItems.SERVICE_PUSH, pushViewModel)
         }
     }
 }
@@ -200,6 +205,6 @@ private fun runLinkItem(
 @Composable
 private fun SettingViewPreView() {
     RatelappTheme {
-        SettingsService(null)
+        // SettingsService(null)
     }
 }

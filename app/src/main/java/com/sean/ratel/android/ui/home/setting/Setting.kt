@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.TopNavigationBar
+import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
 import com.sean.ratel.android.ui.theme.RatelappTheme
@@ -40,8 +40,9 @@ fun Setting(
     viewModel: SettingViewModel?,
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
+    pushViewModel: PushViewModel,
 ) {
-    SettingView(viewModel, mainViewModel, adViewModel)
+    SettingView(viewModel, mainViewModel, adViewModel, pushViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -50,6 +51,7 @@ fun SettingView(
     viewModel: SettingViewModel?,
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
+    pushViewModel: PushViewModel,
 ) {
     val context = LocalContext.current
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
@@ -101,7 +103,7 @@ fun SettingView(
                         .fillMaxSize()
                         .padding(bottom = adSize.dp + bottomBarHeight.dp),
             ) {
-                item { SettingsService(viewModel) }
+                item { SettingsService(viewModel, pushViewModel) }
                 item { SettingsCountry(viewModel) }
                 item { SettingsVideo(viewModel) }
                 item { SettingsApp(viewModel) }
@@ -116,6 +118,6 @@ fun SettingView(
 @Composable
 private fun SettingViewPreView() {
     RatelappTheme {
-        SettingView(null, hiltViewModel(), hiltViewModel())
+        // SettingView(null, hiltViewModel())
     }
 }

@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,13 +16,18 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -126,27 +132,52 @@ fun SearchMain(
     mainViewModel: MainViewModel,
 ) {
     val searchType = rememberSaveable { mutableStateOf(SearchType.VideoSearch) }
-
+    Spacer(Modifier.height(10.dp))
     Box(
         modifier =
             Modifier
                 .fillMaxSize(),
     ) {
         Column(Modifier.fillMaxSize()) {
-            ScrollableTabBar(searchViewModel = searchViewModel, selectedIndx = { currentIndex ->
-                when (currentIndex) {
-                    0 -> {
-                        searchType.value = SearchType.VideoSearch
-                    }
-                    1 -> {
-                        searchType.value = SearchType.ArchiveSearch
-                    }
-                }
-            })
+            Card(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight(),
+                shape = RoundedCornerShape(12.dp),
+                border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
+                elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            ) {
+                ScrollableTabBar(
+                    searchViewModel = searchViewModel,
+                    selectedIndx = { currentIndex ->
+                        when (currentIndex) {
+                            0 -> {
+                                searchType.value = SearchType.VideoSearch
+                            }
+
+                            1 -> {
+                                searchType.value = SearchType.ArchiveSearch
+                            }
+                        }
+                    },
+                )
+            }
+            Spacer(Modifier.height(16.dp))
 
             when (searchType.value) {
-                SearchType.VideoSearch -> SearchComposeUi(searchViewModel, adViewModel, {})
-                SearchType.ArchiveSearch -> SearchFilterScreen(searchViewModel, adViewModel, mainViewModel)
+                SearchType.VideoSearch -> {
+                    SearchComposeUi(searchViewModel, adViewModel, {})
+                }
+
+                SearchType.ArchiveSearch -> {
+                    SearchFilterScreen(
+                        searchViewModel,
+                        adViewModel,
+                        mainViewModel,
+                    )
+                }
             }
         }
     }
@@ -172,8 +203,8 @@ fun ScrollableTabBar(
             Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .padding(bottom = 20.dp),
-        containerColor = APP_BACKGROUND,
+                .padding(12.dp),
+        containerColor = MaterialTheme.colorScheme.outlineVariant,
         indicator = { tabPositions ->
             TabRowDefaults.Indicator(
                 modifier =

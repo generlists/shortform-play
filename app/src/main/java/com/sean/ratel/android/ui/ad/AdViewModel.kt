@@ -3,6 +3,7 @@ package com.sean.ratel.android.ui.ad
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.ads.LoadAdError
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,8 +25,8 @@ class AdViewModel
         private val _bottomBarHeight = mutableStateOf(56)
         val bottomBarHeight = _bottomBarHeight
 
-        private val _adBannerLoadingCompleteAndGetAdSize = MutableStateFlow(Pair(false, 0))
-        val adBannerLoadingCompleteAndGetAdSize = _adBannerLoadingCompleteAndGetAdSize
+        private val _adNativeFail = MutableStateFlow<LoadAdError?>(null)
+        val adNativeFail: StateFlow<LoadAdError?> = _adNativeFail
 
         private val _forceClearCache = MutableStateFlow(false)
         val forceClearCache: StateFlow<Boolean> = _forceClearCache

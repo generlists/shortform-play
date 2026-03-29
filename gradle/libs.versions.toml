@@ -82,11 +82,12 @@ espresso = "3.5.1"
 
 shortform-play ="0.0.0.2"
 google-admob="0.0.7-SNAPSHOT"
+push="0.0.5-SNAPSHOT"
 
 [libraries]
 ai-shortformplay ={ module = "ai.shortform-play.sdk.ratel.player.android:player-core", version.ref = "shortform-play" }
 so-smartlab-sdk-common-ad-android ={ module = "so.smartlab.sdk.common:ad-android", version.ref = "google-admob" }
-
+so-smartlab-sdk-common-push-android ={ module = "so.smartlab.sdk.common:push-android", version.ref = "push" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 
 
@@ -207,3 +208,4 @@ android-library = { id = "com.android.library", version.ref = "agp" }
 kotlin-parcelize = { id = "kotlin-parcelize" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

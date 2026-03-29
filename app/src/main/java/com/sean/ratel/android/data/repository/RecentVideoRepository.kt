@@ -22,4 +22,8 @@ class RecentVideoRepository
         }
 
         suspend fun getRecentVideo(): List<MainShortsModel> = recentVideoPreference.getRecentVideo()
+
+        suspend fun deleteWatchItem(target: MainShortsModel) {
+            recentVideoPreference.deleteWatchItem(target)
+        }
     }

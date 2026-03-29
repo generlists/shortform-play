@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- 얇은 정사각형 프레임 -->
+    <path
+        android:fillColor="#000"
+        android:fillType="evenOdd"
+        android:pathData="
+            M5,5
+            h14
+            a2,2 0 0 1 2,2
+            v10
+            a2,2 0 0 1 -2,2
+            h-14
+            a2,2 0 0 1 -2,-2
+            v-10
+            a2,2 0 0 1 2,-2
+            z
+
+            M6.8,6.8
+            h10.4
+            a1,1 0 0 1 1,1
+            v8.4
+            a1,1 0 0 1 -1,1
+            h-10.4
+            a1,1 0 0 1 -1,-1
+            v-8.4
+            a1,1 0 0 1 1,-1
+            z" />
+
+    <!-- 플레이 버튼 -->
+    <path
+        android:fillColor="#abff43"
+        android:pathData="M10,8.8v6.4L15.2,12L10,8.8z" />
+</vector>

@@ -80,6 +80,7 @@
     <string name="pip_memory_error">erreur de mémoire faible</string>
     <string name="setting_dev_other_app">Autres applications de ce développeur</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+
     <!-- Gestion d'application -->
     <string name="app_manager">Gestionnaire d’applis</string>
     <string name="app_manager_detail">Afficher et gérer les informations des applis sur votre appareil.</string>
@@ -165,7 +166,7 @@
     <string name="api_unknown_error">Une erreur inconnue s’est produite.</string>
     <string name="api_empty_error">Échec du chargement des données. Veuillez réessayer !</string>
     <string name="api_error_retry">Réessayer</string>
-    <string name="api_error_data_not_found">Aucune donnée trouvée</string>
+
 
     <string name="search_type_keyword">Recherche par mots-clés</string>
     <string name="search_type_daily">Shorts du jour</string>
@@ -175,5 +176,22 @@
     <string name="search_category">⚡ Catégorie</string>
     <string name="search_daily_reset">Réinitialiser</string>
     <string name="search_daily_apply">Appliquer</string>
+
+    <!-- 1.0.9-->
+    <string name="app_notification">Notifications</string>
+    <string name="setting_push_management">Notifications push</string>
+    <string name="setting_push_description">Recevez des notifications sur diverses actualités.</string>
+    <string name="setting_push_app_update">"Mises à jour de l'application"</string>
+    <string name="setting_push_video_upload">Mises en ligne de contenu</string>
+    <string name="setting_push_recommend">Vidéos recommandées</string>
+    <string name="api_error_data_not_found">Aucune donnée trouvée</string>
+    <string name="notification_list_description">"Jusqu'à 200 notifications sont enregistrées dans le stockage interne. Au-delà de 200, les plus anciennes sont automatiquement supprimées."</string>
+    <string name="notification_no_data">Aucune notification.</string>
+    <string name="notification_update">Mise à jour</string>
+    <string name="notification_upload">Mise en ligne</string>
+    <string name="notification_recommend">Recommandation</string>
+    <string name="notification_force_update">[Mise à jour requise]</string>
+    <string name="notification_today">Aujourd’hui</string>
+    <string name="notification_yesterday">Hier</string>
 
 </resources>

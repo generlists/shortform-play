@@ -1,7 +1,6 @@
 package com.sean.ratel.android.ui.home.setting
 
 import android.content.Intent
-import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -36,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
@@ -176,7 +176,7 @@ private fun SettingsVideo(
                         } else if (item == SettingsItems.SERVICE_VIDEO_PIP_PLAY) {
                             val intent =
                                 Intent("android.settings.PICTURE_IN_PICTURE_SETTINGS").apply {
-                                    data = Uri.parse("package:${context.packageName}")
+                                    data = "package:${context.packageName}".toUri()
                                 }
                             pipSettingsLauncher.launch(intent)
                         }

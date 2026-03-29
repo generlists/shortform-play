@@ -240,59 +240,36 @@ fun ShortsItemList(
             Modifier
                 .fillMaxSize()
                 .padding(bottom = adSize.dp),
-//                .then(
-//                    if (adBannerLoadingComplete.value.first == true) {
-//                        Modifier.padding(bottom = adBannerLoadingComplete.value.second.dp)
-//                    } else {
-//                        Modifier
-//                    },
-//                ),
-        // verticalArrangement = Arrangement.spacedBy(7.dp),
     ) {
         var i = 0
         val targetIndexList = validationIndex(Destination.Home.Main.route, size)
 
         item {
             while (i < size) {
-                var adPosition = -1
-                targetIndexList.forEach { if (it == i) adPosition = it }
-
                 if (i == 0) {
                     AutoScrollImagePager(viewModel, topFiveData)
                     Spacer(Modifier.height(8.dp))
                 }
 
-                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECENTLY_WATCH_ORDER)) ||
-                    i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECENTLY_WATCH_ORDER) + 1
-
-                ) {
+                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECENTLY_WATCH_ORDER))) {
                     RecentVideoWatchList(viewModel)
                     Spacer(Modifier.height(32.dp))
                 }
 
-                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TRENDS_SHORTS_ORDER)) ||
-                    i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TRENDS_SHORTS_ORDER) + 1
-
-                ) {
+                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TRENDS_SHORTS_ORDER))) {
                     TrendShortsList(viewModel, trendShortsData)
                     Spacer(Modifier.height(32.dp))
                 }
-                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.POPULAR_ORDER)) ||
-                    i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.POPULAR_ORDER) + 1
-                ) {
+                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.POPULAR_ORDER))) {
                     PopularShortFormPager(viewModel, shortFormSearchData)
                     Spacer(Modifier.height(32.dp))
                 }
 
-                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.EDITOR_PICK_ORDER)) ||
-                    i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.EDITOR_PICK_ORDER) + 1
-                ) {
+                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.EDITOR_PICK_ORDER))) {
                     EditorPickHorizontalList(viewModel, editorPickData)
                     Spacer(Modifier.height(32.dp))
                 }
-                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.DAILY_RANKING_ORDER)) ||
-                    i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.DAILY_RANKING_ORDER) + 1
-                ) {
+                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.DAILY_RANKING_ORDER))) {
                     RankingHorizontalScrollView(
                         3,
                         viewModel,
@@ -302,9 +279,7 @@ fun ShortsItemList(
                     )
                     Spacer(Modifier.height(32.dp))
                 }
-                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECOMMEND_SHORTFORM_ORDER)) ||
-                    i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECOMMEND_SHORTFORM_ORDER) + 1
-                ) {
+                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECOMMEND_SHORTFORM_ORDER))) {
                     HomeRecommendList(
                         mainViewModel = viewModel,
                         recommendList = recommendShortFormData,

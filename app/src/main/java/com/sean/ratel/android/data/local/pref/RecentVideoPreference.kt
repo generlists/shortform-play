@@ -11,7 +11,6 @@ import com.sean.ratel.android.data.common.RemoteConfig.MAX_RECENTLY_SAVE_SIZE
 import com.sean.ratel.android.data.dto.MainShortsModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import java.util.Stack
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,19 +34,19 @@ class RecentVideoPreference
             dataStore.edit { it.remove(recentlyVideoKey) }
         }
 
-        suspend fun getRecentVideo(): Stack<MainShortsModel> {
+        suspend fun getRecentVideo(): List<MainShortsModel> {
             val jsonString: String =
                 dataStore.data
                     .map { preferences -> preferences[recentlyVideoKey] ?: "" }
                     .first()
-            val type = object : TypeToken<Stack<MainShortsModel>>() {}.type
-            val currentList: Stack<MainShortsModel> =
-                if (jsonString.isNotEmpty()) {
-                    gson.fromJson(jsonString, type)
-                } else {
-                    Stack<MainShortsModel>()
-                }
-            return currentList
+
+            val type = object : TypeToken<List<MainShortsModel>>() {}.type
+
+            return if (jsonString.isNotEmpty()) {
+                gson.fromJson(jsonString, type)
+            } else {
+                emptyList()
+            }
         }
 
         suspend fun updateRecentVideo(recentVideo: MainShortsModel) {
@@ -77,5 +76,16 @@ class RecentVideoPreference
             }
 
             setRecentVideo(currentList) // 수정된 리스트 저장
+        }
+
+        suspend fun deleteWatchItem(target: MainShortsModel) {
+            val currentList = getRecentVideo()
+
+            val updatedList =
+                currentList.filterNot {
+                    it.shortsVideoModel?.videoId == target.shortsVideoModel?.videoId
+                }
+
+            setRecentVideo(updatedList)
         }
     }

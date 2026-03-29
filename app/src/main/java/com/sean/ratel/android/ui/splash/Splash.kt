@@ -1,7 +1,10 @@
 package com.sean.ratel.android.ui.splash
 
-import android.content.Context
+import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -21,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,14 +47,24 @@ import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.ShortFormSelectDialog
 import com.sean.ratel.android.ui.progress.LottieLoader
+import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
+import com.sean.ratel.android.utils.PhoneUtil.qnaResource
 import com.sean.ratel.android.utils.UIUtil.getCountryCode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
+
+enum class SplashStep {
+    NETWORK,
+    NOTIFICATION,
+    AUTH,
+    INIT,
+    DONE,
+}
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -58,11 +72,126 @@ fun Splash(
     splashViewModel: SplashViewModel,
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
+    pushViewModel: PushViewModel,
 ) {
+    var step by rememberSaveable { mutableStateOf(SplashStep.NETWORK) }
+    val autoCheck by splashViewModel.authCheck.collectAsState()
+
     BackHandler { splashViewModel.navigator.finish() }
-    NetworkAlert(splashViewModel)
-    AuthCheckAlert(splashViewModel)
-    InitialDataAndAD(mainViewModel, adViewModel, splashViewModel)
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Log.d("SPLASH", "pass  $step ,  autoCheck : $autoCheck")
+
+        when (step) {
+            SplashStep.NETWORK -> {
+                NetworkAlert(
+                    splashViewModel = splashViewModel,
+                    pass = { pass ->
+                        Log.d("SPLASH", "pass : Network $pass")
+                        if (!pass) step = SplashStep.NOTIFICATION
+                    },
+                )
+            }
+
+            SplashStep.NOTIFICATION -> {
+                Log.d("SPLASH", "pass : NOTIFICATION $step")
+                NotificationPermission(
+                    splashViewModel = splashViewModel,
+                    pushViewModel = pushViewModel,
+                    pass = { pass ->
+                        if (pass) step = SplashStep.AUTH
+                    },
+                )
+            }
+
+            SplashStep.AUTH -> {
+                Log.d("SPLASH", "pass : AUTH")
+                AuthCheckAlert(
+                    splashViewModel = splashViewModel,
+                    pass = { pass ->
+                        Log.d("SPLASH", "pass : A $pass")
+                        if (pass) step = SplashStep.INIT
+                    },
+                )
+            }
+
+            SplashStep.INIT -> {
+                InitialDataAndAD(
+                    mainViewModel = mainViewModel,
+                    adViewModel = adViewModel,
+                    splashViewModel = splashViewModel,
+                    pass = { pass ->
+                        if (pass) step = SplashStep.DONE
+                    },
+                )
+            }
+
+            SplashStep.DONE -> {
+                LaunchedEffect(Unit) {
+                    delay(500)
+                    adViewModel.goMainHome()
+                }
+            }
+        }
+        AnimatedVisibility(
+            visible = step != SplashStep.DONE,
+            exit = fadeOut(animationSpec = tween(durationMillis = 500)),
+        ) {
+            SplashView()
+        }
+    }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
+private fun NotificationPermission(
+    splashViewModel: SplashViewModel,
+    pushViewModel: PushViewModel,
+    pass: (Boolean) -> Unit,
+) {
+    val permissionManager = splashViewModel.permissionManager
+    val requestPermission = permissionManager.requiredPermissions()
+
+    var hasRequested by rememberSaveable { mutableStateOf(false) }
+
+    val notificationLauncher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.RequestPermission(),
+        ) { granted ->
+            // result 권한 획득 유무와 관계 없이 이동
+            Log.d("SPLASH", "granted $granted")
+            if (granted) {
+                pushViewModel.refreshPermission()
+                pushViewModel.registerPush()
+            } else {
+                pushViewModel.unRegisterPush()
+            }
+
+            pass(true)
+        }
+
+    LaunchedEffect(Unit) {
+        if (!hasRequested) {
+            hasRequested = true
+            Log.d("SPLASH", "grant")
+            // 33 이상만 권한 요청
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                val grant = permissionManager.has(permission = requestPermission)
+                val rationale =
+                    permissionManager.shouldShowRationale(permission = requestPermission)
+
+                Log.d("SPLASH", "grant $grant , rationale : $rationale")
+                if (!grant) {
+                    kotlinx.coroutines.android.awaitFrame()
+                    notificationLauncher.launch(requestPermission)
+                } else {
+                    pass(true)
+                }
+            } else {
+                pass(true)
+            }
+        }
+    }
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -102,7 +231,10 @@ private fun SplashView() {
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-private fun NetworkAlert(splashViewModel: SplashViewModel) {
+private fun NetworkAlert(
+    splashViewModel: SplashViewModel,
+    pass: (Boolean) -> Unit,
+) {
     val context = LocalContext.current
     var showDialog by remember { mutableStateOf(!splashViewModel.isNetWorkAvailable(context)) }
 
@@ -118,58 +250,52 @@ private fun NetworkAlert(splashViewModel: SplashViewModel) {
             stringResource(R.string.alert_ok),
         )
     }
+    pass(showDialog)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-private fun AuthCheckAlert(splashViewModel: SplashViewModel) {
+private fun AuthCheckAlert(
+    splashViewModel: SplashViewModel,
+    pass: (Boolean) -> Unit,
+) {
     val context = LocalContext.current
-    val showDialog = splashViewModel.authCheck.collectAsState()
+    val showDialog by splashViewModel.authCheck.collectAsState()
 
-    RLog.d("SPLASH", "showDialog : $showDialog")
-
-    if (showDialog.value != 0) {
+    RLog.d("SPLASH", "showDialog value : $showDialog")
+    if (showDialog != null && showDialog != 0) {
         ShortFormCommonAlertDialog(
             onDismiss = { buttonClick ->
                 if (buttonClick) {
-                    if (showDialog.value == 1000) {
+                    if (showDialog == 1000) {
                         PhoneUtil.runAppStore(
                             context,
-                            URL_GOOGLE_PLAY_APP(
-                                URL_MY_PACKAGE_NAME,
-                            ),
+                            URL_GOOGLE_PLAY_APP(URL_MY_PACKAGE_NAME),
                         )
                     } else {
-                        PhoneUtil.sendEmail(context, STRINGS.FEEDBACK_TITLE, qnaResource(context))
+                        PhoneUtil.sendEmail(
+                            context,
+                            STRINGS.FEEDBACK_TITLE,
+                            qnaResource(context),
+                        )
                     }
-                    splashViewModel.setAuthCheck(0)
+                    splashViewModel.exitApp()
                 }
             },
-            if (showDialog.value == 1000) {
+            if (showDialog == 1000) {
                 stringResource(R.string.go_app_store)
             } else {
-                stringResource(
-                    R.string.auth_error,
-                )
+                stringResource(R.string.auth_error)
             },
-            if (showDialog.value == 1000) {
+            if (showDialog == 1000) {
                 stringResource(R.string.store_update_btn)
             } else {
-                stringResource(
-                    R.string.alert_ok,
-                )
+                stringResource(R.string.alert_ok)
             },
         )
+    } else {
+        pass(true)
     }
-}
-
-fun qnaResource(context: Context): String {
-    val str = StringBuilder()
-    str.append("App Version : ")
-    str.append(PhoneUtil.getAppVersionName(context))
-    str.append("\n")
-    str.append(PhoneUtil.getEnvironment())
-    return str.toString()
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -178,6 +304,7 @@ fun InitialDataAndAD(
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
     splashViewModel: SplashViewModel,
+    pass: (Boolean) -> Unit,
 ) {
     var showSplash by remember { mutableStateOf(true) }
     var locale by remember { mutableStateOf("") }
@@ -202,12 +329,10 @@ fun InitialDataAndAD(
             Pair(mainData, trendsShortsData)
         }.collect { combinedResult ->
             val (main, trends) = combinedResult
-            if (authCheck > 0) return@collect
+            if (authCheck != null && (authCheck ?: 0) > 0) return@collect
             RLog.d("SPLASH", "main : $main trends : $trends")
             if (main && trends) {
-                showSplash = false
-                delay(500)
-                adViewModel.goMainHome()
+                pass(true)
             }
         }
     }
@@ -257,13 +382,6 @@ fun InitialDataAndAD(
                 )
             }
         }
-    }
-
-    AnimatedVisibility(
-        visible = showSplash,
-        exit = fadeOut(animationSpec = tween(durationMillis = 500)),
-    ) {
-        SplashView()
     }
 }
 
