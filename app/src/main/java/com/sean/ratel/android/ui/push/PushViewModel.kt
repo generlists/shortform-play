@@ -54,9 +54,6 @@ class PushViewModel
 
         val hasPermission: StateFlow<Boolean> = _hasPermission
 
-        private val _currentPushItemCheck = MutableStateFlow<SettingsItems?>(null)
-        val currentPushItemCheck: StateFlow<SettingsItems?> = _currentPushItemCheck
-
         private val _pushUiEvent =
             MutableSharedFlow<Boolean>(
                 replay = 0,
@@ -77,8 +74,17 @@ class PushViewModel
                 initialValue = false,
             )
 
-        fun setCurrentPushCheck(item: SettingsItems?) {
-            _currentPushItemCheck.value = item
+        val fromPermissionPage: StateFlow<Boolean> =
+            pushPreference.getFromPermissionPage().stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = false,
+            )
+
+        fun setFromPermissionPage(fromPermissionPage: Boolean) {
+            viewModelScope.launch {
+                pushPreference.setFromPermissionPage(fromPermissionPage)
+            }
         }
 
         init {
@@ -148,6 +154,11 @@ class PushViewModel
                 saveUploadPush(_hasPermission.value)
                 saveRecommendPush(_hasPermission.value)
             }
+        }
+
+        fun setMainPermission() {
+            _hasPermission.value =
+                permissionManager.has(permissionManager.requiredPermissions())
         }
 
         fun refreshPermission() {

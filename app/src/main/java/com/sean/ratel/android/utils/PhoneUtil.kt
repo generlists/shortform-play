@@ -1,6 +1,7 @@
 package com.sean.ratel.android.utils
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.R
 import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.common.STRINGS
@@ -235,5 +237,19 @@ object PhoneUtil {
         str.append("\n")
         str.append(PhoneUtil.getEnvironment())
         return str.toString()
+    }
+
+    fun newActivity(context: Context) {
+        val activity = (context as? Activity)
+
+        activity?.let {
+            val intent =
+                Intent(it, MainActivity::class.java).apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    putExtra("clear_cache", true)
+                }
+            it.startActivity(intent)
+            it.finish()
+        }
     }
 }

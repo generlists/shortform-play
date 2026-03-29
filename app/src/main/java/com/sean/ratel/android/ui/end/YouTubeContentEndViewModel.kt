@@ -20,6 +20,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.AdsSdk
 import javax.inject.Inject
@@ -439,8 +440,11 @@ YouTubeContentEndViewModel
             categoryShorts: Map<String, List<MainShortsModel>>,
         ) = viewModelScope.launch {
             youtueRepository
-                .requestYouTubeShortsSearchToEnd(videoId, settingRepository.getLocale())
-                .collect { response ->
+                .requestYouTubeShortsSearchToEnd(
+                    videoId,
+                    settingRepository.getLocale().first()
+                        ?: "KR",
+                ).collect { response ->
 
                     when (response) {
                         is ApiResult.Loading -> {

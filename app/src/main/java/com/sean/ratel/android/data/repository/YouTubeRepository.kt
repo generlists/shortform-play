@@ -70,6 +70,13 @@ class YouTubeRepository
                             String.format(DEFAULT_URL, countryCode)
                         }
                     val mainShortsListResponse = shortsJson.getShortsList(key)
+                    RLog.d(
+                        "SPLASH",
+                        "start key : $key , countryCode : $countryCode, " +
+                            " size  : ${
+                                mainShortsListResponse?.shortformList?.topFiveList?.fiveList?.size
+                            }",
+                    )
                     mainShortsListResponse?.shortformList?.let {
                         mainShortsVideosCache = mainShortsListResponse
                         emit(mainShortsListResponse)
@@ -178,7 +185,10 @@ class YouTubeRepository
                 } catch (e: HttpException) {
                     val message =
                         when (e.code()) {
-                            in 400..499 -> context.resources.getString(R.string.api_bad_request_error)
+                            in 400..499 -> {
+                                context.resources.getString(R.string.api_bad_request_error)
+                            }
+
                             in 500..599 -> {
                                 if (e.code() == 503) {
                                     context.resources.getString(R.string.api_empty_error)
@@ -187,7 +197,9 @@ class YouTubeRepository
                                 }
                             }
 
-                            else -> context.resources.getString(R.string.api_unknown_error)
+                            else -> {
+                                context.resources.getString(R.string.api_unknown_error)
+                            }
                         }
                     emit(ApiResult.Exception(ServerErrorException(message)))
                 } catch (e: Exception) {

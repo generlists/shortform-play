@@ -1,8 +1,5 @@
 package com.sean.ratel.android.ui.home.setting
 
-import android.app.Activity
-import android.content.Context
-import android.content.Intent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +20,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,7 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.ratel.android.MainActivity
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.getShortFormCountry
 import com.sean.ratel.android.data.log.GASettingAnalytics
@@ -48,6 +46,7 @@ import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.utils.PhoneUtil.newActivity
 import kotlinx.coroutines.launch
 
 @Suppress("ktlint:standard:function-naming")
@@ -94,15 +93,16 @@ private fun ShortFormCountry(
             Pair(stringResource(R.string.select_country_tailand), "TH"),
             Pair(stringResource(R.string.select_country_canada_en), "CA"),
         )
-    var locale by remember { mutableStateOf("KR") }
+    val locale = viewModel?.locale?.collectAsState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     LaunchedEffect(viewModel) {
         coroutineScope.launch {
-            locale = viewModel?.getLocale() ?: "KR"
+            // locale = viewModel?.getLocale() ?: "KR"
         }
     }
-    val country = getShortFormCountry(context).first { it.second == locale }
+    val value = locale?.value ?: "KR"
+    val country = getShortFormCountry(context).first { it.second == value }
     Row(
         Modifier
             .padding(horizontal = 20.dp, vertical = 16.dp)
@@ -114,13 +114,14 @@ private fun ShortFormCountry(
             Modifier
                 .clickable {
                     showPopup = true
+                    val value = locale?.value ?: "KR"
                     viewModel?.sendGALog(
                         screenName = GASettingAnalytics.SCREEN_NAME,
                         eventName = GASettingAnalytics.Event.SETTING_MAIN_COUNTY_ITEM_CLICK,
                         actionName = GASettingAnalytics.Action.CLICK,
                         parameter =
                             mapOf(
-                                GASettingAnalytics.Param.COUNTY_CODE to locale,
+                                GASettingAnalytics.Param.COUNTY_CODE to value,
                             ),
                     )
                 }.align(Alignment.CenterVertically),
@@ -163,10 +164,11 @@ private fun ShortFormCountry(
 
     if (showPopup) {
         ShortFormSelectDialog(
-            defaultCountryCode = locale,
+            defaultCountryCode = locale?.value ?: "KR",
             options = options,
             onClick = { countryCode ->
-                if (locale != countryCode) {
+                // Log.d("LLLLLLLLLL","${locale?.value} countryCode!! $countryCode")
+                if (locale?.value != countryCode) {
                     viewModel?.sendGALog(
                         screenName = GASettingAnalytics.SCREEN_NAME,
                         eventName = GASettingAnalytics.Event.SELECT_COUNTY_CLICK,
@@ -178,10 +180,11 @@ private fun ShortFormCountry(
                     )
 
                     coroutineScope.launch {
+                        RLog.d("SPLASH", "${locale?.value} countryCode!! $countryCode")
                         viewModel?.removeLocalCache("shorts_main_list_$locale.json")
                         viewModel?.removeLocalCache("shorts_trailer_list_$locale.json")
                         viewModel?.removeCategory()
-                        locale = countryCode
+
                         viewModel?.setLocale(countryCode)
                         newActivity(context)
                     }
@@ -194,20 +197,6 @@ private fun ShortFormCountry(
             },
             showDescription = false,
         )
-    }
-}
-
-private fun newActivity(context: Context) {
-    val activity = (context as? Activity)
-
-    activity?.let {
-        val intent =
-            Intent(it, MainActivity::class.java).apply {
-                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                putExtra("clear_cache", true)
-            }
-        it.startActivity(intent)
-        it.finish()
     }
 }
 

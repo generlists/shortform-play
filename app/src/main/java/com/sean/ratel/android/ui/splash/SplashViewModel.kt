@@ -2,6 +2,7 @@ package com.sean.ratel.android.ui.splash
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,9 +28,12 @@ import com.sean.ratel.android.utils.TimeUtil.getCurrentDate
 import com.sean.ratel.android.utils.UIUtil.pickTendShortsFromMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.resume
@@ -71,8 +75,8 @@ class SplashViewModel
         private val _authCheck = MutableStateFlow<Int?>(null)
         val authCheck = _authCheck
 
-        private val _newUpdate = MutableStateFlow<Boolean>(true)
-        val newUpdate = _newUpdate.asStateFlow()
+        private val _hasLoadedOnce = MutableStateFlow(false)
+        val hasLoadedOnce: StateFlow<Boolean> = _hasLoadedOnce
 
         init {
             viewModelScope.launch {
@@ -188,7 +192,11 @@ class SplashViewModel
                     countryCode,
                     forceRefresh,
                 ).collect { response ->
-                    RLog.d("OKJSP", "shortformList itemSize : ${response.itemSize}")
+                    RLog.d(
+                        "SPLASH",
+                        "countryCode : $countryCode  $shortformList" +
+                            " itemSize : ${response.shortformList.shortformVideoList.videoLikeList.likeList.size}",
+                    )
 
                     _shortformList.value = Pair(response.shortformList, response.itemSize)
 
@@ -257,20 +265,21 @@ class SplashViewModel
                     }.addOnFailureListener { exception ->
                         if (_retryCount.value <= 3) {
                             viewModelScope.launch {
+                                Log.d("LLLLLLLLLL", "retry start : $countryCode")
                                 requestYouTubeVideos(
                                     RequestType.DEFAULT,
                                     FirebaseStorage.getInstance(),
                                     countryCode,
                                     forceRefresh,
                                 )
-                                viewModelScope.launch {
-                                    requestYouTubeTrendShorts(
-                                        RequestType.DEFAULT,
-                                        FirebaseStorage.getInstance(),
-                                        countryCode,
-                                        forceRefresh,
-                                    )
-                                }
+                            }
+                            viewModelScope.launch {
+                                requestYouTubeTrendShorts(
+                                    RequestType.DEFAULT,
+                                    FirebaseStorage.getInstance(),
+                                    countryCode,
+                                    forceRefresh,
+                                )
                             }
                         }
                         _retryCount.value += 1
@@ -279,23 +288,20 @@ class SplashViewModel
 
         fun isNetWorkAvailable(context: Context) = NetworkUtil.isNetworkAvailable(context)
 
-        suspend fun getLocale(): String = settingRepository.getLocale()
-
-        fun loadNewUpdate() {
-            viewModelScope.launch {
-                _newUpdate.value = settingRepository.getNewUpdate()
-            }
-        }
+        @OptIn(FlowPreview::class)
+        val locale: StateFlow<String?> =
+            settingRepository
+                .getLocale()
+                .onStart {
+                    _hasLoadedOnce.value = true
+                }.stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5_000),
+                    initialValue = null,
+                )
 
         suspend fun setLocale(locale: String) {
             settingRepository.setLocale(locale)
-        }
-
-        fun setNewUpdate(update: Boolean) {
-            viewModelScope.launch {
-                settingRepository.setNewUpdate(update)
-                _newUpdate.value = update
-            }
         }
 
         fun setAuthCheck(check: Int) {

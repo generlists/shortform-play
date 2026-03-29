@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -62,7 +63,5 @@ class SettingPreference
 
         suspend fun getSoundOnOff(): Boolean = dataStore.data.map { it[soundOnOff] }.first() ?: false
 
-        suspend fun getLocale(): String = dataStore.data.map { it[localeString] }.first() ?: ""
-
-        suspend fun getNewUpdate(): Boolean = dataStore.data.map { it[newUpdate] }.first() ?: false
+        fun getLocale(): Flow<String?> = dataStore.data.map { it[localeString] }
     }

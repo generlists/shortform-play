@@ -3,6 +3,7 @@ package com.sean.ratel.android.ui.end
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -288,6 +289,7 @@ class YouTubeEndFragment(
                 mainViewModel.currentSelection,
                 mainViewModel.adMobinitState,
             ) { selection, admobState ->
+                Log.d("InterstitialAdManager", "fromSearch : $fromSearch currentSelection : $selection}")
                 InterstitialAdManager.AdTriggerState(
                     selection = selection,
                     fromSearch = fromSearch,
@@ -799,11 +801,12 @@ class YouTubeEndFragment(
             mainShortsModel: MainShortsModel,
         ): YouTubeEndFragment {
             val fragment = YouTubeEndFragment(viewPager)
+            val adSearch = if (position == 0) fromSearch else false
             val args =
                 Bundle().apply {
                     putInt(ARG_POSITION, position)
                     putInt(ARG_TOTAL_SIZE, totalSize)
-                    putBoolean(ARG_FROM_SEARCH, fromSearch)
+                    putBoolean(ARG_FROM_SEARCH, adSearch)
                     putParcelable(ARG_SHORTS_DATA, mainShortsModel)
                 }
             fragment.arguments = args

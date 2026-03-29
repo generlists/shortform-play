@@ -2,6 +2,7 @@ package com.sean.ratel.android.ui.home.setting
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.SettingRepository
@@ -11,6 +12,9 @@ import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.PhoneUtil
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -60,7 +64,12 @@ class SettingViewModel
 
         suspend fun getSoundOnOff(): Boolean = settingRepository.getSoundOnOff()
 
-        suspend fun getLocale(): String = settingRepository.getLocale()
+        val locale: StateFlow<String?> =
+            settingRepository.getLocale().stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = null,
+            )
 
         suspend fun setAutoPlay(isAutoPlay: Boolean) {
             settingRepository.setAutoPlay(isAutoPlay)

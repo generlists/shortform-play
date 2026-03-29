@@ -40,6 +40,7 @@ class PushPreference
         private val saveOpenSettingPush = booleanPreferencesKey("save_open_setting")
         private val pushNotification = stringPreferencesKey("push_notification_list")
         private val newPush = booleanPreferencesKey("new_setting")
+        private val fromPermissionPage = booleanPreferencesKey("from_permission")
 
         val pushJson =
             Json {
@@ -237,5 +238,18 @@ class PushPreference
 
         suspend fun updatePush(pushList: List<PushModel>) {
             setNewPush(pushList)
+        }
+
+        fun getFromPermissionPage(): Flow<Boolean> =
+
+            dataStore.data
+                .map { prefs ->
+                    prefs[fromPermissionPage] ?: true
+                }
+
+        suspend fun setFromPermissionPage(upload: Boolean) {
+            dataStore.edit { prefs ->
+                prefs[fromPermissionPage] = upload
+            }
         }
     }
