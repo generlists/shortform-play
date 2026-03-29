@@ -35,6 +35,7 @@ import com.sean.ratel.android.ui.home.HomeTopBar
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.NavGraph
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
+import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
@@ -44,6 +45,7 @@ import so.smartlab.common.ad.admob.data.model.AdMobInitState
 fun ShortFormPlayApp(
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
+    pushViewModel: PushViewModel,
     finish: () -> Unit,
 ) {
     RatelappTheme {
@@ -68,11 +70,13 @@ fun ShortFormPlayApp(
                     HomeTopBar(
                         modifier = Modifier.padding(top = insetPaddingValue),
                         mainViewModel,
+                        pushViewModel,
                         currentRoute,
                         historyBack = {
                             mainViewModel.runNavigationBack(Destination.YouTube.route)
                         },
                         privacyOptionClick = { mainViewModel.runPrivacyOptionMenu(context) },
+                        notificationPage = { pushViewModel.goNotificationPage() },
                     )
                 }
             },

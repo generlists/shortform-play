@@ -82,6 +82,7 @@
     <string name="pip_memory_error">Memori rendah</string>
     <string name="setting_dev_other_app">Aplikasi lain dari developer ini</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+
     <!-- Pengelola Aplikasi -->
     <string name="app_manager">Pengelola Aplikasi</string>
     <string name="app_manager_detail">Tampilkan dan kelola informasi aplikasi di perangkat Anda.</string>
@@ -162,7 +163,6 @@
     <string name="api_unknown_error">Terjadi kesalahan yang tidak diketahui.</string>
     <string name="api_empty_error">Gagal mengambil data. Silakan coba lagi!</string>
     <string name="api_error_retry">Coba Lagi</string>
-    <string name="api_error_data_not_found">Data tidak ditemukan</string>
 
     <string name="search_type_keyword">Pencarian Kata Kunci</string>
     <string name="search_type_daily">Shorts Harian</string>
@@ -172,4 +172,21 @@
     <string name="search_category">⚡ Kategori</string>
     <string name="search_daily_reset">Reset</string>
     <string name="search_daily_apply">Terapkan</string>
+
+    <!-- 1.0.9 -->
+    <string name="app_notification">Notifikasi</string>
+    <string name="setting_push_management">Notifikasi Push</string>
+    <string name="setting_push_description">Terima notifikasi tentang berbagai kabar terbaru.</string>
+    <string name="setting_push_app_update">Pembaruan Aplikasi</string>
+    <string name="setting_push_video_upload">Unggahan Konten</string>
+    <string name="setting_push_recommend">Video Rekomendasi</string>
+    <string name="api_error_data_not_found">Data Tidak Ditemukan</string>
+    <string name="notification_list_description">Hingga 200 notifikasi disimpan di penyimpanan internal. Jika melebihi 200, notifikasi yang paling lama akan otomatis dihapus.</string>
+    <string name="notification_no_data">Tidak ada notifikasi.</string>
+    <string name="notification_update">Pembaruan</string>
+    <string name="notification_upload">Unggah</string>
+    <string name="notification_recommend">Rekomendasi</string>
+    <string name="notification_force_update">[Pembaruan Wajib]</string>
+    <string name="notification_today">Hari ini</string>
+    <string name="notification_yesterday">Kemarin</string>
 </resources>

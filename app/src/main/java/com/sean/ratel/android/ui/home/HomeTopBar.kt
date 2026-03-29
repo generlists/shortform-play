@@ -11,23 +11,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.Notifications
+import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -36,17 +43,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.PhoneUtil.searchButton
 import com.sean.ratel.android.utils.PhoneUtil.shareAppLinkButton
@@ -57,78 +64,103 @@ import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 fun HomeTopBar(
     modifier: Modifier,
     mainViewModel: MainViewModel?,
+    pushViewModel: PushViewModel,
     isHomeNaviBar: String,
     historyBack: () -> Unit,
     privacyOptionClick: () -> Unit,
+    notificationPage: () -> Unit = {},
 ) {
     Box(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .height(56.dp)
-                .clickable(enabled = false, onClick = {})
-                .background(
-                    if (isHomeNaviBar == Destination.YouTube.route) {
+        modifier = modifier.fillMaxWidth().wrapContentHeight(),
+    ) {
+        Box(
+            modifier =
+                Modifier.fillMaxWidth().height(56.dp).background(
+                    brush =
                         Brush.verticalGradient(
                             colors =
                                 listOf(
-                                    // 80%
                                     Color(0xCC000000),
                                     Color.Transparent,
                                 ),
-                        )
-                    } else {
-                        Brush.linearGradient(
-                            // 동일한 빨간색으로 단일 색상 처리
-                            colors = listOf(APP_BACKGROUND, APP_BACKGROUND),
-                        )
-                    },
+                        ),
                 ),
-        contentAlignment = Alignment.CenterStart,
-    ) {
-        val density = LocalDensity.current
-
-        Row(
+        )
+        Divider(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .padding(start = 10.dp)
-                    .onGloballyPositioned { coordinates ->
-                        val topBarHeight =
-                            with(density) {
-                                coordinates.size.height
-                                    .toDp()
-                                    .value
-                            }
-                        mainViewModel?.setTopBarHeight(topBarHeight.toInt())
-                    },
-            // Row 내에서 수직 중앙 정렬
-            verticalAlignment = Alignment.CenterVertically,
+                    .fillMaxWidth()
+                    .height(1.5.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(Color(0xFF1C1C1E)),
+        )
+
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(53.dp)
+                    .clickable(enabled = false, onClick = {})
+                    .background(
+                        if (isHomeNaviBar == Destination.YouTube.route) {
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        // 80%
+                                        Color(0xCC000000),
+                                        Color.Transparent,
+                                    ),
+                            )
+                        } else {
+                            Brush.linearGradient(
+                                // 동일한 빨간색으로 단일 색상 처리
+                                colors = listOf(APP_BACKGROUND, APP_BACKGROUND),
+                            )
+                        },
+                    ),
+            contentAlignment = Alignment.CenterStart,
         ) {
-            val isPrivacy = mainViewModel?.isPrivacyOptionMenu?.collectAsState(false)
-            if (isHomeNaviBar == Destination.Home.Main.route || isHomeNaviBar == Destination.Home.ShortForm.route) {
-                Image(
-                    painterResource(R.drawable.shortform_play_icon_main),
-                    contentDescription = null,
-                    modifier =
-                        Modifier
-                            .width(42.dp)
-                            .height(42.dp),
-                    contentScale = ContentScale.Fit,
-                )
-                TitleBox()
-                Spacer(modifier = Modifier.weight(1f))
-                PrivacyOptionMenu(isPrivacy?.value ?: false, privacyOptionClick)
-                SearchIconButton(mainViewModel)
-            } else if (isHomeNaviBar == Destination.YouTube.route) {
-                BackButton(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    historyBack,
-                )
-                TitleBox()
-                Spacer(modifier = Modifier.weight(1f))
-                PIPButton(mainViewModel)
-                SharerIconButton()
+            val density = LocalDensity.current
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(start = 10.dp)
+                        .onGloballyPositioned { coordinates ->
+                            val topBarHeight =
+                                with(density) {
+                                    coordinates.size.height
+                                        .toDp()
+                                        .value
+                                }
+                            mainViewModel?.setTopBarHeight(topBarHeight.toInt())
+                        },
+                // Row 내에서 수직 중앙 정렬
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                val isPrivacy = mainViewModel?.isPrivacyOptionMenu?.collectAsState(false)
+                if (isHomeNaviBar == Destination.Home.Main.route || isHomeNaviBar == Destination.Home.ShortForm.route) {
+                    Image(
+                        painterResource(R.drawable.shortform_play_icon_main),
+                        contentDescription = null,
+                        modifier = Modifier.width(42.dp).height(42.dp),
+                        contentScale = ContentScale.Fit,
+                    )
+                    TitleBox()
+                    Spacer(modifier = Modifier.weight(1f))
+                    PrivacyOptionMenu(isPrivacy?.value ?: false, privacyOptionClick)
+                    NotificationIconButton(notificationPage, pushViewModel)
+                    SearchIconButton(mainViewModel)
+                } else if (isHomeNaviBar == Destination.YouTube.route) {
+                    BackButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        historyBack,
+                    )
+                    TitleBox()
+                    Spacer(modifier = Modifier.weight(1f))
+                    PIPButton(mainViewModel)
+                    SharerIconButton()
+                }
             }
         }
     }
@@ -152,10 +184,7 @@ private fun BackButton(
             // 이미지 리소스
             painter = painterResource(id = R.drawable.ic_back),
             contentDescription = "Back Icon",
-            modifier =
-                Modifier
-                    .height(32.dp)
-                    .width(32.dp),
+            modifier = Modifier.height(32.dp).width(32.dp),
         )
     }
 }
@@ -167,31 +196,23 @@ private fun LoginTypeItem(
     onMenuDismiss: () -> Unit,
 ) {
     DropdownMenu(
-        modifier =
-            Modifier
-                .wrapContentSize()
-                .padding(5.dp),
+        modifier = Modifier.wrapContentSize().padding(5.dp),
         expanded = menuExpanded,
         offset = DpOffset(0.dp, 0.dp),
         onDismissRequest = onMenuDismiss,
     ) {
-        Column {
-        }
+        Column {}
     }
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun TitleBox() {
-    Text(
-        stringResource(R.string.title),
-        modifier =
-            Modifier
-                .wrapContentSize(),
-        // Text의 크기를 내용에 맞게 설정
-        fontSize = 18.sp,
-        fontWeight = FontWeight.Bold,
-        color = Color.White,
+    Image(
+        // 이미지 리소스
+        painter = painterResource(id = R.drawable.main_text),
+        contentDescription = stringResource(R.string.app_name),
+        modifier = Modifier.padding(start = 10.dp),
     )
 }
 
@@ -237,6 +258,55 @@ fun SearchIconButton(mainViewModel: MainViewModel?) {
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
+fun NotificationIconButton(
+    notificationPage: () -> Unit,
+    pushViewModel: PushViewModel,
+) {
+    val permission by pushViewModel.hasPermission.collectAsState()
+    val hasUnread by pushViewModel.hasNewPush.collectAsState()
+
+    IconButton(onClick = {
+        notificationPage()
+    }) {
+        val icon =
+            if (permission) {
+                Icons.Outlined.Notifications
+            } else {
+                Icons.Outlined.NotificationsOff
+            }
+        Box(modifier = Modifier.wrapContentSize()) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = APP_TEXT_COLOR,
+                modifier = Modifier.size(28.dp),
+            )
+
+            if (hasUnread) {
+                Box(
+                    modifier =
+                        Modifier
+                            .align(Alignment.TopEnd)
+                            .offset(x = 0.dp, y = 2.dp)
+                            .size(6.dp)
+                            .clip(CircleShape)
+                            .background(Color.Red),
+                )
+            }
+        }
+    }
+
+//        mainViewModel?.sendGALog(
+//            screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+//            eventName = GASplashAnalytics.Event.SELECT_SEARCH_BTN_CLICK,
+//            actionName = GASplashAnalytics.Action.CLICK,
+//            mapOf(),
+//        )
+    //   }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
 fun PIPButton(mainViewModel: MainViewModel?) {
     val context = LocalContext.current
     val pipAction = mainViewModel?.pipClick?.collectAsState(initial = Pair(false, null))
@@ -273,10 +343,7 @@ fun PIPButton(mainViewModel: MainViewModel?) {
             // 이미지 리소스
             painter = painterResource(id = R.drawable.pip_button),
             contentDescription = null,
-            modifier =
-                Modifier
-                    .width(32.dp)
-                    .height(32.dp),
+            modifier = Modifier.width(32.dp).height(32.dp),
         )
     }
 }
@@ -307,6 +374,6 @@ fun PrivacyOptionMenu(
 @Composable
 private fun HomeTopBarPreview() {
     RatelappTheme {
-        HomeTopBar(Modifier, null, Destination.YouTube.route, {}, {})
+        // HomeTopBar(Modifier, null, Destination.Home.Main.route, {}, {})
     }
 }

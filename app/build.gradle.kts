@@ -3,6 +3,7 @@ import java.util.Properties
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.hilt.android)
@@ -281,19 +282,15 @@ android {
 
 dependencies {
 
-//    implementation(project(":core"))
-//    implementation(project(":ui"))
-//    implementation(project(":utils"))
-
-    implementation(libs.androidx.material3)
-
     implementation(libs.ai.shortformplay)
     implementation(libs.so.smartlab.sdk.common.ad.android)
+    implementation(libs.so.smartlab.sdk.common.push.android)
     // androidx
     // Lifecycle
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.appcompat.appcompat)
+    implementation(libs.androidx.material3)
 
     implementation(libs.androidx.lifecycle.runtime)
     implementation(libs.androidx.lifecycle.viewmodel)
@@ -323,6 +320,7 @@ dependencies {
 
     implementation(libs.material)
     implementation(libs.com.android.installreferrer)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 
     // hilt
     implementation(libs.google.hilt.android)
@@ -364,6 +362,10 @@ dependencies {
     implementation(libs.firebase.analytics)
     // firebase config
     implementation(libs.firebase.config)
+
+//    implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+//
+//    implementation("com.google.firebase:firebase-messaging")
     // test
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit.ext)

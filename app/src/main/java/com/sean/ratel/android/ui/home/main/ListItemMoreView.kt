@@ -28,9 +28,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Divider
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -77,6 +81,7 @@ import com.sean.ratel.android.ui.end.BottomSeekBar
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
@@ -127,7 +132,7 @@ fun ListItemDisplayUi(
     val filterVisiable =
         remember { mutableStateOf(viewType == ViewType.ChannelSearchRanking || viewType == ViewType.ChannelLikeRanking) }
 
-    val currentData = moreViewModel.currentDataList.collectAsState()
+    val currentData by moreViewModel.currentDataList.collectAsState()
 
     val channelStringList =
         listOf(
@@ -193,7 +198,7 @@ fun ListItemDisplayUi(
             )
         }
 
-        if (currentData.value.isNotEmpty()) {
+        if (currentData.isNotEmpty()) {
             Box(
                 Modifier
                     .fillMaxSize()
@@ -221,7 +226,7 @@ fun ListItemDisplayUi(
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 12.sp,
-                                color = APP_TEXT_COLOR,
+                                color = APP_SUBTITLE_TEXT_COLOR,
                             )
                             Text(
                                 text = stringResource(R.string.main_recent_watch_video_max_2),
@@ -233,14 +238,14 @@ fun ListItemDisplayUi(
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 12.sp,
-                                color = APP_TEXT_COLOR,
+                                color = APP_SUBTITLE_TEXT_COLOR,
                             )
                         }
 
                         RecentlyWatchItemList(
                             viewType,
                             route ?: Destination.Home.Main.RecommendMore.route,
-                            currentData.value,
+                            currentData,
                             moreViewModel,
                             mainViewModel,
                             adViewModel,
@@ -254,7 +259,7 @@ fun ListItemDisplayUi(
                     ListItemList(
                         viewType,
                         route ?: Destination.Home.Main.RankingChannelMore.route,
-                        currentData.value,
+                        currentData,
                         moreViewModel,
                         mainViewModel,
                         adViewModel,
@@ -496,7 +501,9 @@ fun ListItemList(
                         color = Color.White,
                     )
                     Box(
-                        Modifier.wrapContentSize().weight(0.3f),
+                        Modifier
+                            .wrapContentSize()
+                            .weight(0.3f),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -620,14 +627,19 @@ fun ListItem(
         Text(
             text = getRankingOrder(index),
             fontFamily = FontFamily.SansSerif,
-            modifier = Modifier.wrapContentSize().weight(0.1f),
+            modifier =
+                Modifier
+                    .wrapContentSize()
+                    .weight(0.1f),
             fontStyle = FontStyle.Normal,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp,
             color = Color.White,
         )
         Row(
-            Modifier.wrapContentSize().weight(0.3f),
+            Modifier
+                .wrapContentSize()
+                .weight(0.3f),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             NetworkImage(
@@ -842,155 +854,188 @@ private fun RecentlyWatchItems(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(top = 2.dp, bottom = 2.dp)
-                    .clickable {
-                        mainViewModel?.goEndContent(
-                            route,
-                            viewType,
-                            index,
-                        )
-                        mainViewModel?.sendGALog(
-                            Event.SCREEN_VIEW,
-                            Destination.YouTube.dynamicRoute(
-                                item?.shortsChannelModel?.channelId ?: "",
-                            ),
-                            moreViewModel?.getConvertViewType(viewType),
-                            item?.shortsChannelModel?.channelId,
-                            item?.shortsVideoModel?.videoId,
-                        )
-                    },
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Box(
-                Modifier
-                    .wrapContentHeight()
-                    .weight(0.7f),
-                contentAlignment = Alignment.BottomEnd,
+        Box(Modifier.fillMaxSize()) {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(top = 2.dp, bottom = 2.dp)
+                        .clickable {
+                            mainViewModel?.goEndContent(
+                                route,
+                                viewType,
+                                index,
+                            )
+                            mainViewModel?.sendGALog(
+                                Event.SCREEN_VIEW,
+                                Destination.YouTube.dynamicRoute(
+                                    item?.shortsChannelModel?.channelId ?: "",
+                                ),
+                                moreViewModel?.getConvertViewType(viewType),
+                                item?.shortsChannelModel?.channelId,
+                                item?.shortsVideoModel?.videoId,
+                            )
+                        },
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
                     Modifier
-                        .wrapContentHeight(),
-                    contentAlignment = Alignment.Center,
+                        .wrapContentHeight()
+                        .weight(0.7f),
+                    contentAlignment = Alignment.BottomEnd,
                 ) {
-                    Surface(
-                        shape = RoundedCornerShape(6.dp),
+                    Box(
+                        Modifier
+                            .wrapContentHeight(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Surface(
+                            shape = RoundedCornerShape(6.dp),
+                        ) {
+                            NetworkImage(
+                                url = item?.shortsVideoModel?.thumbNail ?: "",
+                                contentDescription = null,
+                                modifier =
+                                    Modifier
+                                        .aspectRatio(1.7f)
+                                        .wrapContentHeight(),
+                            )
+                        }
+                    }
+
+                    Column(Modifier.wrapContentSize(), horizontalAlignment = Alignment.End) {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .wrapContentSize()
+                                    .padding(top = 5.dp, bottom = 7.dp, end = 7.dp)
+                                    .background(
+                                        brush =
+                                            Brush.horizontalGradient(
+                                                colors =
+                                                    listOf(
+                                                        // 진한 검은색
+                                                        Color.LightGray.copy(alpha = 0.3f),
+                                                        // 투명
+                                                        Color.Black,
+                                                    ),
+                                            ),
+                                    ),
+                            contentAlignment = Alignment.BottomEnd,
+                        ) {
+                            Text(
+                                text = item?.shortsVideoModel?.duration ?: "00:00",
+                                fontFamily = FontFamily.SansSerif,
+                                fontStyle = FontStyle.Normal,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 12.sp,
+                                color = Color.White,
+                                style =
+                                    TextStyle(
+                                        shadow =
+                                            Shadow(
+                                                color = Color.Black,
+                                                // 그림자의 위치 (x, y)
+                                                offset = Offset(2f, 2f),
+                                                // 그림자의 흐림 정도
+                                                blurRadius = 4f,
+                                            ),
+                                    ),
+                            )
+                        }
+                        BottomSeekBar(
+                            progress = progress,
+                            onSeekChanged = { _ ->
+                            },
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth(),
+                        )
+                    }
+                }
+
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .wrapContentHeight()
+                        .padding(start = 5.dp, end = 7.dp),
+                ) {
+                    Text(
+                        text = item?.shortsVideoModel?.title ?: "title",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White,
+                        textAlign = TextAlign.Center,
+                    )
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight(),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         NetworkImage(
-                            url = item?.shortsVideoModel?.thumbNail ?: "",
+                            url = item?.shortsChannelModel?.channelThumbNail ?: "",
                             contentDescription = null,
                             modifier =
                                 Modifier
-                                    .aspectRatio(1.7f)
-                                    .wrapContentHeight(),
+                                    .clip(CircleShape)
+                                    .width(24.dp)
+                                    .height(24.dp),
+                            ContentScale.Fit,
+                            R.drawable.thumb_placeholder,
+                            R.drawable.thumb_placeholder,
+                            R.drawable.thumb_placeholder,
+                            imageLoader = mainViewModel?.imageLoader,
                         )
-                    }
-                }
-
-                Column(Modifier.wrapContentSize(), horizontalAlignment = Alignment.End) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .wrapContentSize()
-                                .padding(top = 5.dp, bottom = 7.dp, end = 7.dp)
-                                .background(
-                                    brush =
-                                        Brush.horizontalGradient(
-                                            colors =
-                                                listOf(
-                                                    // 진한 검은색
-                                                    Color.LightGray.copy(alpha = 0.3f),
-                                                    // 투명
-                                                    Color.Black,
-                                                ),
-                                        ),
-                                ),
-                        contentAlignment = Alignment.BottomEnd,
-                    ) {
                         Text(
-                            text = item?.shortsVideoModel?.duration ?: "00:00",
-                            fontFamily = FontFamily.SansSerif,
-                            fontStyle = FontStyle.Normal,
-                            fontWeight = FontWeight.SemiBold,
-                            fontSize = 12.sp,
+                            item?.shortsChannelModel?.channelTitle ?: "title",
+                            // 한 줄로 제한
+                            maxLines = 1,
+                            // 말줄임표 처리
+                            overflow = TextOverflow.Ellipsis,
+                            modifier =
+                                Modifier
+                                    .wrapContentSize()
+                                    .padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.Bold,
                             color = Color.White,
-                            style =
-                                TextStyle(
-                                    shadow =
-                                        Shadow(
-                                            color = Color.Black,
-                                            // 그림자의 위치 (x, y)
-                                            offset = Offset(2f, 2f),
-                                            // 그림자의 흐림 정도
-                                            blurRadius = 4f,
-                                        ),
-                                ),
                         )
                     }
-                    BottomSeekBar(
-                        progress = progress,
-                        onSeekChanged = { _ ->
-                        },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth(),
-                    )
                 }
             }
-
-            Column(
+            Box(
                 Modifier
-                    .weight(1f)
-                    .wrapContentHeight()
-                    .padding(start = 5.dp, end = 7.dp),
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, end = 10.dp)
+                    .wrapContentHeight(),
+                contentAlignment = Alignment.CenterEnd,
             ) {
-                Text(
-                    text = item?.shortsVideoModel?.title ?: "title",
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontSize = 15.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White,
-                    textAlign = TextAlign.Center,
-                )
-                Row(
+                val coroutineScope = rememberCoroutineScope()
+
+                IconButton(
+                    onClick = {
+                        item?.let {
+                            mainViewModel?.deleteWatchItem(it)
+
+                            coroutineScope.launch {
+                                delay(500)
+                                mainViewModel?.setWatchVideoList()
+                            }
+                        }
+                    },
                     Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight(),
-                    verticalAlignment = Alignment.CenterVertically,
+                        .width(24.dp)
+                        .height(24.dp),
                 ) {
-                    NetworkImage(
-                        url = item?.shortsChannelModel?.channelThumbNail ?: "",
+                    Icon(
+                        imageVector = Icons.Default.Close,
                         contentDescription = null,
-                        modifier =
-                            Modifier
-                                .clip(CircleShape)
-                                .width(24.dp)
-                                .height(24.dp),
-                        ContentScale.Fit,
-                        R.drawable.thumb_placeholder,
-                        R.drawable.thumb_placeholder,
-                        R.drawable.thumb_placeholder,
-                        imageLoader = mainViewModel?.imageLoader,
-                    )
-                    Text(
-                        item?.shortsChannelModel?.channelTitle ?: "title",
-                        // 한 줄로 제한
-                        maxLines = 1,
-                        // 말줄임표 처리
-                        overflow = TextOverflow.Ellipsis,
-                        modifier =
-                            Modifier
-                                .wrapContentSize()
-                                .padding(start = 5.dp, top = 5.dp, bottom = 5.dp),
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White,
+                        tint = Color.White,
                     )
                 }
             }

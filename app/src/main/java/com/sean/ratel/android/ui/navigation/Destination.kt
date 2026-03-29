@@ -12,6 +12,8 @@ object Destination {
 
     data object Search : Screen("home/search")
 
+    data object Notifcation : Screen("home/notification")
+
     data object AppManager : Screen("detail/appManager")
 
     data object Setting : Screen("home/setting")

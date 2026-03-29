@@ -1,6 +1,7 @@
 package com.sean.ratel.android
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -32,8 +33,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.AdsSdk
+import so.smartlab.common.ad.admob.data.GoogleMobileAdsConsentManager
 import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
+import so.smartlab.common.push.PushSDK
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -47,7 +50,9 @@ class MainViewModel
         val recentVideoRepository: RecentVideoRepository,
         val installRefererRepository: InstallRefererRepository,
         private val searchResultsRepository: SearchResultDataRepository,
+        private val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
         val adsSdk: AdsSdk,
+        val pushSDK: PushSDK,
     ) : ViewModel() {
         private val _isInstallReferer = MutableStateFlow<String?>(null)
         val isInstallReferer: StateFlow<String?> = _isInstallReferer
@@ -427,11 +432,11 @@ class MainViewModel
         }
 
         fun runPrivacyOptionMenu(activity: MainActivity) {
-//            googleMobileAdsConsentManager.showPrivacyOptionsForm(activity) { formError ->
-//                if (formError != null) {
-//                    Toast.makeText(activity, formError.message, Toast.LENGTH_SHORT).show()
-//                }
-//            }
+            googleMobileAdsConsentManager.showPrivacyOptionsForm(activity) { formError ->
+                if (formError != null) {
+                    Toast.makeText(activity, formError.message, Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         suspend fun setWatchVideoList() {
@@ -644,6 +649,13 @@ class MainViewModel
                 adsSdk.adAdaptiveBannerState.collect { state ->
                     setAdaptiveInLineBannerState(state)
                 }
+            }
+            pushSDK.register()
+        }
+
+        fun deleteWatchItem(mainShortsModel: MainShortsModel) {
+            viewModelScope.launch {
+                recentVideoRepository.deleteWatchItem(mainShortsModel)
             }
         }
 

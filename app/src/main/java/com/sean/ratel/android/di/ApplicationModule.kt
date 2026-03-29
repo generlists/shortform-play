@@ -24,14 +24,20 @@ import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.android.permission.PermissionManager
 import com.sean.ratel.android.data.android.permission.PermissionProvider
 import com.sean.ratel.android.data.common.AppAdsConfig
+import com.sean.ratel.android.data.common.AppPushConfig
+import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.di.qualifier.AdOpenUnitId
 import com.sean.ratel.android.di.qualifier.AdaptiveBannerUnitId
 import com.sean.ratel.android.di.qualifier.AdmobUnitId
+import com.sean.ratel.android.di.qualifier.ApiUrl
+import com.sean.ratel.android.di.qualifier.AppId
+import com.sean.ratel.android.di.qualifier.AppVersion
 import com.sean.ratel.android.di.qualifier.BannerUnitId
 import com.sean.ratel.android.di.qualifier.InterstitialUnitId
 import com.sean.ratel.android.di.qualifier.NativeAdUnitId
 import com.sean.ratel.android.di.qualifier.RemoteIntervalTime
 import com.sean.ratel.android.di.qualifier.TestHashId
+import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.player.core.domain.api.UserAgentProvider
 import dagger.Module
 import dagger.Provides
@@ -40,6 +46,7 @@ import dagger.hilt.android.UnstableApi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import so.smartlab.common.ad.admob.data.repository.AdsConfigProvider
+import so.smartlab.common.push.fcm.data.repository.PushConfigProvider
 import java.util.Optional
 import javax.inject.Singleton
 
@@ -66,22 +73,9 @@ object ApplicationModule {
     @Provides
     @Singleton
     @OptIn(UnstableApi::class)
-    fun providePermissionManagerr(): PermissionProvider = PermissionManager()
-
-//    @Provides
-//    @Singleton
-//    @OptIn(UnstableApi::class)
-//    fun provideGoogleMobileAdsConsentManager(
-//        @ApplicationContext context: Context,
-//        @TEST_HASH_ID  hashId: String,
-//    ): GoogleMobileAdsConsentManager = GoogleMobileAdsConsentManager(context)
-//
-//    @Provides
-//    @OptIn(UnstableApi::class)
-//    fun providerAppOpenAdManager(
-//        googleMobileAdsConsentManager: GoogleMobileAdsConsentManager
-//    ): AppOpenAdManager =
-//        AppOpenAdManager(googleMobileAdsConsentManager)
+    fun providePermissionManager(
+        @ApplicationContext context: Context,
+    ): PermissionProvider = PermissionManager(context)
 
     @Provides
     @Singleton
@@ -203,5 +197,35 @@ object ApplicationModule {
     @Provides
     @Singleton
     @TestHashId
-    fun provideTestHashId(): String = "12345"
+    fun provideTestHashId(): String = STRINGS.TEST_DEVICE_HASHED_ID
+
+    @Provides
+    @Singleton
+    fun providePushSDKConfigProvider(
+        @AppId appId: String,
+        @ApiUrl apiUrl: String,
+        @AppVersion appVersion: String,
+    ): PushConfigProvider =
+        AppPushConfig(
+            id = appId,
+            url = apiUrl,
+            version = appVersion,
+        )
+
+    @Provides
+    @Singleton
+    @AppId
+    fun provideAppId(): String = STRINGS.APP_NAME
+
+    @Provides
+    @Singleton
+    @AppVersion
+    fun provideAppVersion(
+        @ApplicationContext context: Context,
+    ): String = PhoneUtil.getAppVersionName(context)
+
+    @Provides
+    @Singleton
+    @ApiUrl
+    fun provideAppUrl(): String = BuildConfig.SHORTFORM_PLAY_BASE_URL
 }

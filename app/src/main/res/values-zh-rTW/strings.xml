@@ -75,6 +75,7 @@
     <string name="pip_memory_error">記憶體不足錯誤</string>
     <string name="setting_dev_other_app">這位開發者的其他應用程式</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+
     <!--App Manager -->
     <string name="app_manager">應用管理員</string>
     <string name="app_manager_detail">顯示並管理您裝置上的應用資訊。</string>
@@ -144,13 +145,13 @@
     <string name="store_update_btn">前往商店</string>
     <string name="auth_error">發生驗證錯誤，請聯絡客服人員。</string>
 
+    <!-- 1.0.9-->
     <string name="api_no_network_error">沒有網路連線。</string>
     <string name="api_bad_request_error">無效的請求。</string>
     <string name="api_server_error">伺服器發生錯誤。</string>
     <string name="api_unknown_error">發生未知錯誤。</string>
     <string name="api_empty_error">資料取得失敗，請再試一次！</string>
     <string name="api_error_retry">重試</string>
-    <string name="api_error_data_not_found">沒有找到資料</string>
     <string name="search_type_keyword">	關鍵字搜尋</string>
     <string name="search_type_daily">每日 Shorts</string>
     <string name="youtube_category_all">All</string>
@@ -160,4 +161,20 @@
     <string name="search_daily_reset">重置</string>
     <string name="search_daily_apply">套用</string>
 
+    <!-- 1.0.9 -->
+    <string name="app_notification">通知</string>
+    <string name="setting_push_management">推播通知</string>
+    <string name="setting_push_description">接收各種消息通知。</string>
+    <string name="setting_push_app_update">應用程式更新</string>
+    <string name="setting_push_video_upload">內容上傳</string>
+    <string name="setting_push_recommend">推薦影片</string>
+    <string name="api_error_data_not_found">找不到資料</string>
+    <string name="notification_list_description">通知最多會在內部儲存空間中儲存 200 筆，超過 200 筆時會自動依序刪除較舊的通知。</string>
+    <string name="notification_no_data">沒有通知。</string>
+    <string name="notification_update">更新</string>
+    <string name="notification_upload">上傳</string>
+    <string name="notification_recommend">推薦</string>
+    <string name="notification_force_update">[必須更新]</string>
+    <string name="notification_today">今天</string>
+    <string name="notification_yesterday">昨天</string>
 </resources>

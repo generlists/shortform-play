@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -34,6 +33,7 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Destination.Screen.Companion.BASE_DEEPLINK_URL
 import com.sean.ratel.android.ui.pip.PipAction
+import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.UIUtil.getEndFragment
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
@@ -59,6 +59,7 @@ class MainActivity : FragmentActivity() {
 
     val mainViewModel by viewModels<MainViewModel>()
     val adViewModel by viewModels<AdViewModel>()
+    val pushViewModel by viewModels<PushViewModel>()
 
     @Inject
     lateinit var log: GALog
@@ -96,7 +97,6 @@ class MainActivity : FragmentActivity() {
 
         adViewModel.setForceClearCache(intent.getBooleanExtra("clear_cache", false))
 
-        Log.d("hbungshin", "canRequestAds : ${googleMobileAdsConsentManager.canRequestAds}")
         googleMobileAdsConsentManager.gatherConsent(this) { error ->
             if (error != null) RLog.d(TAG, "${error.errorCode}: ${error.message}")
 
@@ -114,6 +114,7 @@ class MainActivity : FragmentActivity() {
             ShortFormPlayApp(
                 mainViewModel = mainViewModel,
                 adViewModel = adViewModel,
+                pushViewModel = pushViewModel,
                 finish = { finish() },
             )
         }

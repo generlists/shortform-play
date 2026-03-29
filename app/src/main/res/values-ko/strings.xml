@@ -75,6 +75,7 @@
     <string name="pip_memory_error">메모리 부족 오류</string>
     <string name="setting_dev_other_app">개발자 다른 앱</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+
     <!--App Manager -->
     <string name="app_manager">앱 매니저</string>
     <string name="app_manager_detail">내 디바이스 내의 앱 정보를 보여주고 관리합니다.</string>
@@ -152,7 +153,7 @@
     <string name="api_unknown_error">알 수 없는 오류가 발생했습니다.</string>
     <string name="api_empty_error">데이터를 가져오는데 실패 재시도 해주세요!</string>
     <string name="api_error_retry">재시도</string>
-    <string name="api_error_data_not_found">데이터가 없습니다.</string>
+
 
     <string name="search_type_keyword">키워드 검색</string>
     <string name="search_type_daily">데일리 쇼츠</string>
@@ -162,5 +163,22 @@
     <string name="search_daily_reset">초기화</string>
     <string name="search_daily_apply">적용</string>
     <string name="search_select_date">검색할 날짜를 선택해주세요!</string>
+
+    <!--1.0.9 -->
+    <string name="app_notification">알림</string>
+    <string name="setting_push_management">푸시 알림</string>
+    <string name="setting_push_description">다양한 소식에 대한 알림을 받습니다.</string>
+    <string name="setting_push_app_update">앱 업데이트</string>
+    <string name="setting_push_video_upload">콘텐츠 업로드</string>
+    <string name="setting_push_recommend">추천 영상</string>
+    <string name="api_error_data_not_found">No Data Founded</string>
+    <string name="notification_list_description">알림은 최대 200까지 내부 저장소에 저장되고 200개 초과시 오래된 순으로 자동삭제 되요.</string>
+    <string name="notification_no_data">알림이 없습니다.</string>
+    <string name="notification_update">업데이트</string>
+    <string name="notification_upload">업로드</string>
+    <string name="notification_recommend">추천</string>
+    <string name="notification_force_update">[업데이트 필수]</string>
+    <string name="notification_today">오늘</string>
+    <string name="notification_yesterday">어제</string>
 
 </resources>

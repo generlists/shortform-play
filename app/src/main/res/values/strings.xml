@@ -155,7 +155,7 @@
     <string name="api_unknown_error">An unknown error occurred.</string>
     <string name="api_empty_error">Failed to fetch data. Please try again!</string>
     <string name="api_error_retry">Retry</string>
-    <string name="api_error_data_not_found">No Data Founded</string>
+
     <!--1.0.8 -->
 
     <string name="search_type_keyword">Keyword Search</string>
@@ -167,6 +167,24 @@
     <string name="search_select_date">Select a date!</string>
     <string name="search_daily_reset">Reset</string>
     <string name="search_daily_apply">Apply</string>
+
+    <!-- 1.0.9-->
+    <string name="app_notification">Notifications</string>
+    <string name="setting_push_management">Push Notifications</string>
+    <string name="setting_push_description">Receive notifications about various updates.</string>
+    <string name="setting_push_app_update">App Updates</string>
+    <string name="setting_push_video_upload">Content Uploads</string>
+    <string name="setting_push_recommend">Recommended Videos</string>
+    <string name="api_error_data_not_found">No Data Found</string>
+    <string name="notification_list_description">Up to 200 notifications are stored in internal storage. If the number exceeds 200, the oldest notifications are automatically deleted.</string>
+    <string name="notification_no_data">No notifications.</string>
+    <string name="notification_update">Update</string>
+    <string name="notification_upload">Upload</string>
+    <string name="notification_recommend">Recommend</string>
+    <string name="notification_force_update">[Update Required]</string>
+    <string name="notification_today">Today</string>
+    <string name="notification_yesterday">Yester Day</string>
+
 
 
 

@@ -21,6 +21,12 @@ object STRINGS {
 
     val REMAIN_AD_MARGIN = 24.dp
 
+    val NOTIFICATON_CHANNEL_UPDATE = "app_update_channel"
+    val NOTIFICATON_CHANNEL_UPLOAD = "app_uload_channel"
+    val NOTIFICATON_CHANNEL_RECOMMEND = "recommend_channel"
+    val NOTIFICATON_LIMIT_COUNT = 199
+    val NOTIFICATON_NAME = "알림"
+
     // ad
     const val TEST_DEVICE_HASHED_ID = "ABCDEF012345"
 
@@ -30,6 +36,7 @@ object STRINGS {
     @Suppress("ktlint:standard:function-naming")
     fun URLUPDATE_GOOGLE_PLAY_WEB(appTitle: String): String = "https://play.google.com/store/search?q=$appTitle&c=apps"
 
+    const val APP_NAME: String = "shortform-play"
     const val URL_MY_PACKAGE_NAME: String = "com.sean.ratel.android"
     const val URL_MY_OTHER_PACKAGE_NAME: String = "so.smartlab.video.scrap.pro"
 

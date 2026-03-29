@@ -53,6 +53,26 @@ enum class SettingsItems(
         R.string.setting_play_wifi_play,
         R.string.setting_play_wifi_play_discription,
     ),
+    SERVICE_PUSH(
+        null,
+        R.string.setting_push_management,
+        R.string.setting_push_description,
+    ),
+    SERVICE_PUSH_APP_UPDATE(
+        null,
+        R.string.setting_push_app_update,
+        null,
+    ),
+    SERVICE_PUSH_VIDEO_UPLOAD(
+        null,
+        R.string.setting_push_video_upload,
+        null,
+    ),
+    SERVICE_PUSH_VIDEO_RECOMMEND(
+        null,
+        R.string.setting_push_recommend,
+        null,
+    ),
     SETTING_APP_MANAGER(
         null,
         R.string.setting_app_manager,
@@ -73,6 +93,7 @@ enum class SettingsItems(
         R.string.setting_app_rate,
         null,
     ),
+
     SETTING_APP_PRESENT(
         null,
         R.string.setting_app_present,

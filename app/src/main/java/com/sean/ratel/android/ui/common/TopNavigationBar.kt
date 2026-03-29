@@ -45,8 +45,8 @@ fun TopNavigationBar(
     runSetting: () -> Unit,
     filterButton: Boolean,
     // 필터 상태 변경을 위한 콜백 추가
-    onFilterChange: (Int) -> Unit,
-    items: List<String>,
+    onFilterChange: (Int) -> Unit = {},
+    items: List<String> = listOf(),
 ) {
     Row(
         Modifier

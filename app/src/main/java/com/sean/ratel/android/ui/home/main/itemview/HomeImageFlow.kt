@@ -151,27 +151,34 @@ fun AutoScrollImagePager(
     }
     // contentAlignment = Alignment.BottomCenter
     Box(
-        Modifier.fillMaxSize().background(Color.Transparent),
+        Modifier
+            .fillMaxSize()
+            .background(Color.Transparent),
         contentAlignment = Alignment.TopCenter,
     ) {
         Box(
-            Modifier.fillMaxWidth().wrapContentHeight().background(
-                brush =
-                    Brush.verticalGradient(
-                        colors =
-                            listOf(
-                                Color.White.copy(alpha = 0.5f),
-                                Color.White.copy(alpha = 0.4f),
-                                Color.White.copy(alpha = 0.3f),
-                                Color.Transparent,
-                            ),
-                    ),
-            ),
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .background(
+                    brush =
+                        Brush.verticalGradient(
+                            colors =
+                                listOf(
+                                    Color.White.copy(alpha = 0.5f),
+                                    Color.White.copy(alpha = 0.4f),
+                                    Color.White.copy(alpha = 0.3f),
+                                    Color.Transparent,
+                                ),
+                        ),
+                ),
             contentAlignment = Alignment.BottomCenter,
         ) {
             Spacer(Modifier.height(300.dp))
             Box(
-                Modifier.fillMaxSize().padding(bottom = 16.dp),
+                Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 16.dp),
                 contentAlignment = Alignment.BottomCenter,
             ) {
                 // 인디케이터 추가
@@ -224,7 +231,8 @@ fun AutoScrollImagePager(
                         },
             ) { page ->
                 // 실제 이미지의 인덱스 계산
-                val imageIndex = (page % topItemSize)
+
+                val imageIndex = if (page == 0) 0 else (page % topItemSize)
                 val channelId =
                     topFrontMainList?.get(imageIndex)?.shortsChannelModel?.channelId ?: ""
                 val externalUrl =
@@ -292,7 +300,8 @@ fun AutoScrollImagePager(
                                         // Box 높이와 맞추기
                                         endY = heightInPx,
                                     ),
-                                ).height(150.dp)
+                                )
+                                .height(150.dp)
                                 .align(Alignment.BottomCenter)
                                 .padding(top = 7.dp),
                         ) {

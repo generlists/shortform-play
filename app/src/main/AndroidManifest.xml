@@ -12,6 +12,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <queries>
         <intent>
             <action android:name="*"/>
@@ -97,7 +98,15 @@
             android:launchMode="singleTop"
             >
         </activity>
+        <receiver
+            android:name=".ui.push.PushEventReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.sean.ratel.PUSH_EVENT" />
+                <action android:name="com.sean.ratel.PUSH_UPDATE_TOKEN" />
 
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

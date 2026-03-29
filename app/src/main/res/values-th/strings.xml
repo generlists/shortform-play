@@ -80,6 +80,7 @@
     <string name="pip_memory_error">หน่วยความจำต่ำ</string>
     <string name="setting_dev_other_app">แอปอื่นๆ จากนักพัฒนารายนี้</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+
     <!-- ผู้จัดการแอป -->
     <string name="app_manager">ตัวจัดการแอป</string>
     <string name="app_manager_detail">แสดงและจัดการข้อมูลแอปในอุปกรณ์ของคุณ</string>
@@ -157,7 +158,6 @@
     <string name="api_unknown_error">เกิดข้อผิดพลาดที่ไม่ทราบสาเหตุ</string>
     <string name="api_empty_error">ดึงข้อมูลไม่สำเร็จ กรุณาลองใหม่อีกครั้ง!</string>
     <string name="api_error_retry">ลองอีกครั้ง</string>
-    <string name="api_error_data_not_found">ไม่พบข้อมูล</string>
     <string name="search_type_keyword">ค้นหาด้วยคีย์เวิร์ด</string>
     <string name="search_type_daily">ชอร์ตประจำวัน</string>
     <string name="youtube_category_all">All</string>
@@ -167,4 +167,20 @@
     <string name="search_daily_apply">นำไปใช้</string>
     <string name="search_select_date">เลือกวันที่!</string>
 
+    <!-- 1.0.9 -->
+    <string name="app_notification">การแจ้งเตือน</string>
+    <string name="setting_push_management">การแจ้งเตือนแบบพุช</string>
+    <string name="setting_push_description">รับการแจ้งเตือนเกี่ยวกับข่าวสารต่าง ๆ</string>
+    <string name="setting_push_app_update">อัปเดตแอป</string>
+    <string name="setting_push_video_upload">อัปโหลดคอนเทนต์</string>
+    <string name="setting_push_recommend">วิดีโอแนะนำ</string>
+    <string name="api_error_data_not_found">ไม่พบข้อมูล</string>
+    <string name="notification_list_description">การแจ้งเตือนจะถูกบันทึกไว้ในที่เก็บข้อมูลภายในได้สูงสุด 200 รายการ และหากเกิน 200 รายการ รายการที่เก่าที่สุดจะถูกลบโดยอัตโนมัติ</string>
+    <string name="notification_no_data">ไม่มีการแจ้งเตือน</string>
+    <string name="notification_update">อัปเดต</string>
+    <string name="notification_upload">อัปโหลด</string>
+    <string name="notification_recommend">แนะนำ</string>
+    <string name="notification_force_update">[จำเป็นต้องอัปเดต]</string>
+    <string name="notification_today">วันนี้</string>
+    <string name="notification_yesterday">เมื่อวาน</string>
 </resources>

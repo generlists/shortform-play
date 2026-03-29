@@ -26,10 +26,6 @@ class SettingViewModel
             navigator.navigateTo(Destination.AppManager.route)
         }
 
-        fun runNotice() {
-            navigator.navigateTo(Destination.Notices.route)
-        }
-
         fun runQNA(context: Context) = PhoneUtil.sendEmail(context, STRINGS.FEEDBACK_TITLE, qnaResource(context))
 
         fun qnaResource(context: Context): String {
@@ -39,10 +35,6 @@ class SettingViewModel
             str.append("\n")
             str.append(PhoneUtil.getEnvironment())
             return str.toString()
-        }
-
-        fun runLegal() {
-            navigator.navigateTo(Destination.Regal.route)
         }
 
         fun runAppDetail() {
