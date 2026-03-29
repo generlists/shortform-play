@@ -13,11 +13,10 @@ import androidx.core.net.toUri
 import coil.ImageLoader
 import coil.request.ImageRequest
 import com.sean.ratel.android.R
-import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_CHANNEL_RECOMMEND
-import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_CHANNEL_UPDATE
-import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_CHANNEL_UPLOAD
 import com.sean.ratel.android.data.local.pref.PushPreference
-import dagger.hilt.android.qualifiers.ApplicationContext
+import com.sean.ratel.android.ui.push.PushChannelIds.APP_UPDATE
+import com.sean.ratel.android.ui.push.PushChannelIds.RECOMMEND
+import com.sean.ratel.android.ui.push.PushChannelIds.VIDEO_UPLOAD
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -31,7 +30,6 @@ import javax.inject.Singleton
 class PushNotificationManager
     @Inject
     constructor(
-        @ApplicationContext val context: Context,
         val pushPreference: PushPreference,
     ) {
         val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
@@ -63,17 +61,10 @@ class PushNotificationManager
 
             val builder =
                 NotificationCompat
-                    .Builder(context, NOTIFICATON_CHANNEL_UPDATE)
+                    .Builder(context, APP_UPDATE)
                     .setSmallIcon(R.drawable.ic_notification)
-                    .setContentTitle(
-                        if (forceUpdate.toBoolean()) {
-                            context.getString(
-                                R.string.notification_force_update,
-                            ) + "${data["title"]}"
-                        } else {
-                            "${data["title"]}"
-                        },
-                    ).setContentText(data["body"])
+                    .setContentTitle(if (forceUpdate.toBoolean()) "[업데이트 필수]" + "${data["title"]}" else "${data["title"]}")
+                    .setContentText(data["body"])
                     .setLargeIcon(appIconBitmap)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setContentIntent(pendingIntent)
@@ -105,7 +96,7 @@ class PushNotificationManager
                 withContext(Dispatchers.Main) {
                     val builder =
                         NotificationCompat
-                            .Builder(context, NOTIFICATON_CHANNEL_UPLOAD)
+                            .Builder(context, VIDEO_UPLOAD)
                             .setSmallIcon(R.mipmap.ic_launcher_round)
                             .setContentTitle(data["title"])
                             .setContentText(data["body"])
@@ -183,7 +174,7 @@ class PushNotificationManager
                 withContext(Dispatchers.Main) {
                     val builder =
                         NotificationCompat
-                            .Builder(context, NOTIFICATON_CHANNEL_RECOMMEND)
+                            .Builder(context, RECOMMEND)
                             .setSmallIcon(R.mipmap.ic_launcher_round)
                             .setContentTitle(data["title"])
                             .setContentText(data["body"])
@@ -223,21 +214,21 @@ class PushNotificationManager
 
             val update =
                 NotificationChannel(
-                    NOTIFICATON_CHANNEL_UPDATE,
+                    APP_UPDATE,
                     context.getString(R.string.notification_update),
                     NotificationManager.IMPORTANCE_HIGH,
                 )
 
             val event =
                 NotificationChannel(
-                    NOTIFICATON_CHANNEL_RECOMMEND,
+                    RECOMMEND,
                     context.getString(R.string.notification_recommend),
-                    NotificationManager.IMPORTANCE_HIGH,
+                    NotificationManager.IMPORTANCE_DEFAULT,
                 )
 
             val upload =
                 NotificationChannel(
-                    NOTIFICATON_CHANNEL_UPLOAD,
+                    VIDEO_UPLOAD,
                     context.getString(R.string.notification_upload),
                     NotificationManager.IMPORTANCE_DEFAULT,
                 )

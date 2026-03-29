@@ -1,6 +1,7 @@
 package com.sean.ratel.android
 
 import android.app.Activity
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +24,9 @@ import com.sean.ratel.android.data.repository.SearchResultDataRepository
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
+import com.sean.ratel.android.utils.PhoneUtil.newActivity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -44,6 +47,7 @@ import kotlin.random.Random
 class MainViewModel
     @Inject
     constructor(
+        @ApplicationContext val context: Context,
         val navigator: Navigator,
         val imageLoader: ImageLoader,
         val gaLog: GALog,
@@ -348,7 +352,14 @@ class MainViewModel
         fun runNavigationBack(
             route: String? = null,
             recreate: Boolean = false,
+            context: Context? = null,
         ) {
+            // 시스템 죽으면 재시작
+            if (route == null && context != null) {
+                newActivity(context = context)
+                return
+            }
+
             if (_viewType.value == ViewType.DeepLinkVideo) {
                 goMainHome()
             } else {

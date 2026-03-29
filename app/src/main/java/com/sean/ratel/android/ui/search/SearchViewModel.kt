@@ -34,6 +34,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -208,7 +209,9 @@ class SearchViewModel
                                 _searchLoading.value = false
                             }
 
-                            else -> Unit
+                            else -> {
+                                Unit
+                            }
                         }
                     }
             }
@@ -240,7 +243,9 @@ class SearchViewModel
                                     response.e.message?.let { UiState.Error(it) } ?: UiState.Error("")
                             }
 
-                            else -> Unit
+                            else -> {
+                                Unit
+                            }
                         }
                     }
             }
@@ -368,7 +373,9 @@ class SearchViewModel
                                 complete(false)
                             }
 
-                            else -> Unit
+                            else -> {
+                                Unit
+                            }
                         }
                     }
             }
@@ -376,7 +383,7 @@ class SearchViewModel
 
         fun requestLocale() {
             viewModelScope.launch {
-                _currentLocale.value = settingRespository.getLocale()
+                _currentLocale.value = settingRespository.getLocale().first() ?: "KR"
                 _selectedCategory.value = getInitCategory()
                 RLog.d("SearchViewModel", "_currentLocale : ${_selectedCategory.value}")
             }
@@ -428,7 +435,7 @@ class SearchViewModel
 
         fun requestYouTubeCategory() {
             viewModelScope.launch {
-                val countryCode = settingRespository.getLocale()
+                val countryCode = settingRespository.getLocale().first() ?: "KR"
 
                 val categoryList = youtubeApiRepository.getYouTubeCategoryList()
                 RLog.d(TAG, "countryCode : $countryCode  categoryList : $categoryList")
@@ -440,7 +447,10 @@ class SearchViewModel
                 youtubeApiRepository.requestYouTubeCategory(countryCode).collect { response ->
 
                     when (response) {
-                        is ApiResult.Loading -> RLog.d(TAG, "Loading")
+                        is ApiResult.Loading -> {
+                            RLog.d(TAG, "Loading")
+                        }
+
                         is ApiResult.Success -> {
                             _youtubeCategory.value = response.data
                             RLog.d(TAG, "category ${response.data}")
@@ -456,8 +466,13 @@ class SearchViewModel
                             RLog.d(TAG, "modify category ${response.data}")
                         }
 
-                        is ApiResult.Exception -> RLog.e(TAG, "message : ${response.e.message}")
-                        else -> Unit
+                        is ApiResult.Exception -> {
+                            RLog.e(TAG, "message : ${response.e.message}")
+                        }
+
+                        else -> {
+                            Unit
+                        }
                     }
                 }
             }
@@ -522,7 +537,9 @@ class SearchViewModel
                                 setDeepLinkTab(null, null, null)
                             }
 
-                            else -> Unit
+                            else -> {
+                                Unit
+                            }
                         }
                     }
             }
@@ -698,7 +715,11 @@ class SearchViewModel
                 _selectedDate.value = date.toString().replace("-", "")
                 _selectedCategory.value = categoryName
 
-                requestDailyShortsSearch(context, _selectedDate.value, settingRespository.getLocale())
+                requestDailyShortsSearch(
+                    context,
+                    _selectedDate.value,
+                    settingRespository.getLocale().first() ?: "KR",
+                )
             }
         }
 
@@ -717,7 +738,11 @@ class SearchViewModel
         fun getInitCategory() =
             YouTubeCategory(
                 "0",
-                getAppLocaleByStringResource(context, _currentLocale.value, R.string.youtube_category_all),
+                getAppLocaleByStringResource(
+                    context,
+                    _currentLocale.value,
+                    R.string.youtube_category_all,
+                ),
             )
 
         fun getFindCategory(categoryKey: String?): YouTubeCategory? =

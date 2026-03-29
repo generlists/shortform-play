@@ -27,6 +27,7 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.TopNavigationBar
+import com.sean.ratel.android.ui.common.findActivity
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
@@ -53,11 +54,13 @@ fun SettingView(
     adViewModel: AdViewModel,
     pushViewModel: PushViewModel,
 ) {
+    val activity = LocalContext.current.findActivity()
     val context = LocalContext.current
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
     var adSize by remember { mutableStateOf(64) }
     val bottomBarHeight = adViewModel.bottomBarHeight.value
+    val fromPermissionPage by pushViewModel.fromPermissionPage.collectAsState(initial = false)
     when {
         adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
             adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
@@ -77,7 +80,14 @@ fun SettingView(
         topBar = {
             TopNavigationBar(
                 titleResourceId = R.string.setting,
-                historyBack = { mainViewModel.runNavigationBack() },
+                historyBack = {
+                    mainViewModel.runNavigationBack(
+                        null,
+                        false,
+                        if (!fromPermissionPage) null else activity,
+                    )
+                    pushViewModel.setFromPermissionPage(false)
+                },
                 isShareButton = false,
                 runSetting = { PhoneUtil.shareAppLinkButton(context) },
                 filterButton = false,

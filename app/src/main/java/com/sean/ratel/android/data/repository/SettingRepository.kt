@@ -49,7 +49,5 @@ SettingRepository
 
         suspend fun getPIPPlay() = settingPreference.getPIPPlay()
 
-        suspend fun getLocale() = settingPreference.getLocale()
-
-        suspend fun getNewUpdate() = settingPreference.getNewUpdate()
+        fun getLocale() = settingPreference.getLocale()
     }

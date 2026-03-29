@@ -1,5 +1,6 @@
 package com.sean.ratel.android.data.local.pref
 
+import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -51,6 +52,7 @@ class ShortsJsonPreference
                 // 패턴에 맞는 키를 찾아서 삭제
                 preferences.asMap().forEach { (key, _) ->
                     if (key.name.contains(keyPattern)) {
+                        Log.d("LLLLLLLLLL", "$keyPattern remove!! $key")
                         preferences.remove(key)
                     }
                 }

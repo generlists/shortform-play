@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.ad
 
-import android.util.Log
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.common.RemoteConfig.END_AD_POSITION
@@ -36,7 +35,13 @@ class InterstitialAdManager
             showLoading: (Boolean) -> Unit,
         ) {
             if (createPosition == adTriggerState.selection) {
-                RLog.d("InterstitialAdManager", "showAd $showAd")
+                RLog.d(
+                    "InterstitialAdManager",
+                    "showAd $showAd , fromSearch : ${adTriggerState.fromSearch} , shouldTriggerAd : ${shouldTriggerAd(
+                        adTriggerState.selection,
+                        adTriggerState.totalSize,
+                    )}",
+                )
                 if (!showAd && (
                         adTriggerState.fromSearch ||
                             shouldTriggerAd(
@@ -78,8 +83,9 @@ class InterstitialAdManager
             // Log.d("InterstitialAdManager","initAdMobState : $adTriggerState.initAdMobState")
             if (adTriggerState.initAdMobInitState is AdMobInitState.InitComplete) {
                 showAd = true
+
                 requestInitInterstitialAd({ adState ->
-                    Log.d("InterstitialAdManager", "$adState")
+                    RLog.d("InterstitialAdManager", "$adState")
                     if (adState == null ||
                         adState is AdMobInterstitialAdState.FullScreenContentDismiss ||
                         adState is AdMobInterstitialAdState.AdError
@@ -100,7 +106,7 @@ class InterstitialAdManager
             interstitialCollectJob =
                 scope.launch {
                     adsSdk.interstitialState.collect { event ->
-                        Log.d("InterstitialAdManager", "initAdMobState : $event")
+                        RLog.d("InterstitialAdManager", "initAdMobState : $event")
                         initInterstitialAdState(event)
 
                         if (event is AdMobInterstitialAdState.AdLoadComplete) {

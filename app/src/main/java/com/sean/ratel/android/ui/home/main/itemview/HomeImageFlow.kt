@@ -231,81 +231,81 @@ fun AutoScrollImagePager(
                         },
             ) { page ->
                 // 실제 이미지의 인덱스 계산
+                runCatching {
+                    val imageIndex = if (page == 0) 0 else (page % topItemSize)
+                    val channelId =
+                        topFrontMainList?.get(imageIndex)?.shortsChannelModel?.channelId ?: ""
+                    val externalUrl =
+                        topFrontMainList?.get(imageIndex)?.shortsChannelModel?.brandExternalUrl ?: ""
 
-                val imageIndex = if (page == 0) 0 else (page % topItemSize)
-                val channelId =
-                    topFrontMainList?.get(imageIndex)?.shortsChannelModel?.channelId ?: ""
-                val externalUrl =
-                    topFrontMainList?.get(imageIndex)?.shortsChannelModel?.brandExternalUrl ?: ""
-
-                Surface(
-                    Modifier
-                        // .padding(bottom = 10.dp)
-                        .clickable {
-                            mainViewModel?.goEndContent(
-                                Destination.Home.Main.route,
-                                ViewType.ImageFlow,
-                                imageIndex,
-                                channelId,
-                            )
-                            mainViewModel?.sendGALog(
-                                Event.SCREEN_VIEW,
-                                Destination.YouTube.dynamicRoute(channelId),
-                                ViewType.ImageFlow,
-                                channelId,
-                            )
-                        },
-                    shadowElevation = 10.dp,
-                ) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .aspectRatio(1.7f),
+                    Surface(
+                        Modifier
+                            // .padding(bottom = 10.dp)
+                            .clickable {
+                                mainViewModel?.goEndContent(
+                                    Destination.Home.Main.route,
+                                    ViewType.ImageFlow,
+                                    imageIndex,
+                                    channelId,
+                                )
+                                mainViewModel?.sendGALog(
+                                    Event.SCREEN_VIEW,
+                                    Destination.YouTube.dynamicRoute(channelId),
+                                    ViewType.ImageFlow,
+                                    channelId,
+                                )
+                            },
+                        shadowElevation = 10.dp,
                     ) {
-                        NetworkImage(
-                            url = externalUrl,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
+                        Box(
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
-                                    .wrapContentHeight(),
-                            imageLoader = mainViewModel?.imageLoader,
-                            placeholderRes = R.drawable.image_flow_loading,
-                            loadComplete = {},
-                        )
-
-                        Box(
-                            Modifier
-                                .fillMaxWidth()
-                                .background(
-                                    Brush.verticalGradient(
-                                        colors =
-                                            listOf(
-                                                // 위쪽은 투명
-                                                Color.Transparent,
-                                                // 중간은 조금 어둡게
-                                                Color.Black.copy(alpha = 0.1f),
-                                                Color.Black.copy(alpha = 0.2f),
-                                                // 완전히 어두운 색
-                                                Color.Black.copy(alpha = 0.3f),
-                                                Color.Black.copy(alpha = 0.4f),
-                                                Color.Black.copy(alpha = 0.5f),
-                                                Color.Black.copy(alpha = 0.6f),
-                                                // Color.Black.copy(alpha = 0.7f),
-                                            ),
-                                        startY = 0f,
-                                        // Box 높이와 맞추기
-                                        endY = heightInPx,
-                                    ),
-                                )
-                                .height(150.dp)
-                                .align(Alignment.BottomCenter)
-                                .padding(top = 7.dp),
+                                    .wrapContentHeight()
+                                    .aspectRatio(1.7f),
                         ) {
-                            FlowChannelArea(Modifier, topFrontMainList?.get(imageIndex))
+                            NetworkImage(
+                                url = externalUrl,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier =
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentHeight(),
+                                imageLoader = mainViewModel?.imageLoader,
+                                placeholderRes = R.drawable.image_flow_loading,
+                                loadComplete = {},
+                            )
+
+                            Box(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .background(
+                                        Brush.verticalGradient(
+                                            colors =
+                                                listOf(
+                                                    // 위쪽은 투명
+                                                    Color.Transparent,
+                                                    // 중간은 조금 어둡게
+                                                    Color.Black.copy(alpha = 0.1f),
+                                                    Color.Black.copy(alpha = 0.2f),
+                                                    // 완전히 어두운 색
+                                                    Color.Black.copy(alpha = 0.3f),
+                                                    Color.Black.copy(alpha = 0.4f),
+                                                    Color.Black.copy(alpha = 0.5f),
+                                                    Color.Black.copy(alpha = 0.6f),
+                                                    // Color.Black.copy(alpha = 0.7f),
+                                                ),
+                                            startY = 0f,
+                                            // Box 높이와 맞추기
+                                            endY = heightInPx,
+                                        ),
+                                    ).height(150.dp)
+                                    .align(Alignment.BottomCenter)
+                                    .padding(top = 7.dp),
+                            ) {
+                                FlowChannelArea(Modifier, topFrontMainList?.get(imageIndex))
+                            }
                         }
                     }
                 }

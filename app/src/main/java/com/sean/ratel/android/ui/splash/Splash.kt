@@ -306,21 +306,17 @@ fun InitialDataAndAD(
     splashViewModel: SplashViewModel,
     pass: (Boolean) -> Unit,
 ) {
-    var showSplash by remember { mutableStateOf(true) }
-    var locale by remember { mutableStateOf("") }
+    val locale by splashViewModel.locale.collectAsState(initial = null)
+    val hasLoadedOnce by splashViewModel.hasLoadedOnce.collectAsState()
+    var showCheck by remember(hasLoadedOnce) { mutableStateOf(false) }
+
     val coroutineScope = rememberCoroutineScope()
     val isAdComplete by mainViewModel.adMobinitState.collectAsState()
     val options = getShortFormCountry(LocalContext.current)
     val forceRefresh by adViewModel.forceClearCache.collectAsState()
     val authCheck by splashViewModel.authCheck.collectAsState()
-    val newUpdate by splashViewModel.newUpdate.collectAsState()
 
     LaunchedEffect(isAdComplete) {
-        coroutineScope.launch {
-            locale = splashViewModel.getLocale()
-            splashViewModel.loadNewUpdate()
-        }
-
         combine(
             splashViewModel.mainDataComplete,
             splashViewModel.trendsShortsComplete,
@@ -337,36 +333,45 @@ fun InitialDataAndAD(
         }
     }
 
-    RLog.d("SPLASH", "isAdComplete : $isAdComplete newUpdate : $newUpdate, locale : $locale")
     if (isAdComplete is AdMobInitState.InitComplete) {
-        if (locale.isEmpty() || !newUpdate) {
-            RLog.d("SPLASH", "newUpdate : $newUpdate")
+        LaunchedEffect(hasLoadedOnce) {
+            showCheck = false
+            delay(100)
+            showCheck = true
+        }
+        RLog.d("SPASH", "start locale : $locale")
+        if (locale == null && showCheck) {
             ShortFormSelectDialog(
                 defaultCountryCode = getCountryCode(),
                 options = options,
                 onClick = { countryCode ->
-                    locale = countryCode
+                    RLog.d("LLLLLLLLLL", "befor locale : $locale , after countryCode : $countryCode")
+                    coroutineScope.launch {
+                        splashViewModel.setLocale(countryCode)
+                    }
 
+                    val value = locale ?: "KR"
                     splashViewModel.sendGALog(
                         screenName = GASplashAnalytics.SCREEN_NAME.get(SPLASH_SCREEN) ?: "",
                         eventName = GASplashAnalytics.Event.SELECT_COUNTY_CLICK,
                         actionName = GASplashAnalytics.Action.CLICK,
                         parameter =
                             mapOf(
-                                GASplashAnalytics.Param.COUNTY_CODE to locale,
+                                GASplashAnalytics.Param.COUNTY_CODE to value,
                             ),
                     )
 
                     coroutineScope.launch {
                         splashViewModel.setLocale(countryCode)
-                        splashViewModel.setNewUpdate(true)
-                        RLog.d("SPLASH", "newUpdate : $newUpdate")
+                        // RLog.d("SPLASH", "newUpdate : $newUpdate")
                     }
                 },
                 onDismiss = {},
             )
         } else {
-            LaunchedEffect(Unit) {
+            LaunchedEffect(locale) {
+                delay(100)
+                val aa = getCountryCode(locale)
                 splashViewModel.requestYouTubeVideos(
                     SplashViewModel.RequestType.TODAY,
                     FirebaseStorage.getInstance(),

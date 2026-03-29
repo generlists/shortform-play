@@ -1,6 +1,7 @@
 package com.sean.ratel.android.ui.home.setting
 
 import android.Manifest
+import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -33,7 +34,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +50,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.ui.push.PushChannelHelper
+import com.sean.ratel.android.ui.push.PushChannelIds
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
@@ -67,10 +70,7 @@ fun SettingPush(
 
     var expanded by remember { mutableStateOf(true) }
     val pushNotification by pushViewModel.hasPermission.collectAsState()
-
     val hasPermission by pushViewModel.hasPermission.collectAsState()
-    val requestedBefore by pushViewModel.requestedBefore.collectAsState(initial = false)
-    val openSetting by pushViewModel.goOpenSetting.collectAsStateWithLifecycle()
 
     val notificationPermissionLauncher =
         rememberLauncherForActivityResult(
@@ -78,6 +78,8 @@ fun SettingPush(
         ) { granted ->
             pushViewModel.onNotificationPermissionResult(granted)
         }
+
+    setDetailSyncNotification(context, pushViewModel)
 
     Column(Modifier.fillMaxWidth()) {
         Row(
@@ -126,14 +128,11 @@ fun SettingPush(
                         onValueChanged = {
                             when {
                                 hasPermission -> {
-                                    Log.d("hbungshin", "설정이동 1")
                                     pushViewModel.setOpenSettings(true)
-                                    Log.d("hbungshin", "설정이동1 openSetting : $openSetting")
                                     pushViewModel.openAppSettings()
                                 }
 
-                                !requestedBefore && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                                    pushViewModel.setRequestedBefore(true)
+                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
                                     notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                                 }
 
@@ -184,10 +183,7 @@ fun SettingPush(
     }
 
     val lifecycleOwner = LocalLifecycleOwner.current
-    val goOpenSetting by pushViewModel.goOpenSetting.collectAsStateWithLifecycle()
-    val currentPushCheck by pushViewModel.currentPushItemCheck.collectAsState()
-    val latestCurrentPushCheckSetting by rememberUpdatedState(currentPushCheck)
-
+    val openSettings by pushViewModel.goOpenSetting.collectAsStateWithLifecycle(lifecycleOwner)
     val scope = rememberCoroutineScope()
 
     DisposableEffect(lifecycleOwner) {
@@ -197,32 +193,14 @@ fun SettingPush(
                     scope.launch {
                         // 설정에서 프로세스가 죽어서 다시 오면 딜레이를 주고 받아야 정상적으로 데이터를 가져온다.
                         delay(500)
+                        pushViewModel.setFromPermissionPage(!hasPermission)
 
-                        if (!goOpenSetting) return@launch
+                        // val goOpenSetting = pushViewModel.goOpenSetting.value
+                        RLog.d("Permission", "goOpenSetting : $openSettings")
 
-                        pushViewModel.refreshPermission(latestCurrentPushCheckSetting)
-                        val currentPermission = pushViewModel.hasPermission.value
-                        pushViewModel.setOpenSettings(false)
+                        if (!openSettings) return@launch
 
-                        if (latestCurrentPushCheckSetting != null) {
-                            when (latestCurrentPushCheckSetting) {
-                                SettingsItems.SERVICE_PUSH_APP_UPDATE -> {
-                                    pushViewModel.saveAppUpdatePush(currentPermission)
-                                }
-
-                                SettingsItems.SERVICE_PUSH_VIDEO_UPLOAD -> {
-                                    pushViewModel.saveUploadPush(currentPermission)
-                                }
-
-                                SettingsItems.SERVICE_PUSH_VIDEO_RECOMMEND -> {
-                                    pushViewModel.saveRecommendPush(currentPermission)
-                                }
-
-                                else -> {
-                                    Unit
-                                }
-                            }
-                        }
+                        setDetailSyncNotification(context, pushViewModel)
                     }
                 }
             }
@@ -233,6 +211,45 @@ fun SettingPush(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+}
+
+private fun setDetailSyncNotification(
+    context: Context,
+    pushViewModel: PushViewModel,
+) {
+    val updateStatus =
+        PushChannelHelper.getChannelStatus(
+            context = context,
+            channelId = PushChannelIds.APP_UPDATE,
+        )
+
+    val uploadStatus =
+        PushChannelHelper.getChannelStatus(
+            context = context,
+            channelId = PushChannelIds.VIDEO_UPLOAD,
+        )
+
+    val recommendStatus =
+        PushChannelHelper.getChannelStatus(
+            context = context,
+            channelId = PushChannelIds.RECOMMEND,
+        )
+
+    val currentPermission = pushViewModel.hasPermission.value
+    pushViewModel.setOpenSettings(false)
+
+    pushViewModel.setMainPermission()
+    val appUpdate = updateStatus.appNotificationsEnabled && updateStatus.channelEnabled
+    Log.d("OKKKKKKK", "appUpdate : $appUpdate")
+    pushViewModel.saveAppUpdatePush(currentPermission && appUpdate)
+
+    val appUpload = uploadStatus.appNotificationsEnabled && uploadStatus.channelEnabled
+    Log.d("OKKKKKKK", "appUpload : $appUpload")
+    pushViewModel.saveUploadPush(currentPermission && appUpload)
+
+    val recommend = recommendStatus.appNotificationsEnabled && recommendStatus.channelEnabled
+    Log.d("OKKKKKKK", "recommend : $recommend")
+    pushViewModel.saveRecommendPush(currentPermission && recommend)
 }
 
 @Suppress("ktlint:standard:function-naming")
