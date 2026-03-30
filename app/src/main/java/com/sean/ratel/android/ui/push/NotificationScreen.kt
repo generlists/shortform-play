@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -137,20 +138,30 @@ fun NotificationScreen(
                     }
                 }
 
-                TopNavigationBar(
-                    titleResourceId = R.string.app_notification,
-                    historyBack = { mainViewModel.runNavigationBack() },
-                    isShareButton = true,
-                    runSetting = { PhoneUtil.shareAppLinkButton(context) },
-                    filterButton = false,
-                )
-
-                Spacer(Modifier.height(16.dp))
+//                TopNavigationBar(
+//                    titleResourceId = R.string.app_notification,
+//                    historyBack = { mainViewModel.runNavigationBack() },
+//                    isShareButton = true,
+//                    runSetting = { PhoneUtil.shareAppLinkButton(context) },
+//                    filterButton = false,
+//                )
+//
+//                Spacer(Modifier.height(16.dp))
             }
         }
+        TopNavigationBar(
+            titleResourceId = R.string.app_notification,
+            historyBack = { mainViewModel.runNavigationBack() },
+            isShareButton = true,
+            runSetting = { PhoneUtil.shareAppLinkButton(context) },
+            filterButton = false,
+        )
+
+        Spacer(Modifier.height(16.dp))
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun NotificationList(
@@ -307,7 +318,7 @@ fun PushListItem(
                         }
                     }
 
-                    pushViewModel.updateReadFlag(item, isRead = true)
+                    pushViewModel.updateReadFlag(item.id, isRead = true)
                 },
         ) {
             Box(

@@ -86,14 +86,16 @@ fun HomeTopBar(
                         ),
                 ),
         )
-        Divider(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.5.dp)
-                    .align(Alignment.BottomCenter)
-                    .background(Color(0xFF1C1C1E)),
-        )
+        if (isHomeNaviBar != Destination.YouTube.route) {
+            Divider(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.5.dp)
+                        .align(Alignment.BottomCenter)
+                        .background(Color(0xFF1C1C1E)),
+            )
+        }
 
         Box(
             modifier =

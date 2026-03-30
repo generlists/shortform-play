@@ -54,7 +54,7 @@ class PushNotificationManager
             context: Context,
             data: Map<String, String>,
         ) {
-            val pendingIntent = createPendingIntent(context, data["type"], data["linkUrl"])
+            val pendingIntent = createPendingIntent(context, data["id"], data["type"], data["linkUrl"])
             val appIconBitmap =
                 BitmapFactory.decodeResource(
                     context.resources,
@@ -81,7 +81,7 @@ class PushNotificationManager
             data: Map<String, String>,
         ) {
             // Message(type=Upload, title=1658개의 영상이 업로드 되었어요., body=Shrimp vs Time, data={body=Shrimp vs Time, date=2026.03.18, type=Upload, count=, title=1658개의 영상이 업로드 되었어요., linkUrl=https://shortform-play.ai?vid=BepAjwAjZoA, videoId=BepAjwAjZoA, thumbUrl=https://i.ytimg.com/vi/BepAjwAjZoA/hqdefault.jpg, channelThumbUrl=https://yt3.ggpht.com/4UQ577L3bctWdMmwi-PjYIqXXFj_WGRIZNwMuL8-JN2xtfb56DRVv8ONu6VakDZHCqOISI6D=s88-c-k-c0x00ffffff-no-rj})
-            val pendingIntent = createPendingIntent(context, data["type"], data["linkUrl"])
+            val pendingIntent = createPendingIntent(context, data["id"], data["type"], data["linkUrl"])
 
             CoroutineScope(Dispatchers.IO).launch {
                 val bigImage =
@@ -125,6 +125,7 @@ class PushNotificationManager
 
         private fun createPendingIntent(
             context: Context,
+            id: String?,
             type: String?,
             url: String?,
         ): PendingIntent {
@@ -153,6 +154,7 @@ class PushNotificationManager
                 pushPreference.saveNewPush(true)
             }
 
+            intent.putExtra("notification_id", id)
             intent.putExtra("notification_type", type)
             intent.putExtra("notification_click", true)
 
@@ -177,7 +179,8 @@ class PushNotificationManager
 //            "channelThumbUrl":"https://yt3.ggpht.com/AXxjT9r1AoLxyny3L5lquEVIP6Qa5gJnQUtf94De2QydHrse6OCkkLpHOsTiQ37_t7wQ22G3pA=s88-c-k-c0x00ffffff-no-rj",
 //            "thumbUrl":"https://i.ytimg.com/vi/BRYAWqGjmPo/hqdefault.jpg"
 //        }
-            val pendingIntent = createPendingIntent(context, data["type"], data["linkUrl"])
+            val pendingIntent =
+                createPendingIntent(context, data["id"], data["type"], data["linkUrl"])
 
             CoroutineScope(Dispatchers.IO).launch {
                 val bigImage =

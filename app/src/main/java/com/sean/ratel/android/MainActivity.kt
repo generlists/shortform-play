@@ -27,6 +27,7 @@ import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHARE
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHORTFORM
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.YOUTUBE
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
+import com.sean.ratel.android.data.log.GAKeys.NOTIFICATION_ID
 import com.sean.ratel.android.data.log.GAKeys.NOTIFICATION_TYPE
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.log.GASplashAnalytics
@@ -462,6 +463,7 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun sendNotificationGA() {
+        val notificationId = intent.getStringExtra("notification_id") ?: ""
         val notificationType = intent.getStringExtra("notification_type")
         val notificationClick = intent.getBooleanExtra("notification_click", false)
 
@@ -470,8 +472,10 @@ class MainActivity : FragmentActivity() {
                 screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
                 eventName = GASplashAnalytics.Event.SELECT_NOTIFICATION_CLICK,
                 actionName = GASplashAnalytics.Action.CLICK,
-                mapOf(NOTIFICATION_TYPE to notificationType),
+                mapOf(NOTIFICATION_TYPE to notificationType, NOTIFICATION_ID to notificationId),
             )
+            pushViewModel.saveNewPush()
+            pushViewModel.updateReadFlag(notificationId, isRead = true)
         }
 
         RLog.d("KKKMMMMMMM", "$notificationClick")
