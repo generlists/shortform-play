@@ -11,4 +11,5 @@ object GAKeys {
     const val SEARCH_MORE_INDEX = "search_more_index"
     const val SEARCH_TYPE = "search_type"
     const val CATEGORY_NAME = "categoryName"
+    const val NOTIFICATION_TYPE = "notificationType"
 }

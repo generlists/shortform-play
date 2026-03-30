@@ -128,7 +128,7 @@ class PushNotificationManager
             type: String?,
             url: String?,
         ): PendingIntent {
-            RLog.d("KKKKKKKK", "createPendingIntent $url")
+            RLog.d("PushNotificationManager", "createPendingIntent $url")
 
             val intent =
                 when (type) {
@@ -152,6 +152,9 @@ class PushNotificationManager
             scope.launch {
                 pushPreference.saveNewPush(true)
             }
+
+            intent.putExtra("notification_type", type)
+            intent.putExtra("notification_click", true)
 
             return PendingIntent.getActivity(
                 context,

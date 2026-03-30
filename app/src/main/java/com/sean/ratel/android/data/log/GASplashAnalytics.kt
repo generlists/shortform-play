@@ -24,6 +24,7 @@ object GASplashAnalytics {
         const val SELECT_SEARCH_DAILY_RESULT = "select_user_search_daily_result"
         const val SELECT_SEARCH_DAILY_ITEM_CLICK = "select_user_search_daily_item_click"
         const val SEARCH__DAILY_MORE_VIEW = "search_more_daily_view"
+        const val SELECT_NOTIFICATION_CLICK = "select_notification_click"
     }
 
     object Action {
@@ -38,6 +39,8 @@ object GASplashAnalytics {
         const val SEARCH_MORE_INDEX = GAKeys.SEARCH_MORE_INDEX
         const val SEARCH_TYPE = GAKeys.SEARCH_TYPE
         const val CATEGORY_NAME = GAKeys.CATEGORY_NAME
+        const val NOTIFICATION_TYPE = GAKeys.NOTIFICATION_TYPE
+
 //        const val PAGE_INDEX = GAKeys.PAGE_INDEX
 //        const val ISSUE_KEYWORD = GAKeys.ISSUE_KEYWORD
     }

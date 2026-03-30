@@ -26,7 +26,10 @@ import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SETTING
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHARE
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHORTFORM
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.YOUTUBE
+import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
+import com.sean.ratel.android.data.log.GAKeys.NOTIFICATION_TYPE
 import com.sean.ratel.android.data.log.GALog
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.home.ViewType
@@ -192,7 +195,9 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
+
         // deep link
+        sendNotificationGA()
         deepLink()
     }
 
@@ -236,7 +241,7 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
-
+        sendNotificationGA()
         deepLink()
     }
 
@@ -454,6 +459,22 @@ class MainActivity : FragmentActivity() {
                 setUnifiedLinkHandler(intent)
             }
         }
+    }
+
+    private fun sendNotificationGA() {
+        val notificationType = intent.getStringExtra("notification_type")
+        val notificationClick = intent.getBooleanExtra("notification_click", false)
+
+        notificationType?.let {
+            mainViewModel.sendGALog(
+                screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                eventName = GASplashAnalytics.Event.SELECT_NOTIFICATION_CLICK,
+                actionName = GASplashAnalytics.Action.CLICK,
+                mapOf(NOTIFICATION_TYPE to notificationType),
+            )
+        }
+
+        RLog.d("KKKMMMMMMM", "$notificationClick")
     }
 
     companion object {
