@@ -74,7 +74,10 @@ fun Splash(
     mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
 ) {
-    var step by rememberSaveable { mutableStateOf(SplashStep.NETWORK) }
+    var step by remember { mutableStateOf(SplashStep.NETWORK) }
+    LaunchedEffect(Unit) {
+        step = SplashStep.NETWORK
+    }
     val autoCheck by splashViewModel.authCheck.collectAsState()
 
     BackHandler { splashViewModel.navigator.finish() }
@@ -86,9 +89,9 @@ fun Splash(
             SplashStep.NETWORK -> {
                 NetworkAlert(
                     splashViewModel = splashViewModel,
-                    pass = { pass ->
-                        Log.d("SPLASH", "pass : Network $pass")
-                        if (!pass) step = SplashStep.NOTIFICATION
+                    pass = {
+                        Log.d("SPLASH", "move NETWORK -> NOTIFICATION")
+                        step = SplashStep.NOTIFICATION
                     },
                 )
             }
@@ -159,28 +162,27 @@ private fun NotificationPermission(
             contract = ActivityResultContracts.RequestPermission(),
         ) { granted ->
             // result 권한 획득 유무와 관계 없이 이동
-            Log.d("SPLASH", "granted $granted")
+            RLog.d("SPLASH", "notificationLauncher granted $granted")
             if (granted) {
-                pushViewModel.refreshPermission()
                 pushViewModel.registerPush()
             } else {
                 pushViewModel.unRegisterPush()
             }
-
+            pushViewModel.refreshPermission()
             pass(true)
         }
 
     LaunchedEffect(Unit) {
         if (!hasRequested) {
             hasRequested = true
-            Log.d("SPLASH", "grant")
+            Log.d("KKKKKK", "grant")
             // 33 이상만 권한 요청
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val grant = permissionManager.has(permission = requestPermission)
                 val rationale =
                     permissionManager.shouldShowRationale(permission = requestPermission)
 
-                Log.d("SPLASH", "grant $grant , rationale : $rationale")
+                Log.d("KKKKKK", "grant $grant , rationale : $rationale")
                 if (!grant) {
                     kotlinx.coroutines.android.awaitFrame()
                     notificationLauncher.launch(requestPermission)
@@ -188,8 +190,18 @@ private fun NotificationPermission(
                     pass(true)
                 }
             } else {
+                // 33 미만 은 권한이 팝업이  안뜨기 때문에 현재 가지고 있는 권한에 따라 등록 및 취소를 해야한다.
+                val grant = permissionManager.has(permission = requestPermission)
+                Log.d("KKKKKK", "33 미만 grant $grant")
+                if (grant) {
+                    pushViewModel.registerPush()
+                } else {
+                    pushViewModel.unRegisterPush()
+                }
                 pass(true)
             }
+
+            pushViewModel.refreshPermission()
         }
     }
 }
@@ -233,12 +245,23 @@ private fun SplashView() {
 @Composable
 private fun NetworkAlert(
     splashViewModel: SplashViewModel,
-    pass: (Boolean) -> Unit,
+    pass: () -> Unit,
 ) {
     val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(!splashViewModel.isNetWorkAvailable(context)) }
+    var checked by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
-    if (showDialog) {
+    LaunchedEffect(Unit) {
+        val noNetwork = !splashViewModel.isNetWorkAvailable(context)
+        showDialog = noNetwork
+        checked = true
+
+        if (!noNetwork) {
+            pass()
+        }
+    }
+
+    if (checked && showDialog) {
         ShortFormCommonAlertDialog(
             onDismiss = { buttonClick ->
                 if (buttonClick) {
@@ -250,7 +273,6 @@ private fun NetworkAlert(
             stringResource(R.string.alert_ok),
         )
     }
-    pass(showDialog)
 }
 
 @Suppress("ktlint:standard:function-naming")

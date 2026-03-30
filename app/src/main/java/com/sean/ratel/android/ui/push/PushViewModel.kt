@@ -124,8 +124,15 @@ class PushViewModel
         }
 
         fun registerPush() {
-            pushSDK.register()
-            RLog.d("PUSH_TEST", "push unRegisterPush  : registerPush")
+            viewModelScope.launch {
+                val currentToken = pushPreference.getSaveToken().first()
+
+                RLog.d("PUSH_TEST", "push currentToken : $currentToken")
+                if (currentToken == null) {
+                    RLog.d("PUSH_TEST", "push registerPush  : registerPush")
+                    pushSDK.register()
+                }
+            }
             notificationManager.createChannels(context)
         }
 
@@ -155,14 +162,17 @@ class PushViewModel
             }
         }
 
-        fun setMainPermission() {
+        fun setMainPermission(): Boolean {
             _hasPermission.value =
                 permissionManager.has(permissionManager.requiredPermissions())
+            return _hasPermission.value
         }
 
         fun refreshPermission() {
             _hasPermission.value =
                 permissionManager.has(permissionManager.requiredPermissions())
+
+            RLog.d("PUSH_TEST", "_hasPermission : ${_hasPermission.value}")
 
             saveAppUpdatePush(_hasPermission.value)
             saveUploadPush(_hasPermission.value)
