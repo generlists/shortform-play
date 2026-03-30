@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -277,7 +276,7 @@ fun KeyWordSearchGridItemList(
                 searchViewModel.moreContent(context, index.value + 1, query, complete = {
                     coroutine.launch {
                         loading(false)
-                        listState.animateScrollBy(50f)
+                        // listState.animateScrollBy(50f)
                         searchViewModel.setMorEVent(index.value + 1)
                     }
                 })

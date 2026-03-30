@@ -12,11 +12,14 @@ import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import coil.ImageLoader
 import coil.request.ImageRequest
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.domain.model.push.AppPushType
 import com.sean.ratel.android.data.local.pref.PushPreference
 import com.sean.ratel.android.ui.push.PushChannelIds.APP_UPDATE
 import com.sean.ratel.android.ui.push.PushChannelIds.RECOMMEND
 import com.sean.ratel.android.ui.push.PushChannelIds.VIDEO_UPLOAD
+import com.sean.ratel.android.utils.PhoneUtil.getAppVersionCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -51,7 +54,7 @@ class PushNotificationManager
             context: Context,
             data: Map<String, String>,
         ) {
-            val pendingIntent = createPendingIntent(context, data["linkUrl"])
+            val pendingIntent = createPendingIntent(context, data["type"], data["linkUrl"])
             val appIconBitmap =
                 BitmapFactory.decodeResource(
                     context.resources,
@@ -78,8 +81,7 @@ class PushNotificationManager
             data: Map<String, String>,
         ) {
             // Message(type=Upload, title=1658개의 영상이 업로드 되었어요., body=Shrimp vs Time, data={body=Shrimp vs Time, date=2026.03.18, type=Upload, count=, title=1658개의 영상이 업로드 되었어요., linkUrl=https://shortform-play.ai?vid=BepAjwAjZoA, videoId=BepAjwAjZoA, thumbUrl=https://i.ytimg.com/vi/BepAjwAjZoA/hqdefault.jpg, channelThumbUrl=https://yt3.ggpht.com/4UQ577L3bctWdMmwi-PjYIqXXFj_WGRIZNwMuL8-JN2xtfb56DRVv8ONu6VakDZHCqOISI6D=s88-c-k-c0x00ffffff-no-rj})
-
-            val pendingIntent = createPendingIntent(context, data["linkUrl"])
+            val pendingIntent = createPendingIntent(context, data["type"], data["linkUrl"])
 
             CoroutineScope(Dispatchers.IO).launch {
                 val bigImage =
@@ -123,13 +125,28 @@ class PushNotificationManager
 
         private fun createPendingIntent(
             context: Context,
+            type: String?,
             url: String?,
         ): PendingIntent {
+            RLog.d("KKKKKKKK", "createPendingIntent $url")
+
             val intent =
-                if (url?.startsWith("market://") == true) {
-                    Intent(Intent.ACTION_VIEW, url.toUri())
-                } else {
-                    Intent(Intent.ACTION_VIEW, (url ?: "").toUri())
+                when (type) {
+                    AppPushType.Recommend.name, AppPushType.Upload.name -> {
+                        Intent(Intent.ACTION_VIEW, "$url&v=${getAppVersionCode(context)}".toUri()).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                    }
+
+                    AppPushType.Update.name -> {
+                        Intent(Intent.ACTION_VIEW, url?.toUri())
+                    }
+
+                    else -> {
+                        Intent(Intent.ACTION_VIEW, "shortformplay://home".toUri()).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        }
+                    }
                 }
 
             scope.launch {
@@ -138,7 +155,7 @@ class PushNotificationManager
 
             return PendingIntent.getActivity(
                 context,
-                0,
+                10000,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
@@ -157,7 +174,7 @@ class PushNotificationManager
 //            "channelThumbUrl":"https://yt3.ggpht.com/AXxjT9r1AoLxyny3L5lquEVIP6Qa5gJnQUtf94De2QydHrse6OCkkLpHOsTiQ37_t7wQ22G3pA=s88-c-k-c0x00ffffff-no-rj",
 //            "thumbUrl":"https://i.ytimg.com/vi/BRYAWqGjmPo/hqdefault.jpg"
 //        }
-            val pendingIntent = createPendingIntent(context, data["linkUrl"])
+            val pendingIntent = createPendingIntent(context, data["type"], data["linkUrl"])
 
             CoroutineScope(Dispatchers.IO).launch {
                 val bigImage =

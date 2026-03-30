@@ -62,9 +62,11 @@ class UnifiedLinkHandler
                     "https" -> {
                         deepLinkUri.lastPathSegment
                     }
+
                     "shortformplay" -> {
                         deepLinkUri.host
                     }
+
                     else -> {
                         deepLinkUri?.lastPathSegment
                     }
@@ -73,9 +75,13 @@ class UnifiedLinkHandler
 
             val deepLinkInfo: DeepLinkInfo =
                 when (selection) {
-                    HOME -> DeepLinkInfo(HOME, Destination.Home.Main.route, ViewType.DeepLinkVideo)
+                    HOME -> {
+                        DeepLinkInfo(HOME, Destination.Home.Main.route, ViewType.DeepLinkVideo)
+                    }
 
-                    SHORTFORM -> DeepLinkInfo(SHORTFORM, Destination.Home.ShortForm.route, ViewType.DeepLinkVideo)
+                    SHORTFORM -> {
+                        DeepLinkInfo(SHORTFORM, Destination.Home.ShortForm.route, ViewType.DeepLinkVideo)
+                    }
 
                     SETTING -> {
                         val page = deepLinkUri?.getQueryParameter("page")
@@ -86,6 +92,7 @@ class UnifiedLinkHandler
                             DeepLinkInfo(SETTING, Destination.Setting.route, ViewType.DeepLinkVideo)
                         }
                     }
+
                     YOUTUBE -> {
                         val videoId = deepLinkUri?.getQueryParameter("vid")
                         RLog.d("deepLink", "videoId : $videoId")
@@ -96,6 +103,7 @@ class UnifiedLinkHandler
                             videoId,
                         )
                     }
+
                     // https://shortform-play.ai/search?t=keyword&q=아이유&v=10070
                     //  https://shortform-play.ai/search?t=daily&d=20251020&c=0&v=10080
                     SEARCH -> {
@@ -114,6 +122,7 @@ class UnifiedLinkHandler
                             category,
                         )
                     }
+
                     SHARE -> {
                         // val title = deepLinkUri.getQueryParameter("title")
                         val videoId = deepLinkUri?.getQueryParameter("vid")
@@ -124,7 +133,10 @@ class UnifiedLinkHandler
                             videoId,
                         )
                     }
-                    else -> DeepLinkInfo(HOME, Destination.Home.Main.route)
+
+                    else -> {
+                        DeepLinkInfo(HOME, Destination.Home.Main.route)
+                    }
                 }
 
             handleDeepLink(deepLinkInfo)
