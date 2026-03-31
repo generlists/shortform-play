@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.app.ActivityCompat
@@ -72,9 +71,9 @@ class PermissionManager
         }
 
         override fun requiredPermissions(): String =
-            if (Build.VERSION.SDK_INT >= 33) {
-                Manifest.permission.POST_NOTIFICATIONS
-            } else {
-                ""
-            }
+//            if (Build.VERSION.SDK_INT >= 33) {
+            Manifest.permission.POST_NOTIFICATIONS
+//            } else {
+//                ""
+//            }
     }

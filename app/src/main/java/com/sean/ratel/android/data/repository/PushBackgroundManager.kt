@@ -45,14 +45,8 @@ class PushBackgroundManager
                             return@launch
                         }
 
-                        // 같은 항목(예: 같은 타입 + 같은 링크)은 지우고 새 값으로 교체
-                        val filteredList =
-                            currentList.filterNot {
-                                it.type == pushModel.type &&
-                                    it.linkUrl == pushModel.linkUrl
-                            }
                         // 200 개 limit
-                        val updatedList = listOf(pushModel) + filteredList.take(NOTIFICATON_LIMIT_COUNT)
+                        val updatedList = listOf(pushModel) + currentList.take(NOTIFICATON_LIMIT_COUNT)
                         pushPreference.updatePush(updatedList)
                     }
                 }

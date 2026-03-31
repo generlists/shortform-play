@@ -46,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
@@ -86,14 +87,16 @@ fun HomeTopBar(
                         ),
                 ),
         )
-        Divider(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(1.5.dp)
-                    .align(Alignment.BottomCenter)
-                    .background(Color(0xFF1C1C1E)),
-        )
+        if (isHomeNaviBar != Destination.YouTube.route) {
+            Divider(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(1.5.dp)
+                        .align(Alignment.BottomCenter)
+                        .background(Color(0xFF1C1C1E)),
+            )
+        }
 
         Box(
             modifier =
@@ -263,7 +266,7 @@ fun NotificationIconButton(
     pushViewModel: PushViewModel,
 ) {
     val permission by pushViewModel.hasPermission.collectAsState()
-    val hasUnread by pushViewModel.hasNewPush.collectAsState()
+    val hasNewPush by pushViewModel.hasNewPush.collectAsState()
 
     IconButton(onClick = {
         notificationPage()
@@ -281,8 +284,9 @@ fun NotificationIconButton(
                 tint = APP_TEXT_COLOR,
                 modifier = Modifier.size(28.dp),
             )
+            RLog.d("KKKMMMMMMM", "homeTopBar : $hasNewPush")
 
-            if (hasUnread) {
+            if (hasNewPush) {
                 Box(
                     modifier =
                         Modifier
@@ -295,14 +299,6 @@ fun NotificationIconButton(
             }
         }
     }
-
-//        mainViewModel?.sendGALog(
-//            screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
-//            eventName = GASplashAnalytics.Event.SELECT_SEARCH_BTN_CLICK,
-//            actionName = GASplashAnalytics.Action.CLICK,
-//            mapOf(),
-//        )
-    //   }
 }
 
 @Suppress("ktlint:standard:function-naming")

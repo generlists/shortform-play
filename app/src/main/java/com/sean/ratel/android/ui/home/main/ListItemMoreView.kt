@@ -3,7 +3,6 @@ package com.sean.ratel.android.ui.home.main
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -450,7 +449,7 @@ fun ListItemList(
                     coroutine.launch {
                         delay(500)
                         loading(false)
-                        listState.animateScrollBy(50f)
+                        // listState.animateScrollBy(50f)
                     }
                 } else {
                     loading(false)
@@ -795,7 +794,7 @@ fun RecentlyWatchItemList(
                     coroutine.launch {
                         delay(500)
                         loading(false)
-                        listState.animateScrollBy(50f)
+                        // listState.animateScrollBy(50f)
                     }
                 } else {
                     loading(false)

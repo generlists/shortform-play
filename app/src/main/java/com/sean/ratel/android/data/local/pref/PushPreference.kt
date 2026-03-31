@@ -212,7 +212,7 @@ class PushPreference
         }
 
         suspend fun updateReadFlag(
-            target: PushModel,
+            id: String,
             isRead: Boolean,
         ) {
             val currentList = getPushList().first()
@@ -220,9 +220,7 @@ class PushPreference
             val updatedList =
                 currentList.map { item ->
                     if (
-                        item.type == target.type &&
-                        item.linkUrl == target.linkUrl &&
-                        item.createAt == target.createAt
+                        item.id == id
                     ) {
                         when (item) {
                             is PushAppUpdateModel -> item.copy(isRead = isRead)

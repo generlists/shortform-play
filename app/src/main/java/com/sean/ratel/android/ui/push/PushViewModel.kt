@@ -1,7 +1,6 @@
 package com.sean.ratel.android.ui.push
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
@@ -125,8 +124,15 @@ class PushViewModel
         }
 
         fun registerPush() {
-            pushSDK.register()
-            RLog.d("PUSH_TEST", "push unRegisterPush  : registerPush")
+            viewModelScope.launch {
+                val currentToken = pushPreference.getSaveToken().first()
+
+                RLog.d("PUSH_TEST", "push currentToken : $currentToken")
+                if (currentToken == null) {
+                    RLog.d("PUSH_TEST", "push registerPush  : registerPush")
+                    pushSDK.register()
+                }
+            }
             notificationManager.createChannels(context)
         }
 
@@ -156,14 +162,17 @@ class PushViewModel
             }
         }
 
-        fun setMainPermission() {
+        fun setMainPermission(): Boolean {
             _hasPermission.value =
                 permissionManager.has(permissionManager.requiredPermissions())
+            return _hasPermission.value
         }
 
         fun refreshPermission() {
             _hasPermission.value =
                 permissionManager.has(permissionManager.requiredPermissions())
+
+            RLog.d("PUSH_TEST", "_hasPermission : ${_hasPermission.value}")
 
             saveAppUpdatePush(_hasPermission.value)
             saveUploadPush(_hasPermission.value)
@@ -214,21 +223,21 @@ class PushViewModel
 
         fun saveAppUpdatePush(value: Boolean) {
             viewModelScope.launch {
-                Log.d("hbungshin", "saveAppUpdatePush : $value")
+                RLog.d("hbungshin", "saveAppUpdatePush : $value")
                 pushPreference.saveAppUpdatePush(value)
             }
         }
 
         fun saveUploadPush(value: Boolean) {
             viewModelScope.launch {
-                Log.d("hbungshin", "saveUploadPush : $value")
+                RLog.d("hbungshin", "saveUploadPush : $value")
                 pushPreference.saveUploadPush(value)
             }
         }
 
         fun saveRecommendPush(value: Boolean) {
             viewModelScope.launch {
-                Log.d("hbungshin", "saveRecommendPush : $value")
+                RLog.d("hbungshin", "saveRecommendPush : $value")
                 pushPreference.saveRecommendPush(value)
             }
         }
@@ -328,6 +337,13 @@ class PushViewModel
             }
         }
 
+        fun saveNewPush() {
+            viewModelScope.launch {
+                RLog.d("KKKMMMMMMM", "saveNewPush")
+                pushPreference.saveNewPush(false)
+            }
+        }
+
         fun deleteNotification(target: PushModel) {
             viewModelScope.launch {
                 pushPreference.deletePushItem(target)
@@ -335,11 +351,11 @@ class PushViewModel
         }
 
         fun updateReadFlag(
-            target: PushModel,
+            id: String,
             isRead: Boolean,
         ) {
             viewModelScope.launch {
-                pushPreference.updateReadFlag(target, isRead)
+                pushPreference.updateReadFlag(id, isRead)
             }
         }
     }

@@ -195,8 +195,15 @@ fun SettingPush(
                         delay(500)
                         pushViewModel.setFromPermissionPage(!hasPermission)
 
-                        // val goOpenSetting = pushViewModel.goOpenSetting.value
-                        RLog.d("Permission", "goOpenSetting : $openSettings")
+                        val hasPermission = pushViewModel.setMainPermission() // 바로 리턴하게 반경
+
+                        if (hasPermission) {
+                            pushViewModel.registerPush()
+                        } else {
+                            pushViewModel.unRegisterPush()
+                        }
+
+                        RLog.d("PUSH_TEST", "goOpenSetting : $openSettings hasPermission : $hasPermission")
 
                         if (!openSettings) return@launch
 

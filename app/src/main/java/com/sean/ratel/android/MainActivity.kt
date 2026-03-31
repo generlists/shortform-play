@@ -26,7 +26,17 @@ import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SETTING
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHARE
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.SHORTFORM
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.YOUTUBE
+import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_CLICK
+import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_GO_MARKET
+import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_ID
+import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_TYPE
+import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
+import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
+import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
+import com.sean.ratel.android.data.log.GAKeys.NOTIFICATION_ID
+import com.sean.ratel.android.data.log.GAKeys.NOTIFICATION_TYPE
 import com.sean.ratel.android.data.log.GALog
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.home.ViewType
@@ -192,7 +202,9 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
+
         // deep link
+        sendNotificationGA()
         deepLink()
     }
 
@@ -236,7 +248,7 @@ class MainActivity : FragmentActivity() {
                 }
             }
         }
-
+        sendNotificationGA()
         deepLink()
     }
 
@@ -452,6 +464,36 @@ class MainActivity : FragmentActivity() {
                 }
             } else {
                 setUnifiedLinkHandler(intent)
+            }
+        }
+    }
+
+    private fun sendNotificationGA() {
+        val notificationId = intent.getStringExtra(NOTIFICATON_ID) ?: ""
+        val notificationType = intent.getStringExtra(NOTIFICATON_TYPE)
+        val notificationClick = intent.getBooleanExtra(NOTIFICATON_CLICK, false)
+        val goMarket = intent.getBooleanExtra(NOTIFICATON_GO_MARKET, false)
+
+        notificationType?.let {
+            mainViewModel.sendGALog(
+                screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                eventName = GASplashAnalytics.Event.SELECT_NOTIFICATION_CLICK,
+                actionName = GASplashAnalytics.Action.CLICK,
+                mapOf(NOTIFICATION_TYPE to notificationType, NOTIFICATION_ID to notificationId),
+            )
+            RLog.d(
+                TAG,
+                "notificationId : $notificationId , notificationClick : $notificationClick ,  notificationType : $notificationType",
+            )
+            pushViewModel.saveNewPush()
+            pushViewModel.updateReadFlag(notificationId, isRead = true)
+            if (goMarket) {
+                PhoneUtil.runAppStore(
+                    this,
+                    URL_GOOGLE_PLAY_APP(
+                        URL_MY_PACKAGE_NAME,
+                    ),
+                )
             }
         }
     }

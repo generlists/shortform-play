@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -473,7 +472,7 @@ fun GridItemList(
                     coroutine.launch {
                         delay(500)
                         loading(false)
-                        listState.animateScrollBy(50f)
+                        // listState.animateScrollBy(50f)
                     }
                 } else {
                     loading(false)
@@ -741,7 +740,7 @@ fun GridItemBoxRow(
                                 contentScale = ContentScale.Crop,
                                 modifier =
                                     Modifier
-                                        .aspectRatio(0.5625f)
+                                        .aspectRatio(9 / 16f)
                                         .fillMaxSize(),
                             )
                         } else {
@@ -752,7 +751,7 @@ fun GridItemBoxRow(
                                 contentDescription = null,
                                 modifier =
                                     Modifier
-                                        .aspectRatio(0.5625f)
+                                        .aspectRatio(9 / 16f)
                                         .fillMaxSize(),
                                 contentScale = ContentScale.Crop,
                                 placeholderRes = R.drawable.vertical_background,

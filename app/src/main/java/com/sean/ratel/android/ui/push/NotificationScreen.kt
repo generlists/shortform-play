@@ -2,8 +2,8 @@ package com.sean.ratel.android.ui.push
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -88,7 +88,7 @@ fun NotificationScreen(
     pushViewModel: PushViewModel,
 ) {
     val notificationData by pushViewModel.notificationPushUiList.collectAsState()
-    Log.d("PUSH_TEST", "notificationData size ${notificationData.size}")
+    RLog.d("PUSH_TEST", "notificationData size ${notificationData.size}")
     val context = LocalContext.current
     val hasLoadedOnce by pushViewModel.hasLoadedOnce.collectAsState()
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
@@ -136,21 +136,21 @@ fun NotificationScreen(
                         NotificationList(modifier, notificationData, pushViewModel, mainViewModel)
                     }
                 }
-
-                TopNavigationBar(
-                    titleResourceId = R.string.app_notification,
-                    historyBack = { mainViewModel.runNavigationBack() },
-                    isShareButton = true,
-                    runSetting = { PhoneUtil.shareAppLinkButton(context) },
-                    filterButton = false,
-                )
-
-                Spacer(Modifier.height(16.dp))
             }
         }
+        TopNavigationBar(
+            titleResourceId = R.string.app_notification,
+            historyBack = { mainViewModel.runNavigationBack() },
+            isShareButton = true,
+            runSetting = { PhoneUtil.shareAppLinkButton(context) },
+            filterButton = false,
+        )
+
+        Spacer(Modifier.height(16.dp))
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun NotificationList(
@@ -175,7 +175,7 @@ fun NotificationList(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(bottom = adSize.dp),
+            .padding(top = 16.dp, bottom = adSize.dp),
     ) {
         Box(
             modifier
@@ -231,7 +231,7 @@ fun NotificationList(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun ScrapDateHeader(date: LocalDate) {
+private fun ScrapDateHeader(date: LocalDate) {
     val text =
         when (date) {
             LocalDate.now() -> stringResource(R.string.notification_today)
@@ -307,7 +307,7 @@ fun PushListItem(
                         }
                     }
 
-                    pushViewModel.updateReadFlag(item, isRead = true)
+                    pushViewModel.updateReadFlag(item.id, isRead = true)
                 },
         ) {
             Box(
