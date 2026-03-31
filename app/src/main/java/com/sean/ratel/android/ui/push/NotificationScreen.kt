@@ -89,7 +89,7 @@ fun NotificationScreen(
     pushViewModel: PushViewModel,
 ) {
     val notificationData by pushViewModel.notificationPushUiList.collectAsState()
-    Log.d("PUSH_TEST", "notificationData size ${notificationData.size}")
+    RLog.d("PUSH_TEST", "notificationData size ${notificationData.size}")
     val context = LocalContext.current
     val hasLoadedOnce by pushViewModel.hasLoadedOnce.collectAsState()
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
