@@ -339,6 +339,7 @@ class PushViewModel
 
         fun saveNewPush() {
             viewModelScope.launch {
+                RLog.d("KKKMMMMMMM", "saveNewPush")
                 pushPreference.saveNewPush(false)
             }
         }

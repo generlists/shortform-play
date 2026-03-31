@@ -21,9 +21,11 @@ object STRINGS {
 
     val REMAIN_AD_MARGIN = 24.dp
 
-    val NOTIFICATON_CHANNEL_UPDATE = "app_update_channel"
-    val NOTIFICATON_CHANNEL_UPLOAD = "app_uload_channel"
-    val NOTIFICATON_CHANNEL_RECOMMEND = "recommend_channel"
+    val NOTIFICATON_ID = "notification_id"
+    val NOTIFICATON_TYPE = "notification_type"
+    val NOTIFICATON_CLICK = "notification_click"
+    val NOTIFICATON_GO_MARKET = "go_market"
+
     val NOTIFICATON_LIMIT_COUNT = 199
     val NOTIFICATON_NAME = "알림"
 

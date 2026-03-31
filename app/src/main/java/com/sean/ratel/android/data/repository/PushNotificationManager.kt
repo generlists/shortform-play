@@ -13,12 +13,18 @@ import androidx.core.net.toUri
 import coil.ImageLoader
 import coil.request.ImageRequest
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_CLICK
+import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_GO_MARKET
+import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_ID
+import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_TYPE
 import com.sean.ratel.android.data.domain.model.push.AppPushType
 import com.sean.ratel.android.data.local.pref.PushPreference
 import com.sean.ratel.android.ui.push.PushChannelIds.APP_UPDATE
 import com.sean.ratel.android.ui.push.PushChannelIds.RECOMMEND
 import com.sean.ratel.android.ui.push.PushChannelIds.VIDEO_UPLOAD
+import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.getAppVersionCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -129,23 +135,36 @@ class PushNotificationManager
             type: String?,
             url: String?,
         ): PendingIntent {
-            RLog.d("PushNotificationManager", "createPendingIntent $url")
+            RLog.d("KKKMMMMMMM", "id $id ,  type : $type , url : $url")
 
             val intent =
                 when (type) {
-                    AppPushType.Recommend.name, AppPushType.Upload.name -> {
-                        Intent(Intent.ACTION_VIEW, "$url&v=${getAppVersionCode(context)}".toUri()).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    AppPushType.Update.name -> {
+                        Intent(context, MainActivity::class.java).apply {
+                            putExtra(NOTIFICATON_ID, id)
+                            putExtra(NOTIFICATON_TYPE, type)
+                            putExtra(NOTIFICATON_CLICK, true)
+                            putExtra(NOTIFICATON_GO_MARKET, true)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                         }
                     }
 
-                    AppPushType.Update.name -> {
-                        Intent(Intent.ACTION_VIEW, url?.toUri())
+                    AppPushType.Recommend.name, AppPushType.Upload.name -> {
+                        val linkUrl = "$url&v=${getAppVersionCode(context)}"
+                        Intent(Intent.ACTION_VIEW, linkUrl.toUri()).apply {
+                            putExtra(NOTIFICATON_ID, id)
+                            putExtra(NOTIFICATON_TYPE, type)
+                            putExtra(NOTIFICATON_CLICK, true)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        }
                     }
 
                     else -> {
                         Intent(Intent.ACTION_VIEW, "shortformplay://home".toUri()).apply {
-                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            putExtra(NOTIFICATON_ID, id)
+                            putExtra(NOTIFICATON_TYPE, type)
+                            putExtra(NOTIFICATON_CLICK, true)
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         }
                     }
                 }
@@ -154,13 +173,9 @@ class PushNotificationManager
                 pushPreference.saveNewPush(true)
             }
 
-            intent.putExtra("notification_id", id)
-            intent.putExtra("notification_type", type)
-            intent.putExtra("notification_click", true)
-
             return PendingIntent.getActivity(
                 context,
-                10000,
+                (id ?: System.currentTimeMillis().toString()).hashCode(),
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )

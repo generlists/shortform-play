@@ -137,16 +137,6 @@ fun NotificationScreen(
                         NotificationList(modifier, notificationData, pushViewModel, mainViewModel)
                     }
                 }
-
-//                TopNavigationBar(
-//                    titleResourceId = R.string.app_notification,
-//                    historyBack = { mainViewModel.runNavigationBack() },
-//                    isShareButton = true,
-//                    runSetting = { PhoneUtil.shareAppLinkButton(context) },
-//                    filterButton = false,
-//                )
-//
-//                Spacer(Modifier.height(16.dp))
             }
         }
         TopNavigationBar(
@@ -186,7 +176,7 @@ fun NotificationList(
     Column(
         Modifier
             .fillMaxSize()
-            .padding(bottom = adSize.dp),
+            .padding(top = 16.dp, bottom = adSize.dp),
     ) {
         Box(
             modifier
@@ -242,7 +232,7 @@ fun NotificationList(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun ScrapDateHeader(date: LocalDate) {
+private fun ScrapDateHeader(date: LocalDate) {
     val text =
         when (date) {
             LocalDate.now() -> stringResource(R.string.notification_today)
