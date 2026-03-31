@@ -24,7 +24,6 @@ import com.sean.ratel.android.data.local.pref.PushPreference
 import com.sean.ratel.android.ui.push.PushChannelIds.APP_UPDATE
 import com.sean.ratel.android.ui.push.PushChannelIds.RECOMMEND
 import com.sean.ratel.android.ui.push.PushChannelIds.VIDEO_UPLOAD
-import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.getAppVersionCode
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

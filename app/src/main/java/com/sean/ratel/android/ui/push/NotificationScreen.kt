@@ -2,7 +2,6 @@ package com.sean.ratel.android.ui.push
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
