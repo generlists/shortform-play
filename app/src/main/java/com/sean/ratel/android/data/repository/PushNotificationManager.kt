@@ -25,6 +25,8 @@ import com.sean.ratel.android.ui.push.PushChannelIds.APP_UPDATE
 import com.sean.ratel.android.ui.push.PushChannelIds.RECOMMEND
 import com.sean.ratel.android.ui.push.PushChannelIds.VIDEO_UPLOAD
 import com.sean.ratel.android.utils.PhoneUtil.getAppVersionCode
+import com.sean.ratel.android.utils.PhoneUtil.getAppVersionName
+import com.sean.ratel.android.utils.PhoneUtil.isOlderThanCurrentVersion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -49,9 +51,25 @@ class PushNotificationManager
             val type = data["type"] ?: return
 
             when (type) {
-                PushType.Update.name -> showUpdate(context, data)
-                PushType.Upload.name -> showUpload(context, data)
-                PushType.Recommend.name -> showRecommend(context, data)
+                PushType.Update.name -> {
+                    val phoneVersionName = getAppVersionName(context)
+                    val update =
+                        data["version"]?.let { serverVersion ->
+                            isOlderThanCurrentVersion(serverVersion, phoneVersionName)
+                        } ?: false
+
+                    if (update) {
+                        showUpdate(context, data)
+                    }
+                }
+
+                PushType.Upload.name -> {
+                    showUpload(context, data)
+                }
+
+                PushType.Recommend.name -> {
+                    showRecommend(context, data)
+                }
             }
         }
 

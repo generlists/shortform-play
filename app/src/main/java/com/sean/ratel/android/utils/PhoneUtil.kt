@@ -116,6 +116,26 @@ object PhoneUtil {
             0L
         }
 
+    fun isOlderThanCurrentVersion(
+        serverVersion: String,
+        phoneVersion: String,
+    ): Boolean {
+        val serverParts = serverVersion.split(".").map { it.toIntOrNull() ?: 0 }
+        val phoneParts = phoneVersion.split(".").map { it.toIntOrNull() ?: 0 }
+
+        val maxSize = maxOf(serverParts.size, phoneParts.size)
+
+        for (i in 0 until maxSize) {
+            val server = serverParts.getOrElse(i) { 0 }
+            val phone = phoneParts.getOrElse(i) { 0 }
+
+            if (server > phone) return true
+            if (server < phone) return false
+        }
+
+        return false
+    }
+
     fun getEnvironment(): String = "Model : ${Build.MODEL}\nOS Version : ${Build.VERSION.RELEASE}\nAPI Level : ${Build.VERSION.SDK_INT}"
 
     fun openAppSettings(context: Context) {
