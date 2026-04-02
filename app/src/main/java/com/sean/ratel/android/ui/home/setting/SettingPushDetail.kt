@@ -25,6 +25,8 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.ui.push.PushChannelHelper.openChannelNotificationSettings
 import com.sean.ratel.android.ui.push.PushChannelIds
 import com.sean.ratel.android.ui.push.PushViewModel
@@ -59,10 +61,12 @@ private fun SettingPushItem(
     viewModel: PushViewModel,
     item: SettingsItems,
 ) {
+    val hasPermission by viewModel.hasPermission.collectAsState()
     val appUpdatePush by viewModel.appUpdatePush.collectAsState()
     val contentUpload by viewModel.uploadPush.collectAsState()
     val recommendPush by viewModel.recommendPush.collectAsState()
     val context = LocalContext.current
+    val activity = LocalContext.current as MainActivity
     val coroutineScope = rememberCoroutineScope()
     Row(
         Modifier
@@ -107,16 +111,21 @@ private fun SettingPushItem(
                             recommendPush
                         },
                     onValueChanged = { _ ->
+
                         viewModel.setOpenSettings(true)
 
                         coroutineScope.launch {
-                            // delay(500)
+                            RLog.d("SSKKKKKK", "hasPermission : $hasPermission")
+                            if (!hasPermission) {
+                                viewModel.openAppSettings()
+                                return@launch
+                            }
                             if (item == SettingsItems.SERVICE_PUSH_APP_UPDATE) {
-                                openChannelNotificationSettings(context, PushChannelIds.APP_UPDATE)
+                                openChannelNotificationSettings(activity, PushChannelIds.APP_UPDATE)
                             } else if (item == SettingsItems.SERVICE_PUSH_VIDEO_UPLOAD) {
-                                openChannelNotificationSettings(context, PushChannelIds.VIDEO_UPLOAD)
+                                openChannelNotificationSettings(activity, PushChannelIds.VIDEO_UPLOAD)
                             } else {
-                                openChannelNotificationSettings(context, PushChannelIds.RECOMMEND)
+                                openChannelNotificationSettings(activity, PushChannelIds.RECOMMEND)
                             }
                         }
                     },

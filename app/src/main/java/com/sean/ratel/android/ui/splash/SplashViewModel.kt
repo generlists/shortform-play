@@ -2,7 +2,6 @@ package com.sean.ratel.android.ui.splash
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -265,7 +264,6 @@ class SplashViewModel
                     }.addOnFailureListener { exception ->
                         if (_retryCount.value <= 3) {
                             viewModelScope.launch {
-                                Log.d("LLLLLLLLLL", "retry start : $countryCode")
                                 requestYouTubeVideos(
                                     RequestType.DEFAULT,
                                     FirebaseStorage.getInstance(),

@@ -3,7 +3,6 @@ package com.sean.ratel.android.ui.end
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -289,7 +288,7 @@ class YouTubeEndFragment(
                 mainViewModel.currentSelection,
                 mainViewModel.adMobinitState,
             ) { selection, admobState ->
-                Log.d("InterstitialAdManager", "fromSearch : $fromSearch currentSelection : $selection}")
+                RLog.d("InterstitialAdManager", "fromSearch : $fromSearch currentSelection : $selection}")
                 InterstitialAdManager.AdTriggerState(
                     selection = selection,
                     fromSearch = fromSearch,

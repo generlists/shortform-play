@@ -127,9 +127,9 @@ class PushViewModel
             viewModelScope.launch {
                 val currentToken = pushPreference.getSaveToken().first()
 
-                RLog.d("PUSH_TEST", "push currentToken : $currentToken")
+                RLog.d("SSKKKKKK", "push currentToken : $currentToken")
                 if (currentToken == null) {
-                    RLog.d("PUSH_TEST", "push registerPush  : registerPush")
+                    RLog.d("SSKKKKKK", "push registerPush  : registerPush")
                     pushSDK.register()
                 }
             }
@@ -141,6 +141,7 @@ class PushViewModel
                 RLog.d("PUSH_TEST", "push unRegisterPush  : ${pushPreference.getSaveToken().first()}")
                 pushSDK.unRegister(pushPreference.getSaveToken().first())
             }
+            notificationManager.createChannels(context)
         }
 
         fun goNotificationPage() {
@@ -186,6 +187,13 @@ class PushViewModel
         fun openAppSettings() {
             permissionManager.openAppSettings()
         }
+
+        val permissionDeniedCount: StateFlow<Int> =
+            pushPreference.getPermissionDeniedCount().stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = 0,
+            )
 
         val requestedBefore: StateFlow<Boolean> =
             pushPreference.notificationRequestedBefore.stateIn(

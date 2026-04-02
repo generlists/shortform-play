@@ -1,7 +1,6 @@
 package com.sean.ratel.android.ui.splash
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -83,21 +82,21 @@ fun Splash(
     BackHandler { splashViewModel.navigator.finish() }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Log.d("SPLASH", "pass  $step ,  autoCheck : $autoCheck")
+        RLog.d("SPLASH", "pass  $step ,  autoCheck : $autoCheck")
 
         when (step) {
             SplashStep.NETWORK -> {
                 NetworkAlert(
                     splashViewModel = splashViewModel,
                     pass = {
-                        Log.d("SPLASH", "move NETWORK -> NOTIFICATION")
+                        RLog.d("SPLASH", "move NETWORK -> NOTIFICATION")
                         step = SplashStep.NOTIFICATION
                     },
                 )
             }
 
             SplashStep.NOTIFICATION -> {
-                Log.d("SPLASH", "pass : NOTIFICATION $step")
+                RLog.d("SPLASH", "pass : NOTIFICATION $step")
                 NotificationPermission(
                     splashViewModel = splashViewModel,
                     pushViewModel = pushViewModel,
@@ -108,11 +107,11 @@ fun Splash(
             }
 
             SplashStep.AUTH -> {
-                Log.d("SPLASH", "pass : AUTH")
+                RLog.d("SPLASH", "pass : AUTH")
                 AuthCheckAlert(
                     splashViewModel = splashViewModel,
                     pass = { pass ->
-                        Log.d("SPLASH", "pass : A $pass")
+                        RLog.d("SPLASH", "pass : A $pass")
                         if (pass) step = SplashStep.INIT
                     },
                 )
@@ -169,20 +168,21 @@ private fun NotificationPermission(
                 pushViewModel.unRegisterPush()
             }
             pushViewModel.refreshPermission()
+            pushViewModel.onNotificationPermissionResult(granted)
             pass(true)
         }
 
     LaunchedEffect(Unit) {
         if (!hasRequested) {
             hasRequested = true
-            Log.d("KKKKKK", "grant")
+            RLog.d("KKKKKK", "grant")
             // 33 이상만 권한 요청
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val grant = permissionManager.has(permission = requestPermission)
                 val rationale =
                     permissionManager.shouldShowRationale(permission = requestPermission)
 
-                Log.d("KKKKKK", "grant $grant , rationale : $rationale")
+                RLog.d("KKKKKK", "grant $grant , rationale : $rationale")
                 if (!grant) {
                     kotlinx.coroutines.android.awaitFrame()
                     notificationLauncher.launch(requestPermission)
@@ -192,7 +192,7 @@ private fun NotificationPermission(
             } else {
                 // 33 미만 은 권한이 팝업이  안뜨기 때문에 현재 가지고 있는 권한에 따라 등록 및 취소를 해야한다.
                 val grant = permissionManager.has(permission = requestPermission)
-                Log.d("KKKKKK", "33 미만 grant $grant")
+
                 if (grant) {
                     pushViewModel.registerPush()
                 } else {
