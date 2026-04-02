@@ -3,7 +3,7 @@ package com.sean.ratel.android.ui.push
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.util.Log
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.repository.PushReceiverEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import so.smartlab.common.push.fcm.data.domain.PushEvent
@@ -29,7 +29,7 @@ class PushEventReceiver : BroadcastReceiver() {
             @Suppress("UNCHECKED_CAST")
             val data = intent.getSerializableExtra("data") as? HashMap<String, String> ?: hashMapOf()
 
-            Log.d("PUSH_TEST", "RECEIVER type=$type title=$title body=$body data=$data")
+            RLog.d("PUSH_TEST", "RECEIVER type=$type title=$title body=$body data=$data")
 
             val event =
                 PushEvent.Message(

@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.domain.model.push.PushAppUpdateModel
 import com.sean.ratel.android.data.domain.model.push.PushModel
 import com.sean.ratel.android.data.domain.model.push.PushRecommendModel
@@ -161,12 +162,14 @@ class PushPreference
             dataStore.edit { prefs ->
                 val current = prefs[permissionDeniedCount] ?: 0
                 prefs[permissionDeniedCount] = current + 1
+                RLog.d("SSKKKKKK", "incrementNotificationDeniedCount")
             }
         }
 
         suspend fun resetNotificationDeniedCount() {
             dataStore.edit { prefs ->
                 prefs[permissionDeniedCount] = 0
+                RLog.d("SSKKKKKK", "resetNotificationDeniedCount")
             }
         }
 
@@ -183,6 +186,12 @@ class PushPreference
                 preferences[pushNotification] = jsonString
             }
         }
+
+        fun getPermissionDeniedCount(): Flow<Int> =
+            dataStore.data
+                .map { prefs ->
+                    prefs[permissionDeniedCount] ?: 0
+                }
 
         suspend fun removeAllPush() {
             dataStore.edit { it.remove(pushNotification) }

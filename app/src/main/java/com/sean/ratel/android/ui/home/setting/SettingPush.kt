@@ -3,7 +3,6 @@ package com.sean.ratel.android.ui.home.setting
 import android.Manifest
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -58,6 +57,7 @@ import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 @Suppress("ktlint:standard:function-naming")
@@ -71,11 +71,25 @@ fun SettingPush(
     var expanded by remember { mutableStateOf(true) }
     val pushNotification by pushViewModel.hasPermission.collectAsState()
     val hasPermission by pushViewModel.hasPermission.collectAsState()
+    val deniedCount by pushViewModel.permissionDeniedCount.collectAsState()
+    val corutineScope = rememberCoroutineScope()
 
     val notificationPermissionLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.RequestPermission(),
         ) { granted ->
+            corutineScope.launch {
+                if (deniedCount > 1 && !granted) {
+                    pushViewModel.setOpenSettings(true)
+                    pushViewModel.openAppSettings()
+                }
+
+                RLog.d(
+                    "SSKKKKKK",
+                    "granted : $granted ${pushViewModel.permissionDeniedCount.first()}",
+                )
+            }
+            // 값 저장
             pushViewModel.onNotificationPermissionResult(granted)
         }
 
@@ -199,8 +213,10 @@ fun SettingPush(
 
                         if (hasPermission) {
                             pushViewModel.registerPush()
+                            pushViewModel.onNotificationPermissionResult(true)
                         } else {
                             pushViewModel.unRegisterPush()
+                            pushViewModel.onNotificationPermissionResult(false)
                         }
 
                         RLog.d("PUSH_TEST", "goOpenSetting : $openSettings hasPermission : $hasPermission")
@@ -247,15 +263,12 @@ private fun setDetailSyncNotification(
 
     pushViewModel.setMainPermission()
     val appUpdate = updateStatus.appNotificationsEnabled && updateStatus.channelEnabled
-    Log.d("OKKKKKKK", "appUpdate : $appUpdate")
     pushViewModel.saveAppUpdatePush(currentPermission && appUpdate)
 
     val appUpload = uploadStatus.appNotificationsEnabled && uploadStatus.channelEnabled
-    Log.d("OKKKKKKK", "appUpload : $appUpload")
     pushViewModel.saveUploadPush(currentPermission && appUpload)
 
     val recommend = recommendStatus.appNotificationsEnabled && recommendStatus.channelEnabled
-    Log.d("OKKKKKKK", "recommend : $recommend")
     pushViewModel.saveRecommendPush(currentPermission && recommend)
 }
 

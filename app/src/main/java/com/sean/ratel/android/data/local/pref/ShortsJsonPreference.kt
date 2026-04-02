@@ -1,10 +1,10 @@
 package com.sean.ratel.android.data.local.pref
 
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.dto.MainShortsResponse
 import com.sean.ratel.android.data.dto.TrendShortsResponse
 import com.sean.ratel.android.utils.UIUtil.jsonToMainShortsObject
@@ -52,7 +52,7 @@ class ShortsJsonPreference
                 // 패턴에 맞는 키를 찾아서 삭제
                 preferences.asMap().forEach { (key, _) ->
                     if (key.name.contains(keyPattern)) {
-                        Log.d("LLLLLLLLLL", "$keyPattern remove!! $key")
+                        RLog.d("LLLLLLLLLL", "$keyPattern remove!! $key")
                         preferences.remove(key)
                     }
                 }
