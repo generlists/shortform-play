@@ -13,8 +13,12 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.data.repository.YouTubeEndUserRepository
 import com.sean.ratel.android.data.repository.YouTubeRepository
+import com.sean.ratel.android.ui.home.TopicFilterType
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_FILTER_TYPE
+import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_PARAM
+import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_TOPIC_ID
 import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -102,7 +106,9 @@ YouTubeContentEndViewModel
         private val _isProgress = MutableStateFlow<Boolean>(true)
         val isProgress: StateFlow<Boolean> = _isProgress
 
-        private val _channelId = savedStateHandle.get<String>(Destination.YouTube.routeArgName)
+        private val _channelId = savedStateHandle.get<String>(ARG_PARAM)
+        private val _topicId = savedStateHandle.get<String>(ARG_TOPIC_ID)
+        private val _filterType = savedStateHandle.get<String>(ARG_FILTER_TYPE)
 
         private val _searchShots = MutableStateFlow<List<MainShortsModel>>(emptyList())
         val searchShots: StateFlow<List<MainShortsModel>> = _searchShots
@@ -118,6 +124,12 @@ YouTubeContentEndViewModel
         // private var adProcessing = false
         private val _adProcessing = MutableStateFlow<Map<Int, Boolean>>(mapOf<Int, Boolean>())
         val adProcessing: StateFlow<Map<Int, Boolean>> = _adProcessing
+
+        private val _topicChannelList = MutableStateFlow<List<MainShortsModel>>(emptyList())
+        val topicChannelList: StateFlow<List<MainShortsModel>?> = _topicChannelList
+
+        private val _topicGroupList = MutableStateFlow<List<MainShortsModel>>(emptyList())
+        val topicGroupList: StateFlow<List<MainShortsModel>?> = _topicGroupList
 
         fun setAdProcessing(loading: Int) {
             _adProcessing.value += mapOf<Int, Boolean>(loading to true)
@@ -484,6 +496,114 @@ YouTubeContentEndViewModel
 
         fun setRightButtonWidth(width: Int) {
             _rightMenuWidth.value = width
+        }
+
+        fun setTopicChannelData() {
+            val filterType = TopicFilterType.valueOf(_filterType ?: TopicFilterType.Popular.name)
+            val startChannelId = _channelId
+            val topicKey = _topicId
+
+            RLog.d(TAG, "filterType : $filterType channelId : $startChannelId topicKey : $topicKey")
+
+            if (_topicChannelList.value.isNotEmpty()) {
+                _topicChannelList.value = emptyList() // clear 대신 새로운 빈 리스트 할당
+            }
+            val filterList =
+                when (filterType) {
+                    TopicFilterType.Popular -> {
+                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+                            ?.popularlist
+                            ?.topicList
+                    }
+
+                    TopicFilterType.Views -> {
+                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+                            ?.viewlist
+                            ?.topicList
+                    }
+
+                    TopicFilterType.Subscriber -> {
+                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+                            ?.subscriberlist
+                            ?.topicList
+                    }
+                }
+            val headList =
+                filterList
+                    ?.flatMap { it.topicList }
+                    ?.groupBy { it.shortsChannelModel?.channelId }
+                    ?.values
+                    ?.flatMap { it }
+                    ?.filter { it.shortsChannelModel?.channelId == startChannelId }
+
+            val tailList =
+                filterList
+                    ?.flatMap { it.topicList }
+                    ?.filter { it.shortsChannelModel?.channelId != startChannelId } ?: listOf()
+
+//        headList?.forEach {
+//            Log.d("OKSSSSSSS","header :${it.shortsVideoModel?.title}")
+//        }
+
+//        tailList.forEach {
+//            Log.d("OKSSSSSSS","tail : ${it.shortsVideoModel?.title}")
+//        }
+
+            if (headList != null) {
+                _topicChannelList.value = headList + tailList
+            }
+            RLog.d(TAG, "size  : ${_topicChannelList.value.size}")
+        }
+
+        fun setTopicGroupData(selectedIndex: Int) {
+            val filterType = TopicFilterType.valueOf(_filterType ?: TopicFilterType.Popular.name)
+            val topicKey = _topicId
+            RLog.d(TAG, "filterType : $filterType ,  topicKey : $topicKey ")
+
+            // 리스트가 비어있지 않으면 빈 리스트로 초기화
+            if (_topicGroupList.value.isNotEmpty()) {
+                _topicGroupList.value = emptyList() // clear 대신 새로운 빈 리스트 할당
+            }
+            val filterList =
+                when (filterType) {
+                    TopicFilterType.Popular -> {
+                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+                            ?.popularlist
+                            ?.topicList
+                    }
+
+                    TopicFilterType.Views -> {
+                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+                            ?.viewlist
+                            ?.topicList
+                    }
+
+                    TopicFilterType.Subscriber -> {
+                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+                            ?.subscriberlist
+                            ?.topicList
+                    }
+                }
+            val groupList = filterList?.flatMap { it.topicList }
+            val size = groupList?.size ?: 0
+
+            if (groupList != null && selectedIndex < size) {
+                val headVideoList =
+                    groupList.subList(selectedIndex.coerceAtLeast(0), groupList.size)
+                val tailVideoList = groupList.subList(0, selectedIndex.coerceAtMost(groupList.size))
+
+                headVideoList.forEach {
+                    RLog.d(TAG, "header : ${it.shortsVideoModel?.title}")
+                }
+
+                tailVideoList.forEach {
+                    RLog.d(TAG, "tail : ${it.shortsVideoModel?.title}")
+                }
+
+                _topicGroupList.value = headVideoList + tailVideoList
+            } else {
+                RLog.e(TAG, "no data found : setChannelRankingData")
+            }
         }
 
         companion object {

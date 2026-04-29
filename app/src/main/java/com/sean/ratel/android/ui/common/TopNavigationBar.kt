@@ -1,28 +1,30 @@
 package com.sean.ratel.android.ui.common
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +34,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
-import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
 @Suppress("ktlint:standard:function-naming")
@@ -47,33 +48,42 @@ fun TopNavigationBar(
     // 필터 상태 변경을 위한 콜백 추가
     onFilterChange: (Int) -> Unit = {},
     items: List<String> = listOf(),
+    isTopicScreen: Boolean = false,
 ) {
     Row(
         Modifier
             .fillMaxWidth()
             .height(56.dp)
-            .background(APP_BACKGROUND),
+            .background(
+                if (isTopicScreen) {
+                    Brush.verticalGradient(
+                        colors =
+                            listOf(
+                                // 80%
+                                Color(0xCC000000),
+                                Color.Transparent,
+                            ),
+                    )
+                } else {
+                    Brush.linearGradient(
+                        // 동일한 빨간색으로 단일 색상 처리
+                        colors = listOf(APP_BACKGROUND, APP_BACKGROUND),
+                    )
+                },
+            ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(
-            onClick = historyBack,
+        Icon(
+            imageVector = Icons.AutoMirrored.Default.ArrowBack,
+            contentDescription = null,
+            tint = Color.White,
             modifier =
                 Modifier
                     .size(32.dp)
-                    .align(Alignment.CenterVertically)
-                    // 아이콘 크기 설정
-                    .padding(start = 5.dp),
-        ) {
-            Image(
-                // 이미지 리소스
-                painter = painterResource(id = R.drawable.ic_back),
-                contentDescription = "Back Icon",
-                modifier =
-                    Modifier
-                        .height(32.dp)
-                        .width(32.dp),
-            )
-        }
+                    .clickable {
+                        historyBack()
+                    },
+        )
 
         Text(
             titleString ?: stringResource(titleResourceId),
@@ -94,23 +104,18 @@ fun TopNavigationBar(
                     .padding(end = 5.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                IconButton(
-                    onClick = runSetting,
-                    modifier =
-                        Modifier
-                            .fillMaxHeight()
-                            // 아이콘 크기 설정
-                            .align(Alignment.End),
-                ) {
-                    Image(
-                        // 이미지 리소스
-                        painter = painterResource(id = R.drawable.ic_share_main),
-                        contentDescription = "Setting Icon",
+                val context = LocalContext.current
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterEnd) {
+                    Icon(
+                        imageVector = Icons.Outlined.IosShare,
+                        contentDescription = null,
+                        tint = Color.White,
                         modifier =
                             Modifier
-                                .height(24.dp)
-                                .width(24.dp)
-                                .align(Alignment.End),
+                                .size(32.dp)
+                                .clickable {
+                                    runSetting()
+                                },
                     )
                 }
             }
@@ -123,7 +128,7 @@ fun TopNavigationBar(
                     .align(Alignment.CenterVertically),
             ) {
                 DropDownMenuComposable(
-                    APP_TEXT_COLOR,
+                    Color.White,
                     ImageVector.vectorResource(R.drawable.ic_sort_list),
                     modifer = Modifier.align(Alignment.End),
                 ) { menuExpanded, onMenuDismiss ->

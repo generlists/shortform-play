@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -48,7 +47,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -66,7 +64,6 @@ import com.sean.ratel.android.data.dto.ShortFormVideoSearchList
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.UIUtil.pixelToDp
 
@@ -89,7 +86,10 @@ fun PopularShortFormPager(
         }
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 0.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 0.dp),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
@@ -146,7 +146,8 @@ fun PopularVideoItem(
                         item?.shortsChannelModel?.channelId,
                         item?.shortsVideoModel?.videoId,
                     )
-                }.padding(vertical = 16.dp)
+                }
+                .padding(vertical = 16.dp)
                 .aspectRatio(9f / 16f),
         shape = RoundedCornerShape(12.dp),
     ) {
@@ -162,9 +163,11 @@ fun PopularVideoItem(
             }
 
         Box(
-            Modifier.wrapContentSize().onGloballyPositioned { coordinates ->
-                componentWidth = coordinates.size.width
-            },
+            Modifier
+                .wrapContentSize()
+                .onGloballyPositioned { coordinates ->
+                    componentWidth = coordinates.size.width
+                },
         ) {
             Box(
                 modifier = Modifier.widthIn(max = 220.dp),
@@ -172,7 +175,10 @@ fun PopularVideoItem(
                 var backgroundColor by remember { mutableStateOf(Color.Black) }
 
                 Card(
-                    modifier = Modifier.fillMaxWidth().aspectRatio(9 / 16f),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .aspectRatio(9 / 16f),
                     // 가로 길이에 맞춰 높이 1:1 확보 (이미지 크기 결정)
                     shape = RoundedCornerShape(12.dp),
                     colors = CardDefaults.cardColors(containerColor = backgroundColor),
@@ -184,12 +190,18 @@ fun PopularVideoItem(
                             painter = painterResource(id = R.drawable.sample_image),
                             contentDescription = "Preview Image",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.aspectRatio(0.5625f).fillMaxSize(),
+                            modifier =
+                                Modifier
+                                    .aspectRatio(0.5625f)
+                                    .fillMaxSize(),
                         )
                     } else {
                         viewModel?.imageLoader?.let {
                             NetworkImage(
-                                modifier = Modifier.aspectRatio(0.5625f).fillMaxSize(),
+                                modifier =
+                                    Modifier
+                                        .aspectRatio(0.5625f)
+                                        .fillMaxSize(),
                                 imageLoader = it,
                                 url = item?.shortsVideoModel?.thumbNail ?: "",
                                 contentDescription = null,
@@ -201,7 +213,9 @@ fun PopularVideoItem(
                 }
 
                 Row(
-                    Modifier.fillMaxWidth().padding(8.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
                     verticalAlignment = Alignment.Top,
                 ) {
                     Box(
@@ -220,17 +234,20 @@ fun PopularVideoItem(
 
                 Box(
                     modifier =
-                        Modifier.wrapContentSize().align(Alignment.BottomEnd).background(
-                            brush =
-                                Brush.verticalGradient(
-                                    colors =
-                                        listOf(
-                                            Color.Black.copy(alpha = 0.0f),
-                                            Color.Black.copy(alpha = 0.4f),
-                                            Color.Black.copy(alpha = 0.7f),
-                                        ),
-                                ),
-                        ),
+                        Modifier
+                            .wrapContentSize()
+                            .align(Alignment.BottomEnd)
+                            .background(
+                                brush =
+                                    Brush.verticalGradient(
+                                        colors =
+                                            listOf(
+                                                Color.Black.copy(alpha = 0.0f),
+                                                Color.Black.copy(alpha = 0.4f),
+                                                Color.Black.copy(alpha = 0.7f),
+                                            ),
+                                    ),
+                            ),
                 ) {
                     Column(
                         modifier = Modifier.wrapContentSize(),
@@ -284,7 +301,9 @@ fun PopularVideoItem(
 @Composable
 private fun TimeArea(duration: String) {
     Box(
-        Modifier.fillMaxWidth().fillMaxHeight(),
+        Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
         contentAlignment = Alignment.BottomEnd,
     ) {
         Box(
@@ -338,11 +357,16 @@ private fun TitleArea(
     var textWidth by remember { mutableStateOf(0f) }
 
     Box(
-        Modifier.fillMaxWidth().wrapContentHeight(),
+        Modifier
+            .fillMaxWidth()
+            .wrapContentHeight(),
         contentAlignment = Alignment.BottomStart,
     ) {
         Row(
-            Modifier.fillMaxWidth().wrapContentHeight().padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -375,31 +399,29 @@ private fun TitleArea(
                 )
             }
             Box(
-                Modifier.fillMaxWidth().wrapContentHeight().padding(end = 7.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(end = 7.dp),
                 contentAlignment = Alignment.CenterEnd,
             ) {
-                Text(
-                    stringResource(R.string.main_more),
-                    Modifier
-                        .wrapContentWidth()
-                        .clickable {
-                            viewModel.goMoreContent(
-                                Destination.Home.Main.PoplarShortFormMore.route,
-                                ViewType.PopularSearchShortForm,
-                            )
-                            // 로딩바
-                            viewModel.setIsHomeVisible(true)
-                            viewModel.sendGALog(
-                                Event.SCREEN_VIEW,
-                                Destination.Home.Main.PoplarShortFormMore.route,
-                                ViewType.PopularSearchShortForm,
-                            )
-                        }.wrapContentHeight(),
-                    fontFamily = FontFamily.SansSerif,
-                    fontStyle = FontStyle.Normal,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 15.sp,
-                    color = APP_TEXT_COLOR,
+                NavArrowButton(
+                    Modifier,
+                    isHome = true,
+                    size = 32.dp,
+                    onClick = {
+                        viewModel.goMoreContent(
+                            Destination.Home.Main.PoplarShortFormMore.route,
+                            ViewType.PopularSearchShortForm,
+                        )
+                        // 로딩바
+                        viewModel.setIsHomeVisible(true)
+                        viewModel.sendGALog(
+                            Event.SCREEN_VIEW,
+                            Destination.Home.Main.PoplarShortFormMore.route,
+                            ViewType.PopularSearchShortForm,
+                        )
+                    },
                 )
             }
         }

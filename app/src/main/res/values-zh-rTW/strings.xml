@@ -177,4 +177,7 @@
     <string name="notification_force_update">[必須更新]</string>
     <string name="notification_today">今天</string>
     <string name="notification_yesterday">昨天</string>
+
+    <!-- 1.1.0 -->
+    <string name="main_topic_top_channel">Top 10 頻道</string>
 </resources>

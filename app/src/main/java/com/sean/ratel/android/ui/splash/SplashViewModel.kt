@@ -21,6 +21,7 @@ import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.AuthRepository
 import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.data.repository.YouTubeRepository
+import com.sean.ratel.android.data.repository.YouTubeRepository.Companion.DEFAULT_NEW_URL
 import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.NetworkUtil
 import com.sean.ratel.android.utils.TimeUtil.getCurrentDate
@@ -177,12 +178,12 @@ class SplashViewModel
 
             val currentDate = getCurrentDate()
             val startTime = System.currentTimeMillis()
-            val downloadKey =
-                if (requestType == RequestType.TODAY) {
-                    String.format(UPLOAD_URL, currentDate, countryCode)
-                } else {
-                    String.format(DEFAULT_URL, countryCode)
-                }
+            val downloadKey = DEFAULT_NEW_URL
+//                if (requestType == RequestType.TODAY) {
+//                    String.format(UPLOAD_URL, currentDate, countryCode)
+//                } else {
+//                    String.format(DEFAULT_URL, countryCode)
+//                }
 
             youTubeRepository
                 .requestYouTubeVideos(

@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
@@ -64,7 +63,6 @@ import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.THUMBNAIL_BACKGROUND
 import com.sean.ratel.android.utils.ComposeUtil.pxToDp
@@ -150,30 +148,24 @@ fun TrendShortsList(
                             .padding(end = 7.dp),
                         contentAlignment = Alignment.CenterEnd,
                     ) {
-                        Text(
-                            stringResource(R.string.main_more),
-                            Modifier
-                                .wrapContentWidth()
-                                .wrapContentHeight()
-                                .clickable {
-                                    viewModel.goMoreContent(
-                                        Destination.Home.Main.TrendShortsMore.route,
-                                        ViewType.TrendShortsMore,
-                                        initDataKey,
-                                    )
-                                    // 로딩바
-                                    viewModel.setIsHomeVisible(true)
-                                    viewModel.sendGALog(
-                                        Event.SCREEN_VIEW,
-                                        Destination.Home.Main.TrendShortsMore.route,
-                                        ViewType.MainTrendShorts,
-                                    )
-                                },
-                            fontFamily = FontFamily.SansSerif,
-                            fontStyle = FontStyle.Normal,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 15.sp,
-                            color = APP_TEXT_COLOR,
+                        NavArrowButton(
+                            Modifier,
+                            isHome = true,
+                            size = 32.dp,
+                            onClick = {
+                                viewModel.goMoreContent(
+                                    Destination.Home.Main.TrendShortsMore.route,
+                                    ViewType.TrendShortsMore,
+                                    initDataKey,
+                                )
+                                // 로딩바
+                                viewModel.setIsHomeVisible(true)
+                                viewModel.sendGALog(
+                                    Event.SCREEN_VIEW,
+                                    Destination.Home.Main.TrendShortsMore.route,
+                                    ViewType.MainTrendShorts,
+                                )
+                            },
                         )
                     }
                 }

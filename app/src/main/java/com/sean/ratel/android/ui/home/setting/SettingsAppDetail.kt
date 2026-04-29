@@ -38,7 +38,6 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
-import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.PhoneUtil.getAppVersionName
@@ -143,7 +142,7 @@ private fun SettingsApp(
                         fontWeight = FontWeight.Bold,
                         fontStyle = FontStyle.Normal,
                         fontFamily = FontFamily.SansSerif,
-                        color = APP_TEXT_COLOR,
+                        color = Color.White,
                         modifier = Modifier,
                     )
                 }

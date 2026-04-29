@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.navigation
 
+import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
@@ -13,6 +14,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.ui.ad.AdViewModel
@@ -23,6 +25,7 @@ import com.sean.ratel.android.ui.home.main.ListItemMoreView
 import com.sean.ratel.android.ui.home.main.Main
 import com.sean.ratel.android.ui.home.main.MainMoreViewModel
 import com.sean.ratel.android.ui.home.main.MainVideoViewModel
+import com.sean.ratel.android.ui.home.main.TopicDetailScreen
 import com.sean.ratel.android.ui.home.setting.Setting
 import com.sean.ratel.android.ui.home.setting.SettingOpenSourceLicensesScreen
 import com.sean.ratel.android.ui.home.setting.SettingViewModel
@@ -123,6 +126,7 @@ fun NavGraph(
             }
         }
         // End
+
         composable(
             route = Destination.YouTube.route,
             arguments = Destination.YouTube.navArguments,
@@ -130,10 +134,30 @@ fun NavGraph(
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None },
-        ) { _ ->
-
+        ) { backStackEntry ->
+            Log.d("KKKKKK", "YouTube composable ENTERED")
             val viewModel: YouTubeContentEndViewModel =
+
                 hiltViewModel(key = YouTubeContentEndViewModel.TAG)
+
+            val param =
+                backStackEntry.arguments
+
+                    ?.getString(Destination.YouTube.ARG_PARAM)
+
+            val topicId =
+                backStackEntry.arguments
+
+                    ?.getString(Destination.YouTube.ARG_TOPIC_ID)
+
+            val filterType =
+                backStackEntry.arguments
+
+                    ?.getString(Destination.YouTube.ARG_FILTER_TYPE)
+
+            Log.d("KKKKKK", "YouTube param : $param")
+            Log.d("KKKKKK", "YouTube filterType : $filterType")
+            Log.d("KKKKKK", "YouTube topicId : $topicId")
 
             YouTubeContentEnd(mainViewModel, viewModel)
         }
@@ -210,6 +234,19 @@ fun NavGraph(
         }
         composable(Destination.SettingAppLicense.route) {
             SettingOpenSourceLicensesScreen(modifier)
+        }
+        composable(
+            Destination.Home.Main.TopicListDetail.route,
+            arguments = Destination.Home.Main.TopicListDetail.navArguments,
+        ) { backStackEntry ->
+            val topicId = backStackEntry.arguments?.getString("topicId")
+            val filterType = backStackEntry.arguments?.getString("filterType")
+
+            RLog.d("hbungshin", "111111 topicId : $topicId ,  filterType : $filterType")
+
+            topicId?.let { topicId ->
+                TopicDetailScreen(modifier, topicId, mainViewModel)
+            }
         }
 
         composable(

@@ -194,4 +194,7 @@
     <string name="notification_today">Aujourd’hui</string>
     <string name="notification_yesterday">Hier</string>
 
+    <!-- 1.1.0 -->
+    <string name="main_topic_top_channel">TOP 10 Channel</string>
+
 </resources>

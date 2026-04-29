@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.end
 
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -49,6 +50,9 @@ fun YouTubeContentEnd(
 
     val itemClicked = mainViewModel.itemClicked.value
 
+    Log.d("KKKKKK", "itemClicked : $itemClicked")
+    Log.d("KKKKKK", "${Destination.Home.Main.TopicListDetail.route}")
+
     val apiState = youTubeContentEndViewModel.uiState.collectAsState()
 
     LaunchedEffect(itemClicked) {
@@ -70,8 +74,10 @@ fun YouTubeContentEnd(
             itemClicked == Destination.Home.Main.RankingSubscriptionMore.route ||
             itemClicked == Destination.Home.Main.RankingSubscriptionUpMore.route ||
             itemClicked == Destination.Home.Main.RecentlyWatchMore.route ||
-            itemClicked == Destination.Home.Main.TrendShortsMore.route
+            itemClicked == Destination.Home.Main.TrendShortsMore.route ||
+            itemClicked == Destination.Home.Main.TopicListDetail.route
         ) {
+            Log.d("KKKKKK", "!!!!!!!!!!!!!")
             when (mainViewModel.viewType.value) {
                 ViewType.ImageFlow -> {
                     youTubeContentEndViewModel.setImageFlowData()
@@ -126,6 +132,14 @@ fun YouTubeContentEnd(
 
                 ViewType.TrendShortsMore -> {
                     selectedVideoId?.let { youTubeContentEndViewModel.setMoreTendShortsData(it) }
+                }
+
+                ViewType.TopicChannel -> {
+                    youTubeContentEndViewModel.setTopicChannelData()
+                }
+
+                ViewType.TopicGroup -> {
+                    youTubeContentEndViewModel.setTopicGroupData(selectedIndex)
                 }
 
                 else -> {
@@ -232,6 +246,8 @@ fun DisplayUI(
     val moreTrendsShorts by youTubeContentEndViewModel.moreTrendShortsList.collectAsState()
     val searchShortsVideo by youTubeContentEndViewModel.searchShots.collectAsState()
     val searchDailyShortsVideo by youTubeContentEndViewModel.searchDailyShorts.collectAsState()
+    val topicChannelData by youTubeContentEndViewModel.topicChannelList.collectAsState()
+    val topicGroupData by youTubeContentEndViewModel.topicGroupList.collectAsState()
     val activity = LocalContext.current as FragmentActivity
 
     if ((
@@ -239,7 +255,9 @@ fun DisplayUI(
                 imageFlowList?.isNotEmpty() == true ||
                 editorPickList?.isNotEmpty() == true ||
                 mainTrendsShorts?.isNotEmpty() == true ||
-                moreTrendsShorts?.isNotEmpty() == true
+                moreTrendsShorts?.isNotEmpty() == true ||
+                topicChannelData?.isNotEmpty() == true ||
+                topicGroupData?.isNotEmpty() == true
 
         ) ||
         channelRankingList.isNotEmpty() ||
@@ -250,6 +268,7 @@ fun DisplayUI(
         watchList.isNotEmpty() ||
         searchShortsVideo.isNotEmpty() ||
         searchDailyShortsVideo.isNotEmpty()
+
     ) {
         val endList =
             getEndData(mainViewModel.viewType.collectAsState().value, youTubeContentEndViewModel)
@@ -335,6 +354,14 @@ private fun getEndData(
 
         ViewType.SearchShortsDaily -> {
             youTubeContentEndViewModel.searchDailyShorts.value
+        }
+
+        ViewType.TopicChannel -> {
+            youTubeContentEndViewModel.topicChannelList.value
+        }
+
+        ViewType.TopicGroup -> {
+            youTubeContentEndViewModel.topicGroupList.value
         }
 
         else -> {

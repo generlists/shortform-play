@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
@@ -66,7 +65,6 @@ import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
-import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.TimeUtil
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
@@ -349,44 +347,39 @@ private fun RankingTitleArea(
                         .padding(end = 23.dp),
                     contentAlignment = Alignment.CenterEnd,
                 ) {
-                    Text(
-                        stringResource(R.string.main_more),
-                        Modifier
-                            .wrapContentWidth()
-                            .clickable {
-                                val viewType =
-                                    if (rankingIndex ==
-                                        0
-                                    ) {
-                                        ViewType.ChannelSearchRanking
-                                    } else if (rankingIndex ==
-                                        1
-                                    ) {
-                                        ViewType.SubscriptionRanking
-                                    } else if (rankingIndex ==
-                                        2
-                                    ) {
-                                        ViewType.SubscriptionRankingUp
-                                    } else {
-                                        ViewType.ChannelSearchRanking
-                                    }
-                                viewModel?.goMoreContent(
-                                    Destination.Home.Main.RankingChannelMore.route,
-                                    viewType,
-                                )
-                                // 로딩바
-                                viewModel?.setIsHomeVisible(true)
-                                viewModel?.sendGALog(
-                                    Event.SCREEN_VIEW,
-                                    Destination.Home.Main.RankingChannelMore.route,
-                                    viewType,
-                                )
-                            }.wrapContentHeight(),
-                        fontFamily = FontFamily.SansSerif,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 15.sp,
-                        color = APP_TEXT_COLOR,
+                    NavArrowButton(
+                        Modifier,
+                        isHome = true,
+                        size = 32.dp,
+                        onClick = {
+                            val viewType =
+                                if (rankingIndex ==
+                                    0
+                                ) {
+                                    ViewType.ChannelSearchRanking
+                                } else if (rankingIndex ==
+                                    1
+                                ) {
+                                    ViewType.SubscriptionRanking
+                                } else if (rankingIndex ==
+                                    2
+                                ) {
+                                    ViewType.SubscriptionRankingUp
+                                } else {
+                                    ViewType.ChannelSearchRanking
+                                }
+                            viewModel?.goMoreContent(
+                                Destination.Home.Main.RankingChannelMore.route,
+                                viewType,
+                            )
+                            // 로딩바
+                            viewModel?.setIsHomeVisible(true)
+                            viewModel?.sendGALog(
+                                Event.SCREEN_VIEW,
+                                Destination.Home.Main.RankingChannelMore.route,
+                                viewType,
+                            )
+                        },
                     )
                 }
             }
@@ -664,7 +657,7 @@ fun Item(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                color = APP_TEXT_COLOR,
+                color = Color.White,
             )
             if (rankingIndex == 2) {
                 Text(
@@ -676,7 +669,7 @@ fun Item(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
-                    color = APP_TEXT_COLOR,
+                    color = Color.White,
                 )
             }
         }

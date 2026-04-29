@@ -300,7 +300,8 @@ fun AutoScrollImagePager(
                                             // Box 높이와 맞추기
                                             endY = heightInPx,
                                         ),
-                                    ).height(150.dp)
+                                    )
+                                    .height(150.dp)
                                     .align(Alignment.BottomCenter)
                                     .padding(top = 7.dp),
                             ) {
@@ -426,7 +427,7 @@ fun FlowChannelArea(
                     ) {
                         Text(
                             text = annotionString(context, channelId = channelId),
-                            fontSize = 12.sp,
+                            fontSize = 14.sp,
                             modifier =
                                 Modifier
                                     .wrapContentSize()
@@ -512,9 +513,15 @@ private fun annotionString(
             withStyle(
                 style =
                     SpanStyle(
-                        color = APP_TEXT_COLOR,
+                        color = Color.White,
                         fontWeight = FontWeight.Bold,
                         textDecoration = TextDecoration.Underline,
+                        shadow =
+                            Shadow(
+                                color = Color.Black,
+                                offset = Offset(2f, 2f),
+                                blurRadius = 4f,
+                            ),
                     ),
             ) {
                 append(context.getString(R.string.main_go_channel))

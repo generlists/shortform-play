@@ -37,6 +37,7 @@ object Networking {
         OkHttpClient
             .Builder()
             .addInterceptor(authInterceptor)
+            .addInterceptor(getHttpLoggingInterceptor())
             .readTimeout(NETWORK_CALL_TIMEOUT.toLong(), TimeUnit.SECONDS)
             .writeTimeout(NETWORK_CALL_TIMEOUT.toLong(), TimeUnit.SECONDS)
             .build()

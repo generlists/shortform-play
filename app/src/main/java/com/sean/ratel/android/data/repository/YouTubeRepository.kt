@@ -72,11 +72,16 @@ class YouTubeRepository
                     val mainShortsListResponse = shortsJson.getShortsList(key)
                     RLog.d(
                         "SPLASH",
-                        "start key : $key , countryCode : $countryCode, " +
+                        "start key : $key ,$url ,  countryCode : $countryCode, " +
                             " size  : ${
                                 mainShortsListResponse?.shortformList?.topFiveList?.fiveList?.size
                             }",
                     )
+                    val response = firebaseApi.requestYouTubeVideos(url)
+                    shortsJson.clearDataByKeyPattern(JSON_REMOVE_KEY)
+                    shortsJson.setShortsList(key, response)
+                    mainShortsVideosCache = response
+                    emit(response)
                     mainShortsListResponse?.shortformList?.let {
                         mainShortsVideosCache = mainShortsListResponse
                         emit(mainShortsListResponse)
@@ -406,6 +411,7 @@ class YouTubeRepository
             private const val JSON_SAVE_KEY = "%s/shortform-play/shorts_main_list_%s.json"
             private const val JSON_REMOVE_KEY = "/shorts_main_list"
             private const val DEFAULT_URL = "shorts_main_default_%s.json"
+            const val DEFAULT_NEW_URL = "shorts_main_new_default_KR.json"
 
             private const val JSON_TRENDS_SAVE_KEY = "%s/shortform-play/shorts_trailer_list_%s.json"
             private const val JSON_TRENDS_REMOVE_KEY = "/shorts_trailer_list"
