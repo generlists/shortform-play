@@ -4,6 +4,7 @@ import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.utils.TimeUtil
 import javax.inject.Inject
@@ -26,8 +27,9 @@ class GALog
             )
             analytics.logEvent(event) {
                 when (event) {
-                    FirebaseAnalytics.Event.APP_OPEN ->
+                    FirebaseAnalytics.Event.APP_OPEN -> {
                         param(FirebaseAnalytics.Param.ITEM_ID, TimeUtil.getCurrentDate())
+                    }
 
                     FirebaseAnalytics.Event.SCREEN_VIEW -> {
                         route?.let {
@@ -77,5 +79,12 @@ class GALog
                 }
             }
             return bundle
+        }
+
+        fun sendPageView(screen: String) {
+            analytics.logEvent(FirebaseAnalytics.Event.SCREEN_VIEW) {
+                param(FirebaseAnalytics.Param.SCREEN_NAME, screen)
+                param(FirebaseAnalytics.Param.SCREEN_CLASS, MainActivity::class.java.simpleName)
+            }
         }
     }

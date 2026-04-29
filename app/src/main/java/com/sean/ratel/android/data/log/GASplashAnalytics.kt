@@ -3,10 +3,16 @@ package com.sean.ratel.android.data.log
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GAKeys.SPLASH_SCREEN
+import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
 
 object GASplashAnalytics {
     val SCREEN_NAME =
-        mapOf<String, String>(MAIN_SCREEN to "main_screen", SPLASH_SCREEN to "splash_screen", SEARCH_SCREEN to "search_screen")
+        mapOf<String, String>(
+            MAIN_SCREEN to "main_screen",
+            SPLASH_SCREEN to "splash_screen",
+            SEARCH_SCREEN to "search_screen",
+            TOPIC_DETAIL to "topic_screen",
+        )
 
     object Event {
         const val SEARCH_VIEW = "view"
@@ -25,6 +31,11 @@ object GASplashAnalytics {
         const val SELECT_SEARCH_DAILY_ITEM_CLICK = "select_user_search_daily_item_click"
         const val SEARCH__DAILY_MORE_VIEW = "search_more_daily_view"
         const val SELECT_NOTIFICATION_CLICK = "select_notification_click"
+        const val SELECT_MAIN_HOME_TOPIC_ITEM_CLICK = "select_main_topic_item_click"
+        const val SELECT_TOPIC_DETAIL_CHANNEL_ITEM_CLICK = "select_topic_channel_item_click"
+        const val SELECT_TOPIC_DETAIL_GROUP_ITEM_CLICK = "select_topic_group_item_click"
+        const val SELECT_TOPIC_DETAIL_FILTER_ITEM_CLICK = "select_topic_filter_item_click"
+        const val SELECT_TOPIC_DETAIL_SHARE_BTN_CLICK = "select_topic_filter_item_click"
     }
 
     object Action {

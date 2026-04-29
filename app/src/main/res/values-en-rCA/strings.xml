@@ -182,4 +182,5 @@
 
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">TOP 10 Channel</string>
+    <string name="main_topic_channel_count">%s channels</string>
 </resources>
