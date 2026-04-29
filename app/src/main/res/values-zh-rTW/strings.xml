@@ -180,4 +180,5 @@
 
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">Top 10 頻道</string>
+    <string name="main_topic_channel_count">%s 個頻道</string>
 </resources>

@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
@@ -59,6 +60,8 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.TopicItem
 import com.sean.ratel.android.data.dto.TopicList
+import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -184,6 +187,13 @@ fun TopicCard(
                     trendsShortsKey = null,
                     topicId = topic.topicId,
                 )
+
+                mainViewModel.sendGALog(
+                    screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                    eventName = GASplashAnalytics.Event.SELECT_MAIN_HOME_TOPIC_ITEM_CLICK,
+                    actionName = GASplashAnalytics.Action.CLICK,
+                    mapOf("viewType" to ViewType.MainTopic.name, "topicId" to topic.topicId),
+                )
             },
     ) {
         Card(
@@ -261,7 +271,11 @@ fun TopicCard(
                                 ),
                         )
                         Text(
-                            text = "${formatNumberByLocale(topic.channel_count.toLong())} 개",
+                            text =
+                                String.format(
+                                    stringResource(R.string.main_topic_channel_count),
+                                    formatNumberByLocale(topic.channel_count.toLong()),
+                                ),
                             fontSize = 8.sp,
                             fontWeight = FontWeight.Light,
                             color = APP_SUBTITLE_TEXT_COLOR,

@@ -459,6 +459,10 @@ class MainViewModel
             )
         }
 
+        fun sendGALog(pageView: String) {
+            gaLog.sendPageView(pageView)
+        }
+
         val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
         suspend fun setRecentVideo() {

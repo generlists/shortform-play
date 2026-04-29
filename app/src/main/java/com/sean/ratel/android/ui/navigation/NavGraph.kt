@@ -17,6 +17,8 @@ import androidx.navigation.navigation
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.MainViewModel
+import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.end.YouTubeContentEnd
 import com.sean.ratel.android.ui.end.YouTubeContentEndViewModel
@@ -239,6 +241,9 @@ fun NavGraph(
             Destination.Home.Main.TopicListDetail.route,
             arguments = Destination.Home.Main.TopicListDetail.navArguments,
         ) { backStackEntry ->
+            LaunchedEffect(backStackEntry.destination.route) {
+                mainViewModel.sendGALog(GASplashAnalytics.SCREEN_NAME.get(TOPIC_DETAIL) ?: "")
+            }
             val topicId = backStackEntry.arguments?.getString("topicId")
             val filterType = backStackEntry.arguments?.getString("filterType")
 

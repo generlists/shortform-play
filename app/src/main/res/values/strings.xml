@@ -186,8 +186,8 @@
     <string name="notification_yesterday">Yester Day</string>
 
     <!-- 1.1.0 -->
-    TOP 10 채널
     <string name="main_topic_top_channel">Top 10 Channels</string>
+    <string name="main_topic_channel_count">%s channels</string>
 
 
 

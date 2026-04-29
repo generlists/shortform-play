@@ -13,4 +13,5 @@ object GAKeys {
     const val CATEGORY_NAME = "categoryName"
     const val NOTIFICATION_TYPE = "notificationType"
     const val NOTIFICATION_ID = "notificationId"
+    const val TOPIC_DETAIL = "main_topic_detail"
 }

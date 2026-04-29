@@ -186,4 +186,5 @@
 
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">ช่อง Top 10</string>
+    <string name="main_topic_channel_count">%s ช่อง</string>
 </resources>

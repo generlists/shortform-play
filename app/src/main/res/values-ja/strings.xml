@@ -180,4 +180,5 @@
 
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">トップ10チャンネル</string>
+    <string name="main_topic_channel_count">%s チャンネル</string>
 </resources>

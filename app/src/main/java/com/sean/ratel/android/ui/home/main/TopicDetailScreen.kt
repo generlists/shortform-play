@@ -68,6 +68,8 @@ import androidx.compose.ui.unit.sp
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.TopicFilterType
@@ -158,7 +160,18 @@ fun TopicDetailScreen(
                             titleString = topicData.value?.topicName ?: "",
                             historyBack = { mainViewModel.runNavigationBack() },
                             isShareButton = true,
-                            runSetting = { PhoneUtil.shareAppLinkButton(context) },
+                            runSetting = {
+                                PhoneUtil.shareAppLinkButton(context)
+                                mainViewModel.sendGALog(
+                                    screenName =
+                                        GASplashAnalytics.SCREEN_NAME.get(
+                                            TOPIC_DETAIL,
+                                        ) ?: "",
+                                    eventName = GASplashAnalytics.Event.SELECT_TOPIC_DETAIL_SHARE_BTN_CLICK,
+                                    actionName = GASplashAnalytics.Action.CLICK,
+                                    mapOf(),
+                                )
+                            },
                             filterButton = false,
                             onFilterChange = {
                             },
@@ -185,8 +198,30 @@ fun TopicDetailScreen(
                                         .clip(RoundedCornerShape(20.dp))
                                         .background(
                                             if (selectedFilter == index) APP_TEXT_COLOR else APP_FILTER_BACKGROUND,
-                                        ).clickable { selectedFilter = index }
-                                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                                        ).clickable {
+                                            selectedFilter = index
+
+                                            val filterType =
+                                                when (selectedFilter) {
+                                                    0 -> TopicFilterType.Popular
+                                                    1 -> TopicFilterType.Views
+                                                    2 -> TopicFilterType.Subscriber
+                                                    else -> TopicFilterType.Popular
+                                                }
+
+                                            mainViewModel.sendGALog(
+                                                screenName =
+                                                    GASplashAnalytics.SCREEN_NAME.get(
+                                                        TOPIC_DETAIL,
+                                                    ) ?: "",
+                                                eventName = GASplashAnalytics.Event.SELECT_TOPIC_DETAIL_FILTER_ITEM_CLICK,
+                                                actionName = GASplashAnalytics.Action.CLICK,
+                                                mapOf(
+                                                    "topicId" to topicKey,
+                                                    "filterType" to filterType.name,
+                                                ),
+                                            )
+                                        }.padding(horizontal = 16.dp, vertical = 6.dp),
                             ) {
                                 Text(
                                     text = filter,
@@ -255,27 +290,35 @@ fun TopicDetailScreen(
                                                     "selectedFilter : $selectedFilter , " +
                                                     "topicId : ${topicData.value?.topicId}",
                                             )
+                                            val topicId = topicData.value?.topicId ?: ""
+                                            val channelId = item.shortsChannelModel?.channelId ?: ""
+                                            val filterType =
+                                                when (selectedFilter) {
+                                                    0 -> TopicFilterType.Popular
+                                                    1 -> TopicFilterType.Views
+                                                    2 -> TopicFilterType.Subscriber
+                                                    else -> TopicFilterType.Popular
+                                                }
 //
                                             mainViewModel.goEndContent(
                                                 Destination.Home.Main.TopicListDetail.route,
                                                 ViewType.TopicChannel,
                                                 index,
-                                                item.shortsChannelModel?.channelId,
-                                                topicId = topicData.value?.topicId,
-                                                filterType =
-                                                    when (selectedFilter) {
-                                                        0 -> TopicFilterType.Popular
-                                                        1 -> TopicFilterType.Views
-                                                        2 -> TopicFilterType.Subscriber
-                                                        else -> TopicFilterType.Popular
-                                                    },
+                                                channelId,
+                                                topicId = topicId,
+                                                filterType = filterType,
                                             )
-//                                        mainViewModel?.sendGALog(
-//                                            Event.SCREEN_VIEW,
-//                                            Destination.YouTube.dynamicRoute(channelId),
-//                                            ViewType.ImageFlow,
-//                                            channelId,
-//                                        )
+                                            mainViewModel.sendGALog(
+                                                screenName = GASplashAnalytics.SCREEN_NAME.get(TOPIC_DETAIL) ?: "",
+                                                eventName = GASplashAnalytics.Event.SELECT_TOPIC_DETAIL_CHANNEL_ITEM_CLICK,
+                                                actionName = GASplashAnalytics.Action.CLICK,
+                                                mapOf(
+                                                    "viewType" to ViewType.TopicChannel.name,
+                                                    "topicId" to topicId,
+                                                    "channelId" to channelId,
+                                                    "filterType" to filterType.name,
+                                                ),
+                                            )
                                         },
                                     ) {
                                         val borderBrush =
@@ -427,27 +470,37 @@ fun TopicDetailScreen(
                                                         index = rIndex
                                                     }
 
+                                                    val topicId = topicData.value?.topicId ?: ""
+                                                    val filterType =
+                                                        when (selectedFilter) {
+                                                            0 -> TopicFilterType.Popular
+                                                            1 -> TopicFilterType.Views
+                                                            2 -> TopicFilterType.Subscriber
+                                                            else -> TopicFilterType.Popular
+                                                        }
+
                                                     mainViewModel.goEndContent(
                                                         route = Destination.Home.Main.TopicListDetail.route,
                                                         viewType = ViewType.TopicGroup,
                                                         selectedIndex = index,
-                                                        topicId = topicData.value?.topicId,
-                                                        filterType =
-                                                            when (selectedFilter) {
-                                                                0 -> TopicFilterType.Popular
-                                                                1 -> TopicFilterType.Views
-                                                                2 -> TopicFilterType.Subscriber
-                                                                else -> TopicFilterType.Popular
-                                                            },
+                                                        topicId = topicId,
+                                                        filterType = filterType,
                                                     )
 
-//                                                viewModel?.sendGALog(
-//                                                    Event.SCREEN_VIEW,
-//                                                    Destination.YouTube.dynamicRoute(item?.shortsChannelModel?.channelId ?: ""),
-//                                                    ViewType.PopularSearchShortForm,
-//                                                    item?.shortsChannelModel?.channelId,
-//                                                    item?.shortsVideoModel?.videoId,
-//                                                )
+                                                    mainViewModel.sendGALog(
+                                                        screenName =
+                                                            GASplashAnalytics.SCREEN_NAME.get(
+                                                                TOPIC_DETAIL,
+                                                            ) ?: "",
+                                                        eventName = GASplashAnalytics.Event.SELECT_TOPIC_DETAIL_GROUP_ITEM_CLICK,
+                                                        actionName = GASplashAnalytics.Action.CLICK,
+                                                        mapOf(
+                                                            "viewType" to ViewType.TopicChannel.name,
+                                                            "topicId" to topicId,
+                                                            "selectedIndex" to index.toString(),
+                                                            "filterType" to filterType.name,
+                                                        ),
+                                                    )
                                                 }.padding(vertical = 16.dp)
                                                 .aspectRatio(9f / 16f),
                                         shape = RoundedCornerShape(12.dp),
