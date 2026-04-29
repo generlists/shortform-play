@@ -32,6 +32,7 @@ data class MainShortFormList(
     override val startDate: String = SERVICE_START_DATE,
     override val legacyEndDate: String = SERVICE_RENEWAL_START_DATE,
     val topFiveList: TopFiveList = TopFiveList(),
+    val topicList: TopicList = TopicList(),
     val editorPickList: EditorPickList = EditorPickList(),
     val shortformVideoList: ShortFormVideoList = ShortFormVideoList(),
     val channelVideoList: ChannelVideoList = ChannelVideoList(),
@@ -56,6 +57,13 @@ data class MainShortFormLegacyList(
 data class TopFiveList(
     val title: String = "",
     val fiveList: Map<String, List<MainShortsModel>> = emptyMap(),
+) : Parcelable
+
+@Keep
+@Parcelize
+data class TopicList(
+    val title: String = "",
+    val topicList: Map<String, TopicItem> = emptyMap(),
 ) : Parcelable
 
 @Keep

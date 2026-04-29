@@ -2,6 +2,7 @@ package com.sean.ratel.android
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.InstallRefererRepository
 import com.sean.ratel.android.data.repository.RecentVideoRepository
 import com.sean.ratel.android.data.repository.SearchResultDataRepository
+import com.sean.ratel.android.ui.home.TopicFilterType
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
@@ -227,6 +229,8 @@ class MainViewModel
             selectedIndex: Int = 0,
             channelId: String? = null,
             videoId: String? = null,
+            topicId: String? = null,
+            filterType: TopicFilterType = TopicFilterType.Popular,
         ) {
             _itemClicked.value = route
             _selectedIndex.value = selectedIndex
@@ -241,6 +245,35 @@ class MainViewModel
                             false,
                         )
                     }
+                }
+
+                ViewType.TopicChannel -> {
+                    channelId?.let { param ->
+
+                        val createdRoute =
+                            Destination.YouTube.createRoute(
+                                pathArgs = listOf(param),
+                                queryArgs = mapOf("topicId" to topicId, "filterType" to filterType.name),
+                            )
+                        Log.d("hbungshin", "param = [$param]")
+                        Log.d("hbungshin", "pattern route = ${Destination.YouTube.route}")
+                        Log.d("hbungshin", "created route = $createdRoute")
+
+                        navigator.navigateTo(createdRoute, false)
+                    }
+                }
+
+                ViewType.TopicGroup -> {
+                    val createdRoute =
+                        Destination.YouTube.createRoute(
+                            pathArgs = listOf(selectedIndex.toString()),
+                            queryArgs = mapOf("topicId" to topicId, "filterType" to filterType.name),
+                        )
+                    Log.d("KKKKKK", "selectedIndex = [$selectedIndex]")
+                    Log.d("KKKKKK", "pattern route = ${Destination.YouTube.route}")
+                    Log.d("KKKKKK", "created route = $createdRoute")
+
+                    navigator.navigateTo(createdRoute, false)
                 }
 
                 ViewType.PopularSearchShortForm,
@@ -291,7 +324,6 @@ class MainViewModel
                 }
 
                 else -> {
-                    Unit
                 }
             }
         }
@@ -300,11 +332,22 @@ class MainViewModel
             route: String,
             viewType: ViewType,
             trendsShortsKey: String? = null,
+            topicId: String? = null,
         ) {
             _viewType.value = viewType
             _moreButtonClicked.value = route
             _moreTrendShortsKey.value = trendsShortsKey
-            navigator.navigateTo(route, false)
+            if (viewType == ViewType.MainTopic || viewType == ViewType.TopicChannel || viewType == ViewType.TopicGroup) {
+                Log.d("hbungshin", "topicId : $topicId")
+                topicId?.let {
+                    navigator.navigateTo(
+                        Destination.Home.Main.TopicListDetail
+                            .createRoute(listOf(it)),
+                    )
+                }
+            } else {
+                navigator.navigateTo(route, false)
+            }
         }
 
         fun setSettingDetailClick(route: String) {

@@ -46,7 +46,9 @@ object PhoneUtil {
     }
 
     fun shareAppLinkButton(context: Context) {
-        val messageToShare = "${context.getString(R.string.short_form_app_share)} ${STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(context.packageName)}"
+        val messageToShare = "${context.getString(R.string.short_form_app_share)} ${
+            STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(context.packageName)
+        }"
         val sendIntent =
             Intent().apply {
                 action = Intent.ACTION_SEND
@@ -272,4 +274,11 @@ object PhoneUtil {
             it.finish()
         }
     }
+
+    fun isTablet(sw: Int) =
+        when {
+            sw >= 840 -> true
+            sw >= 600 -> true
+            else -> false
+        }
 }

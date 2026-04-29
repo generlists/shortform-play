@@ -33,6 +33,7 @@ import com.sean.ratel.android.data.dto.EditorPickList
 import com.sean.ratel.android.data.dto.RecommendList
 import com.sean.ratel.android.data.dto.ShortFormVideoSearchList
 import com.sean.ratel.android.data.dto.TopFiveList
+import com.sean.ratel.android.data.dto.TopicList
 import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.home.main.itemview.AutoScrollImagePager
@@ -41,6 +42,7 @@ import com.sean.ratel.android.ui.home.main.itemview.HomeRecommendList
 import com.sean.ratel.android.ui.home.main.itemview.PopularShortFormPager
 import com.sean.ratel.android.ui.home.main.itemview.RankingHorizontalScrollView
 import com.sean.ratel.android.ui.home.main.itemview.RecentVideoWatchList
+import com.sean.ratel.android.ui.home.main.itemview.TopicCardPager
 import com.sean.ratel.android.ui.home.main.itemview.TrendShortsList
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.utils.UIUtil.validationIndex
@@ -67,6 +69,13 @@ fun Main(
             mutableStateOf(
                 mainViewModel.mainShorts.value.first
                     .topFiveList,
+            )
+        }
+    val topicData =
+        remember {
+            mutableStateOf(
+                mainViewModel.mainShorts.value.first
+                    .topicList,
             )
         }
     val trendShortsData =
@@ -135,6 +144,7 @@ fun Main(
             modifier,
             itemSize,
             topFiveData.value,
+            topicData.value,
             trendShortsData.value,
             editorPickData.value,
             shortFormSearchData.value,
@@ -158,6 +168,7 @@ fun MainShortFormView(
     modifier: Modifier,
     itemSize: Int,
     topFiveData: TopFiveList,
+    topicList: TopicList,
     trendShortsData: TrendsShortFormList,
     editorPickData: EditorPickList,
     shortFormSearchData: ShortFormVideoSearchList,
@@ -181,6 +192,7 @@ fun MainShortFormView(
             ShortsItemList(
                 itemSize,
                 topFiveData,
+                topicList,
                 trendShortsData,
                 editorPickData,
                 shortFormSearchData,
@@ -200,6 +212,7 @@ fun MainShortFormView(
 fun ShortsItemList(
     itemSize: Int,
     topFiveData: TopFiveList,
+    topicList: TopicList,
     trendShortsData: TrendsShortFormList,
     editorPickData: EditorPickList,
     shortFormSearchData: ShortFormVideoSearchList,
@@ -248,7 +261,12 @@ fun ShortsItemList(
             while (i < size) {
                 if (i == 0) {
                     AutoScrollImagePager(viewModel, topFiveData)
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(16.dp))
+                }
+
+                if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TOPIC_LIST_ORDER))) {
+                    TopicCardPager(viewModel, topicList)
+                    Spacer(Modifier.height(32.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECENTLY_WATCH_ORDER))) {

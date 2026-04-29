@@ -14,6 +14,8 @@ object RemoteConfig {
     val END_AD_POSITION: String = "end_ad_position"
 
     val RECENTLY_WATCH_ORDER: String = "recently_watch_order"
+    val TOPIC_LIST_ORDER: String = "topic_list_order"
+
     val TRENDS_SHORTS_ORDER: String = "trends_shorts_order"
 
     val POPULAR_ORDER: String = "popular_order"

@@ -6,7 +6,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +23,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import com.google.accompanist.drawablepainter.DrawablePainter
 import com.sean.ratel.android.R
+import com.sean.ratel.android.ui.theme.APP_IMAGE_FLOW_BACKGROUND_COLOR
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -113,7 +113,7 @@ fun NetworkImage(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = alpha)),
+                            .background(APP_IMAGE_FLOW_BACKGROUND_COLOR.copy(alpha = alpha)),
                     contentAlignment = Alignment.Center,
                 ) {
                     Image(
@@ -130,7 +130,7 @@ fun NetworkImage(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .background(MaterialTheme.colorScheme.background.copy(alpha = alpha)),
+                            .background(APP_IMAGE_FLOW_BACKGROUND_COLOR.copy(alpha = alpha)),
                     contentAlignment = Alignment.TopCenter,
                 ) {
                     Image(

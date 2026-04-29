@@ -189,4 +189,7 @@
     <string name="notification_force_update">[Pembaruan Wajib]</string>
     <string name="notification_today">Hari ini</string>
     <string name="notification_yesterday">Kemarin</string>
+
+    <!-- 1.1.0 -->
+    <string name="main_topic_top_channel">Top 10 des chaînes</string>
 </resources>

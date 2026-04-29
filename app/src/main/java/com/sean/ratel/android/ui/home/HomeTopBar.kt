@@ -20,7 +20,10 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ManageSearch
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsOff
 import androidx.compose.material3.DropdownMenu
@@ -46,7 +49,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
@@ -54,7 +56,6 @@ import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
-import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.PhoneUtil.searchButton
 import com.sean.ratel.android.utils.PhoneUtil.shareAppLinkButton
@@ -72,20 +73,26 @@ fun HomeTopBar(
     notificationPage: () -> Unit = {},
 ) {
     Box(
-        modifier = modifier.fillMaxWidth().wrapContentHeight(),
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .wrapContentHeight(),
     ) {
         Box(
             modifier =
-                Modifier.fillMaxWidth().height(56.dp).background(
-                    brush =
-                        Brush.verticalGradient(
-                            colors =
-                                listOf(
-                                    Color(0xCC000000),
-                                    Color.Transparent,
-                                ),
-                        ),
-                ),
+                Modifier
+                    .fillMaxWidth()
+                    .height(56.dp)
+                    .background(
+                        brush =
+                            Brush.verticalGradient(
+                                colors =
+                                    listOf(
+                                        Color(0xCC000000),
+                                        Color.Transparent,
+                                    ),
+                            ),
+                    ),
         )
         if (isHomeNaviBar != Destination.YouTube.route) {
             Divider(
@@ -146,7 +153,10 @@ fun HomeTopBar(
                     Image(
                         painterResource(R.drawable.shortform_play_icon_main),
                         contentDescription = null,
-                        modifier = Modifier.width(42.dp).height(42.dp),
+                        modifier =
+                            Modifier
+                                .width(42.dp)
+                                .height(42.dp),
                         contentScale = ContentScale.Fit,
                     )
                     TitleBox()
@@ -175,21 +185,17 @@ private fun BackButton(
     modifier: Modifier,
     historyBack: () -> Unit,
 ) {
-    IconButton(
-        onClick = historyBack,
+    Icon(
+        imageVector = Icons.AutoMirrored.Default.ArrowBack,
+        contentDescription = null,
+        tint = Color.White,
         modifier =
             modifier
                 .size(32.dp)
-                // 아이콘 크기 설정
-                .padding(end = 5.dp),
-    ) {
-        Image(
-            // 이미지 리소스
-            painter = painterResource(id = R.drawable.ic_back),
-            contentDescription = "Back Icon",
-            modifier = Modifier.height(32.dp).width(32.dp),
-        )
-    }
+                .clickable {
+                    historyBack()
+                },
+    )
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -199,7 +205,10 @@ private fun LoginTypeItem(
     onMenuDismiss: () -> Unit,
 ) {
     DropdownMenu(
-        modifier = Modifier.wrapContentSize().padding(5.dp),
+        modifier =
+            Modifier
+                .wrapContentSize()
+                .padding(5.dp),
         expanded = menuExpanded,
         offset = DpOffset(0.dp, 0.dp),
         onDismissRequest = onMenuDismiss,
@@ -223,40 +232,40 @@ fun TitleBox() {
 @Composable
 fun SharerIconButton() {
     val context = LocalContext.current
-    IconButton(
-        onClick = { shareAppLinkButton(context) },
-        modifier = Modifier,
-    ) {
-        Image(
-            // 이미지 리소스
-            painter = painterResource(id = R.drawable.ic_share_main),
-            contentDescription = stringResource(R.string.end_share),
-            modifier = Modifier,
-        )
-    }
+    Icon(
+        imageVector = Icons.Outlined.IosShare,
+        contentDescription = null,
+        tint = Color.White,
+        modifier =
+            Modifier
+                .size(32.dp)
+                .clickable {
+                    shareAppLinkButton(context)
+                },
+    )
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun SearchIconButton(mainViewModel: MainViewModel?) {
     val context = LocalContext.current
-    IconButton(
-        onClick = { searchButton(context) },
-        modifier = Modifier,
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_search),
-            contentDescription = stringResource(R.string.search),
-            modifier = Modifier,
-        )
-
-        mainViewModel?.sendGALog(
-            screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
-            eventName = GASplashAnalytics.Event.SELECT_SEARCH_BTN_CLICK,
-            actionName = GASplashAnalytics.Action.CLICK,
-            mapOf(),
-        )
-    }
+    Icon(
+        imageVector = Icons.AutoMirrored.Filled.ManageSearch,
+        contentDescription = null,
+        tint = Color.White,
+        modifier =
+            Modifier
+                .size(32.dp)
+                .clickable {
+                    searchButton(context)
+                    mainViewModel?.sendGALog(
+                        screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                        eventName = GASplashAnalytics.Event.SELECT_SEARCH_BTN_CLICK,
+                        actionName = GASplashAnalytics.Action.CLICK,
+                        mapOf(),
+                    )
+                },
+    )
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -281,10 +290,9 @@ fun NotificationIconButton(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                tint = APP_TEXT_COLOR,
+                tint = Color.White,
                 modifier = Modifier.size(28.dp),
             )
-            RLog.d("KKKMMMMMMM", "homeTopBar : $hasNewPush")
 
             if (hasNewPush) {
                 Box(
@@ -314,32 +322,38 @@ fun PIPButton(mainViewModel: MainViewModel?) {
         }
     }
     Box(
-        Modifier.height(64.dp).width(64.dp).clickable(
-            enabled = pipButtonEnabled.value,
-            onClick = {
-                if (!context.hasPipPermission()) {
-                    Toast
-                        .makeText(
-                            context,
-                            context.getString(R.string.setting_pip_go),
-                            Toast.LENGTH_SHORT,
-                        ).show()
+        Modifier
+            .height(64.dp)
+            .width(64.dp)
+            .clickable(
+                enabled = pipButtonEnabled.value,
+                onClick = {
+                    if (!context.hasPipPermission()) {
+                        Toast
+                            .makeText(
+                                context,
+                                context.getString(R.string.setting_pip_go),
+                                Toast.LENGTH_SHORT,
+                            ).show()
 
-                    mainViewModel?.goSettingView()
-                } else {
-                    val action = !(pipAction?.value?.first ?: false)
-                    val viewPager = pipAction?.value?.second
-                    mainViewModel?.setPIPClick(Pair(action, viewPager))
-                }
-            },
-        ),
+                        mainViewModel?.goSettingView()
+                    } else {
+                        val action = !(pipAction?.value?.first ?: false)
+                        val viewPager = pipAction?.value?.second
+                        mainViewModel?.setPIPClick(Pair(action, viewPager))
+                    }
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Image(
             // 이미지 리소스
             painter = painterResource(id = R.drawable.pip_button),
             contentDescription = null,
-            modifier = Modifier.width(32.dp).height(32.dp),
+            modifier =
+                Modifier
+                    .width(32.dp)
+                    .height(32.dp),
         )
     }
 }

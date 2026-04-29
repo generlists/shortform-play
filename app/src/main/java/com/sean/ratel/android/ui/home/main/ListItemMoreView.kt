@@ -81,7 +81,6 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
-import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import com.sean.ratel.android.utils.TimeUtil.timeToFloat
@@ -548,7 +547,7 @@ fun ListItemList(
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
                                 fontSize = 10.sp,
-                                color = APP_TEXT_COLOR,
+                                color = Color.White,
                             )
                         }
                     }
@@ -701,7 +700,7 @@ fun ListItem(
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.Bold,
                 fontSize = 10.sp,
-                color = APP_TEXT_COLOR,
+                color = Color.White,
             )
             if (viewType == ViewType.SubscriptionRankingUp) {
                 Text(
@@ -713,7 +712,7 @@ fun ListItem(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.Bold,
                     fontSize = 10.sp,
-                    color = APP_TEXT_COLOR,
+                    color = Color.White,
                 )
             }
         }

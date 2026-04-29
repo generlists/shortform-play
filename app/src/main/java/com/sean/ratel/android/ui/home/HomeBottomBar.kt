@@ -103,6 +103,7 @@ fun HomeBottomBar(
             currentRoute != Destination.Home.Main.RecommendMore.route &&
             currentRoute != Destination.Home.Main.RecentlyWatchMore.route &&
             currentRoute != Destination.Home.Main.TrendShortsMore.route &&
+            currentRoute != Destination.Home.Main.TopicListDetail.route &&
             currentRoute != Destination.Notifcation.route &&
             currentRoute != Destination.Notifcation.route &&
             pipClick.value?.first == false,

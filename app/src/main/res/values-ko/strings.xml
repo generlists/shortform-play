@@ -181,4 +181,7 @@
     <string name="notification_today">오늘</string>
     <string name="notification_yesterday">어제</string>
 
+    <!-- 1.1.0 -->
+    <string name="main_topic_top_channel">TOP 10 채널</string>
+
 </resources>

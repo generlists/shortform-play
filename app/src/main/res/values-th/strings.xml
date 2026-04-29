@@ -183,4 +183,7 @@
     <string name="notification_force_update">[จำเป็นต้องอัปเดต]</string>
     <string name="notification_today">วันนี้</string>
     <string name="notification_yesterday">เมื่อวาน</string>
+
+    <!-- 1.1.0 -->
+    <string name="main_topic_top_channel">ช่อง Top 10</string>
 </resources>
