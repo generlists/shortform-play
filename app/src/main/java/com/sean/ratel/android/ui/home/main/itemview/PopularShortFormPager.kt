@@ -146,8 +146,7 @@ fun PopularVideoItem(
                         item?.shortsChannelModel?.channelId,
                         item?.shortsVideoModel?.videoId,
                     )
-                }
-                .padding(vertical = 16.dp)
+                }.padding(vertical = 16.dp)
                 .aspectRatio(9f / 16f),
         shape = RoundedCornerShape(12.dp),
     ) {
@@ -410,6 +409,7 @@ private fun TitleArea(
                     isHome = true,
                     size = 32.dp,
                     onClick = {
+                        viewModel.setInterstitialAdStart(Destination.Home.Main.PoplarShortFormMore.route, true)
                         viewModel.goMoreContent(
                             Destination.Home.Main.PoplarShortFormMore.route,
                             ViewType.PopularSearchShortForm,

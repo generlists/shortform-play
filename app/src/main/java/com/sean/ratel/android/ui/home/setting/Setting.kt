@@ -61,15 +61,16 @@ fun SettingView(
     var adSize by remember { mutableStateOf(64) }
     val bottomBarHeight = adViewModel.bottomBarHeight.value
     val fromPermissionPage by pushViewModel.fromPermissionPage.collectAsState(initial = false)
-    when {
-        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-        }
+    adSize =
+        when {
+            adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
+                (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
+            }
 
-        else -> {
-            adSize = 0
+            else -> {
+                0
+            }
         }
-    }
 
     BackHandler(enabled = true) {
         mainViewModel.runNavigationBack()
@@ -98,7 +99,6 @@ fun SettingView(
         containerColor = Background,
     ) { innerPadding ->
         RLog.d("Setting", "$innerPadding $adSize")
-        // LazyColumn
 
         Column(
             Modifier
@@ -116,7 +116,7 @@ fun SettingView(
                 item { SettingsService(viewModel, pushViewModel) }
                 item { SettingsCountry(viewModel) }
                 item { SettingsVideo(viewModel) }
-                item { SettingsApp(viewModel) }
+                item { SettingsApp(mainViewModel, viewModel) }
                 item { SettingsDevOtherApp(viewModel) }
             }
         }

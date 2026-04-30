@@ -90,6 +90,7 @@ private fun SettingsApp(
             if (isArrow) {
                 Modifier.then(
                     Modifier.clickable {
+                        mainViewModel.setInterstitialAdStart(Destination.SettingAppLicense.route, true)
                         viewModel?.goAppSettingsOpenSourceLicense()
                         viewModel?.sendGALog(
                             Event.SCREEN_VIEW,

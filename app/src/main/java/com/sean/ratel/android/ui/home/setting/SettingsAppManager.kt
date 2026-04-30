@@ -11,13 +11,21 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
-import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.ad.AdTarget
+import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.TopNavigationBar
+import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
 import com.sean.ratel.android.ui.theme.RatelappTheme
@@ -28,27 +36,28 @@ import com.sean.ratel.android.utils.PhoneUtil
 @Composable
 fun SettingsAppManager(
     viewModel: SettingViewModel?,
-    mainViewModel: MainViewModel?,
-    adViewModel: AdViewModel?,
+    mainViewModel: MainViewModel,
 ) {
-    SettingsAppManagerView(viewModel, mainViewModel, adViewModel)
+    SettingsAppManagerView(viewModel, mainViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun SettingsAppManagerView(
     viewModel: SettingViewModel?,
-    mainViewModel: MainViewModel?,
-    adViewModel: AdViewModel?,
+    mainViewModel: MainViewModel,
 ) {
     val context = LocalContext.current
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
+    var loading by remember { mutableStateOf(true) }
+    val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
+
     Scaffold(
         Modifier.padding(insetPaddingValue),
         topBar = {
             TopNavigationBar(
                 titleResourceId = R.string.setting_app_manager,
-                historyBack = { mainViewModel?.runNavigationBack() },
+                historyBack = { mainViewModel.runNavigationBack() },
                 isShareButton = true,
                 runSetting = { PhoneUtil.shareAppLinkButton(context) },
                 filterButton = false,
@@ -67,7 +76,28 @@ fun SettingsAppManagerView(
                 .verticalScroll(scrollState),
         ) {
             SettingsAppDetail(viewModel = viewModel)
-            PhoneAppList(viewModel)
+            PhoneAppList(mainViewModel, viewModel)
+        }
+        if (adLoading?.route == Destination.SettingAppManagerDetail.route) {
+            InterstitialAdPage(
+                adTarget =
+                    AdTarget(
+                        Destination.Home.Main.TopicListDetail.route,
+                        adLoading?.adStart ?: true,
+                    ),
+                interstitialAdManager = mainViewModel.interstitialAdManager,
+                setAdLoading = {
+                    it?.let {
+                        mainViewModel.setInterstitialAdStart(it.route, it.adStart)
+                    }
+                },
+                adInitState = mainViewModel.adMobinitState,
+                loading = loading,
+                setLoading = {
+                    loading = it
+                },
+                itemSize = Integer.MAX_VALUE,
+            )
         }
     }
 }
@@ -77,6 +107,6 @@ fun SettingsAppManagerView(
 @Composable
 private fun SettingViewPreView() {
     RatelappTheme {
-        SettingsAppManager(null, null, null)
+        SettingsAppManager(null, hiltViewModel())
     }
 }

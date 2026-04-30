@@ -232,7 +232,7 @@ fun NavGraph(
 
         composable(Destination.SettingAppManagerDetail.route) {
             val viewModel: SettingViewModel = hiltViewModel(key = SettingViewModel.TAG)
-            SettingsAppManager(viewModel, mainViewModel, adViewModel)
+            SettingsAppManager(viewModel, mainViewModel)
         }
         composable(Destination.SettingAppLicense.route) {
             SettingOpenSourceLicensesScreen(modifier)

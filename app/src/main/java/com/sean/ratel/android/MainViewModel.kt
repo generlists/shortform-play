@@ -22,6 +22,8 @@ import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.InstallRefererRepository
 import com.sean.ratel.android.data.repository.RecentVideoRepository
 import com.sean.ratel.android.data.repository.SearchResultDataRepository
+import com.sean.ratel.android.ui.ad.AdTarget
+import com.sean.ratel.android.ui.ad.InterstitialAdManager
 import com.sean.ratel.android.ui.home.TopicFilterType
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -34,8 +36,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.AdsSdk
 import so.smartlab.common.ad.admob.data.GoogleMobileAdsConsentManager
@@ -57,6 +62,7 @@ class MainViewModel
         val installRefererRepository: InstallRefererRepository,
         private val searchResultsRepository: SearchResultDataRepository,
         private val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
+        val interstitialAdManager: InterstitialAdManager,
         val adsSdk: AdsSdk,
         val pushSDK: PushSDK,
     ) : ViewModel() {
@@ -156,6 +162,21 @@ class MainViewModel
         private val _currentCategory = MutableStateFlow<String>("0")
         val currentCategory: MutableStateFlow<String> = _currentCategory
 
+        private val _interstitialAdStart =
+            MutableSharedFlow<AdTarget>(
+                replay = 1,
+                extraBufferCapacity = 1,
+            )
+        val interstitialAdStart: SharedFlow<AdTarget> = _interstitialAdStart.asSharedFlow()
+
+        fun setInterstitialAdStart(
+            route: String,
+            adStart: Boolean,
+        ) {
+            // _interstitialAdStart.value = adStart
+            _interstitialAdStart.tryEmit(AdTarget(route, adStart))
+        }
+
         fun setPIPClick(pipClick: Pair<Boolean, ViewPager2?>) {
             _pipClick.value = pipClick
             _isTopViewVisible.value = !pipClick.first && !isCurrentPageMoreView()
@@ -253,7 +274,11 @@ class MainViewModel
                         val createdRoute =
                             Destination.YouTube.createRoute(
                                 pathArgs = listOf(param),
-                                queryArgs = mapOf("topicId" to topicId, "filterType" to filterType.name),
+                                queryArgs =
+                                    mapOf(
+                                        "topicId" to topicId,
+                                        "filterType" to filterType.name,
+                                    ),
                             )
                         Log.d("hbungshin", "param = [$param]")
                         Log.d("hbungshin", "pattern route = ${Destination.YouTube.route}")

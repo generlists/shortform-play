@@ -181,6 +181,7 @@ fun TopicCard(
         Modifier
             .fillMaxSize()
             .clickable {
+                mainViewModel.setInterstitialAdStart(Destination.Home.Main.TopicListDetail.route, true)
                 mainViewModel.goMoreContent(
                     route = Destination.Home.Main.TopicListDetail.route,
                     viewType = ViewType.MainTopic,

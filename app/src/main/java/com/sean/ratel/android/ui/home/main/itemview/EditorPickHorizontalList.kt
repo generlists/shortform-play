@@ -160,6 +160,10 @@ fun EditorPickHorizontalList(
                             isHome = true,
                             size = 32.dp,
                             onClick = {
+                                viewModel.setInterstitialAdStart(
+                                    Destination.Home.Main.EditorPickMore.route,
+                                    true,
+                                )
                                 viewModel.goMoreContent(
                                     Destination.Home.Main.EditorPickMore.route,
                                     ViewType.EditorPick,

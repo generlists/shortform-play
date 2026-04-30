@@ -156,6 +156,7 @@ fun RecentVideoWatchList(viewModel: MainViewModel) {
                             isHome = true,
                             size = 32.dp,
                             onClick = {
+                                viewModel.setInterstitialAdStart(Destination.Home.Main.RecentlyWatchMore.route, true)
                                 viewModel.goMoreContent(
                                     Destination.Home.Main.RecentlyWatchMore.route,
                                     ViewType.RecentlyWatch,

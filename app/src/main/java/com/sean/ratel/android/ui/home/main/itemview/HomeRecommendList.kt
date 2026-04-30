@@ -199,6 +199,10 @@ private fun TitleArea(
                     isHome = true,
                     size = 32.dp,
                     onClick = {
+                        viewModel?.setInterstitialAdStart(
+                            Destination.Home.Main.RecommendMore.route,
+                            true,
+                        )
                         viewModel?.goMoreContent(
                             Destination.Home.Main.RecommendMore.route,
                             ViewType.Recommend,

@@ -73,7 +73,9 @@ import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.ui.ad.AdTarget
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.end.BottomSeekBar
@@ -89,7 +91,6 @@ import com.sean.ratel.android.utils.UIUtil.formatNumberWithCommas
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -126,6 +127,8 @@ fun ListItemDisplayUi(
     val initScroll = moreViewModel.initScroll.collectAsState()
     val route = mainViewModel.moreButtonClicked.value
     val title = moreViewModel.listMoreTitle.collectAsState()
+    var loading by remember { mutableStateOf(true) }
+    val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
 
     val filterVisiable =
         remember { mutableStateOf(viewType == ViewType.ChannelSearchRanking || viewType == ViewType.ChannelLikeRanking) }
@@ -161,19 +164,7 @@ fun ListItemDisplayUi(
     ) { innerPadding ->
 
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
-        val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-        var adSize by remember { mutableStateOf(64) }
 
-        adSize =
-            when {
-                adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-                    (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-                }
-
-                else -> {
-                    0
-                }
-            }
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = rememberSaveable { mutableStateOf(0) }
         val scrollOffset = rememberSaveable { mutableStateOf(0) }
@@ -280,7 +271,7 @@ fun ListItemDisplayUi(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = (adSize + bottomBarHeight).dp)
+                    .padding(bottom = (64 + bottomBarHeight).dp)
                     .background(Color.Transparent),
                 contentAlignment = Alignment.BottomCenter,
             ) {
@@ -299,6 +290,29 @@ fun ListItemDisplayUi(
         } else {
             FilterList(filterAction, mainViewModel, moreViewModel)
         }
+    }
+    if (adLoading?.route == Destination.Home.Main.RecentlyWatchMore.route ||
+        adLoading?.route == Destination.Home.Main.RankingChannelMore.route
+    ) {
+        InterstitialAdPage(
+            adTarget =
+                AdTarget(
+                    Destination.Home.Main.TopicListDetail.route,
+                    adLoading?.adStart ?: true,
+                ),
+            interstitialAdManager = mainViewModel.interstitialAdManager,
+            setAdLoading = {
+                it?.let {
+                    mainViewModel.setInterstitialAdStart(it.route, it.adStart)
+                }
+            },
+            adInitState = mainViewModel.adMobinitState,
+            loading = loading,
+            setLoading = {
+                loading = it
+            },
+            itemSize = Integer.MAX_VALUE,
+        )
     }
 }
 
@@ -403,19 +417,7 @@ fun ListItemList(
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
     }
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-    var adSize by remember { mutableStateOf(64) }
 
-    adSize =
-        when {
-            adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-                (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-            }
-
-            else -> {
-                0
-            }
-        }
     val isAtBottom = listState.isAtBottom()
     val coroutine = rememberCoroutineScope()
 
@@ -565,12 +567,12 @@ fun ListItemList(
                     modifier =
                         Modifier
                             .fillMaxSize()
-                            .padding(top = 16.dp, bottom = adSize.dp),
+                            .padding(top = 16.dp),
                 ) {
                     LazyColumn(
                         Modifier
                             .fillMaxSize(),
-                        contentPadding = PaddingValues(bottom = adSize.dp),
+                        contentPadding = PaddingValues(bottom = 64.dp),
                         state = listState,
                     ) {
                         items(count = items.size) { index ->
@@ -751,20 +753,6 @@ fun RecentlyWatchItemList(
     val isAtBottom = listState.isAtBottom()
     val coroutine = rememberCoroutineScope()
 
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-    var adSize by remember { mutableStateOf(64) }
-
-    adSize =
-        when {
-            adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-                (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-            }
-
-            else -> {
-                0
-            }
-        }
-
     LaunchedEffect(isFirstItemVisible) {
         if (isFirstItemVisible) {
             // 첫 번째 아이템이 보일 때 처리할 작업
@@ -808,12 +796,12 @@ fun RecentlyWatchItemList(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(top = 16.dp, bottom = adSize.dp),
+                    .padding(top = 16.dp),
         ) {
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 state = listState,
-                contentPadding = PaddingValues(bottom = adSize.dp),
+                contentPadding = PaddingValues(bottom = 64.dp),
             ) {
                 items(count = items.size) { index ->
                     RecentlyWatchItems(

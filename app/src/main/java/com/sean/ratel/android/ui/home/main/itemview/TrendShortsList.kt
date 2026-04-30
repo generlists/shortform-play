@@ -153,6 +153,7 @@ fun TrendShortsList(
                             isHome = true,
                             size = 32.dp,
                             onClick = {
+                                viewModel.setInterstitialAdStart(Destination.Home.Main.TrendShortsMore.route, true)
                                 viewModel.goMoreContent(
                                     Destination.Home.Main.TrendShortsMore.route,
                                     ViewType.TrendShortsMore,

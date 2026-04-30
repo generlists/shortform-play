@@ -80,7 +80,6 @@ import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.SearchResultModel
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
@@ -91,7 +90,6 @@ import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.launch
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import kotlin.random.Random
 
 @Suppress("ktlint:standard:function-naming")
@@ -110,7 +108,6 @@ fun KeyWordSearchDisplayUi(
     query: String,
     adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
-    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val currentData = searchViewModel.shortsSearchList.collectAsState()
 
@@ -118,18 +115,7 @@ fun KeyWordSearchDisplayUi(
         containerColor = APP_BACKGROUND,
     ) { innerPadding ->
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
-        val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-        var adSize by remember { mutableStateOf(64) }
-        adSize =
-            when {
-                adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-                    (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-                }
 
-                else -> {
-                    0
-                }
-            }
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = remember { mutableStateOf(0) }
         val scrollOffset = remember { mutableStateOf(0) }
@@ -155,7 +141,6 @@ fun KeyWordSearchDisplayUi(
                 KeyWordSearchGridItemView(
                     query,
                     currentData.value,
-                    adViewModel,
                     searchViewModel,
                     loading = { load ->
                         moreLoading = load
@@ -169,12 +154,12 @@ fun KeyWordSearchDisplayUi(
             listState.scrollToItem(0)
         }
 
-        RLog.d("search", "moreLoading : $moreLoading , adSize :$adSize ,  bottomBarHeight : $bottomBarHeight $")
+        RLog.d("search", "moreLoading : $moreLoading  ,  bottomBarHeight : $bottomBarHeight $")
         if (moreLoading) {
             Box(
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = (adSize + bottomBarHeight).dp + REMAIN_AD_MARGIN)
+                    .padding(bottom = 64.dp + REMAIN_AD_MARGIN)
                     .background(Color.Transparent),
                 contentAlignment = Alignment.BottomCenter,
             ) {
@@ -203,7 +188,6 @@ fun KeyWordSearchDisplayUi(
 fun KeyWordSearchGridItemView(
     query: String,
     data: List<SearchResultModel>,
-    adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,
@@ -225,7 +209,7 @@ fun KeyWordSearchGridItemView(
                 .padding(top = 16.dp)
                 .wrapContentHeight(),
         ) {
-            KeyWordSearchGridItemList(query, data, adViewModel, searchViewModel, loading, listState)
+            KeyWordSearchGridItemList(query, data, searchViewModel, loading, listState)
         }
     }
 }
@@ -235,11 +219,9 @@ fun KeyWordSearchGridItemView(
 fun KeyWordSearchGridItemList(
     query: String,
     items: List<SearchResultModel>,
-    adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,
-    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val index = searchViewModel.moreIndex.collectAsState()
     val searchComplete = searchViewModel.searchDataComplete.collectAsState()
@@ -247,18 +229,7 @@ fun KeyWordSearchGridItemList(
     val isAtBottom = listState.isAtBottom()
     val context = LocalContext.current as SearchActivity
     val coroutine = rememberCoroutineScope()
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
 
-    var adSize by remember { mutableStateOf(64) }
-    when {
-        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-        }
-
-        else -> {
-            adSize = 0
-        }
-    }
     RLog.d(
         "KeywordSearch",
         "isAtBottom : $isAtBottom , maxMoreIndex : ${
@@ -298,7 +269,7 @@ fun KeyWordSearchGridItemList(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = adSize.dp),
+                    .padding(bottom = 64.dp),
             state = listState,
         ) {
             var i = 0
@@ -352,17 +323,6 @@ fun KeyWordSearchGridItemList(
                     }
                 }
             }
-        }
-    }
-
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(Color.Transparent),
-        contentAlignment = Alignment.BottomCenter,
-    ) {
-        if (!searchComplete.value) {
-            AdBannerView(context, Destination.Search.route)
         }
     }
 }

@@ -71,7 +71,9 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsChannelModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
+import com.sean.ratel.android.ui.ad.AdTarget
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.ShortFormBottomSheetDialog
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
@@ -84,7 +86,6 @@ import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -131,6 +132,8 @@ fun GridDisplayUi(
     val trendShortsTitle = moreViewModel.trendShortsMoreList.collectAsState()
     val trendShortsKeys = trendShortsTitle.value?.event_list?.keys
     val moreTrendShortsKey = mainViewModel.moreTrendShortsKey.collectAsState()
+    var loading by remember { mutableStateOf(true) }
+    val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
 
     val filterVisiable =
         remember {
@@ -172,7 +175,6 @@ fun GridDisplayUi(
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
 
         val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-        var adSize by remember { mutableStateOf(64) }
 
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = remember { mutableStateOf(0) }
@@ -186,16 +188,6 @@ fun GridDisplayUi(
                 initialFirstVisibleItemScrollOffset = scrollOffset.value,
             )
 
-        adSize =
-            when {
-                adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-                    (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-                }
-
-                else -> {
-                    0
-                }
-            }
         // 초기 로딩시
         if (title.value.isEmpty()) {
             SetTitle(
@@ -225,7 +217,7 @@ fun GridDisplayUi(
                     listState,
                 )
                 if (viewType == ViewType.TrendShortsMore) {
-                    Box(Modifier.fillMaxSize().padding(bottom = adSize.dp)) {
+                    Box(Modifier.fillMaxSize().padding(bottom = 64.dp)) {
                         TrendShortsMenuButton(mainViewModel, Modifier, true, onclick = {
                             showBottomSheet = true
                         })
@@ -256,7 +248,7 @@ fun GridDisplayUi(
             Box(
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = (adSize + bottomBarHeight).dp)
+                    .padding(bottom = (64 + bottomBarHeight).dp)
                     .background(Color.Transparent),
                 contentAlignment = Alignment.BottomCenter,
             ) {
@@ -274,6 +266,31 @@ fun GridDisplayUi(
         } else {
             FilterList(filterAction, mainViewModel, moreViewModel)
         }
+    }
+    if (adLoading?.route == Destination.Home.Main.TrendShortsMore.route ||
+        adLoading?.route == Destination.Home.Main.PoplarShortFormMore.route ||
+        adLoading?.route == Destination.Home.Main.EditorPickMore.route ||
+        adLoading?.route == Destination.Home.Main.RecommendMore.route
+    ) {
+        InterstitialAdPage(
+            adTarget =
+                AdTarget(
+                    Destination.Home.Main.TopicListDetail.route,
+                    adLoading?.adStart ?: true,
+                ),
+            interstitialAdManager = mainViewModel.interstitialAdManager,
+            setAdLoading = {
+                it?.let {
+                    mainViewModel.setInterstitialAdStart(it.route, it.adStart)
+                }
+            },
+            adInitState = mainViewModel.adMobinitState,
+            loading = loading,
+            setLoading = {
+                loading = it
+            },
+            itemSize = Integer.MAX_VALUE,
+        )
     }
 }
 
@@ -437,8 +454,6 @@ fun GridItemList(
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
     }
-    val adFixedBannerState by viewModel.fixedBannerState.collectAsState()
-    var adSize by remember { mutableStateOf(64) }
 
     LaunchedEffect(isFirstItemVisible) {
         if (isFirstItemVisible) {
@@ -482,28 +497,19 @@ fun GridItemList(
             loading(false)
         }
     }
-    adSize =
-        when {
-            adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-                (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-            }
 
-            else -> {
-                0
-            }
-        }
     Box(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(top = 16.dp, bottom = adSize.dp),
+                .padding(top = 16.dp),
     ) {
         LazyColumn(
             modifier =
                 Modifier
                     .fillMaxSize(),
             state = listState,
-            contentPadding = PaddingValues(bottom = adSize.dp),
+            contentPadding = PaddingValues(bottom = 64.dp),
         ) {
             var i = 0
             item(key = items[i].itemPosition) {

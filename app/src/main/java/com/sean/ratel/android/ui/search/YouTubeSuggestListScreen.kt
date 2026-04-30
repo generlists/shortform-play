@@ -22,9 +22,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -42,19 +40,13 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.SearchActivity
-import com.sean.ratel.android.ui.ad.AdBannerLocation
-import com.sean.ratel.android.ui.ad.AdBannerView
-import com.sean.ratel.android.ui.ad.AdViewModel
-import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun YouTubeSuggestList(
     query: String,
-    adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
     selectItem: (String) -> Unit,
 ) {
@@ -73,17 +65,7 @@ fun ListItemDisplayUi(
     val suggests by searchViewModel.searchSuggestList.collectAsState()
 
     val context = LocalContext.current as SearchActivity
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-    var adSize by remember { mutableStateOf(64) }
-    when {
-        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-        }
 
-        else -> {
-            adSize = 0
-        }
-    }
     Scaffold(
         containerColor = APP_BACKGROUND,
     ) { innerPadding ->
@@ -101,16 +83,10 @@ fun ListItemDisplayUi(
             ) {
                 Box(
                     Modifier
-                        .wrapContentSize()
-                        .padding(top = adSize.dp),
+                        .wrapContentSize(),
                     contentAlignment = Alignment.CenterStart,
                 ) {
                     SuggestListView(suggests, selectItem)
-                }
-                Box(
-                    Modifier.fillMaxSize(),
-                ) {
-                    AdBannerView(context, Destination.Search.route, AdBannerLocation.TOP)
                 }
             }
         }

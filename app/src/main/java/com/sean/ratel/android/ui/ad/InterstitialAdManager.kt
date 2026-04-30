@@ -21,6 +21,7 @@ class InterstitialAdManager
     @Inject
     constructor(
         val adsSdk: AdsSdk,
+        val adPolicyManager: AdPolicyManager,
     ) {
         private var interstitialCollectJob: Job? = null
         private var showAd = false
@@ -128,4 +129,33 @@ class InterstitialAdManager
             val initAdMobInitState: AdMobInitState,
             // val shouldTriggerAd: Boolean,
         )
+
+        // collect 를 한번만
+        fun requestInitInterstitialAdPage(initInterstitialAdState: (AdMobInterstitialAdState?) -> Unit) {
+            val isShow = adPolicyManager.shouldShowAd()
+
+//            if (!isShow) {
+//                initInterstitialAdState(null)
+//
+//                return
+//            }
+
+            interstitialCollectJob?.cancel()
+
+            interstitialCollectJob =
+                CoroutineScope(Dispatchers.Main.immediate).launch {
+                    adsSdk.interstitialState.collect { event ->
+
+                        initInterstitialAdState(event)
+
+                        if (event is AdMobInterstitialAdState.AdLoadComplete) {
+                            RLog.d("ADDDDDDDDDDFFF", "show Add")
+                            adsSdk.showInterstitialAds()
+                        }
+                    }
+                }
+            CoroutineScope(Dispatchers.Main.immediate).launch {
+                adsSdk.initInterstitialAd(BuildConfig.INTERSTITIALAd_UNIT_ID)
+            }
+        }
     }
