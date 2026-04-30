@@ -14,6 +14,7 @@ import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.search.SearchScreen
 import com.sean.ratel.android.ui.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -51,7 +52,7 @@ class SearchActivity : FragmentActivity() {
             actionName = GASplashAnalytics.Action.VIEW,
             parameter = mapOf(),
         )
-
+        mainViewModel.setInterstitialAdStart(Destination.Search.route, true)
         deeLink(intent)
     }
 

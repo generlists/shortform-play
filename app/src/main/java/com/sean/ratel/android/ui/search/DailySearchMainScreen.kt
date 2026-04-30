@@ -30,6 +30,7 @@ import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.end.LoadingArea
+import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.search.DailyFilterTopBar
 import com.sean.ratel.android.ui.search.DailySearchFilterBottomSheet
 import com.sean.ratel.android.ui.search.DailySearchResultScreen
@@ -87,11 +88,13 @@ fun SearchFilterScreen(
             if (showFilterSheet) {
                 SearchFilterScreen({
                     showFilterSheet = it
-                }, searchViewModel)
+                }, searchViewModel, mainViewModel)
             }
 
             when (apiState.value) {
-                is UiState.Loading -> LoadingArea(true)
+                is UiState.Loading -> {
+                    LoadingArea(true)
+                }
 
                 is UiState.Success<*> -> {
                     RLog.d("SearchViewModel", "apiState : Success")
@@ -100,9 +103,14 @@ fun SearchFilterScreen(
                     LoadingArea(false)
                     gaSend(searchViewModel, GASplashAnalytics.Event.SELECT_SEARCH_DAILY_RESULT, GASplashAnalytics.Action.VIEW)
                 }
-                is UiState.Error -> DailyErrorView(context, searchViewModel, apiState.value)
 
-                else -> Unit
+                is UiState.Error -> {
+                    DailyErrorView(context, searchViewModel, apiState.value)
+                }
+
+                else -> {
+                    Unit
+                }
             }
         }
         LaunchedEffect(deepLinkSearch.value) {
@@ -124,6 +132,7 @@ fun SearchFilterScreen(
 fun SearchFilterScreen(
     showFilterSheet: (Boolean) -> Unit,
     searchViewModel: SearchViewModel,
+    mainViewModel: MainViewModel,
 ) {
     val selectedDate by searchViewModel.selectedDate.collectAsState()
     val categories = searchViewModel.youtubeCategory.collectAsState()
@@ -155,13 +164,8 @@ fun SearchFilterScreen(
             },
             onApply = { date, category ->
 
-//                searchViewModel.resetData()
-//                showFilterSheet(false)
-// 1764547200000
-//                date?.let {
-//                    searchViewModel.onDateSelected(context, it, category)
-//                }
                 RLog.d("deeplink", "date : $date")
+                mainViewModel.setInterstitialAdStart(Destination.Search.route, true)
                 applyDailySearch(context, searchViewModel, showFilterSheet, date, category)
                 gaSend(
                     searchViewModel,

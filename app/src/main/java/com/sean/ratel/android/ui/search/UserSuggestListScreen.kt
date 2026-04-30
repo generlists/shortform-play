@@ -32,9 +32,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -58,15 +56,11 @@ import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.dto.SearchResultModel
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdBannerLocation
-import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
-import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -125,18 +119,6 @@ fun UserSuggestUI(
     selectItem: (String) -> Unit,
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-    var adSize by remember { mutableStateOf(64) }
-    when {
-        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-        }
-
-        else -> {
-            adSize = 0
-        }
-    }
-
     val context = LocalContext.current as SearchActivity
     Box(
         Modifier
@@ -145,16 +127,10 @@ fun UserSuggestUI(
     ) {
         Box(
             Modifier
-                .wrapContentSize()
-                .padding(top = adSize.dp),
+                .wrapContentSize(),
             contentAlignment = Alignment.CenterStart,
         ) {
             UserSuggestListView(items, searchViewModel, selectItem)
-        }
-        Box(
-            Modifier.fillMaxSize(),
-        ) {
-            AdBannerView(context, Destination.Search.route, AdBannerLocation.TOP)
         }
     }
 }

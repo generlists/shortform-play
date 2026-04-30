@@ -65,7 +65,7 @@ import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 @Composable
 fun HomeTopBar(
     modifier: Modifier,
-    mainViewModel: MainViewModel?,
+    mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
     isHomeNaviBar: String,
     historyBack: () -> Unit,
@@ -143,12 +143,12 @@ fun HomeTopBar(
                                         .toDp()
                                         .value
                                 }
-                            mainViewModel?.setTopBarHeight(topBarHeight.toInt())
+                            mainViewModel.setTopBarHeight(topBarHeight.toInt())
                         },
                 // Row 내에서 수직 중앙 정렬
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                val isPrivacy = mainViewModel?.isPrivacyOptionMenu?.collectAsState(false)
+                val isPrivacy = mainViewModel.isPrivacyOptionMenu.collectAsState(false)
                 if (isHomeNaviBar == Destination.Home.Main.route || isHomeNaviBar == Destination.Home.ShortForm.route) {
                     Image(
                         painterResource(R.drawable.shortform_play_icon_main),
@@ -162,7 +162,7 @@ fun HomeTopBar(
                     TitleBox()
                     Spacer(modifier = Modifier.weight(1f))
                     PrivacyOptionMenu(isPrivacy?.value ?: false, privacyOptionClick)
-                    NotificationIconButton(notificationPage, pushViewModel)
+                    NotificationIconButton(notificationPage, mainViewModel, pushViewModel)
                     SearchIconButton(mainViewModel)
                 } else if (isHomeNaviBar == Destination.YouTube.route) {
                     BackButton(
@@ -272,12 +272,14 @@ fun SearchIconButton(mainViewModel: MainViewModel?) {
 @Composable
 fun NotificationIconButton(
     notificationPage: () -> Unit,
+    mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
 ) {
     val permission by pushViewModel.hasPermission.collectAsState()
     val hasNewPush by pushViewModel.hasNewPush.collectAsState()
 
     IconButton(onClick = {
+        mainViewModel.setInterstitialAdStart(Destination.Notifcation.route, true)
         notificationPage()
     }) {
         val icon =

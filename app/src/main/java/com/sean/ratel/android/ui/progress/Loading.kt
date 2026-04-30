@@ -82,6 +82,7 @@ fun LoadingMainPlaceholder(
 ) {
     if (!loading) return
     val modifiers = modifier.wrapContentSize()
+
     Box(
         Modifier
             .fillMaxSize()

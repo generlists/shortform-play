@@ -34,7 +34,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.firebase.analytics.FirebaseAnalytics.Event
+import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
@@ -44,7 +46,10 @@ import com.sean.ratel.android.ui.theme.RatelappTheme
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun PhoneAppList(viewModel: SettingViewModel?) {
+fun PhoneAppList(
+    mainViewModel: MainViewModel,
+    viewModel: SettingViewModel?,
+) {
     Column(
         Modifier
             .wrapContentSize()
@@ -64,7 +69,7 @@ fun PhoneAppList(viewModel: SettingViewModel?) {
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             ToolBox.entries.forEach { toolBox ->
-                PhoneManagerItem(viewModel, toolBox)
+                PhoneManagerItem(mainViewModel, viewModel, toolBox)
             }
         }
     }
@@ -94,6 +99,7 @@ private fun PhoneManagerTitle() {
 @Suppress("ktlint:standard:function-naming")
 @Composable
 private fun PhoneManagerItem(
+    mainViewModel: MainViewModel,
     viewModel: SettingViewModel?,
     item: ToolBox,
 ) {
@@ -106,7 +112,7 @@ private fun PhoneManagerItem(
             Modifier
                 .padding(horizontal = 20.dp, vertical = 16.dp)
                 .wrapContentSize()
-                .clickable(onClick = { runDetailPage(item, viewModel) }),
+                .clickable(onClick = { runDetailPage(item, mainViewModel, viewModel) }),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -160,32 +166,18 @@ private fun PhoneManagerItem(
 
 fun runDetailPage(
     toolBox: ToolBox,
+    mainViewModel: MainViewModel,
     viewModel: SettingViewModel?,
 ) {
     when (toolBox.icon) {
         R.drawable.ic_app_list -> {
+            mainViewModel.setInterstitialAdStart(Destination.AppManager.route, true)
             viewModel?.runAppManagerDetail()
             viewModel?.sendGALog(
                 Event.SCREEN_VIEW,
                 Destination.AppManager.route,
             )
         }
-
-//        R.drawable.ic_network_manager -> {
-//            Toast.makeText(context, R.string.device_manager_comming_soon, Toast.LENGTH_LONG).show()
-//            viewModel?.sendGALog(
-//                Event.SCREEN_VIEW,
-//                Destination.SettingDeviceNetwork.route,
-//            )
-//        }
-
-//        R.drawable.ic_phone_care -> {
-//            Toast.makeText(context, R.string.device_manager_comming_soon, Toast.LENGTH_LONG).show()
-//            viewModel?.sendGALog(
-//                Event.SCREEN_VIEW,
-//                Destination.SettingPhoneCare.route,
-//            )
-//        }
 
         else -> {
             Unit
@@ -198,6 +190,6 @@ fun runDetailPage(
 @Composable
 private fun PhoneAppPreView() {
     RatelappTheme {
-        PhoneAppList(null)
+        PhoneAppList(hiltViewModel(), hiltViewModel())
     }
 }

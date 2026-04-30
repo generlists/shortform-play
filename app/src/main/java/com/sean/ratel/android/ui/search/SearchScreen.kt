@@ -60,7 +60,9 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
+import com.sean.ratel.android.ui.ad.AdTarget
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.preview.ShortsVideoParameterProvider
@@ -82,6 +84,8 @@ fun SearchScreen(
 ) {
     val sessionId by searchViewModel.sessionId.collectAsState()
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
+    var loading by remember { mutableStateOf(true) }
+    val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
 
     BackHandler(enabled = true) {
         searchViewModel.requestResetSession(sessionId)
@@ -121,6 +125,27 @@ fun SearchScreen(
                 SearchMain(searchViewModel, adViewModel, mainViewModel)
             }
         }
+    }
+    if (adLoading?.route == Destination.Search.route) {
+        InterstitialAdPage(
+            adTarget =
+                AdTarget(
+                    Destination.Home.Main.TopicListDetail.route,
+                    adLoading?.adStart ?: true,
+                ),
+            interstitialAdManager = mainViewModel.interstitialAdManager,
+            setAdLoading = {
+                it?.let {
+                    mainViewModel.setInterstitialAdStart(it.route, it.adStart)
+                }
+            },
+            adInitState = mainViewModel.adMobinitState,
+            loading = loading,
+            setLoading = {
+                loading = it
+            },
+            itemSize = Integer.MAX_VALUE,
+        )
     }
 }
 
@@ -168,7 +193,12 @@ fun SearchMain(
 
             when (searchType.value) {
                 SearchType.VideoSearch -> {
-                    SearchComposeUi(searchViewModel, adViewModel, {})
+                    SearchComposeUi(
+                        mainViewModel,
+                        searchViewModel,
+                        adViewModel,
+                        {},
+                    )
                 }
 
                 SearchType.ArchiveSearch -> {

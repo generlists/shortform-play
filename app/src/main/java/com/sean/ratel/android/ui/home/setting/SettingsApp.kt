@@ -32,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.google.firebase.analytics.FirebaseAnalytics.Event
+import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
@@ -43,7 +44,10 @@ import com.sean.ratel.android.utils.PhoneUtil
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun SettingsApp(viewModel: SettingViewModel?) {
+fun SettingsApp(
+    mainViewModel: MainViewModel,
+    viewModel: SettingViewModel?,
+) {
     Column(
         Modifier
             .wrapContentHeight()
@@ -65,6 +69,10 @@ fun SettingsApp(viewModel: SettingViewModel?) {
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             SettingsApp(SettingsItems.SETTING_APP_MANAGER, viewModel) {
+                mainViewModel.setInterstitialAdStart(
+                    Destination.SettingAppManagerDetail.route,
+                    true,
+                )
                 viewModel?.runAppDetail()
                 viewModel?.sendGALog(
                     Event.SCREEN_VIEW,

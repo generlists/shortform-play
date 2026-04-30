@@ -74,7 +74,6 @@ import com.sean.ratel.android.data.dto.ShortsVideoModel
 import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
@@ -84,7 +83,6 @@ import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
 import kotlinx.coroutines.launch
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -103,18 +101,7 @@ fun KeyWordSearchDisplayUi(
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val currentData = searchViewModel.dailyCurrentSearchShortformList.collectAsState()
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-    var adSize by remember { mutableStateOf(64) }
-    adSize =
-        when {
-            adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-                (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-            }
 
-            else -> {
-                0
-            }
-        }
     if (currentData.value.isEmpty()) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Text(
@@ -181,7 +168,7 @@ fun KeyWordSearchDisplayUi(
                 Box(
                     Modifier
                         .fillMaxSize()
-                        .padding(bottom = (adSize + bottomBarHeight).dp + REMAIN_AD_MARGIN)
+                        .padding(bottom = 64.dp + REMAIN_AD_MARGIN)
                         .background(Color.Transparent),
                     contentAlignment = Alignment.BottomCenter,
                 ) {
@@ -251,20 +238,10 @@ fun KeyWordSearchGridItemList(
     val index = searchViewModel.moreIndex.collectAsState()
     val searchComplete = searchViewModel.searchDataComplete.collectAsState()
     val currentCategory = searchViewModel.selectedCategory.collectAsState()
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
 
     val isAtBottom = listState.isAtBottom()
     val coroutine = rememberCoroutineScope()
-    var adSize by remember { mutableStateOf(64) }
-    when {
-        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-        }
 
-        else -> {
-            adSize = 0
-        }
-    }
     RLog.d(
         "KeywordSearch",
         "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex(
@@ -307,7 +284,7 @@ fun KeyWordSearchGridItemList(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = adSize.dp),
+                    .padding(bottom = 64.dp),
             state = listState,
         ) {
             var i = 0
@@ -364,32 +341,6 @@ fun KeyWordSearchGridItemList(
                 }
             }
         }
-    }
-//        val bottomPadding =
-//            adBannerLoadingComplete.value.second.dp +
-//                WindowInsets.navigationBars
-//                    .asPaddingValues()
-//                    .calculateBottomPadding() +
-//                STRINGS.REMAIN_AD_MARGIN
-    Box(
-        Modifier
-            .fillMaxSize(),
-//                .then(
-//                    if (adBannerLoadingComplete.value.first) {
-//                        Modifier
-//                            .height(
-//                                bottomPadding,
-//                            )
-//                    } else {
-//                        Modifier
-//                    },
-//                ),
-        contentAlignment = Alignment.BottomCenter,
-    ) {
-        // if (!searchComplete.value) {
-        // LoadBanner(Destination.Search.route, adViewModel, AdBannerLocation.BOTTOM)
-        AdBannerView(context, Destination.Search.route)
-        //  }
     }
 }
 

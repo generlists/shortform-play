@@ -37,6 +37,7 @@ import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -70,6 +71,8 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
 import com.sean.ratel.android.data.log.GASplashAnalytics
+import com.sean.ratel.android.ui.ad.AdTarget
+import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.TopicFilterType
@@ -91,6 +94,9 @@ fun TopicDetailScreen(
     mainViewModel: MainViewModel,
 ) {
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
+    var loading by remember { mutableStateOf(true) }
+    val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
+
     val listState = rememberLazyListState()
     val topicData =
         remember {
@@ -309,7 +315,10 @@ fun TopicDetailScreen(
                                                 filterType = filterType,
                                             )
                                             mainViewModel.sendGALog(
-                                                screenName = GASplashAnalytics.SCREEN_NAME.get(TOPIC_DETAIL) ?: "",
+                                                screenName =
+                                                    GASplashAnalytics.SCREEN_NAME.get(
+                                                        TOPIC_DETAIL,
+                                                    ) ?: "",
                                                 eventName = GASplashAnalytics.Event.SELECT_TOPIC_DETAIL_CHANNEL_ITEM_CLICK,
                                                 actionName = GASplashAnalytics.Action.CLICK,
                                                 mapOf(
@@ -679,6 +688,28 @@ fun TopicDetailScreen(
                 }
             }
         }
+    }
+
+    if (adLoading?.route == Destination.Home.Main.TopicListDetail.route) {
+        InterstitialAdPage(
+            adTarget =
+                AdTarget(
+                    Destination.Home.Main.TopicListDetail.route,
+                    adLoading?.adStart ?: true,
+                ),
+            interstitialAdManager = mainViewModel.interstitialAdManager,
+            setAdLoading = {
+                it?.let {
+                    mainViewModel.setInterstitialAdStart(it.route, it.adStart)
+                }
+            },
+            adInitState = mainViewModel.adMobinitState,
+            loading = loading,
+            setLoading = {
+                loading = it
+            },
+            itemSize = Integer.MAX_VALUE,
+        )
     }
 }
 

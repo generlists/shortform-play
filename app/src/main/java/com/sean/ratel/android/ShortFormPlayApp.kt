@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sean.ratel.android.data.common.RemoteConfig
+import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.home.HomeBottomBar
@@ -105,18 +106,13 @@ fun ShortFormPlayApp(
             ShadowBottomLayer(route = currentRoute)
 
             if ((
-                    currentRoute != Destination.Splash.route &&
-                        // currentRoute != Destination.Home.Main.route &&
-                        currentRoute != Destination.Home.ShortForm.route &&
-                        // 구글정책상 한페이지에 하나의 광고만허용
-                        currentRoute != Destination.YouTube.route &&
-                        currentRoute != Destination.Notices.route &&
-                        currentRoute != Destination.Regal.route
+                    currentRoute == Destination.Home.Main.route ||
+                        currentRoute == Destination.Setting.route
                 ) &&
                 adMobInitialComplete is AdMobInitState.InitComplete &&
                 RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
             ) {
-                // AdBannerView(context, currentRoute)
+                AdBannerView(context, currentRoute)
             }
 
             FullScreenToggleView(currentRoute)

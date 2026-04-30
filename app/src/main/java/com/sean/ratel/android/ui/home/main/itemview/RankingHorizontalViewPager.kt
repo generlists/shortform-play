@@ -368,6 +368,10 @@ private fun RankingTitleArea(
                                 } else {
                                     ViewType.ChannelSearchRanking
                                 }
+                            viewModel?.setInterstitialAdStart(
+                                Destination.Home.Main.RankingChannelMore.route,
+                                true,
+                            )
                             viewModel?.goMoreContent(
                                 Destination.Home.Main.RankingChannelMore.route,
                                 viewType,

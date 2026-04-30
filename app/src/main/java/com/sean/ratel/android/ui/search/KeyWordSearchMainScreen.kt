@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.api.UiState
@@ -39,6 +40,7 @@ import com.sean.ratel.android.utils.UIUtil.localeFromCountryCode
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun SearchComposeUi(
+    mainViewModel: MainViewModel,
     searchViewModel: SearchViewModel,
     adViewModel: AdViewModel,
     finish: () -> Unit,
@@ -98,6 +100,7 @@ fun SearchComposeUi(
                     // 처음 저장된 자동완성 리스트
                     SearchUiState.UserSuggest -> {
                         UserSuggestListScreen(adViewModel, searchViewModel) { userSelect ->
+                            mainViewModel.setInterstitialAdStart(Destination.Search.route, true)
                             val locale = localeFromCountryCode(currentLocale)
                             val keyword = "$userSelect + ${
                                 getAppLocaleByStringResource(
@@ -130,15 +133,19 @@ fun SearchComposeUi(
                                     }
                                 }
                             }
-                            is UiState.Error -> ErrorView(context, searchViewModel, apiState.value)
 
-                            else -> Unit
+                            is UiState.Error -> {
+                                ErrorView(context, searchViewModel, apiState.value)
+                            }
+
+                            else -> {
+                                Unit
+                            }
                         }
 
                         if (searchSuggestComplete.value) {
                             YouTubeSuggestList(
                                 query.value,
-                                adViewModel,
                                 searchViewModel,
                             ) { suggest ->
                                 val newKeyword = "$suggest + ${
@@ -163,6 +170,7 @@ fun SearchComposeUi(
                             }
                         }
                     }
+
                     SearchUiState.DeepLink -> {
                         val locale = localeFromCountryCode(currentLocale)
                         query.value = (deepLinkQuery.value ?: "") + ""
@@ -188,6 +196,7 @@ fun SearchComposeUi(
                         )
                         uiState.value = SearchUiState.Searching
                     }
+
                     // 로딩 중 (검색 요청)
                     SearchUiState.Searching -> {
                         when (apiState.value) {
@@ -195,6 +204,7 @@ fun SearchComposeUi(
                                 LoadingArea(true)
                                 LocalSoftwareKeyboardController.current?.hide()
                             }
+
                             is UiState.Success<SearchShortsResponse> -> {
                                 LaunchedEffect(searchDataComplete.value) {
                                     if (searchViewModel.searchDataComplete.value) {
@@ -203,10 +213,14 @@ fun SearchComposeUi(
                                     }
                                 }
                             }
+
                             is UiState.Error -> {
                                 ErrorView(context, searchViewModel, apiState.value)
                             }
-                            is UiState.Idle -> Unit
+
+                            is UiState.Idle -> {
+                                Unit
+                            }
                         }
                     }
 

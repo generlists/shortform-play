@@ -67,16 +67,18 @@ import com.sean.ratel.android.data.domain.model.push.PushAppUpdateModel
 import com.sean.ratel.android.data.domain.model.push.PushModel
 import com.sean.ratel.android.data.domain.model.push.PushRecommendModel
 import com.sean.ratel.android.data.domain.model.push.PushUploadModel
+import com.sean.ratel.android.ui.ad.AdTarget
+import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.end.LoadingArea
+import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.push.item.PushUiItem
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.utils.PhoneUtil
 import kotlinx.coroutines.delay
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -88,11 +90,13 @@ fun NotificationScreen(
     pushViewModel: PushViewModel,
 ) {
     val notificationData by pushViewModel.notificationPushUiList.collectAsState()
-    RLog.d("PUSH_TEST", "notificationData size ${notificationData.size}")
+
     val context = LocalContext.current
     val hasLoadedOnce by pushViewModel.hasLoadedOnce.collectAsState()
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     var showRealImage by remember(hasLoadedOnce) { mutableStateOf(false) }
+    var loading by remember { mutableStateOf(true) }
+    val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
 
     Box(
         Modifier
@@ -133,7 +137,7 @@ fun NotificationScreen(
                         ) {
                             Text(stringResource(R.string.notification_list_description), color = APP_SUBTITLE_TEXT_COLOR)
                         }
-                        NotificationList(modifier, notificationData, pushViewModel, mainViewModel)
+                        NotificationList(modifier, notificationData, pushViewModel)
                     }
                 }
             }
@@ -148,6 +152,27 @@ fun NotificationScreen(
 
         Spacer(Modifier.height(16.dp))
     }
+    if (adLoading?.route == Destination.Notifcation.route) {
+        InterstitialAdPage(
+            adTarget =
+                AdTarget(
+                    Destination.Home.Main.TopicListDetail.route,
+                    adLoading?.adStart ?: true,
+                ),
+            interstitialAdManager = mainViewModel.interstitialAdManager,
+            setAdLoading = {
+                it?.let {
+                    mainViewModel.setInterstitialAdStart(it.route, it.adStart)
+                }
+            },
+            adInitState = mainViewModel.adMobinitState,
+            loading = loading,
+            setLoading = {
+                loading = it
+            },
+            itemSize = Integer.MAX_VALUE,
+        )
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -157,25 +182,13 @@ fun NotificationList(
     modifier: Modifier,
     notificationData: List<PushUiItem>?,
     pushViewModel: PushViewModel,
-    mainViewModel: MainViewModel,
 ) {
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-    var adSize by remember { mutableStateOf(64) }
     if (notificationData.isNullOrEmpty()) return
 
-    when {
-        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-        }
-
-        else -> {
-            adSize = 0
-        }
-    }
     Column(
         Modifier
             .fillMaxSize()
-            .padding(top = 16.dp, bottom = adSize.dp),
+            .padding(top = 16.dp, bottom = 64.dp),
     ) {
         Box(
             modifier
