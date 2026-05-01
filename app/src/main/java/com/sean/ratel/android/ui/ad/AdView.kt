@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -117,6 +118,7 @@ private fun isBottomBar(route: String) =
 fun AdaptiveBanner(
     homeMainViewModel: MainViewModel = hiltViewModel(),
     adViewModel: AdViewModel,
+    onHeightChanged:(Int) ->Unit ={}
 ) {
     RLog.d(TAG, "InLineAdaptiveBanner")
     val adMobInitState by homeMainViewModel.adMobinitState.collectAsState()
@@ -153,7 +155,10 @@ fun AdaptiveBanner(
         Box(
             Modifier
                 .fillMaxSize()
-                .padding(top = padding.dp, bottom = padding.dp),
+                .padding(top = padding.dp, bottom = padding.dp).onGloballyPositioned { coordinates ->
+                onHeightChanged(coordinates.size.height)
+
+            },
             contentAlignment = Alignment.BottomCenter,
         ) {
             RLog.d("AdView", "AdView requestBanner $activity")

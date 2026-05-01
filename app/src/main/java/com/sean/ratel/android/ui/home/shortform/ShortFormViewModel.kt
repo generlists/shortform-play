@@ -5,9 +5,12 @@ import androidx.lifecycle.ViewModel
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.data.dto.TopicItem
+import com.sean.ratel.android.data.dto.TopicList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @Suppress("ktlint:standard:property-naming")
@@ -28,6 +31,8 @@ class ShortFormViewModel
         val moreIndex: StateFlow<MutableMap<String, Int>> = _moreIndex
 
         private val _shortsList = MutableStateFlow<MutableList<MainShortsModel>>(mutableListOf())
+
+        private val _topicList = MutableStateFlow<Map<String, TopicItem>>(mapOf())
 
         fun setMoreEvent(
             categoryKey: String,
@@ -62,8 +67,26 @@ class ShortFormViewModel
                 ).toMutableList().distinct()
 
             _shortsList.value.addAll(zipList)
+            _topicList.value = list.topicList.topicList
 
             setCategoryByYouTubeVideoList()
+            // 로그 확인 코드 (선택사항)
+            _categoryVideoMap.size
+
+//            RLog.d(
+//
+//                "hbungshin",
+//
+//                _categoryVideoMap.entries.joinToString("\n") {
+//
+//                    "key = ${it.key}, size = ${it.value.size}"
+//
+//                })
+//            RLog.d(
+//                "hbungshin",
+//                _categoryVideoMap.map { it }.joinToString { "key = ${it.key} , value ${(it.value).size}" })
+
+
         }
 
         fun initData() {
@@ -77,17 +100,34 @@ class ShortFormViewModel
         }
 
         private fun setCategoryByYouTubeVideoList() {
-            val categoryMap =
+            var categoryMap =
                 _shortsList.value
                     .groupBy { it.shortsVideoModel?.category }
                     .filterKeys { it != null }
                     .mapKeys { it.key ?: "99" }
 
+           // categoryMap += getTopicVideoList(_topicList.value)
+
             setVideoMap(categoryMap)
+
+
+
+
         }
 
         private fun setVideoMap(categoryMap: Map<String, List<MainShortsModel>>) {
             categoryMap.entries.forEach { setContent(it.key, it.value.toMutableList()) }
+        }
+
+        private fun getTopicVideoList(topicList: Map<String, TopicItem>):Map<String,List<MainShortsModel>> {
+
+               return topicList.mapValues { (_, topicItem) ->
+                    listOfNotNull(topicItem.popularlist, topicItem.viewlist, topicItem.subscriberlist)
+                        .flatMap { filterList -> filterList.topicList }
+                        .flatMap { groupItem -> groupItem.topicList }
+                        .map { it.copy(shortsVideoModel = it.shortsVideoModel?.copy(categoryName = topicItem.topicName)) }
+                }
+
         }
 
         fun maxMoreIndex(categoryKey: String): Int {
@@ -119,32 +159,48 @@ class ShortFormViewModel
                 }
             } else {
                 _categoryVideoMap[categoryKey] = map
-                _categoryByContents.value.put(categoryKey, list.toMutableList())
+                _categoryByContents.value[categoryKey] = list.toMutableList()
             }
 
-            // 로그 확인 코드 (선택사항)
-//        RLog.d(
-//            "hbungshin",
-//            _categoryVideoMap.map { it }.joinToString { "key = ${it.key} , value ${(it.value).size}" })
         }
 
-        fun moreContent(
-            categoryKey: String,
-            childIndex: Int,
+    fun moreContent(
+        categoryKey: String,
+        childIndex: Int,
+
         ) {
-            val childMap = _categoryVideoMap[categoryKey]
-            val nextList = childMap?.get(childIndex)
 
-            nextList?.let {
-                // 현재 Map을 가져와서 변경 작업 수행
-                val updatedMap = _categoryByContents.value.toMutableMap()
-                val existingList = updatedMap[categoryKey] ?: emptyList()
+        val nextList = _categoryVideoMap[categoryKey]?.get(childIndex)
+        if (nextList.isNullOrEmpty()) {
 
-                // 변경된 리스트 생성 후 Map에 업데이트
-                updatedMap[categoryKey] = existingList + nextList
-                _categoryByContents.value = updatedMap // 전체 Map을 새로 할당하여 StateFlow 업데이트
-            }
+            RLog.d("SSKKKKK", "nextList empty / categoryKey=$categoryKey, childIndex=$childIndex"
+            )
+
+            return
+
         }
+
+        _categoryByContents.update { currentMap ->
+
+            val existingList = currentMap[categoryKey].orEmpty()
+
+            currentMap.toMutableMap().apply {
+
+                this[categoryKey] = existingList + nextList
+
+            }
+
+        }
+
+        RLog.d(
+
+            "SSKKKKK",
+
+            "categoryKey=$categoryKey, add=${nextList.size}, total=${_categoryByContents.value[categoryKey]?.size}"
+
+        )
+
+    }
 
         companion object {
             private const val MORE_MAX_COUNT = 10

@@ -14,6 +14,7 @@ data class ShortsVideoModel(
     var duration: String,
     var category: String,
     var categoryName: String,
+    var topicName:String?,
     var viewCount: String? = "0",
     var likeCount: String? = "0",
     var commentCount: String? = "0",

@@ -329,17 +329,24 @@ YouTubeContentEndViewModel
             if (_shortFormVideoList.value.isNotEmpty()) {
                 _shortFormVideoList.value = emptyList()
             }
+
             val currentCategory = _shortFormVideoMap.value[categoryId]
             val headVideoList =
                 currentCategory?.subList(selectedIndex.coerceAtLeast(0), currentCategory.size)
+            RLog.d("OOPPSSSSSS","categoryId : $categoryId , headVideoList : ${headVideoList?.size}")
 
             val tailVideoList =
                 currentCategory?.subList(0, selectedIndex.coerceAtMost(currentCategory.size))
+
+            RLog.d("OOPPSSSSSS","categoryId : $categoryId , tailVideoList : ${tailVideoList?.size}")
 
             val otherTailList =
                 _shortFormVideoMap.value
                     .filter { it.key != categoryId }
                     .flatMap { it.value }
+
+            RLog.d("OOPPSSSSSS","categoryId : $categoryId , otherTailList : ${otherTailList?.size}")
+
 
             if (headVideoList != null && tailVideoList != null) {
                 _shortFormVideoList.value = headVideoList + tailVideoList + otherTailList
