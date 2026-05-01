@@ -62,7 +62,7 @@ fun YouTubeContentEnd(
             mainViewModel.trendsShorts.value.event_list.values
                 .flatMap { it },
         )
-
+        Log.d("LLLLLLLLLLLLL", "Enddddd  : ${mainViewModel.hashCode()}  , ${mainViewModel.shortFormVideoList.value.get("10")?.size}")
         youTubeContentEndViewModel.shortFormVideoData(mainViewModel.shortFormVideoList.value)
         youTubeContentEndViewModel.setRecentlyWatchData(mainViewModel.watchVideoList.value)
 
@@ -77,7 +77,6 @@ fun YouTubeContentEnd(
             itemClicked == Destination.Home.Main.TrendShortsMore.route ||
             itemClicked == Destination.Home.Main.TopicListDetail.route
         ) {
-            Log.d("KKKKKK", "!!!!!!!!!!!!!")
             when (mainViewModel.viewType.value) {
                 ViewType.ImageFlow -> {
                     youTubeContentEndViewModel.setImageFlowData()

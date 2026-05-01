@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,6 +41,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -53,6 +55,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
@@ -107,8 +110,11 @@ fun ShortForm(
         mainViewModel.runNavigationBack()
     }
 
-    val data = viewModel.categoryByContents.collectAsState()
-    ShortFormView(modifier, data.value, mainViewModel, viewModel, adViewModel)
+    val data by viewModel.categoryByContents.collectAsState()
+
+    RLog.d("LLLLLLLLLLLLL", "111223444 : ${data.size}")
+
+    ShortFormView(modifier, data, mainViewModel, viewModel, adViewModel)
     val coroutine = rememberCoroutineScope()
 
     LaunchedEffect(mainViewModel.tabClicked) {
@@ -134,6 +140,8 @@ fun ShortFormView(
     adViewModel: AdViewModel,
 ) {
     // val bottomBarHeight = remember { adViewModel.bottomBarHeight.value } //구글정책상 수정
+    val listState = rememberLazyListState()
+
     Column(
         modifier
             .fillMaxSize()
@@ -144,8 +152,7 @@ fun ShortFormView(
             modifier = Modifier.fillMaxSize(),
         ) {
             Column(Modifier.fillMaxSize()) {
-                ScrollableTabBar()
-                VerticalScrollWithHorizontalItems(data, mainViewModel, viewModel, adViewModel)
+                VerticalScrollWithHorizontalItems(data, mainViewModel, viewModel, adViewModel, listState)
             }
         }
     }
@@ -158,6 +165,7 @@ fun VerticalScrollWithHorizontalItems(
     mainViewModel: MainViewModel,
     viewModel: ShortFormViewModel,
     adViewModel: AdViewModel?,
+    listState: LazyListState,
 ) {
     val categorySize = items.values.size
     val targetIndexList =
@@ -169,7 +177,10 @@ fun VerticalScrollWithHorizontalItems(
                 RemoteConfig.BANNER_AD_VISIBILITY,
             )
         }
+    val scope = rememberCoroutineScope()
     val adIndexSet = remember(targetIndexList) { targetIndexList.toSet() }
+    var tabHeightPx by remember { mutableIntStateOf(0) }
+    var adBannerSize by remember { mutableIntStateOf(0) }
 
     LazyColumn(
         // 세로 스크롤 전체 화면 채우기
@@ -179,13 +190,37 @@ fun VerticalScrollWithHorizontalItems(
                 .background(APP_BACKGROUND),
         // 세로 항목 간 간격 설정
         verticalArrangement = Arrangement.spacedBy(7.dp),
+        state = listState,
     ) {
+        item {
+            ScrollableTabBar(onHeightChanged = { height ->
+                tabHeightPx = height
+            })
+        }
+
+        stickyHeader(key = "category_filter") {
+            CategoryFilterRow(
+                categoryMap = items,
+                adIndexSet = adIndexSet,
+                tabHeight = tabHeightPx,
+                adBannerSize = adBannerSize,
+                listState = listState,
+                scope = scope,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF111111)),
+            )
+        }
         val list = items.values.toList()
+
         itemsIndexed(list) { index, _ ->
             val shouldShowAd = bannerVisible && adIndexSet.contains(index)
             if (shouldShowAd) {
                 adViewModel?.let {
-                    AdaptiveBanner(mainViewModel, it)
+                    AdaptiveBanner(mainViewModel, it, onHeightChanged = {
+                        adBannerSize = it
+                    })
                 }
                 Spacer(Modifier.height(8.dp))
             }
@@ -356,6 +391,10 @@ fun RowCategoryList(
                     Modifier
                         .wrapContentSize()
                         .clickable {
+                            RLog.d(
+                                "LLLLLLLLLLLLL",
+                                "hashCode :  ${mainViewModel.hashCode()} , 뮤직 크기 : ${viewModel.categoryByContents.value.get("10")?.size}",
+                            )
                             mainViewModel.shortFormVideoData(viewModel.categoryByContents.value)
                             mainViewModel.goEndContent(
                                 Destination.Home.ShortForm.route,
@@ -586,11 +625,15 @@ private fun ProgressBar() {
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun ScrollableTabBar() {
+fun ScrollableTabBar(onHeightChanged: (Int) -> Unit = {}) {
     val tabs = remember { ShortFormTab.entries.toTypedArray().asList() }
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     ScrollableTabRow(
+        modifier =
+            Modifier.onGloballyPositioned { coordinates ->
+                onHeightChanged(coordinates.size.height) // px
+            },
         selectedTabIndex = selectedTabIndex,
         containerColor = APP_BACKGROUND,
         // 탭 바의 좌우 여백
