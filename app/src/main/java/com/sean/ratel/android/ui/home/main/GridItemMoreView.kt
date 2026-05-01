@@ -78,8 +78,9 @@ import com.sean.ratel.android.ui.common.ShortFormBottomSheetDialog
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
+import com.sean.ratel.android.ui.home.main.itemview.MainSearchFilterView
+import com.sean.ratel.android.ui.home.main.itemview.TrendsShortsFilterButton
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.progress.TrendShortsMenuButton
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.utils.ComposeUtil.isAtBottom
@@ -123,7 +124,7 @@ fun GridDisplayUi(
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
 ) {
-    var filterAction by remember { mutableIntStateOf(-1) }
+    var filterAction by remember { mutableIntStateOf(0) }
     val initScroll = moreViewModel.initScroll.collectAsState()
     val title = moreViewModel.gridShortFormTitle.collectAsState()
     val popularTitle = moreViewModel.popularShortsFormMoreList.collectAsState()
@@ -163,18 +164,14 @@ fun GridDisplayUi(
                 historyBack = { mainViewModel.runNavigationBack() },
                 isShareButton = false,
                 runSetting = {},
-                filterButton = filterVisiable.value,
-                onFilterChange = { newFilterAction ->
-                    filterAction = newFilterAction
-                },
-                items = menuStringList,
+                filterButton = false,
+                onFilterChange = {},
+                items = listOf(),
             )
         },
         containerColor = APP_BACKGROUND,
     ) { innerPadding ->
         val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
-
-        val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
 
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = remember { mutableStateOf(0) }
@@ -201,11 +198,17 @@ fun GridDisplayUi(
         }
 
         if (currentData.value.isNotEmpty()) {
-            Box(
+            Column(
                 Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
             ) {
+                if (filterVisiable.value) {
+                    MainSearchFilterView(filterAction, setSelectedFilter = { newFilterAction ->
+                        filterAction = newFilterAction
+                    }, menuStringList)
+                }
+
                 GridItemView(
                     currentData.value,
                     mainViewModel,
@@ -216,9 +219,16 @@ fun GridDisplayUi(
                     },
                     listState,
                 )
-                if (viewType == ViewType.TrendShortsMore) {
-                    Box(Modifier.fillMaxSize().padding(bottom = 64.dp)) {
-                        TrendShortsMenuButton(mainViewModel, Modifier, true, onclick = {
+            }
+            if (viewType == ViewType.TrendShortsMore) {
+                Box(Modifier.fillMaxSize().background(Color.Transparent).padding(bottom = 128.dp)) {
+                    Box(
+                        Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 64.dp, end = 32.dp),
+                        contentAlignment = Alignment.BottomEnd,
+                    ) {
+                        TrendsShortsFilterButton(onClick = {
                             showBottomSheet = true
                         })
                     }
@@ -429,13 +439,7 @@ fun GridItemView(
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .wrapContentHeight(),
-        ) {
-            GridItemList(data, mainViewModel, moreViewModel, loading, listState)
-        }
+        GridItemList(data, mainViewModel, moreViewModel, loading, listState)
     }
 }
 
