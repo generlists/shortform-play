@@ -80,6 +80,7 @@ import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.end.BottomSeekBar
 import com.sean.ratel.android.ui.home.ViewType
+import com.sean.ratel.android.ui.home.main.itemview.MainSearchFilterView
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
@@ -123,7 +124,7 @@ fun ListItemDisplayUi(
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
 ) {
-    var filterAction by remember { mutableIntStateOf(-1) }
+    var filterAction by remember { mutableIntStateOf(0) }
     val initScroll = moreViewModel.initScroll.collectAsState()
     val route = mainViewModel.moreButtonClicked.value
     val title = moreViewModel.listMoreTitle.collectAsState()
@@ -153,11 +154,9 @@ fun ListItemDisplayUi(
                 historyBack = { mainViewModel.runNavigationBack() },
                 isShareButton = false,
                 runSetting = {},
-                filterButton = filterVisiable.value,
-                onFilterChange = { newFilterAction ->
-                    filterAction = newFilterAction
-                },
-                items = channelStringList,
+                filterButton = false,
+                onFilterChange = {},
+                items = listOf(),
             )
         },
         containerColor = APP_BACKGROUND,
@@ -245,21 +244,29 @@ fun ListItemDisplayUi(
                         )
                     }
                 } else {
-                    ListItemList(
-                        viewType,
-                        route ?: Destination.Home.Main.RankingChannelMore.route,
-                        currentData,
-                        moreViewModel,
-                        mainViewModel,
-                        adViewModel,
-                        loading = { load ->
-                            moreLoading = load
-                        },
-                        listState,
-                    )
+                    Column(Modifier.fillMaxSize()) {
+                        if (filterVisiable.value) {
+                            MainSearchFilterView(filterAction, setSelectedFilter = { newFilterAction ->
+                                filterAction = newFilterAction
+                            }, channelStringList)
+                        }
+                        ListItemList(
+                            viewType,
+                            route ?: Destination.Home.Main.RankingChannelMore.route,
+                            currentData,
+                            moreViewModel,
+                            mainViewModel,
+                            adViewModel,
+                            loading = { load ->
+                                moreLoading = load
+                            },
+                            listState,
+                        )
+                    }
                 }
             }
         }
+
         if (initScroll.value) {
             LaunchedEffect(Unit) {
                 listState.scrollToItem(0)
@@ -464,7 +471,7 @@ fun ListItemList(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 16.dp),
+                .padding(horizontal = 16.dp, vertical = 0.dp),
         shape = RoundedCornerShape(12.dp),
         border = BorderStroke(1.5.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.8f)),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),

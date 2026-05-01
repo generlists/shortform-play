@@ -134,11 +134,11 @@ class InterstitialAdManager
         fun requestInitInterstitialAdPage(initInterstitialAdState: (AdMobInterstitialAdState?) -> Unit) {
             val isShow = adPolicyManager.shouldShowAd()
 
-//            if (!isShow) {
-//                initInterstitialAdState(null)
-//
-//                return
-//            }
+            if (!isShow) {
+                initInterstitialAdState(null)
+
+                return
+            }
 
             interstitialCollectJob?.cancel()
 

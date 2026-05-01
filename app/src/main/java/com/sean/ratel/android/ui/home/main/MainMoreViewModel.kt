@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.main
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.dto.ChannelSubscriptionList
@@ -122,6 +123,7 @@ class MainMoreViewModel
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
                     list?.let { _currentDataList.value += list }
+                    Log.d("hbungshin", "PopularSearchShortForm size : ${list?.size}")
                 }
 
                 ViewType.PopularLikeShortForm -> {
@@ -132,6 +134,8 @@ class MainMoreViewModel
                             ) // 리스트를 30개씩 나눔
                             .mapIndexed { i, chunk -> i to chunk } // 인덱스를 키로 사용
                             .toMap()[index] // Map으로 변환
+
+                    Log.d("hbungshin", "PopularLikeShortForm size : ${list?.size}")
 
                     list?.let { _currentDataList.value += list }
                 }
@@ -146,6 +150,7 @@ class MainMoreViewModel
                             .toMap()[index] // Map으로 변환
 
                     list?.let { _currentDataList.value += list }
+                    Log.d("hbungshin", "PopularCommentShortForm size : ${list?.size}")
                 }
 
                 ViewType.EditorPick -> {
@@ -391,6 +396,7 @@ class MainMoreViewModel
                 _currentDataList.value += dataList
                 _initScroll.value = true
                 _moreIndex.value = 0
+                // Log.d("hbungshin"," size : ${_currentFilter} size : ${_currentDataList.value.size}")
             }
         }
 

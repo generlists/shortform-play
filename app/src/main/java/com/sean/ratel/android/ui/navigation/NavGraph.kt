@@ -116,7 +116,9 @@ fun NavGraph(
                 val viewModel: ShortFormViewModel = hiltViewModel(key = ShortFormViewModel.TAG)
                 val mainData = splashViewModel.shortformList.collectAsState().value
 
-                viewModel.mainVideoData(mainData.first)
+                LaunchedEffect(mainData.first) {
+                    viewModel.mainVideoData(mainData.first)
+                }
                 ShortForm(modifier, mainViewModel, viewModel, adViewModel)
             }
             composable(

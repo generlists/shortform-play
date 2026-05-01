@@ -80,7 +80,7 @@ class MainViewModel
         // shortform video
         private val _shortFormVideoList =
             MutableStateFlow<Map<String, List<MainShortsModel>>>(
-                mutableMapOf(),
+                mapOf(),
             )
         val shortFormVideoList: StateFlow<Map<String, List<MainShortsModel>>> = _shortFormVideoList
 
@@ -394,6 +394,7 @@ class MainViewModel
         }
 
         fun shortFormVideoData(items: Map<String, List<MainShortsModel>>) {
+            Log.d("LLLLLLLLLLLLL", "shortFormVideoData : ${items.get("10")?.size}")
             _shortFormVideoList.value = items
         }
 

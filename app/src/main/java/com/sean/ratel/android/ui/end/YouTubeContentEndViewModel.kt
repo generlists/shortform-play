@@ -329,6 +329,7 @@ YouTubeContentEndViewModel
             if (_shortFormVideoList.value.isNotEmpty()) {
                 _shortFormVideoList.value = emptyList()
             }
+
             val currentCategory = _shortFormVideoMap.value[categoryId]
             val headVideoList =
                 currentCategory?.subList(selectedIndex.coerceAtLeast(0), currentCategory.size)
