@@ -2,12 +2,10 @@ package com.sean.ratel.android.ui.search
 
 import SearchFilterScreen
 import androidx.activity.compose.BackHandler
-import androidx.annotation.DrawableRes
-import androidx.annotation.Keep
-import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,21 +16,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,11 +33,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -57,7 +45,6 @@ import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
-import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdTarget
@@ -68,7 +55,9 @@ import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.preview.ShortsVideoParameterProvider
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
-import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
+import com.sean.ratel.android.ui.theme.APP_FILTER_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_BORDER
+import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_DISABLE
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
 private const val TAG = "ShortForm"
@@ -126,6 +115,8 @@ fun SearchScreen(
             }
         }
     }
+
+    // 광고
     if (adLoading?.route == Destination.Search.route) {
         InterstitialAdPage(
             adTarget =
@@ -226,108 +217,46 @@ fun ScrollableTabBar(
     if (deepLinkTab != null) {
         selectedIndx(1)
     }
-
-    TabRow(
-        selectedTabIndex = selectedTabIndex,
+    Box(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .wrapContentHeight()
-                .padding(12.dp),
-        containerColor = MaterialTheme.colorScheme.outlineVariant,
-        indicator = { tabPositions ->
-            TabRowDefaults.Indicator(
-                modifier =
-                    Modifier
-                        .tabIndicatorOffset(tabPositions[selectedTabIndex])
-                        .padding(start = 40.dp, end = 20.dp),
-                color = APP_TEXT_COLOR,
-                height = 3.dp,
-            )
-        },
-        divider = {},
+                .padding(horizontal = 16.dp)
+                .clip(RoundedCornerShape(14.dp))
+                .background(Color(0xFF161616))
+                .padding(4.dp),
     ) {
-        tabs.forEachIndexed { index, item ->
-
-            Tab(
-                selected = selectedTabIndex == index,
-                onClick = {
-                    selectedTabIndex = index
-                    selectedIndx(index)
-                    RLog.d("hbungshin", "selectedTabIndex : $selectedTabIndex")
-                    sendGA(selectedTabIndex, searchViewModel)
-                },
-                modifier =
-                    Modifier
-                        .wrapContentHeight(),
-            ) {
-                TabUi(searchTabs = item, selectedTabIndex == index)
-            }
-        }
-    }
-}
-
-@Suppress("ktlint:standard:function-naming")
-@Composable
-private fun TabUi(
-    searchTabs: SearchTabs,
-    selectedItem: Boolean,
-) {
-    val context = LocalContext.current
-
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        contentAlignment = Alignment.BottomStart,
-    ) {
-        Column(
-            Modifier
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(bottom = 2.5.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
+        Row {
+            tabs.forEachIndexed { index, searchTabs ->
                 Box(
-                    Modifier
-                        .wrapContentSize(),
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(
+                                if (selectedTabIndex == index) APP_FILTER_BACKGROUND else Color.Transparent,
+                            ).border(
+                                width = if (selectedTabIndex == index) 0.5.dp else 0.dp,
+                                color = if (selectedTabIndex == index) APP_SEARCH_FILTER_BORDER else Color.Transparent,
+                                shape = RoundedCornerShape(10.dp),
+                            ).clickable {
+                                selectedTabIndex = index
+                                selectedIndx(index)
+                                RLog.d("hbungshin", "selectedTabIndex : $selectedTabIndex")
+                                sendGA(selectedTabIndex, searchViewModel)
+                            }.padding(vertical = 10.dp),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .wrapContentHeight()
-                                .padding(top = 3.dp, bottom = 3.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            painter = painterResource(searchTabs.icon),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier =
-                                Modifier
-                                    .size(24.dp),
-                        )
-
-                        Spacer(Modifier.width(8.dp))
-
-                        Text(
-                            text = stringResource(searchTabs.title),
-                            fontFamily = FontFamily.SansSerif,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 15.sp,
-                            color = Color.White,
-                        )
-                    }
+                    Text(
+                        text = stringResource(searchTabs.title),
+                        fontSize = 13.sp,
+                        fontWeight = if (selectedTabIndex == index) FontWeight.Medium else FontWeight.Normal,
+                        color = if (selectedTabIndex == index) Color.White else APP_SEARCH_FILTER_DISABLE,
+                    )
                 }
             }
         }
+        Spacer(Modifier.height(20.dp))
     }
 }
 
@@ -370,40 +299,7 @@ private fun SearchTabPreView(
 ) {
     RLog.d("", "$list")
     RatelappTheme {
-        TabUi(SearchTabs.ARCHIVE, false)
+        // TabUi(SearchTabs.ARCHIVE, false)
         // RowCategoryList(categoryIndex = 0, list, null,null)
     }
 }
-
-@Keep
-enum class SearchTabs(
-    @StringRes val title: Int,
-    @DrawableRes val icon: Int,
-    val route: String,
-    val destRoute: String,
-) {
-    SHORTS(
-        R.string.search_type_keyword,
-        R.drawable.ic_video_search,
-        Destination.Home.ShortForm.route,
-        Destination.Home.ShortForm.route,
-    ),
-    ARCHIVE(
-        R.string.search_type_daily,
-        R.drawable.ic_achive_search,
-        Destination.Search.route,
-        Destination.Search.route,
-    ),
-}
-
-enum class SearchType {
-    VideoSearch,
-    ArchiveSearch,
-}
-
-data class SearchFilterActions(
-    val changeCategory: (YouTubeCategory) -> Unit,
-    val resetCategory: (Boolean) -> Unit,
-    val onDismiss: () -> Unit,
-    val onApply: (Long?, YouTubeCategory) -> Unit,
-)

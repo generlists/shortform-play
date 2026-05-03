@@ -292,7 +292,10 @@ fun ListItemDisplayUi(
             }
         }
 
-        if (viewType == ViewType.SubscriptionRanking || viewType == ViewType.SubscriptionRankingUp) {
+        if (viewType == ViewType.SubscriptionRanking ||
+            viewType == ViewType.SubscriptionRankingUp ||
+            viewType == ViewType.RecentlyWatch
+        ) {
             filterAction = -1
         } else {
             FilterList(filterAction, mainViewModel, moreViewModel)

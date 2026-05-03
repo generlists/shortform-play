@@ -24,6 +24,7 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.MY_EMAIL_ACCOUNT
+import com.sean.ratel.android.utils.UIUtil.toBundle
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.math.ceil
@@ -61,6 +62,7 @@ object PhoneUtil {
 
     fun searchButton(
         context: Context,
+        topicCategory: Map<String, String>?,
         query: String? = null,
         tab: String? = null,
         date: String? = null,
@@ -88,6 +90,7 @@ object PhoneUtil {
                         Unit
                     }
                 }
+                putExtra("topicCategory", topicCategory?.toBundle())
             }
 
         val options =

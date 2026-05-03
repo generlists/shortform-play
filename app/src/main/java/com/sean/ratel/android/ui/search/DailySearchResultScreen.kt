@@ -66,7 +66,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
-import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsChannelModel
@@ -98,7 +97,6 @@ fun DailySearchResultScreen(
 fun KeyWordSearchDisplayUi(
     adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
-    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val currentData = searchViewModel.dailyCurrentSearchShortformList.collectAsState()
 
@@ -110,7 +108,6 @@ fun KeyWordSearchDisplayUi(
                     Modifier
                         .wrapContentSize()
                         .padding(start = 5.dp),
-                // Text의 크기를 내용에 맞게 설정
                 fontSize = 15.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White,
@@ -219,7 +216,7 @@ fun DailySearchGridItemView(
                 .padding(top = 16.dp)
                 .wrapContentHeight(),
         ) {
-            KeyWordSearchGridItemList(data, adViewModel, searchViewModel, loading, listState)
+            KeyWordSearchGridItemList(data, searchViewModel, loading, listState)
         }
     }
 }
@@ -228,15 +225,11 @@ fun DailySearchGridItemView(
 @Composable
 fun KeyWordSearchGridItemList(
     items: List<MainShortsModel>,
-    adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,
-    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
-    val context = LocalContext.current as SearchActivity
     val index = searchViewModel.moreIndex.collectAsState()
-    val searchComplete = searchViewModel.searchDataComplete.collectAsState()
     val currentCategory = searchViewModel.selectedCategory.collectAsState()
 
     val isAtBottom = listState.isAtBottom()
@@ -284,7 +277,7 @@ fun KeyWordSearchGridItemList(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = 64.dp),
+                    .padding(bottom = 16.dp),
             state = listState,
         ) {
             var i = 0

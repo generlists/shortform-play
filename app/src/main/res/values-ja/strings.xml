@@ -157,7 +157,7 @@
     <string name="youtube_category_all">All</string>
     <string name="search_date">📆 日付</string>
     <string name="search_select_date">日付を選択してください！</string>
-    <string name="search_category">⚡ カテゴリー</string>
+    <string name="search_category">カテゴリー</string>
     <string name="search_daily_reset">初期化</string>
     <string name="search_daily_apply">適用</string>
 
@@ -181,4 +181,7 @@
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">トップ10チャンネル</string>
     <string name="main_topic_channel_count">%s チャンネル</string>
+    <string name="search_daily_shorts_blank_text">日付を選択すると\nその日の人気ショート動画を見られます</string>
+    <string name="search_recently">最近の検索</string>
+
 </resources>

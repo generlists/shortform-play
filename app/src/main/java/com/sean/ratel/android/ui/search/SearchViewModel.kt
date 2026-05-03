@@ -2,6 +2,7 @@ package com.sean.ratel.android.ui.search
 
 import android.content.Context
 import android.content.Intent
+import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sean.player.utils.log.RLog
@@ -28,6 +29,7 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.UIUtil.getAppLocaleByStringResource
 import com.sean.ratel.android.utils.UIUtil.localeFromCountryCode
+import com.sean.ratel.android.utils.UIUtil.toStringMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.delay
@@ -136,6 +138,15 @@ class SearchViewModel
 
         private val _youtubeCategory = MutableStateFlow<List<YouTubeCategory>>(emptyList())
         val youtubeCategory: StateFlow<List<YouTubeCategory>> = _youtubeCategory
+
+        private val _topicCategory = MutableStateFlow<Map<String, String>>(emptyMap())
+        val topicCategory: StateFlow<Map<String, String>> = _topicCategory
+
+        fun setTopicCategory(topic: Bundle?) {
+            topic?.let {
+                _topicCategory.value = it.toStringMap()
+            }
+        }
 
         init {
             requestSaveSuggestResultList()
@@ -438,7 +449,7 @@ class SearchViewModel
                 val countryCode = settingRespository.getLocale().first() ?: "KR"
 
                 val categoryList = youtubeApiRepository.getYouTubeCategoryList()
-                RLog.d(TAG, "countryCode : $countryCode  categoryList : $categoryList")
+                RLog.d("OKJJJJJJJ", "countryCode : $countryCode  categoryList : $categoryList")
 
                 if (categoryList.isNotEmpty() && categoryList.first().categoryKey != null) {
                     _youtubeCategory.value = categoryList
@@ -452,17 +463,12 @@ class SearchViewModel
                         }
 
                         is ApiResult.Success -> {
-                            _youtubeCategory.value = response.data
-                            RLog.d(TAG, "category ${response.data}")
-//                        val data = response.data.toMutableList()
-//
-//                        data.find { it.key == "0"}?.let{
-//                            RLog.d("SearchViewModel","ddddd $it")
-//                            val lastItem = data.removeAt(data.size - 1)  // 마지막 요소 제거 후 반환
-//                            data.add(0, lastItem)
-//                        }
+                            RLog.d("OKJJJJJJJ", "category ${response.data} topicCategory : ${_topicCategory.value}")
 
-                            youtubeApiRepository.saveSearchCategoryList(response.data)
+                            youtubeApiRepository.saveSearchCategoryList(response.data, _topicCategory.value)
+
+                            _youtubeCategory.value = youtubeApiRepository.getYouTubeCategoryList()
+
                             RLog.d(TAG, "modify category ${response.data}")
                         }
 

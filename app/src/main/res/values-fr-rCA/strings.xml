@@ -173,7 +173,7 @@
     <string name="youtube_category_all">All</string>
     <string name="search_date">📆 Date</string>
     <string name="search_select_date">Sélectionnez une date !</string>
-    <string name="search_category">⚡ Catégorie</string>
+    <string name="search_category">Catégorie</string>
     <string name="search_daily_reset">Réinitialiser</string>
     <string name="search_daily_apply">Appliquer</string>
 
@@ -197,5 +197,7 @@
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">TOP 10 Channel</string>
     <string name="main_topic_channel_count">%s chaînes</string>
+    <string name="search_daily_shorts_blank_text">Sélectionnez une date pour voir les Shorts populaires de ce jour-là.</string>
+    <string name="search_recently">Recherches récentes</string>
 
 </resources>

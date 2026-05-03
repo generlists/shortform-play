@@ -18,4 +18,5 @@ data class SearchResultModel(
     val channelThumbnail: String? = null,
     val views: String? = null,
     val uploadedTime: String? = null,
+    val saveTime: Long = System.currentTimeMillis(),
 ) : Parcelable
