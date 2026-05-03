@@ -412,7 +412,8 @@ class MainActivity : FragmentActivity() {
                             "deeplink",
                             "tab : $param2 query : $param1 , date : $param3 , category : $param4",
                         )
-                        PhoneUtil.searchButton(this@MainActivity, param1, param2, param3, param4)
+                        val topicCategory = mainViewModel.mainShorts.value.first.topicList.topicCategory
+                        PhoneUtil.searchButton(this@MainActivity, topicCategory, param1, param2, param3, param4)
                     }
 
                     SHARE -> {

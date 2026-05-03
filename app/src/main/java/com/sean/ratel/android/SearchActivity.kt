@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -66,11 +67,15 @@ class SearchActivity : FragmentActivity() {
         val tab = intent?.getStringExtra("tab")
         val date = intent?.getStringExtra("date")
         val category = intent?.getStringExtra("category")
+        val topicCategory = intent?.getBundleExtra("topicCategory")
         RLog.d("deeplink", "query : $query , date : $date ,  tab : $tab , category :  $category")
+        Log.d("hbungshin", "topicCategory : $topicCategory")
+
         when (tab) {
             "keyword" -> searchViewModel.setDeepLinkQuery(query)
             "daily" -> searchViewModel.setDeepLinkTab(tab, date, category)
             else -> searchViewModel.setDeepLinkQuery(query)
         }
+        searchViewModel.setTopicCategory(topicCategory)
     }
 }

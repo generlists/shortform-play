@@ -74,6 +74,7 @@ fun SearchComposeUi(
                     },
                     fromSelection,
                     fromDeepLink = fromDeeplink,
+                    uiState = uiState.value,
                     historyBack = {
                         searchViewModel.requestResetSession(sessionId)
                         finish()
@@ -99,7 +100,7 @@ fun SearchComposeUi(
                 when (uiState.value) {
                     // 처음 저장된 자동완성 리스트
                     SearchUiState.UserSuggest -> {
-                        UserSuggestListScreen(adViewModel, searchViewModel) { userSelect ->
+                        UserSuggestListScreen(searchViewModel) { userSelect ->
                             mainViewModel.setInterstitialAdStart(Destination.Search.route, true)
                             val locale = localeFromCountryCode(currentLocale)
                             val keyword = "$userSelect + ${

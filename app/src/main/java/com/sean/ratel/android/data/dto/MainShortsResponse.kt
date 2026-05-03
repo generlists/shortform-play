@@ -64,6 +64,7 @@ data class TopFiveList(
 data class TopicList(
     val title: String = "",
     val topicList: Map<String, TopicItem> = emptyMap(),
+    val topicCategory: Map<String, String> = emptyMap(),
 ) : Parcelable
 
 @Keep

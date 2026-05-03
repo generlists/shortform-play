@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
@@ -64,6 +65,7 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.THUMBNAIL_BACKGROUND
 import com.sean.ratel.android.utils.ComposeUtil.pxToDp
@@ -427,6 +429,17 @@ fun RecentVideoList(
                                 }
                             }
                         }
+                    }
+                    Box(
+                        modifier =
+                            Modifier
+                                .align(Alignment.Center)
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(Color.Black.copy(alpha = 0.45f)),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text("▶", Modifier.align(Alignment.Center), color = APP_TEXT_COLOR, fontSize = 14.sp)
                     }
                 }
             }

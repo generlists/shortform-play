@@ -67,6 +67,7 @@ fun SearchFilterScreen(
             DailyFilterTopBar(
                 selectedDate ?: stringResource(R.string.search_select_date),
                 selectedCategory.categoryName,
+                uiState = apiState.value,
                 { click ->
                     showFilterSheet = click
                     gaSend(

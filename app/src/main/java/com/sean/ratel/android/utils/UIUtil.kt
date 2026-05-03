@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.os.Build
+import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.WindowManager
 import androidx.annotation.StringRes
@@ -405,4 +406,25 @@ object UIUtil {
         val tag = "f$itemId"
         return fragmentManager.findFragmentByTag(tag) as? YouTubeEndFragment
     }
+
+    fun getChosung(text: String): String {
+        val chosungList = listOf('ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ', 'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ')
+        return text
+            .map { char ->
+                if (char in '가'..'힣') {
+                    chosungList[(char.code - 0xAC00) / (21 * 28)]
+                } else {
+                    char
+                }
+            }.joinToString("")
+    }
+
+    fun Map<String, String>.toBundle(): Bundle =
+        Bundle().apply {
+            for ((key, value) in this@toBundle) {
+                putString(key, value)
+            }
+        }
+
+    fun Bundle.toStringMap(): Map<String, String> = keySet().associateWith { getString(it).orEmpty() }
 }

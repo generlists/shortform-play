@@ -162,7 +162,7 @@
     <string name="search_type_daily">ชอร์ตประจำวัน</string>
     <string name="youtube_category_all">All</string>
     <string name="search_date">📆 วันที่</string>
-    <string name="search_category">⚡ หมวดหมู่</string>
+    <string name="search_category">หมวดหมู่</string>
     <string name="search_daily_reset">รีเซ็ต</string>
     <string name="search_daily_apply">นำไปใช้</string>
     <string name="search_select_date">เลือกวันที่!</string>
@@ -187,4 +187,6 @@
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">ช่อง Top 10</string>
     <string name="main_topic_channel_count">%s ช่อง</string>
+    <string name="search_daily_shorts_blank_text">เลือกวันที่เพื่อดู Shorts ยอดนิยมของวันนั้น</string>
+    <string name="search_recently">การค้นหาล่าสุด</string>
 </resources>

@@ -11,8 +11,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
-import kotlin.collections.flatMap
-import kotlin.collections.mapValues
 
 @Suppress("ktlint:standard:property-naming")
 @HiltViewModel

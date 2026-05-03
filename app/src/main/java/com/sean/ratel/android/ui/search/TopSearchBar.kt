@@ -3,8 +3,11 @@ package com.sean.ratel.android.ui.search
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,7 +17,12 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -43,6 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_USELECT
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import kotlinx.coroutines.delay
@@ -56,65 +65,108 @@ fun TopSearchBar(
     queryChange: (String) -> Unit,
     fromSuggestion: MutableState<Boolean>,
     fromDeepLink: MutableState<Boolean>,
+    uiState: SearchUiState,
     historyBack: () -> Unit,
 ) {
     val isCancelButton = remember { mutableStateOf(false) }
 
-    Row(
+    Column(
         Modifier
             .fillMaxWidth()
-            .height(56.dp)
-            .padding(start = 20.dp, end = 20.dp)
+            .wrapContentHeight()
+            .padding(top = 16.dp)
             .background(APP_BACKGROUND),
-        verticalAlignment = Alignment.CenterVertically,
+        // verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             Modifier
-                .height(38.dp)
+                .height(50.dp)
                 .fillMaxWidth()
                 .padding(start = 5.dp, end = 5.dp),
             contentAlignment = Alignment.CenterStart,
         ) {
-            // 배경용 border 박스
-            Box(
-                Modifier
-                    .matchParentSize()
-                    .shadow(4.dp, shape = RoundedCornerShape(8.dp))
-                    .border(
-                        width = 1.dp,
-                        color = APP_TEXT_COLOR,
-                        shape = RoundedCornerShape(8.dp),
-                    ),
-            )
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(MaterialTheme.colorScheme.outlineVariant)
+                        .border(1.5.dp, APP_TEXT_COLOR, RoundedCornerShape(14.dp))
+                        .padding(horizontal = 16.dp, vertical = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Box(
+                    Modifier
+                        .fillMaxWidth(),
+                    contentAlignment = Alignment.CenterStart,
+                    // .padding(start = 8.dp, end = 5.dp, top = 1.dp, bottom = 1.dp),
+                ) {
+                    Icon(
+                        Icons.Default.Search,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp),
+                    )
 
+                    SearchTextField(
+                        query = query,
+                        searchLoading = loading,
+                        onQueryChange = {
+                            if (it.length <= 50) queryChange(it)
+
+                            isCancelButton.value = it.isNotEmpty()
+                        },
+                        Modifier,
+                        fromSuggestion,
+                        fromDeepLink,
+                    )
+                    Icon(
+                        Icons.Default.Mic,
+                        contentDescription = null,
+                        tint = APP_BACKGROUND,
+                        modifier = Modifier.size(14.dp),
+                    )
+                }
+                if (isCancelButton.value) {
+                    SearchCancelButton(
+                        modifier,
+                        { q ->
+                            isCancelButton.value = q.isNotEmpty()
+                            queryChange("")
+                        },
+                    )
+                }
+            }
+        }
+        Spacer(Modifier.height(12.dp))
+        // 최근 검색 라벨
+        if (uiState == SearchUiState.UserSuggest) {
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .padding(start = 8.dp, end = 5.dp, top = 1.dp, bottom = 1.dp),
+                    .wrapContentHeight(),
+                contentAlignment = Alignment.CenterStart,
             ) {
-                // 실제 텍스트 입력 필드
-                SearchTextField(
-                    query = query,
-                    searchLoading = loading,
-                    onQueryChange = {
-                        if (it.length <= 50) queryChange(it)
-
-                        isCancelButton.value = it.isNotEmpty()
-                    },
-                    Modifier,
-                    fromSuggestion,
-                    fromDeepLink,
-                )
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = stringResource(R.string.search_recently),
+                        fontSize = 11.sp,
+                        color = APP_SEARCH_FILTER_USELECT,
+                        letterSpacing = 0.8.sp,
+                    )
+                }
             }
-            if (isCancelButton.value) {
-                SearchCancelButton(
-                    modifier,
-                    { q ->
-                        isCancelButton.value = q.isNotEmpty()
-                        queryChange("")
-                    },
-                )
-            }
+        } else {
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -155,9 +207,9 @@ fun SearchTextField(
     Box(
         modifier =
             modifier
-                .height(38.dp)
-                .fillMaxWidth()
-                .background(APP_BACKGROUND),
+                .height(56.dp)
+                .padding(start = 24.dp, end = 24.dp)
+                .fillMaxWidth(),
         contentAlignment = Alignment.CenterStart,
     ) {
         if (query.value.isEmpty()) {
@@ -186,7 +238,7 @@ fun SearchTextField(
                     textAlign = TextAlign.Start,
                     platformStyle = PlatformTextStyle(includeFontPadding = true),
                 ),
-            cursorBrush = SolidColor(APP_TEXT_COLOR),
+            cursorBrush = SolidColor(Color.White),
             modifier =
                 Modifier
                     .matchParentSize()

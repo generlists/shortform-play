@@ -15,11 +15,7 @@ import java.util.Locale
 object TimeUtil {
     fun formatMillisToDate(millis: Long): String {
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-        val date =
-            Instant
-                .ofEpochMilli(millis)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
+        val date = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
         return date.format(formatter)
     }
 
@@ -34,11 +30,7 @@ object TimeUtil {
 
     /** 날짜 포맷 */
     fun millisToDateString(millis: Long): String {
-        val date =
-            Instant
-                .ofEpochMilli(millis)
-                .atZone(ZoneId.systemDefault())
-                .toLocalDate()
+        val date = Instant.ofEpochMilli(millis).atZone(ZoneId.systemDefault()).toLocalDate()
         return date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
     }
 
@@ -138,4 +130,209 @@ object TimeUtil {
         RLog.d("SKTTTTTTTTT", "⏰ 현재 시간 (UTC): $curUtc")
         RLog.d("SKTTTTTTTTT", "⏰ 현재 시간 (KST): $curKst")
     }
+
+    enum class RelativeLang {
+        KO,
+        EN,
+        TH,
+        JA,
+        ZH_TW,
+        FR,
+        ID,
+    }
+
+    fun String.toRelativeLangByCountry(): RelativeLang =
+        when (this.trim().uppercase()) {
+            "KR", "KOR" -> RelativeLang.KO
+            "US", "EN" -> RelativeLang.EN
+            "TH", "THA" -> RelativeLang.TH
+            "JP", "JPN" -> RelativeLang.JA
+            "TW", "TWN" -> RelativeLang.ZH_TW
+            "FR", "FRA" -> RelativeLang.FR
+            "ID", "IDN" -> RelativeLang.ID
+            else -> RelativeLang.EN
+        }
+
+    fun formatRelativeDate(
+        createdAtMillis: Long,
+        nowMillis: Long = System.currentTimeMillis(),
+        lang: RelativeLang = RelativeLang.KO,
+    ): String {
+        val diffMillis = (nowMillis - createdAtMillis).coerceAtLeast(0L)
+
+        val minute = 60_000L
+        val hour = 60 * minute
+        val day = 24 * hour
+        val week = 7 * day
+        val month = 30 * day
+        val year = 365 * day
+
+        val value: Long
+        val unit: RelativeUnit
+
+        when {
+            diffMillis < minute -> {
+                return when (lang) {
+                    RelativeLang.KO -> "지금"
+                    RelativeLang.EN -> "Just now"
+                    RelativeLang.TH -> "เมื่อสักครู่"
+                    RelativeLang.JA -> "たった今"
+                    RelativeLang.ZH_TW -> "剛剛"
+                    RelativeLang.FR -> "À l’instant"
+                    RelativeLang.ID -> "Baru saja"
+                }
+            }
+
+            diffMillis < hour -> {
+                value = diffMillis / minute
+                unit = RelativeUnit.MINUTE
+            }
+
+            diffMillis < day -> {
+                value = diffMillis / hour
+                unit = RelativeUnit.HOUR
+            }
+
+            diffMillis < 2 * day -> {
+                return when (lang) {
+                    RelativeLang.KO -> "어제"
+                    RelativeLang.EN -> "Yesterday"
+                    RelativeLang.TH -> "เมื่อวาน"
+                    RelativeLang.JA -> "昨日"
+                    RelativeLang.ZH_TW -> "昨天"
+                    RelativeLang.FR -> "Hier"
+                    RelativeLang.ID -> "Kemarin"
+                }
+            }
+
+            diffMillis < week -> {
+                value = diffMillis / day
+                unit = RelativeUnit.DAY
+            }
+
+            diffMillis < month -> {
+                value = diffMillis / week
+                unit = RelativeUnit.WEEK
+            }
+
+            diffMillis < year -> {
+                value = diffMillis / month
+                unit = RelativeUnit.MONTH
+            }
+
+            else -> {
+                value = diffMillis / year
+                unit = RelativeUnit.YEAR
+            }
+        }
+
+        return formatRelativeValue(value, unit, lang)
+    }
+
+    private enum class RelativeUnit {
+        MINUTE,
+        HOUR,
+        DAY,
+        WEEK,
+        MONTH,
+        YEAR,
+    }
+
+    private fun formatRelativeValue(
+        value: Long,
+        unit: RelativeUnit,
+        lang: RelativeLang,
+    ): String =
+        when (lang) {
+            RelativeLang.KO -> {
+                val text =
+                    when (unit) {
+                        RelativeUnit.MINUTE -> "분"
+                        RelativeUnit.HOUR -> "시간"
+                        RelativeUnit.DAY -> "일"
+                        RelativeUnit.WEEK -> "주"
+                        RelativeUnit.MONTH -> "개월"
+                        RelativeUnit.YEAR -> "년"
+                    }
+                "${value}$text 전"
+            }
+
+            RelativeLang.EN -> {
+                val text =
+                    when (unit) {
+                        RelativeUnit.MINUTE -> if (value == 1L) "minute" else "minutes"
+                        RelativeUnit.HOUR -> if (value == 1L) "hour" else "hours"
+                        RelativeUnit.DAY -> if (value == 1L) "day" else "days"
+                        RelativeUnit.WEEK -> if (value == 1L) "week" else "weeks"
+                        RelativeUnit.MONTH -> if (value == 1L) "month" else "months"
+                        RelativeUnit.YEAR -> if (value == 1L) "year" else "years"
+                    }
+                "$value $text ago"
+            }
+
+            RelativeLang.TH -> {
+                val text =
+                    when (unit) {
+                        RelativeUnit.MINUTE -> "นาที"
+                        RelativeUnit.HOUR -> "ชั่วโมง"
+                        RelativeUnit.DAY -> "วัน"
+                        RelativeUnit.WEEK -> "สัปดาห์"
+                        RelativeUnit.MONTH -> "เดือน"
+                        RelativeUnit.YEAR -> "ปี"
+                    }
+                "$value ${text}ที่แล้ว"
+            }
+
+            RelativeLang.JA -> {
+                val text =
+                    when (unit) {
+                        RelativeUnit.MINUTE -> "分"
+                        RelativeUnit.HOUR -> "時間"
+                        RelativeUnit.DAY -> "日"
+                        RelativeUnit.WEEK -> "週間"
+                        RelativeUnit.MONTH -> "か月"
+                        RelativeUnit.YEAR -> "年"
+                    }
+                "${value}${text}前"
+            }
+
+            RelativeLang.ZH_TW -> {
+                val text =
+                    when (unit) {
+                        RelativeUnit.MINUTE -> "分鐘"
+                        RelativeUnit.HOUR -> "小時"
+                        RelativeUnit.DAY -> "天"
+                        RelativeUnit.WEEK -> "週"
+                        RelativeUnit.MONTH -> "個月"
+                        RelativeUnit.YEAR -> "年"
+                    }
+                "$value ${text}前"
+            }
+
+            RelativeLang.FR -> {
+                val text =
+                    when (unit) {
+                        RelativeUnit.MINUTE -> if (value == 1L) "minute" else "minutes"
+                        RelativeUnit.HOUR -> if (value == 1L) "heure" else "heures"
+                        RelativeUnit.DAY -> if (value == 1L) "jour" else "jours"
+                        RelativeUnit.WEEK -> if (value == 1L) "semaine" else "semaines"
+                        RelativeUnit.MONTH -> "mois"
+                        RelativeUnit.YEAR -> if (value == 1L) "an" else "ans"
+                    }
+                "Il y a $value $text"
+            }
+
+            RelativeLang.ID -> {
+                val text =
+                    when (unit) {
+                        RelativeUnit.MINUTE -> "menit"
+                        RelativeUnit.HOUR -> "jam"
+                        RelativeUnit.DAY -> "hari"
+                        RelativeUnit.WEEK -> "minggu"
+                        RelativeUnit.MONTH -> "bulan"
+                        RelativeUnit.YEAR -> "tahun"
+                    }
+                "$value $text yang lalu"
+            }
+        }
 }

@@ -319,8 +319,12 @@ class YouTubeRepository
                 }
             }
 
-        suspend fun saveSearchCategoryList(categoryList: List<YouTubeCategory>) {
-            youtubeSearchPrefence.saveCategoryList(categoryList)
+        suspend fun saveSearchCategoryList(
+            categoryList: List<YouTubeCategory>,
+            topicCategory: Map<String, String>,
+        ) {
+            val category = categoryList + topicCategory.map { YouTubeCategory(it.key, it.value) }
+            youtubeSearchPrefence.saveCategoryList(category)
         }
 
         suspend fun getYouTubeCategoryList(): List<YouTubeCategory> = youtubeSearchPrefence.getYouTubeCategoryList()

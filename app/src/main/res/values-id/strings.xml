@@ -169,7 +169,7 @@
     <string name="youtube_category_all">All</string>
     <string name="search_date">📆 Tanggal</string>
     <string name="search_select_date">Pilih tanggal!</string>
-    <string name="search_category">⚡ Kategori</string>
+    <string name="search_category">Kategori</string>
     <string name="search_daily_reset">Reset</string>
     <string name="search_daily_apply">Terapkan</string>
 
@@ -193,4 +193,6 @@
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">Top 10 des chaînes</string>
     <string name="main_topic_channel_count">%s channel</string>
+    <string name="search_daily_shorts_blank_text">Pilih tanggal untuk melihat Shorts populer pada hari itu.</string>
+    <string name="search_recently">Pencarian terbaru</string>
 </resources>

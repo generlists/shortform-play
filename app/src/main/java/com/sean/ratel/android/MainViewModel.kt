@@ -359,11 +359,11 @@ class MainViewModel
             trendsShortsKey: String? = null,
             topicId: String? = null,
         ) {
+            Log.d("hbungshin", "viewType : $viewType route : $route")
             _viewType.value = viewType
             _moreButtonClicked.value = route
             _moreTrendShortsKey.value = trendsShortsKey
             if (viewType == ViewType.MainTopic || viewType == ViewType.TopicChannel || viewType == ViewType.TopicGroup) {
-                Log.d("hbungshin", "topicId : $topicId")
                 topicId?.let {
                     navigator.navigateTo(
                         Destination.Home.Main.TopicListDetail
@@ -394,7 +394,6 @@ class MainViewModel
         }
 
         fun shortFormVideoData(items: Map<String, List<MainShortsModel>>) {
-            Log.d("LLLLLLLLLLLLL", "shortFormVideoData : ${items.get("10")?.size}")
             _shortFormVideoList.value = items
         }
 

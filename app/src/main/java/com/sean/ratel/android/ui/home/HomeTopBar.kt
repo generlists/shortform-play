@@ -249,6 +249,13 @@ fun SharerIconButton() {
 @Composable
 fun SearchIconButton(mainViewModel: MainViewModel?) {
     val context = LocalContext.current
+    val mainShorts = mainViewModel?.mainShorts?.collectAsState()
+    val category =
+        mainShorts
+            ?.value
+            ?.first
+            ?.topicList
+            ?.topicCategory
     Icon(
         imageVector = Icons.AutoMirrored.Filled.ManageSearch,
         contentDescription = null,
@@ -257,7 +264,7 @@ fun SearchIconButton(mainViewModel: MainViewModel?) {
             Modifier
                 .size(32.dp)
                 .clickable {
-                    searchButton(context)
+                    searchButton(context, category)
                     mainViewModel?.sendGALog(
                         screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
                         eventName = GASplashAnalytics.Event.SELECT_SEARCH_BTN_CLICK,

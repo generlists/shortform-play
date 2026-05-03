@@ -159,10 +159,10 @@
     <string name="search_type_daily">데일리 쇼츠</string>
     <string name="youtube_category_all">전체</string>
     <string name="search_date">📆 날짜</string>
-    <string name="search_category">⚡ 카테고리</string>
+    <string name="search_category">카테고리</string>
     <string name="search_daily_reset">초기화</string>
     <string name="search_daily_apply">적용</string>
-    <string name="search_select_date">검색할 날짜를 선택해주세요!</string>
+    <string name="search_select_date">날짜 선택</string>
 
     <!--1.0.9 -->
     <string name="app_notification">알림</string>
@@ -183,5 +183,9 @@
 
     <!-- 1.1.0 -->
     <string name="main_topic_top_channel">TOP 10 채널</string>
+    <string name="main_topic_channel_count">%s 채널</string>
+    <string name="search_daily_shorts_blank_text">날짜를 선택하면\n 해당 날의 인기 쇼츠를 볼 수 있어요</string>
+    <string name="search_recently">최근 검색</string>
+
 
 </resources>
