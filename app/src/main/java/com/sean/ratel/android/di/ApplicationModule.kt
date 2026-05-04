@@ -2,6 +2,7 @@ package com.sean.ratel.android.di
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.Build
 import androidx.annotation.OptIn
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -33,8 +34,10 @@ import com.sean.ratel.android.di.qualifier.ApiUrl
 import com.sean.ratel.android.di.qualifier.AppId
 import com.sean.ratel.android.di.qualifier.AppVersion
 import com.sean.ratel.android.di.qualifier.BannerUnitId
+import com.sean.ratel.android.di.qualifier.DeviceModel
 import com.sean.ratel.android.di.qualifier.InterstitialUnitId
 import com.sean.ratel.android.di.qualifier.NativeAdUnitId
+import com.sean.ratel.android.di.qualifier.Region
 import com.sean.ratel.android.di.qualifier.RemoteIntervalTime
 import com.sean.ratel.android.di.qualifier.TestHashId
 import com.sean.ratel.android.utils.PhoneUtil
@@ -47,6 +50,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import so.smartlab.common.ad.admob.data.repository.AdsConfigProvider
 import so.smartlab.common.push.fcm.data.repository.PushConfigProvider
+import java.util.Locale
 import java.util.Optional
 import javax.inject.Singleton
 
@@ -204,11 +208,15 @@ object ApplicationModule {
     fun providePushSDKConfigProvider(
         @AppId appId: String,
         @ApiUrl apiUrl: String,
+        @Region region: String,
+        @DeviceModel deviceModel: String,
         @AppVersion appVersion: String,
     ): PushConfigProvider =
         AppPushConfig(
             id = appId,
             url = apiUrl,
+            location = region,
+            model = deviceModel,
             version = appVersion,
         )
 
@@ -216,6 +224,16 @@ object ApplicationModule {
     @Singleton
     @AppId
     fun provideAppId(): String = STRINGS.APP_NAME
+
+    @Provides
+    @Singleton
+    @DeviceModel
+    fun provideDeviceModel(): String = Build.MODEL
+
+    @Provides
+    @Singleton
+    @Region
+    fun provideRegion(): String = Locale.getDefault().country
 
     @Provides
     @Singleton
