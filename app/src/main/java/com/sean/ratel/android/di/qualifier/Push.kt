@@ -12,4 +12,12 @@ annotation class AppVersion
 
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
+annotation class Region
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class DeviceModel
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
 annotation class ApiUrl
