@@ -11,6 +11,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -44,6 +47,8 @@ import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Destination.Screen.Companion.BASE_DEEPLINK_URL
 import com.sean.ratel.android.ui.pip.PipAction
 import com.sean.ratel.android.ui.push.PushViewModel
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.UIUtil.getEndFragment
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
@@ -53,6 +58,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import so.smartlab.common.ad.admob.data.GoogleMobileAdsConsentManager
+import so.smartlab.common.review.ReviewManager
+import so.smartlab.common.review.ui.ReviewDialog
+import so.smartlab.common.review.ui.ReviewDialogTheme
 import javax.inject.Inject
 
 /**
@@ -66,6 +74,9 @@ import javax.inject.Inject
 class MainActivity : FragmentActivity() {
     @Inject
     lateinit var unifiedLinkHandler: UnifiedLinkHandler
+
+    @Inject
+    lateinit var reviewManager: ReviewManager
 
     val mainViewModel by viewModels<MainViewModel>()
     val adViewModel by viewModels<AdViewModel>()
@@ -91,6 +102,7 @@ class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
+
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             enableEdgeToEdge()
         } else {
@@ -121,6 +133,7 @@ class MainActivity : FragmentActivity() {
         if (googleMobileAdsConsentManager.canRequestAds) mainViewModel.initAdMobSDK(this)
 
         setContent {
+            ReviewDialog(reviewManager, theme = default())
             ShortFormPlayApp(
                 mainViewModel = mainViewModel,
                 adViewModel = adViewModel,
@@ -499,7 +512,30 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        reviewManager.resetSession()
+    }
+
     companion object {
         private val TAG = "MainActivity"
+
+        @Composable
+        fun default() =
+            ReviewDialogTheme(
+                backgroundColor = APP_BACKGROUND,
+                backgroundBorderColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
+                titleColor = Color.White,
+                messageColor = Color.White,
+                primaryButtonBackground = APP_TEXT_COLOR,
+                primaryButtonText = APP_BACKGROUND,
+                outlinedButtonText = Color.White,
+                outlinedButtonBorder = Color.Transparent,
+                textButtonColor = Color.White,
+                textFieldBackground = Color.Transparent,
+                textFieldText = Color.White,
+                textFieldBorder = MaterialTheme.colorScheme.onSurfaceVariant,
+                textFieldHint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
     }
 }

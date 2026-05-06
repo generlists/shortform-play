@@ -38,6 +38,7 @@ import com.sean.ratel.android.ui.progress.LoadingPlaceholder
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.utils.findActivity
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
 
 @Suppress("ktlint:standard:function-naming")
@@ -60,7 +61,8 @@ fun ShortFormPlayApp(
 
         val currentRoute = navBackStackEntry?.destination?.route ?: Destination.Splash.route
         val itemClick by remember { mainViewModel.itemClicked }
-        val context = LocalContext.current as MainActivity
+        val context = LocalContext.current
+        val activity = context.findActivity()
         val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
         Scaffold(
@@ -75,7 +77,7 @@ fun ShortFormPlayApp(
                         historyBack = {
                             mainViewModel.runNavigationBack(Destination.YouTube.route)
                         },
-                        privacyOptionClick = { mainViewModel.runPrivacyOptionMenu(context) },
+                        privacyOptionClick = { mainViewModel.runPrivacyOptionMenu(activity) },
                         notificationPage = { pushViewModel.goNotificationPage() },
                     )
                 }
@@ -112,7 +114,7 @@ fun ShortFormPlayApp(
                 adMobInitialComplete is AdMobInitState.InitComplete &&
                 RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
             ) {
-                AdBannerView(context, currentRoute)
+                AdBannerView(activity, currentRoute)
             }
 
             FullScreenToggleView(currentRoute)

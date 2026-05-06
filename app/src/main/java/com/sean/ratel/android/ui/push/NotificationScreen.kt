@@ -77,7 +77,9 @@ import com.sean.ratel.android.ui.push.item.PushUiItem
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
+import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.PhoneUtil
+import com.sean.ratel.android.utils.findActivity
 import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -92,12 +94,13 @@ fun NotificationScreen(
     val notificationData by pushViewModel.notificationPushUiList.collectAsState()
 
     val context = LocalContext.current
+    val activity = context.findActivity()
     val hasLoadedOnce by pushViewModel.hasLoadedOnce.collectAsState()
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     var showRealImage by remember(hasLoadedOnce) { mutableStateOf(false) }
     var loading by remember { mutableStateOf(true) }
     val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
-
+    val shareLauncher = GetShareLauncher(activity, mainViewModel)
     Box(
         Modifier
             .fillMaxSize()
@@ -146,7 +149,7 @@ fun NotificationScreen(
             titleResourceId = R.string.app_notification,
             historyBack = { mainViewModel.runNavigationBack() },
             isShareButton = true,
-            runSetting = { PhoneUtil.shareAppLinkButton(context) },
+            runSetting = { PhoneUtil.shareAppLinkButton(context, shareLauncher) },
             filterButton = false,
         )
 

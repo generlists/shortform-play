@@ -82,9 +82,11 @@ import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_FILTER_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_FILTER_DIABLE_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
+import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.isTablet
 import com.sean.ratel.android.utils.UIUtil.pixelToDp
+import com.sean.ratel.android.utils.findActivity
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -132,6 +134,8 @@ fun TopicDetailScreen(
                     .background(Color(0xFF111111)),
         ) {
             val context = LocalContext.current
+            val activity = context.findActivity()
+            val shareLaucher = GetShareLauncher(activity, mainViewModel)
 
             // .padding(top = insetPaddingValue.calculateTopPadding()
 
@@ -167,7 +171,7 @@ fun TopicDetailScreen(
                             historyBack = { mainViewModel.runNavigationBack() },
                             isShareButton = true,
                             runSetting = {
-                                PhoneUtil.shareAppLinkButton(context)
+                                PhoneUtil.shareAppLinkButton(context, shareLaucher)
                                 mainViewModel.sendGALog(
                                     screenName =
                                         GASplashAnalytics.SCREEN_NAME.get(

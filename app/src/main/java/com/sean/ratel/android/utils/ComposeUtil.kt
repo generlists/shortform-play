@@ -1,5 +1,12 @@
 package com.sean.ratel.android.utils
 
+import android.app.Activity
+import android.content.Intent
+import android.util.Log
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -8,7 +15,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.MainViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 object ComposeUtil {
     @Composable
@@ -65,5 +77,57 @@ object ComposeUtil {
                 isLastItem && isFullyVisible && isScrollingDown
             }
         }.value
+    }
+
+    @Suppress("ktlint:standard:function-naming")
+    @Composable
+    fun GetShareLauncher(
+        activity: Activity?,
+        mainViewModel: MainViewModel,
+    ): ManagedActivityResultLauncher<Intent, ActivityResult>? {
+        val lifecycleOwner = LocalLifecycleOwner.current
+
+        activity?.let {
+            // Compose에서 ActivityResultLauncher 등록
+            return rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartActivityForResult(),
+            ) { result ->
+                Log.d("shareAppLinkButton", "result : $result")
+                if (result.resultCode == Activity.RESULT_OK) {
+                    lifecycleOwner.lifecycleScope.launch {
+                        delay(500)
+
+                        mainViewModel.onShareClicked(activity)
+                    }
+                }
+            }
+        }
+        return null
+    }
+
+    @Suppress("ktlint:standard:function-naming")
+    @Composable
+    fun GetCommentLauncher(
+        activity: Activity?,
+        mainViewModel: MainViewModel,
+    ): ManagedActivityResultLauncher<Intent, ActivityResult>? {
+        val lifecycleOwner = LocalLifecycleOwner.current
+
+        activity?.let {
+            // Compose에서 ActivityResultLauncher 등록
+            return rememberLauncherForActivityResult(
+                contract = ActivityResultContracts.StartActivityForResult(),
+            ) { result ->
+                Log.d("shareAppLinkButton", "result : $result")
+                if (result.resultCode == Activity.RESULT_OK) {
+                    lifecycleOwner.lifecycleScope.launch {
+                        delay(500)
+
+                        mainViewModel.reviewManager.trackComment()
+                    }
+                }
+            }
+        }
+        return null
     }
 }

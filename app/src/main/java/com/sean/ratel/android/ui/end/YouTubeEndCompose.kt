@@ -2,7 +2,10 @@ package com.sean.ratel.android.ui.end
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -65,6 +68,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.YouTubeUtils
 import com.sean.ratel.android.data.dto.MainShortsModel
@@ -75,7 +79,10 @@ import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.utils.ComposeUtil.GetCommentLauncher
+import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
+import com.sean.ratel.android.utils.findActivity
 import kotlinx.coroutines.launch
 import java.util.Locale
 
@@ -249,7 +256,11 @@ fun EndBottomContents(
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun LoadingArea(isLoading: Boolean) {
-    Box(Modifier.fillMaxSize().background(Color.Transparent)) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(Color.Transparent),
+    ) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             LoadingPlaceholder(loading = isLoading)
         }
@@ -291,8 +302,12 @@ fun RightContentArea(
     youTubeContentEndViewModel: YouTubeContentEndViewModel?,
     mainShortsModel: MainShortsModel?,
     onSoundChange: (Boolean) -> Unit,
+    mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
+    val activity = context.findActivity()
+    val shareLauncher = GetShareLauncher(activity, mainViewModel)
+    val commentLauncher = GetCommentLauncher(activity, mainViewModel)
 
     val rightMenu = remember { YouTubeEndContentRightMenu.entries.toTypedArray().asList() }
     val videoModel = remember { mainShortsModel?.shortsVideoModel }
@@ -369,7 +384,16 @@ fun RightContentArea(
                                                     disLike = pDisLike
                                                     sound = pSound
                                                     onSoundChange(sound)
+                                                    if (like) {
+                                                        activity?.let {
+                                                            youTubeContentEndViewModel?.onLikeClicked(
+                                                                activity,
+                                                            )
+                                                        }
+                                                    }
                                                 },
+                                                shareLauncher,
+                                                commentLauncher,
                                             )
                                         }
                                     }.fillMaxWidth()
@@ -520,6 +544,8 @@ private suspend fun toggleRightEvent(
     disLike: Boolean,
     sound: Boolean,
     onChanged: (Boolean, Boolean, Boolean) -> Unit,
+    shareLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>?,
+    commentLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>?,
 ) {
     when (item) {
         YouTubeEndContentRightMenu.Like -> {
@@ -559,13 +585,14 @@ private suspend fun toggleRightEvent(
                 YouTubeUtils.goYouTubeAppByVideoId(
                     context,
                     it,
+                    commentLauncher = commentLauncher,
                 )
             }
         }
 
         YouTubeEndContentRightMenu.Share -> {
             mainShortsModel?.shortsVideoModel?.videoId?.let {
-                YouTubeUtils.shareVideo(context, it)
+                YouTubeUtils.shareVideo(context, it, shareLauncher)
             }
         }
     }

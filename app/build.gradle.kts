@@ -285,6 +285,7 @@ dependencies {
     implementation(libs.ai.shortformplay)
     implementation(libs.so.smartlab.sdk.common.ad.android)
     implementation(libs.so.smartlab.sdk.common.push.android)
+    implementation(libs.so.smartlab.sdk.common.review.android)
     // androidx
     // Lifecycle
     implementation(libs.androidx.core.ktx)

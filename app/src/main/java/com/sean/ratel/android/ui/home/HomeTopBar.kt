@@ -5,7 +5,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,7 +25,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.IosShare
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.outlined.NotificationsOff
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -47,7 +45,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
@@ -57,9 +54,11 @@ import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.PhoneUtil.searchButton
 import com.sean.ratel.android.utils.PhoneUtil.shareAppLinkButton
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
+import com.sean.ratel.android.utils.findActivity
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -161,7 +160,7 @@ fun HomeTopBar(
                     )
                     TitleBox()
                     Spacer(modifier = Modifier.weight(1f))
-                    PrivacyOptionMenu(isPrivacy?.value ?: false, privacyOptionClick)
+                    PrivacyOptionMenu(isPrivacy.value, privacyOptionClick)
                     NotificationIconButton(notificationPage, mainViewModel, pushViewModel)
                     SearchIconButton(mainViewModel)
                 } else if (isHomeNaviBar == Destination.YouTube.route) {
@@ -172,7 +171,7 @@ fun HomeTopBar(
                     TitleBox()
                     Spacer(modifier = Modifier.weight(1f))
                     PIPButton(mainViewModel)
-                    SharerIconButton()
+                    SharerIconButton(mainViewModel)
                 }
             }
         }
@@ -200,25 +199,6 @@ private fun BackButton(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-private fun LoginTypeItem(
-    menuExpanded: Boolean,
-    onMenuDismiss: () -> Unit,
-) {
-    DropdownMenu(
-        modifier =
-            Modifier
-                .wrapContentSize()
-                .padding(5.dp),
-        expanded = menuExpanded,
-        offset = DpOffset(0.dp, 0.dp),
-        onDismissRequest = onMenuDismiss,
-    ) {
-        Column {}
-    }
-}
-
-@Suppress("ktlint:standard:function-naming")
-@Composable
 fun TitleBox() {
     Image(
         // 이미지 리소스
@@ -230,8 +210,10 @@ fun TitleBox() {
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun SharerIconButton() {
+fun SharerIconButton(mainViewModel: MainViewModel) {
     val context = LocalContext.current
+    val activity = context.findActivity()
+    val shareLauncer = GetShareLauncher(activity, mainViewModel)
     Icon(
         imageVector = Icons.Outlined.IosShare,
         contentDescription = null,
@@ -240,7 +222,7 @@ fun SharerIconButton() {
             Modifier
                 .size(32.dp)
                 .clickable {
-                    shareAppLinkButton(context)
+                    shareAppLinkButton(context, shareLauncer)
                 },
     )
 }

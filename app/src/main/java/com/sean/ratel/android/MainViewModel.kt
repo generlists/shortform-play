@@ -29,6 +29,7 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.PhoneUtil.newActivity
+import com.sean.ratel.android.utils.onShareClicked
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -47,6 +48,7 @@ import so.smartlab.common.ad.admob.data.GoogleMobileAdsConsentManager
 import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
 import so.smartlab.common.push.PushSDK
+import so.smartlab.common.review.ReviewManager
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -65,6 +67,7 @@ class MainViewModel
         val interstitialAdManager: InterstitialAdManager,
         val adsSdk: AdsSdk,
         val pushSDK: PushSDK,
+        val reviewManager: ReviewManager,
     ) : ViewModel() {
         private val _isInstallReferer = MutableStateFlow<String?>(null)
         val isInstallReferer: StateFlow<String?> = _isInstallReferer
@@ -168,6 +171,12 @@ class MainViewModel
                 extraBufferCapacity = 1,
             )
         val interstitialAdStart: SharedFlow<AdTarget> = _interstitialAdStart.asSharedFlow()
+
+        // 세션 추적 변수
+        private var consecutiveWatchCount = 0
+        private var sessionLikeCount = 0
+        private var totalFollowCount = 0
+        private var sessionVideoCount = 0
 
         fun setInterstitialAdStart(
             route: String,
@@ -514,7 +523,8 @@ class MainViewModel
             _recentVideo.value = Pair(mainShortsModel, saveTime)
         }
 
-        fun runPrivacyOptionMenu(activity: MainActivity) {
+        fun runPrivacyOptionMenu(activity: Activity?) {
+            if (activity == null) return
             googleMobileAdsConsentManager.showPrivacyOptionsForm(activity) { formError ->
                 if (formError != null) {
                     Toast.makeText(activity, formError.message, Toast.LENGTH_SHORT).show()
@@ -740,6 +750,14 @@ class MainViewModel
             viewModelScope.launch {
                 recentVideoRepository.deleteWatchItem(mainShortsModel)
             }
+        }
+
+        // 저장
+        fun onShareClicked(activity: Activity) {
+            reviewManager.onShareClicked(
+                activity = activity,
+                scope = viewModelScope,
+            )
         }
 
         companion object {

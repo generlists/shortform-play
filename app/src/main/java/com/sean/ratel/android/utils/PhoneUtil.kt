@@ -8,7 +8,9 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.statusBars
@@ -46,7 +48,12 @@ object PhoneUtil {
         return bufferedReader.use { it.readText() }
     }
 
-    fun shareAppLinkButton(context: Context) {
+    fun shareAppLinkButton(
+        context: Context,
+        shareLauncer: ActivityResultLauncher<Intent>?,
+    ) {
+        Log.d("shareAppLinkButton", "shareLauncer : $shareLauncer")
+
         val messageToShare = "${context.getString(R.string.short_form_app_share)} ${
             STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(context.packageName)
         }"
@@ -56,8 +63,12 @@ object PhoneUtil {
                 putExtra(Intent.EXTRA_TEXT, messageToShare)
                 type = "text/plain"
             }
-        val shareIntent = Intent.createChooser(sendIntent, null)
-        context.startActivity(shareIntent)
+        shareLauncer?.let {
+            shareLauncer.launch(Intent.createChooser(sendIntent, null))
+        } ?: run {
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            context.startActivity(shareIntent)
+        }
     }
 
     fun searchButton(

@@ -30,7 +30,9 @@ import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.ui.toolbox.PhoneAppList
+import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.PhoneUtil
+import com.sean.ratel.android.utils.findActivity
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -48,10 +50,11 @@ fun SettingsAppManagerView(
     mainViewModel: MainViewModel,
 ) {
     val context = LocalContext.current
+    val activity = context.findActivity()
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     var loading by remember { mutableStateOf(true) }
     val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
-
+    val launcher = GetShareLauncher(activity, mainViewModel)
     Scaffold(
         Modifier.padding(insetPaddingValue),
         topBar = {
@@ -59,7 +62,7 @@ fun SettingsAppManagerView(
                 titleResourceId = R.string.setting_app_manager,
                 historyBack = { mainViewModel.runNavigationBack() },
                 isShareButton = true,
-                runSetting = { PhoneUtil.shareAppLinkButton(context) },
+                runSetting = { PhoneUtil.shareAppLinkButton(context, launcher) },
                 filterButton = false,
                 onFilterChange = {},
                 items = listOf(),

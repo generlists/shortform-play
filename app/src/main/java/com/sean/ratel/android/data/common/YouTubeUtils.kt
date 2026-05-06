@@ -2,7 +2,9 @@ package com.sean.ratel.android.data.common
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
+import androidx.core.net.toUri
 import com.sean.ratel.android.utils.PhoneUtil.getAppVersionCode
 
 object YouTubeUtils {
@@ -33,14 +35,20 @@ object YouTubeUtils {
     fun goYouTubeAppByVideoId(
         context: Context,
         videoId: String,
+        commentLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>?,
     ) {
         try {
             val fallbackIntent =
                 Intent(
                     Intent.ACTION_VIEW,
-                    Uri.parse(STRINGS.YOUTUBE_APP_BY_VIDEO_ID(videoId)),
+                    STRINGS.YOUTUBE_APP_BY_VIDEO_ID(videoId).toUri(),
                 )
-            context.startActivity(fallbackIntent)
+
+            commentLauncher?.let {
+                commentLauncher.launch(fallbackIntent)
+            } ?: run {
+                context.startActivity(fallbackIntent)
+            }
         } catch (e: Exception) {
             e.printStackTrace()
         }
@@ -49,6 +57,7 @@ object YouTubeUtils {
     fun shareVideo(
         context: Context,
         videoId: String,
+        shareLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>?,
     ) {
         val videoUrl = STRINGS.YOUTUBE_SHARE_ID(videoId, getAppVersionCode(context))
         val sendIntent =
@@ -57,7 +66,11 @@ object YouTubeUtils {
                 putExtra(Intent.EXTRA_TEXT, videoUrl)
                 type = "text/plain"
             }
-        val shareIntent = Intent.createChooser(sendIntent, null)
-        context.startActivity(shareIntent)
+        shareLauncher?.let {
+            shareLauncher.launch(Intent.createChooser(sendIntent, null))
+        } ?: run {
+            val shareIntent = Intent.createChooser(sendIntent, null)
+            context.startActivity(shareIntent)
+        }
     }
 }

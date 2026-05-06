@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.end
 
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -31,6 +30,8 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.UIUtil.findCurrentFragment
+import com.sean.ratel.android.utils.findActivity
+import com.sean.ratel.android.utils.findFragmentActivity
 import kotlinx.coroutines.launch
 
 private const val TAG = "YouTubeContentEnd"
@@ -50,9 +51,6 @@ fun YouTubeContentEnd(
 
     val itemClicked = mainViewModel.itemClicked.value
 
-    Log.d("KKKKKK", "itemClicked : $itemClicked")
-    Log.d("KKKKKK", "${Destination.Home.Main.TopicListDetail.route}")
-
     val apiState = youTubeContentEndViewModel.uiState.collectAsState()
 
     LaunchedEffect(itemClicked) {
@@ -62,7 +60,7 @@ fun YouTubeContentEnd(
             mainViewModel.trendsShorts.value.event_list.values
                 .flatMap { it },
         )
-        Log.d("LLLLLLLLLLLLL", "Enddddd  : ${mainViewModel.hashCode()}  , ${mainViewModel.shortFormVideoList.value.get("10")?.size}")
+
         youTubeContentEndViewModel.shortFormVideoData(mainViewModel.shortFormVideoList.value)
         youTubeContentEndViewModel.setRecentlyWatchData(mainViewModel.watchVideoList.value)
 
@@ -247,7 +245,8 @@ fun DisplayUI(
     val searchDailyShortsVideo by youTubeContentEndViewModel.searchDailyShorts.collectAsState()
     val topicChannelData by youTubeContentEndViewModel.topicChannelList.collectAsState()
     val topicGroupData by youTubeContentEndViewModel.topicGroupList.collectAsState()
-    val activity = LocalContext.current as FragmentActivity
+    val context = LocalContext.current
+    val activity = context.findFragmentActivity()
 
     if ((
             popularShorFormList?.isNotEmpty() == true ||
@@ -277,12 +276,15 @@ fun DisplayUI(
             color = APP_BACKGROUND,
         ) {
             endList?.let {
-                FragmentViewPagerWithData(
-                    activity,
-                    fromSearch,
-                    mainViewModel,
-                    it,
-                )
+                activity?.let { act ->
+                    FragmentViewPagerWithData(
+                        act,
+                        fromSearch,
+                        mainViewModel,
+                        youTubeContentEndViewModel,
+                        it,
+                    )
+                }
             }
         }
         mainViewModel.setPIPButtonClickState(false)
@@ -374,12 +376,13 @@ fun FragmentViewPagerWithData(
     fragmentActivity: FragmentActivity,
     fromSearch: Boolean,
     mainViewModel: MainViewModel,
+    contentEndViewModel: YouTubeContentEndViewModel,
     // 데이터를 동적으로 전달할 리스트
     contentList: List<MainShortsModel>,
 ) {
     // implementation("androidx.compose.foundation:foundation:1.5.0") 뷰페이저는 인덱스를 잘못가지고 와서 아직 안정성이 떨어짐
     // 좀더 딥하게 파파야함.
-    FragmentContainer(fragmentActivity, fromSearch, mainViewModel, contentList)
+    FragmentContainer(fragmentActivity, fromSearch, mainViewModel, contentEndViewModel, contentList)
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -388,9 +391,11 @@ fun FragmentContainer(
     fragmentActivity: FragmentActivity,
     fromSearch: Boolean,
     mainViewModel: MainViewModel,
+    youTubeContentEndViewModel: YouTubeContentEndViewModel,
     contentList: List<MainShortsModel>,
 ) {
     val context = LocalContext.current
+    val activity = context.findActivity()
     val corutineScope = rememberCoroutineScope()
     val endBackButtonAction by mainViewModel.endBack.collectAsState()
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -427,10 +432,12 @@ fun FragmentContainer(
                                     "Scrolling Downwards $position previousPosition : $previousPosition $position",
                                 )
                                 scrollState = PageScrollState.SCROLL_DOWNWARDS
+                                activity?.let { youTubeContentEndViewModel.previousVideo(activity) }
                             } else if (position < previousPosition) {
                                 // 위로 스크롤 중
                                 RLog.d(TAG, "Scrolling Upwards $position")
                                 scrollState = PageScrollState.SCROLL_UPWARDS
+                                activity?.let { youTubeContentEndViewModel.nextVideo(activity) }
                             }
                             previousPosition = position
                         }
