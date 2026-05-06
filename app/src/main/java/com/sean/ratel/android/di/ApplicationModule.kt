@@ -26,16 +26,27 @@ import com.sean.ratel.android.data.android.permission.PermissionManager
 import com.sean.ratel.android.data.android.permission.PermissionProvider
 import com.sean.ratel.android.data.common.AppAdsConfig
 import com.sean.ratel.android.data.common.AppPushConfig
+import com.sean.ratel.android.data.common.AppReviewConfig
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.di.qualifier.AdOpenUnitId
 import com.sean.ratel.android.di.qualifier.AdaptiveBannerUnitId
 import com.sean.ratel.android.di.qualifier.AdmobUnitId
+import com.sean.ratel.android.di.qualifier.AllowReviewOnResume
 import com.sean.ratel.android.di.qualifier.ApiUrl
 import com.sean.ratel.android.di.qualifier.AppId
 import com.sean.ratel.android.di.qualifier.AppVersion
 import com.sean.ratel.android.di.qualifier.BannerUnitId
+import com.sean.ratel.android.di.qualifier.DebugMode
 import com.sean.ratel.android.di.qualifier.DeviceModel
+import com.sean.ratel.android.di.qualifier.EmotionScoreThreshold
+import com.sean.ratel.android.di.qualifier.InAppSuccessRateThreshold
 import com.sean.ratel.android.di.qualifier.InterstitialUnitId
+import com.sean.ratel.android.di.qualifier.MaxCustomPromptsPerYear
+import com.sean.ratel.android.di.qualifier.MinAttemptsBeforeCustom
+import com.sean.ratel.android.di.qualifier.MinDaysBetweenCustomPrompts
+import com.sean.ratel.android.di.qualifier.MinDaysBetweenInAppAttempts
+import com.sean.ratel.android.di.qualifier.MinDaysSinceInstall
+import com.sean.ratel.android.di.qualifier.MinLaunchCount
 import com.sean.ratel.android.di.qualifier.NativeAdUnitId
 import com.sean.ratel.android.di.qualifier.Region
 import com.sean.ratel.android.di.qualifier.RemoteIntervalTime
@@ -50,6 +61,9 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import so.smartlab.common.ad.admob.data.repository.AdsConfigProvider
 import so.smartlab.common.push.fcm.data.repository.PushConfigProvider
+import so.smartlab.common.review.ReviewConfig
+import so.smartlab.common.review.data.FirebaseReviewAnalytics
+import so.smartlab.common.review.data.ReviewAnalytics
 import java.util.Locale
 import java.util.Optional
 import javax.inject.Singleton
@@ -246,4 +260,109 @@ object ApplicationModule {
     @Singleton
     @ApiUrl
     fun provideAppUrl(): String = BuildConfig.SHORTFORM_PLAY_BASE_URL
+
+    @Provides
+    @Singleton
+    fun provideReviewConfigProvider(
+        @MinLaunchCount minLaunchCount: Int,
+        @MinDaysSinceInstall minDaysSinceInstall: Int,
+        @MinDaysBetweenInAppAttempts minDaysBetweenInAppAttempts: Int,
+        @MinDaysBetweenCustomPrompts minDaysBetweenCustomPrompts: Int,
+        @MaxCustomPromptsPerYear maxCustomPromptsPerYear: Int,
+        @InAppSuccessRateThreshold inAppSuccessRateThrehold: Float,
+        @MinAttemptsBeforeCustom minAttemptsBeforeCustom: Int,
+        @EmotionScoreThreshold emitionScroeThreshold: Int,
+        @AllowReviewOnResume allowReviewOnResume: Boolean,
+        @DebugMode debugMode: Boolean,
+    ): ReviewConfig =
+        AppReviewConfig(
+            minLaunchCount,
+            minDaysSinceInstall,
+            minDaysBetweenInAppAttempts,
+            minDaysBetweenCustomPrompts,
+            maxCustomPromptsPerYear,
+            inAppSuccessRateThrehold,
+            minAttemptsBeforeCustom,
+            emitionScroeThreshold,
+            allowReviewOnResume,
+            debugMode,
+        )
+
+    @Provides
+    @Singleton
+    fun provideAnalyticsProvider(): ReviewAnalytics = FirebaseReviewAnalytics(Firebase.analytics)
+
+    /**
+     * In-App Review 시도 최소 간격 (일)
+     */
+    @Provides
+    @Singleton
+    @MinLaunchCount
+    fun provideMinLaunchCount(): Int = 5
+
+    /**
+     * 커스텀 다이얼로그 최소 간격 (일)
+     */
+    @Provides
+    @Singleton
+    @MinDaysSinceInstall
+    fun provideMinDaysSinceInstall(): Int = 3
+
+    /**
+     * 커스텀 다이얼로그 고려 전 최소 시도 횟수
+     */
+    @Provides
+    @Singleton
+    @MinDaysBetweenInAppAttempts
+    fun provideMinDaysBetweenInAppAttempts(): Int = 7
+
+    @Provides
+    @Singleton
+    @MinDaysBetweenCustomPrompts
+    fun provideMinDaysBetweenCustomPrompts(): Int = 60
+
+    /**
+     * 연간 최대 커스텀 프롬프트 횟수
+     */
+    @Provides
+    @Singleton
+    @MaxCustomPromptsPerYear
+    fun provideMaxCustomPromptsPerYear(): Int = 2
+
+    /**
+     * In-App Review 성공률 임계값 (이하면 커스텀 다이얼로그 고려)
+     */
+    @Provides
+    @Singleton
+    @InAppSuccessRateThreshold
+    fun provideInAppSuccessRateThreshold(): Float = 0.2f
+
+    @Provides
+    @Singleton
+    @MinAttemptsBeforeCustom
+    fun provideMinAttemptsBeforeCustom(): Int = 5
+
+    /**
+     * 감정 점수 기반 트리거 임계값
+     */
+    @Provides
+    @Singleton
+    @EmotionScoreThreshold
+    fun provideEmotionScoreThreshold(): Int = 100
+
+    /**
+     * 앱이 포그라운드로 돌아올 때 리뷰 요청 허용 여부
+     */
+    @Provides
+    @Singleton
+    @AllowReviewOnResume
+    fun provideAllowReviewOnResume(): Boolean = true
+
+    /**
+     * 디버그 모드 (로그 출력)
+     */
+    @Provides
+    @Singleton
+    @DebugMode
+    fun provideDebugMode(): Boolean = BuildConfig.DEBUG
 }

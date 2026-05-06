@@ -63,6 +63,7 @@ import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.DropDownMenuComposable
 import com.sean.ratel.android.ui.common.TopNavigationBar
+import com.sean.ratel.android.ui.home.main.itemview.MainSearchFilterView
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
@@ -83,7 +84,7 @@ fun AppManagerView(
         mainViewModel.runNavigationBack()
     }
     val data = remember { viewModel.contents }
-    var filterAction by remember { mutableIntStateOf(-1) }
+    var filterAction by remember { mutableIntStateOf(0) }
     val isLoaded by viewModel.appListLoaded.collectAsState()
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
     var loading by remember { mutableStateOf(true) }
@@ -99,32 +100,36 @@ fun AppManagerView(
             historyBack = { mainViewModel.runNavigationBack() },
             isShareButton = false,
             runSetting = {},
-            filterButton = true,
-            // 파라메터로 넣고 싶을때는 이렇게 함수로 넘겨서 셋팅
-            onFilterChange = { newFilterAction ->
-                filterAction = newFilterAction // 상태 업데이트
-            },
-            items =
+            filterButton = false,
+            onFilterChange = {},
+            items = listOf(),
+        )
+        Box(Modifier.wrapContentSize().padding(top = insetPaddingValue.calculateTopPadding())) {
+            MainSearchFilterView(
+                filterAction,
+                setSelectedFilter = { newFilterAction ->
+                    filterAction = newFilterAction
+                },
                 listOf(
                     stringResource(R.string.device_update_sort),
                     stringResource(R.string.device_name_sort),
                     stringResource(R.string.device_size_sort),
                 ),
-        )
-        Column(
-            Modifier
-                .fillMaxSize()
-                .background(Color.Transparent),
-        ) {
-            Spacer(Modifier.height(32.dp))
-
-            Box(
-                modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .background(APP_BACKGROUND),
+            )
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = insetPaddingValue.calculateTopPadding())
+                    .background(Color.Transparent),
             ) {
-                ItemList(data, viewModel, adViewModel)
+                Box(
+                    modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .background(APP_BACKGROUND),
+                ) {
+                    ItemList(data, viewModel)
+                }
             }
         }
     }
@@ -168,14 +173,12 @@ fun AppManagerView(
 fun ItemList(
     items: List<AppManagerInfo>?,
     viewModel: AppManagerViewModel,
-    adViewModel: AdViewModel,
 ) {
     items?.let {
         RLog.d(TAG, "size ${items.size}")
         LazyColumn(
             Modifier
-                .fillMaxSize()
-                .padding(top = 16.dp),
+                .fillMaxSize(),
         ) {
             items(count = items.size) { index ->
                 AppListItem(items[index], viewModel)

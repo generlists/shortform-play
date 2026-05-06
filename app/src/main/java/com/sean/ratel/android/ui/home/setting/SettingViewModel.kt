@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.home.setting
 
+import android.app.Activity
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,10 +12,12 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.PhoneUtil
+import com.sean.ratel.android.utils.trackDirect
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import so.smartlab.common.review.ReviewManager
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,6 +28,7 @@ class SettingViewModel
         private val settingRepository: SettingRepository,
         private val youTubeRepository: YouTubeRepository,
         private val gaLog: GALog,
+        private val reviewManager: ReviewManager,
     ) : ViewModel() {
         fun runAppManagerDetail() {
             navigator.navigateTo(Destination.AppManager.route)
@@ -122,6 +126,13 @@ class SettingViewModel
                 eventName,
                 actionName,
                 parameter,
+            )
+        }
+
+        fun onDirectClicked(activity: Activity) {
+            reviewManager.trackDirect(
+                activity = activity,
+                scope = viewModelScope,
             )
         }
 

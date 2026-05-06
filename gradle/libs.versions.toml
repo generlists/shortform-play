@@ -83,11 +83,13 @@ espresso = "3.5.1"
 shortform-play ="0.0.0.2"
 google-admob="0.0.1"
 push="0.0.2"
+review="0.0.5"
 
 [libraries]
 ai-shortformplay ={ module = "ai.shortform-play.sdk.ratel.player.android:player-core", version.ref = "shortform-play" }
 so-smartlab-sdk-common-ad-android ={ module = "so.smartlab.sdk.common:ad-android", version.ref = "google-admob" }
 so-smartlab-sdk-common-push-android ={ module = "so.smartlab.sdk.common:push-android", version.ref = "push" }
+so-smartlab-sdk-common-review-android ={ module = "so.smartlab.sdk.common:review-android", version.ref = "review" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 
 

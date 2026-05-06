@@ -41,6 +41,7 @@ import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.PhoneUtil
+import com.sean.ratel.android.utils.findActivity
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -55,6 +56,7 @@ fun SettingsApp(
             .background(APP_BACKGROUND),
     ) {
         val context = LocalContext.current
+        val activity = context.findActivity()
         AppTitle()
         Card(
             modifier =
@@ -81,12 +83,17 @@ fun SettingsApp(
             }
 
             SettingsApp(SettingsItems.SETTING_APP_RATE, viewModel) {
-                PhoneUtil.runAppStore(
-                    context,
-                    URL_GOOGLE_PLAY_APP(
-                        URL_MY_PACKAGE_NAME,
-                    ),
-                )
+                // onSettingClick
+                activity?.let {
+                    viewModel?.onDirectClicked(activity)
+                } ?: run {
+                    PhoneUtil.runAppStore(
+                        context,
+                        URL_GOOGLE_PLAY_APP(
+                            URL_MY_PACKAGE_NAME,
+                        ),
+                    )
+                }
             }
         }
 

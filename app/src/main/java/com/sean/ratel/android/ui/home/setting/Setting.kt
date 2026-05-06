@@ -32,6 +32,7 @@ import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.PhoneUtil
 import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
@@ -61,6 +62,7 @@ fun SettingView(
     var adSize by remember { mutableStateOf(64) }
     val bottomBarHeight = adViewModel.bottomBarHeight.value
     val fromPermissionPage by pushViewModel.fromPermissionPage.collectAsState(initial = false)
+    val shareLauncher = GetShareLauncher(activity, mainViewModel)
     adSize =
         when {
             adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
@@ -90,7 +92,7 @@ fun SettingView(
                     pushViewModel.setFromPermissionPage(false)
                 },
                 isShareButton = false,
-                runSetting = { PhoneUtil.shareAppLinkButton(context) },
+                runSetting = { PhoneUtil.shareAppLinkButton(context, shareLauncher) },
                 filterButton = false,
                 onFilterChange = {},
                 items = listOf(),

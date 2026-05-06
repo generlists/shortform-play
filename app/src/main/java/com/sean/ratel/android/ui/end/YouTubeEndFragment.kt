@@ -728,6 +728,7 @@ class YouTubeEndFragment(
                 onSeekChanged = { newProgress ->
 
                     progress = newProgress
+                    // mainViewModel.onVideoWatched(0.8f, it)
                 },
                 modifier =
                     Modifier

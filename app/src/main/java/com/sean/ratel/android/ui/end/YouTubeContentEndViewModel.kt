@@ -1,7 +1,10 @@
 package com.sean.ratel.android.ui.end
 
+import android.app.Activity
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,13 +23,17 @@ import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_FILTER_TYPE
 import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_PARAM
 import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_TOPIC_ID
 import com.sean.ratel.android.ui.navigation.Navigator
+import com.sean.ratel.android.utils.onLikeClicked
+import com.sean.ratel.android.utils.onSaveClicked
+import com.sean.ratel.android.utils.onVideoWatched
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import so.smartlab.common.ad.admob.AdsSdk
+import so.smartlab.common.review.ReviewManager
 import javax.inject.Inject
 
 @Suppress("ktlint:standard:property-naming")
@@ -40,7 +47,7 @@ YouTubeContentEndViewModel
         private val youTubeEndUserRepository: YouTubeEndUserRepository,
         private val youtueRepository: YouTubeRepository,
         private val settingRepository: SettingRepository,
-        private val adsSdk: AdsSdk,
+        val reviewManager: ReviewManager,
     ) : ViewModel() {
         private val _mainFromShorts =
             MutableStateFlow<Pair<MainShortFormList, Int>>(
@@ -605,6 +612,115 @@ YouTubeContentEndViewModel
             } else {
                 RLog.e(TAG, "no data found : setChannelRankingData")
             }
+        }
+
+        // 상태 관리
+        var consecutiveWatchCount by mutableStateOf(0)
+            private set
+
+        var sessionLikeCount by mutableStateOf(0)
+            private set
+
+        var currentVideoIndex by mutableStateOf(0)
+            private set
+
+        var isLiked by mutableStateOf(false)
+            private set
+
+        var isSaved by mutableStateOf(false)
+            private set
+
+        var watchProgress by mutableStateOf(0f)
+            private set
+
+        // 영상 자동 재생 시뮬레이션
+        fun startWatchingVideo() {
+            viewModelScope.launch {
+                watchProgress = 0f
+
+                // 5초 동안 재생 시뮬레이션
+                for (i in 1..50) {
+                    delay(100)
+                    watchProgress = i / 50f
+                }
+            }
+        }
+
+        // 다음 영상
+        fun nextVideo(activity: Activity) {
+            val watchPercentage = watchProgress
+
+            // 영상 시청 처리
+            consecutiveWatchCount =
+                reviewManager.onVideoWatched(
+                    watchPercentage = watchPercentage,
+                    activity = activity,
+                    scope = viewModelScope,
+                    currentCount = consecutiveWatchCount,
+                    threshold = 10,
+                )
+
+            // 다음 영상으로
+//        if (currentVideoIndex < videos.size - 1) {
+//            currentVideoIndex++
+//            isLiked = false
+//            isSaved = false
+//            startWatchingVideo()
+//        }
+        }
+
+        // 이전 영상
+        fun previousVideo(activity: Activity) {
+            val watchPercentage = watchProgress
+
+            consecutiveWatchCount =
+                reviewManager.onVideoWatched(
+                    watchPercentage = watchPercentage,
+                    activity = activity,
+                    scope = viewModelScope,
+                    currentCount = consecutiveWatchCount,
+                )
+
+            if (currentVideoIndex > 0) {
+                currentVideoIndex--
+                isLiked = false
+                isSaved = false
+                startWatchingVideo()
+            }
+        }
+
+        // 좋아요
+        fun onLikeClicked(activity: Activity) {
+            isLiked = !isLiked
+
+            if (isLiked) {
+                sessionLikeCount =
+                    reviewManager.onLikeClicked(
+                        activity = activity,
+                        scope = viewModelScope,
+                        currentCount = sessionLikeCount,
+                        threshold = 3,
+                    )
+            }
+        }
+
+        // 저장
+        fun onSaveClicked(activity: Activity) {
+            isSaved = !isSaved
+
+            if (isSaved) {
+                reviewManager.onSaveClicked(
+                    activity = activity,
+                    scope = viewModelScope,
+                )
+            }
+        }
+
+        // 세션 리셋
+        fun resetSession() {
+            reviewManager.resetSession()
+            consecutiveWatchCount = 0
+            sessionLikeCount = 0
         }
 
         companion object {
