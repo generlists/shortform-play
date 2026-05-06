@@ -53,111 +53,113 @@ fun DailyFilterTopBar(
     filterClick: (Boolean) -> Unit,
 ) {
     // 날짜 선택 카드
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp)
-                .clip(RoundedCornerShape(14.dp))
-                .background(MaterialTheme.colorScheme.outlineVariant)
-                .border(
-                    1.5.dp,
-                    MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
-                    RoundedCornerShape(14.dp),
-                ).padding(horizontal = 16.dp, vertical = 13.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        // 날짜
+    Column {
         Row(
-            modifier = Modifier.weight(1f),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
-        ) {
-            Text(text = "📅", fontSize = 14.sp)
-            Text(
-                text = selectDay ?: stringResource(R.string.main_topic_channel_count),
-                fontSize = 12.sp,
-                color = if (selectDay != null) APP_SEARCH_FILTER_UNSELECT else APP_SEARCH_FILTER_USELECT,
-            )
-        }
-
-        // 구분선
-        Box(
             modifier =
                 Modifier
-                    .width(1.dp)
-                    .height(16.dp)
-                    .background(Color(0xFF2A2A2A)),
-        )
-
-        // 카테고리
-        Row(
-            modifier = Modifier.weight(1f),
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    .clip(RoundedCornerShape(14.dp))
+                    .background(MaterialTheme.colorScheme.outlineVariant)
+                    .border(
+                        1.5.dp,
+                        MaterialTheme.colorScheme.outline.copy(alpha = 0.8f),
+                        RoundedCornerShape(14.dp),
+                    ).padding(horizontal = 16.dp, vertical = 13.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(text = "⚡", fontSize = 14.sp)
-            Text(
-                text = selectedCategory,
-                fontSize = 12.sp,
-                color = APP_SEARCH_FILTER_UNSELECT,
-            )
-        }
-        // filterClick(true)
-        // 필터 아이콘
-        Icon(
-            Icons.Default.FilterList,
-            contentDescription = null,
-            tint = APP_TEXT_COLOR,
-            modifier =
-                Modifier
-                    .size(16.dp)
-                    .clickable {
-                        filterClick(true)
-                    },
-        )
-    }
-    Spacer(Modifier.height(40.dp))
-
-    // 빈 상태 안내
-    if (uiState == UiState.Idle) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Column(
-                modifier =
-                    Modifier
-                        .wrapContentSize()
-                        .padding(horizontal = 16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+            // 날짜
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
-                Box(
-                    modifier =
-                        Modifier
-                            .size(56.dp)
-                            .clip(CircleShape)
-                            .background(APP_SEARCH_FILTER_EMTPY_MESSAGE)
-                            .border(0.5.dp, APP_SEARCH_FILTER_EMTPY_BORDER, CircleShape),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        Icons.Default.CalendarMonth,
-                        contentDescription = null,
-                        tint = APP_SEARCH_FILTER_DISABLE,
-                        modifier = Modifier.size(24.dp),
-                    )
-                }
+                Text(text = "📅", fontSize = 14.sp)
                 Text(
-                    text = stringResource(R.string.search_daily_shorts_blank_text),
-                    fontSize = 13.sp,
-                    color = APP_SEARCH_FILTER_DISABLE,
-                    textAlign = TextAlign.Center,
-                    lineHeight = 20.sp,
+                    text = selectDay ?: stringResource(R.string.main_topic_channel_count),
+                    fontSize = 12.sp,
+                    color = if (selectDay != null) APP_SEARCH_FILTER_UNSELECT else APP_SEARCH_FILTER_USELECT,
                 )
             }
+
+            // 구분선
+            Box(
+                modifier =
+                    Modifier
+                        .width(1.dp)
+                        .height(16.dp)
+                        .background(Color(0xFF2A2A2A)),
+            )
+
+            // 카테고리
+            Row(
+                modifier = Modifier.weight(1f),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                Text(text = "⚡", fontSize = 14.sp)
+                Text(
+                    text = selectedCategory,
+                    fontSize = 12.sp,
+                    color = APP_SEARCH_FILTER_UNSELECT,
+                )
+            }
+            // filterClick(true)
+            // 필터 아이콘
+            Icon(
+                Icons.Default.FilterList,
+                contentDescription = null,
+                tint = APP_TEXT_COLOR,
+                modifier =
+                    Modifier
+                        .size(16.dp)
+                        .clickable {
+                            filterClick(true)
+                        },
+            )
         }
-    } else {
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(40.dp))
+
+        // 빈 상태 안내
+        if (uiState == UiState.Idle) {
+            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Column(
+                    modifier =
+                        Modifier
+                            .wrapContentSize()
+                            .padding(horizontal = 16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .size(56.dp)
+                                .clip(CircleShape)
+                                .background(APP_SEARCH_FILTER_EMTPY_MESSAGE)
+                                .border(0.5.dp, APP_SEARCH_FILTER_EMTPY_BORDER, CircleShape),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            Icons.Default.CalendarMonth,
+                            contentDescription = null,
+                            tint = APP_SEARCH_FILTER_DISABLE,
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
+                    Text(
+                        text = stringResource(R.string.search_daily_shorts_blank_text),
+                        fontSize = 13.sp,
+                        color = APP_SEARCH_FILTER_DISABLE,
+                        textAlign = TextAlign.Center,
+                        lineHeight = 20.sp,
+                    )
+                }
+            }
+        } else {
+            Spacer(Modifier.height(16.dp))
+        }
     }
 }
 
