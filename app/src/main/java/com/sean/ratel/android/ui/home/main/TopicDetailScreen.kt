@@ -1,7 +1,7 @@
 package com.sean.ratel.android.ui.home.main
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -88,6 +88,7 @@ import com.sean.ratel.android.utils.PhoneUtil.isTablet
 import com.sean.ratel.android.utils.UIUtil.pixelToDp
 import com.sean.ratel.android.utils.findActivity
 
+@OptIn(ExperimentalFoundationApi::class)
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun TopicDetailScreen(
@@ -294,7 +295,7 @@ fun TopicDetailScreen(
                                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                     Box(
                                         Modifier.clickable {
-                                            Log.d(
+                                            RLog.d(
                                                 "hbungshin",
                                                 "channelId : ${item.shortsChannelModel?.channelId} , " +
                                                     "selectedFilter : $selectedFilter , " +
@@ -371,9 +372,9 @@ fun TopicDetailScreen(
                                                         .width(64.dp)
                                                         .height(64.dp),
                                                 ContentScale.Fit,
-                                                R.drawable.ic_play_icon,
-                                                R.drawable.ic_play_icon,
-                                                R.drawable.ic_play_icon,
+                                                R.drawable.play,
+                                                R.drawable.play,
+                                                R.drawable.play,
                                             )
                                         }
                                         Box(
