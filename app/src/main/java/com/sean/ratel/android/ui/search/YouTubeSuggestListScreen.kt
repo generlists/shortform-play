@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -40,7 +39,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_DISABLE
 import com.sean.ratel.android.ui.theme.APP_SEARCH_SUGGEST_DIVIDER
@@ -69,8 +67,6 @@ fun ListItemDisplayUi(
     selectItem: (String) -> Unit,
 ) {
     val suggests by searchViewModel.searchSuggestList.collectAsState()
-
-    val context = LocalContext.current as SearchActivity
 
     Scaffold(
         containerColor = APP_BACKGROUND,

@@ -45,7 +45,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -77,6 +76,7 @@ fun TrendShortsList(
     val context = LocalContext.current
 
     val trendShorts = viewModel.mainTrendShortsList.collectAsState().value
+    val trendShortsTitle = trendShortsData.title
     val initDataKey =
         trendShortsData.event_list.keys
             .toList()
@@ -117,7 +117,7 @@ fun TrendShortsList(
                             .wrapContentSize(),
                     ) {
                         Text(
-                            text = stringResource(R.string.main_trends_shorts_title),
+                            text = trendShortsTitle,
                             Modifier
                                 .wrapContentSize(),
                             fontFamily = FontFamily.SansSerif,

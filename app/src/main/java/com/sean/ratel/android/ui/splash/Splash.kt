@@ -1,6 +1,7 @@
 package com.sean.ratel.android.ui.splash
 
 import android.os.Build
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -82,47 +83,51 @@ fun Splash(
     BackHandler { splashViewModel.navigator.finish() }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        RLog.d("SPLASH", "pass  $step ,  autoCheck : $autoCheck")
+        // RLog.d("STEP", "START  $step ,  authCheck : $autoCheck")
 
         when (step) {
             SplashStep.NETWORK -> {
                 NetworkAlert(
                     splashViewModel = splashViewModel,
                     pass = {
-                        RLog.d("SPLASH", "move NETWORK -> NOTIFICATION")
+                        RLog.d("STEP", "move NETWORK -> NOTIFICATION")
                         step = SplashStep.NOTIFICATION
                     },
                 )
             }
 
             SplashStep.NOTIFICATION -> {
-                RLog.d("SPLASH", "pass : NOTIFICATION $step")
+                // RLog.d("STEP", "pass : NOTIFICATION $step")
                 NotificationPermission(
                     splashViewModel = splashViewModel,
                     pushViewModel = pushViewModel,
                     pass = { pass ->
+                        RLog.d("STEP", "move NOTIFICATION -> AUTH")
                         if (pass) step = SplashStep.AUTH
                     },
                 )
             }
 
             SplashStep.AUTH -> {
-                RLog.d("SPLASH", "pass : AUTH")
+                RLog.d("STEP", "pass : AUTH")
                 AuthCheckAlert(
                     splashViewModel = splashViewModel,
                     pass = { pass ->
-                        RLog.d("SPLASH", "pass : A $pass")
+                        RLog.d("STEP", "move AUTH -> INIT")
+                        // RLog.d("SPLASH", "pass : A $pass")
                         if (pass) step = SplashStep.INIT
                     },
                 )
             }
 
             SplashStep.INIT -> {
+                RLog.d("STEP", "pass : INIT")
                 InitialDataAndAD(
                     mainViewModel = mainViewModel,
                     adViewModel = adViewModel,
                     splashViewModel = splashViewModel,
                     pass = { pass ->
+                        RLog.d("STEP", "move INIT -> DONE")
                         if (pass) step = SplashStep.DONE
                     },
                 )
@@ -131,6 +136,7 @@ fun Splash(
             SplashStep.DONE -> {
                 LaunchedEffect(Unit) {
                     delay(500)
+                    RLog.d("STEP", "move DONE -> GO HOME ")
                     adViewModel.goMainHome()
                 }
             }
@@ -284,7 +290,7 @@ private fun AuthCheckAlert(
     val context = LocalContext.current
     val showDialog by splashViewModel.authCheck.collectAsState()
 
-    RLog.d("SPLASH", "showDialog value : $showDialog")
+    RLog.d("SPLASH", "AuthCheckAlert showDialog : $showDialog")
     if (showDialog != null && showDialog != 0) {
         ShortFormCommonAlertDialog(
             onDismiss = { buttonClick ->
@@ -329,6 +335,7 @@ fun InitialDataAndAD(
     pass: (Boolean) -> Unit,
 ) {
     val locale by splashViewModel.locale.collectAsState(initial = null)
+    Log.d("REQUESTSSSSS", "locale: $locale")
     val hasLoadedOnce by splashViewModel.hasLoadedOnce.collectAsState()
     var showCheck by remember(hasLoadedOnce) { mutableStateOf(false) }
 
@@ -337,8 +344,10 @@ fun InitialDataAndAD(
     val options = getShortFormCountry(LocalContext.current)
     val forceRefresh by adViewModel.forceClearCache.collectAsState()
     val authCheck by splashViewModel.authCheck.collectAsState()
+    var mainTrendComplete by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isAdComplete) {
+    LaunchedEffect(isAdComplete, locale) {
+        // if (locale == null) return@LaunchedEffect
         combine(
             splashViewModel.mainDataComplete,
             splashViewModel.trendsShortsComplete,
@@ -348,9 +357,12 @@ fun InitialDataAndAD(
         }.collect { combinedResult ->
             val (main, trends) = combinedResult
             if (authCheck != null && (authCheck ?: 0) > 0) return@collect
-            RLog.d("SPLASH", "main : $main trends : $trends")
-            if (main && trends) {
+            RLog.d("REQUESTSSSSS", "main : $main trends : $trends locale : $locale")
+            if (main && trends && locale != null) {
                 pass(true)
+            }
+            if (main && trends) {
+                mainTrendComplete = true
             }
         }
     }
@@ -361,16 +373,17 @@ fun InitialDataAndAD(
             delay(100)
             showCheck = true
         }
-        RLog.d("SPASH", "start locale : $locale")
+        RLog.d("STEP", "start locale : $locale")
         if (locale == null && showCheck) {
             ShortFormSelectDialog(
                 defaultCountryCode = getCountryCode(),
                 options = options,
                 onClick = { countryCode ->
-                    RLog.d("LLLLLLLLLL", "befor locale : $locale , after countryCode : $countryCode")
+                    Log.d("REQUESTSSSSS", "befor locale : $locale , after countryCode : $countryCode")
                     coroutineScope.launch {
                         splashViewModel.setLocale(countryCode)
                     }
+                    Log.d("REQUESTSSSSS", "final locale : $locale")
 
                     val value = locale ?: "KR"
                     splashViewModel.sendGALog(
@@ -385,15 +398,21 @@ fun InitialDataAndAD(
 
                     coroutineScope.launch {
                         splashViewModel.setLocale(countryCode)
+                        // pass(true)
                         // RLog.d("SPLASH", "newUpdate : $newUpdate")
                     }
+//                    if(mainTrendComplete){
+//                        pass(true)
+//                    }
                 },
                 onDismiss = {},
             )
         } else {
             LaunchedEffect(locale) {
+                if (locale == null) return@LaunchedEffect
                 delay(100)
-                val aa = getCountryCode(locale)
+                RLog.d("REQUESTSSSSS", "!!!!!!!start locale : $locale")
+
                 splashViewModel.requestYouTubeVideos(
                     SplashViewModel.RequestType.TODAY,
                     FirebaseStorage.getInstance(),

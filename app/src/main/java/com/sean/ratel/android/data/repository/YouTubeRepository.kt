@@ -289,7 +289,10 @@ class YouTubeRepository
             shortsJson.clearDataByKeyPattern(pattern)
         }
 
-        suspend fun requestYouTubeCategory(region: String): Flow<ApiResult<List<YouTubeCategory>>> =
+        suspend fun requestYouTubeCategory(
+            region: String,
+            language: String,
+        ): Flow<ApiResult<List<YouTubeCategory>>> =
             flow {
                 emit(ApiResult.Loading)
 
@@ -298,8 +301,9 @@ class YouTubeRepository
                     return@flow
                 }
                 try {
+                    RLog.d("SearchViewModel", "region : $region , language : $language")
                     val response =
-                        youtubeSearchApi.requestYouTubeCategory(region)
+                        youtubeSearchApi.requestYouTubeCategory(region, language)
                     RLog.d("SearchViewModel", "response : $response")
                     val categoryList =
                         response.map { (key, value) ->
@@ -399,6 +403,11 @@ class YouTubeRepository
                 }
             }
 
+        fun clearMemoryCache() {
+            mainShortsVideosCache = null
+            trendShortsVideosCache = null
+        }
+
         private fun parseLegacyData(
             startDate: String,
             legacyEndDate: String,
@@ -415,7 +424,7 @@ class YouTubeRepository
             private const val JSON_SAVE_KEY = "%s/shortform-play/shorts_main_list_%s.json"
             private const val JSON_REMOVE_KEY = "/shorts_main_list"
             private const val DEFAULT_URL = "shorts_main_default_%s.json"
-            const val DEFAULT_NEW_URL = "shorts_main_new_default_KR.json"
+            // const val DEFAULT_NEW_URL = "shorts_main_new_default_KR.json"
 
             private const val JSON_TRENDS_SAVE_KEY = "%s/shortform-play/shorts_trailer_list_%s.json"
             private const val JSON_TRENDS_REMOVE_KEY = "/shorts_trailer_list"

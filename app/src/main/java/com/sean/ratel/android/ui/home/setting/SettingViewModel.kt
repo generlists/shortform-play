@@ -107,6 +107,10 @@ class SettingViewModel
             youTubeRepository.removeCategory()
         }
 
+        fun clearMemoryCache() {
+            youTubeRepository.clearMemoryCache()
+        }
+
         fun sendGALog(
             event: String,
             route: String? = null,

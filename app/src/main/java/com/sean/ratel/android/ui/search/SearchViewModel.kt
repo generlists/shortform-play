@@ -28,6 +28,7 @@ import com.sean.ratel.android.data.repository.YouTubeRepository
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Navigator
 import com.sean.ratel.android.utils.UIUtil.getAppLocaleByStringResource
+import com.sean.ratel.android.utils.UIUtil.getLanguageCode
 import com.sean.ratel.android.utils.UIUtil.localeFromCountryCode
 import com.sean.ratel.android.utils.UIUtil.toStringMap
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -447,15 +448,16 @@ class SearchViewModel
         fun requestYouTubeCategory() {
             viewModelScope.launch {
                 val countryCode = settingRespository.getLocale().first() ?: "KR"
+                val language = getLanguageCode(countryCode)
 
                 val categoryList = youtubeApiRepository.getYouTubeCategoryList()
-                RLog.d("OKJJJJJJJ", "countryCode : $countryCode  categoryList : $categoryList")
+                RLog.d("OKJJJJJJJ", "countryCode : $countryCode  categoryList : $categoryList language : $language")
 
                 if (categoryList.isNotEmpty() && categoryList.first().categoryKey != null) {
                     _youtubeCategory.value = categoryList
                     return@launch
                 }
-                youtubeApiRepository.requestYouTubeCategory(countryCode).collect { response ->
+                youtubeApiRepository.requestYouTubeCategory(countryCode, language).collect { response ->
 
                     when (response) {
                         is ApiResult.Loading -> {

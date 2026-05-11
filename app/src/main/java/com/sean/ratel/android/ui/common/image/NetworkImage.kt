@@ -129,8 +129,8 @@ fun NetworkImage(
                 Box(
                     modifier =
                         Modifier
-                            .fillMaxSize()
-                            .background(APP_IMAGE_FLOW_BACKGROUND_COLOR.copy(alpha = alpha)),
+                            .fillMaxSize(),
+                    // .background(APP_IMAGE_FLOW_BACKGROUND_COLOR.copy(alpha = alpha)),
                     contentAlignment = Alignment.TopCenter,
                 ) {
                     Image(

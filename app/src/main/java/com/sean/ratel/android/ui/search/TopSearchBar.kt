@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
-import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_USELECT
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import kotlinx.coroutines.delay
@@ -160,7 +160,7 @@ fun TopSearchBar(
                     Text(
                         text = stringResource(R.string.search_recently),
                         fontSize = 11.sp,
-                        color = APP_SEARCH_FILTER_USELECT,
+                        color = APP_SUBTITLE_TEXT_COLOR,
                         letterSpacing = 0.8.sp,
                     )
                 }
@@ -220,7 +220,7 @@ fun SearchTextField(
                 modifier =
                     Modifier
                         .align(Alignment.CenterStart)
-                        .padding(start = 3.dp, bottom = 3.dp),
+                        .padding(start = 5.dp),
             )
         }
 

@@ -267,16 +267,27 @@ object UIUtil {
                 "KR"
             }
 
-    fun getLanguageCode(): String =
-        if (Locale
-                .getDefault()
-                .language
-                .toString()
-                .isNotEmpty()
-        ) {
-            Locale.getDefault().language
-        } else {
-            "ko"
+    fun getLanguageCode(region: String): String =
+        when (region) {
+            "KR" -> "ko"
+
+            "JP" -> "ja"
+
+            "TH" -> "th"
+
+            "TW" -> "zh-TW"
+
+            "CN" -> "zh"
+
+            "ID" -> "id"
+
+            // 인도네시아
+            "CA" -> "en"
+
+            // 캐나다 영어 (캐나다 프랑스어 분리 불가, region만으론)
+            "US", "GB", "AU", "NZ" -> "en"
+
+            else -> "en"
         }
 
     fun getLanguageTag(): String =
@@ -319,6 +330,28 @@ object UIUtil {
             "CA" -> Locale.CANADA
             else -> Locale.ENGLISH
         }
+
+    fun getLocalizedString(
+        context: Context,
+        region: String,
+        @StringRes resId: Int,
+    ): String {
+        val locale =
+            when (region) {
+                "KR" -> Locale.forLanguageTag("ko")
+                "JP" -> Locale.forLanguageTag("ja")
+                "TH" -> Locale.forLanguageTag("th")
+                "TW" -> Locale.forLanguageTag("zh-TW")
+                "ID" -> Locale.forLanguageTag("id")
+                "CA" -> Locale.forLanguageTag("en")
+                "US" -> Locale.forLanguageTag("en")
+                else -> Locale.forLanguageTag("en")
+            }
+
+        val config = Configuration(context.resources.configuration)
+        config.setLocale(locale)
+        return context.createConfigurationContext(config).getString(resId)
+    }
 
     fun pickTendShortsFromMap(
         shortsMap: Map<String, List<MainShortsModel>>,

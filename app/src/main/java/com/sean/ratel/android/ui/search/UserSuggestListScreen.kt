@@ -58,10 +58,9 @@ import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
-import com.sean.ratel.android.ui.theme.APP_FILTER_BACKGROUND
-import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_DISABLE
 import com.sean.ratel.android.ui.theme.APP_SEARCH_SUGGEST_DIVIDER
 import com.sean.ratel.android.ui.theme.APP_SEARCH_SUGGEST_TEXT
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.TimeUtil.RelativeLang
@@ -214,7 +213,7 @@ fun SearchHistoryItem(
                     .size(42.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(APP_SEARCH_SUGGEST_DIVIDER)
-                    .border(0.5.dp, APP_FILTER_BACKGROUND, RoundedCornerShape(10.dp)),
+                    .border(0.5.dp, APP_SEARCH_SUGGEST_TEXT, RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center,
         ) {
             NetworkImage(
@@ -242,7 +241,7 @@ fun SearchHistoryItem(
             Text(
                 text = displayDate,
                 fontSize = 11.sp,
-                color = APP_SEARCH_FILTER_DISABLE,
+                color = APP_SUBTITLE_TEXT_COLOR,
                 modifier = Modifier.padding(top = 2.dp),
             )
         }

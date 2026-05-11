@@ -152,7 +152,7 @@ object ApplicationModule {
             .memoryCachePolicy(CachePolicy.ENABLED)
             .precision(Precision.INEXACT)
             .bitmapConfig(Bitmap.Config.RGB_565)
-            .crossfade(500)
+            .crossfade(false)
             .allowHardware(true)
             .build()
 

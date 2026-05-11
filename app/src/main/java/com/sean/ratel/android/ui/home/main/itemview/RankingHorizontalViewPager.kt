@@ -69,6 +69,7 @@ import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.TimeUtil
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import com.sean.ratel.android.utils.UIUtil.formatNumberWithCommas
+import com.sean.ratel.android.utils.UIUtil.getLocalizedString
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -81,6 +82,8 @@ fun RankingHorizontalScrollView(
     channelSubscriptionData: ChannelSubscriptionList,
     channelSubscriptionUpData: ChannelSubscriptionUpList,
 ) {
+    val context = LocalContext.current
+    val countryCode by mainViewModel.locale.collectAsState()
     if (channelSearchData.searchList.isEmpty() ||
         channelSubscriptionData.subscriptionList.isEmpty() ||
         channelSubscriptionUpData.subscriptionUpList.isEmpty()
@@ -120,14 +123,14 @@ fun RankingHorizontalScrollView(
         channelSearchData.period?.let {
             "(${
                 String.format(
-                    stringResource(R.string.base_date),
+                    getLocalizedString(context, countryCode ?: "KR", R.string.base_date),
                     TimeUtil.formatTimestamp(it, "yy-MM-dd"),
                 )
             })"
         } ?: run {
             "(${
                 String.format(
-                    stringResource(R.string.base_date),
+                    getLocalizedString(context, countryCode ?: "KR", R.string.base_date),
                     TimeUtil.formatTimestamp(System.currentTimeMillis(), "yy-MM-dd"),
                 )
             })"
@@ -152,7 +155,7 @@ fun RankingHorizontalScrollView(
                 period = period,
                 mainViewModel,
                 20.sp,
-                stringResource(R.string.main_ranking_label),
+                getLocalizedString(context, countryCode ?: "KR", R.string.main_ranking_label),
                 start = 0.dp,
                 end = 0.dp,
                 top = 0.dp,
