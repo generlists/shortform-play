@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.R
 import com.sean.ratel.android.SearchActivity
@@ -52,7 +52,7 @@ object PhoneUtil {
         context: Context,
         shareLauncer: ActivityResultLauncher<Intent>?,
     ) {
-        Log.d("shareAppLinkButton", "shareLauncer : $shareLauncer")
+        RLog.d("shareAppLinkButton", "shareLauncer : $shareLauncer")
 
         val messageToShare = "${context.getString(R.string.short_form_app_share)} ${
             STRINGS.URLUPDATE_GOOGLE_PLAY_WEB(context.packageName)

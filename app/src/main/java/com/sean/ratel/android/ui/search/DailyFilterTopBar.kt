@@ -41,6 +41,7 @@ import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_EMTPY_BORDER
 import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_EMTPY_MESSAGE
 import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_UNSELECT
 import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_USELECT
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
@@ -119,7 +120,7 @@ fun DailyFilterTopBar(
                         },
             )
         }
-        Spacer(Modifier.height(40.dp))
+        Spacer(Modifier.height(16.dp))
 
         // 빈 상태 안내
         if (uiState == UiState.Idle) {
@@ -151,7 +152,7 @@ fun DailyFilterTopBar(
                     Text(
                         text = stringResource(R.string.search_daily_shorts_blank_text),
                         fontSize = 13.sp,
-                        color = APP_SEARCH_FILTER_DISABLE,
+                        color = APP_SUBTITLE_TEXT_COLOR,
                         textAlign = TextAlign.Center,
                         lineHeight = 20.sp,
                     )

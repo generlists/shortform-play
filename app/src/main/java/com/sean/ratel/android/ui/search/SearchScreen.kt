@@ -57,7 +57,7 @@ import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_FILTER_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_BORDER
-import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_DISABLE
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
 private const val TAG = "ShortForm"
@@ -251,7 +251,7 @@ fun ScrollableTabBar(
                         text = stringResource(searchTabs.title),
                         fontSize = 13.sp,
                         fontWeight = if (selectedTabIndex == index) FontWeight.Medium else FontWeight.Normal,
-                        color = if (selectedTabIndex == index) Color.White else APP_SEARCH_FILTER_DISABLE,
+                        color = if (selectedTabIndex == index) Color.White else APP_SUBTITLE_TEXT_COLOR,
                     )
                 }
             }

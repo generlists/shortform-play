@@ -180,10 +180,13 @@ private fun ShortFormCountry(
                     )
 
                     coroutineScope.launch {
-                        RLog.d("SPLASH", "${locale?.value} countryCode!! $countryCode")
+                        RLog.d("CACHECLEAR", "${locale?.value} countryCode!! $countryCode")
                         viewModel?.removeLocalCache("shorts_main_list_$locale.json")
-                        viewModel?.removeLocalCache("shorts_trailer_list_$locale.json")
+                        viewModel?.removeLocalCache("shorts_trailer_default.json")
+                        viewModel?.removeLocalCache("shorts_main_default__$locale.json")
+
                         viewModel?.removeCategory()
+                        viewModel?.clearMemoryCache()
 
                         viewModel?.setLocale(countryCode)
                         newActivity(context)

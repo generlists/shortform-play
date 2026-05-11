@@ -73,7 +73,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
-import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.RANDOM_GA_END_SIZE
 import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
@@ -227,7 +226,7 @@ fun KeyWordSearchGridItemList(
     val searchComplete = searchViewModel.searchDataComplete.collectAsState()
 
     val isAtBottom = listState.isAtBottom()
-    val context = LocalContext.current as SearchActivity
+    val context = LocalContext.current
     val coroutine = rememberCoroutineScope()
 
     RLog.d(
@@ -269,7 +268,7 @@ fun KeyWordSearchGridItemList(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(bottom = 64.dp),
+                    .padding(vertical = 5.dp),
             state = listState,
         ) {
             var i = 0

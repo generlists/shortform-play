@@ -41,6 +41,7 @@ interface YouTubeSearchApi {
     @GET(EndPoint.CATEGORY)
     suspend fun requestYouTubeCategory(
         @Query("region") region: String,
+        @Query("hl") hl: String,
     ): Map<String, String>
 
     @GET(EndPoint.DAILY_SHORTS)

@@ -2,7 +2,6 @@ package com.sean.ratel.android
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -22,6 +21,7 @@ import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.InstallRefererRepository
 import com.sean.ratel.android.data.repository.RecentVideoRepository
 import com.sean.ratel.android.data.repository.SearchResultDataRepository
+import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.ui.ad.AdTarget
 import com.sean.ratel.android.ui.ad.InterstitialAdManager
 import com.sean.ratel.android.ui.home.TopicFilterType
@@ -40,8 +40,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.AdsSdk
 import so.smartlab.common.ad.admob.data.GoogleMobileAdsConsentManager
@@ -64,6 +66,7 @@ class MainViewModel
         val installRefererRepository: InstallRefererRepository,
         private val searchResultsRepository: SearchResultDataRepository,
         private val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
+        private val settingRepository: SettingRepository,
         val interstitialAdManager: InterstitialAdManager,
         val adsSdk: AdsSdk,
         val pushSDK: PushSDK,
@@ -171,12 +174,6 @@ class MainViewModel
                 extraBufferCapacity = 1,
             )
         val interstitialAdStart: SharedFlow<AdTarget> = _interstitialAdStart.asSharedFlow()
-
-        // 세션 추적 변수
-        private var consecutiveWatchCount = 0
-        private var sessionLikeCount = 0
-        private var totalFollowCount = 0
-        private var sessionVideoCount = 0
 
         fun setInterstitialAdStart(
             route: String,
@@ -289,9 +286,6 @@ class MainViewModel
                                         "filterType" to filterType.name,
                                     ),
                             )
-                        Log.d("hbungshin", "param = [$param]")
-                        Log.d("hbungshin", "pattern route = ${Destination.YouTube.route}")
-                        Log.d("hbungshin", "created route = $createdRoute")
 
                         navigator.navigateTo(createdRoute, false)
                     }
@@ -303,9 +297,6 @@ class MainViewModel
                             pathArgs = listOf(selectedIndex.toString()),
                             queryArgs = mapOf("topicId" to topicId, "filterType" to filterType.name),
                         )
-                    Log.d("KKKKKK", "selectedIndex = [$selectedIndex]")
-                    Log.d("KKKKKK", "pattern route = ${Destination.YouTube.route}")
-                    Log.d("KKKKKK", "created route = $createdRoute")
 
                     navigator.navigateTo(createdRoute, false)
                 }
@@ -368,7 +359,6 @@ class MainViewModel
             trendsShortsKey: String? = null,
             topicId: String? = null,
         ) {
-            Log.d("hbungshin", "viewType : $viewType route : $route")
             _viewType.value = viewType
             _moreButtonClicked.value = route
             _moreTrendShortsKey.value = trendsShortsKey
@@ -759,6 +749,13 @@ class MainViewModel
                 scope = viewModelScope,
             )
         }
+
+        val locale =
+            settingRepository.getLocale().stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = null,
+            )
 
         companion object {
             private const val MAIN_ITEM_COUNT = 0

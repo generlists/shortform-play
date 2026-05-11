@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
-import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.dto.SearchShortsResponse
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
@@ -46,7 +45,7 @@ fun SearchComposeUi(
     finish: () -> Unit,
 ) {
     RatelappTheme {
-        val context = LocalContext.current as SearchActivity
+        val context = LocalContext.current
         val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
         val query = remember { mutableStateOf("") }
         val searchDataComplete = searchViewModel.searchDataComplete.collectAsState()
