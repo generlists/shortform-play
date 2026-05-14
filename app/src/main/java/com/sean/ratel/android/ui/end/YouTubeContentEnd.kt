@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.end
 
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -156,6 +157,7 @@ fun YouTubeContentEnd(
                     searchRequestLoading.value = true
 
                     selectedVideoId?.let {
+                        Log.d("hbungshin", "requestYouTubeShortsSearchToEnd selectedVideoId : $selectedVideoId")
                         youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
                             it,
                             categoryShortsList,
@@ -176,13 +178,14 @@ fun YouTubeContentEnd(
                 }
             }
         } else if (mainViewModel.itemClicked.value == Destination.DeepLink.route && !searchRequestLoading.value) {
-            RLog.d("YouTubeContentEnd", "deeplinkkkk $selectedVideoId ,  size : ${categoryShortsList.size}")
+            RLog.d("hbungshin", "deep link requestYouTubeShortsSearchToEnd $selectedVideoId ,  size : ${categoryShortsList.size}")
             searchRequestLoading.value = true
 
             selectedVideoId?.let {
                 youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
                     it,
                     categoryShortsList,
+                    isDeepLink = true,
                 )
             }
         }

@@ -23,6 +23,8 @@ import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_FILTER_TYPE
 import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_PARAM
 import com.sean.ratel.android.ui.navigation.Destination.YouTube.ARG_TOPIC_ID
 import com.sean.ratel.android.ui.navigation.Navigator
+import com.sean.ratel.android.utils.UIUtil.getCountryCode
+import com.sean.ratel.android.utils.UIUtil.getLanguageCode
 import com.sean.ratel.android.utils.onLikeClicked
 import com.sean.ratel.android.utils.onSaveClicked
 import com.sean.ratel.android.utils.onVideoWatched
@@ -458,12 +460,22 @@ YouTubeContentEndViewModel
         fun requestYouTubeShortsSearchToEnd(
             videoId: String,
             categoryShorts: Map<String, List<MainShortsModel>>,
+            isDeepLink: Boolean = false,
         ) = viewModelScope.launch {
+            val region =
+                if (!isDeepLink) {
+                    settingRepository.getLocale().first()
+                        ?: "KR"
+                } else {
+                    getCountryCode()
+                }
+            val language = getLanguageCode(region)
+
             youtueRepository
                 .requestYouTubeShortsSearchToEnd(
                     videoId,
-                    settingRepository.getLocale().first()
-                        ?: "KR",
+                    region,
+                    language,
                 ).collect { response ->
 
                     when (response) {
@@ -477,6 +489,12 @@ YouTubeContentEndViewModel
                             response.data.let {
                                 val categoryName = it.shortsVideoModel?.categoryName
                                 val updatedList: List<MainShortsModel>? = categoryShorts[categoryName]
+                                RLog.d(
+                                    "hbungshin",
+                                    "locale : ${
+                                        settingRepository.getLocale().first()
+                                    }, categoryName : $categoryName , size : ${updatedList?.size}",
+                                )
 
                                 updatedList?.let { list ->
                                     _searchShots.value = listOf(it) + list

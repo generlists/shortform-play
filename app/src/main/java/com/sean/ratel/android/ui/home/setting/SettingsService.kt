@@ -92,8 +92,7 @@ private fun SettingsService(
             Modifier
                 .clickable {
                     runLinkItem(context, item, viewModel)
-                }
-                .align(Alignment.CenterVertically),
+                }.align(Alignment.CenterVertically),
             contentAlignment = Alignment.CenterStart,
         ) {
             Text(
