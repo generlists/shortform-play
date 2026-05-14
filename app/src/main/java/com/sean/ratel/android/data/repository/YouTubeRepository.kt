@@ -1,6 +1,7 @@
 package com.sean.ratel.android.data.repository
 
 import android.content.Context
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -170,6 +171,7 @@ class YouTubeRepository
             lastVideoId: String? = null,
         ): Flow<ApiResult<SearchShortsResponse>> =
             flow {
+                Log.d("hbungshin", "requestYouTubeSearch query : $query , countryCode :$countryCode , language : $language")
                 emit(ApiResult.Loading)
 
                 if (!networkHelper.isNetworkConnected()) {
@@ -215,8 +217,10 @@ class YouTubeRepository
         suspend fun requestYouTubeShortsSearchToEnd(
             videoId: String,
             region: String,
+            hl: String,
         ): Flow<ApiResult<MainShortsModel>> =
             flow {
+                RLog.d("hbungshin", "requestYouTubeShortsSearchToEnd videoId : $videoId , region :$region")
                 emit(ApiResult.Loading)
 
                 if (!networkHelper.isNetworkConnected()) {
@@ -228,6 +232,7 @@ class YouTubeRepository
                         youtubeSearchApi.requestYouTubeShortsSearchToEnd(
                             videoId,
                             region,
+                            hl,
                         )
                     emit(ApiResult.Success(response))
                 } catch (e: HttpException) {

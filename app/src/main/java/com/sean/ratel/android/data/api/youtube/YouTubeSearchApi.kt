@@ -31,6 +31,7 @@ interface YouTubeSearchApi {
     suspend fun requestYouTubeShortsSearchToEnd(
         @Query("videoId") videoId: String,
         @Query("region") region: String,
+        @Query("hl") hl: String,
     ): MainShortsModel
 
     @GET(EndPoint.SEARCH_REMOVE_SESSION)
