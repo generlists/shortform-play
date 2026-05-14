@@ -187,4 +187,5 @@
     <string name="main_topic_channel_count">%s channels</string>
     <string name="search_daily_shorts_blank_text">Select a date to see popular Shorts from that day</string>
     <string name="search_recently">Recent searches</string>
+    <string name="main_trends_shorts_text">🔥 "What's trending today?"</string>
 </resources>

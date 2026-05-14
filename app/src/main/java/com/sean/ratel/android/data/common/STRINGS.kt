@@ -11,6 +11,8 @@ object STRINGS {
 
     const val NOTICES_URL_EN = BuildConfig.NOTICES_URL_EN
 
+    const val NOTICES_URL_ID = BuildConfig.NOTICES_URL_ID
+
     const val REGAL_URL = BuildConfig.REGAL_URL
 
     const val REGAL_URL_EN = BuildConfig.REGAL_URL_EN

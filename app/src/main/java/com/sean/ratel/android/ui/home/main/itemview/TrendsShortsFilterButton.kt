@@ -10,10 +10,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -27,6 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 
 @Suppress("ktlint:standard:function-naming")
@@ -63,7 +66,7 @@ fun TrendsShortsFilterButton(
         modifier =
             modifier
                 .height(56.dp)
-                .width(180.dp),
+                .wrapContentWidth(),
         shape = RoundedCornerShape(20.dp),
         colors =
             ButtonDefaults.buttonColors(
@@ -76,7 +79,7 @@ fun TrendsShortsFilterButton(
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize(),
+                    .wrapContentSize(),
         ) {
             // 상단 하이라이트 (입체감)
             Box(
@@ -100,7 +103,7 @@ fun TrendsShortsFilterButton(
                 modifier =
                     Modifier
                         .fillMaxHeight()
-                        .width(40.dp)
+                        .width(60.dp)
                         .offset { IntOffset(sweepOffset.toInt(), 0) }
                         .background(
                             Brush.horizontalGradient(
@@ -116,8 +119,8 @@ fun TrendsShortsFilterButton(
 
             // 텍스트
             Text(
-                text = "\uD83D\uDD25 오늘의 트랜드는?",
-                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(R.string.main_trends_shorts_text),
+                modifier = Modifier.align(Alignment.Center).padding(start = 15.dp, end = 15.dp),
                 fontFamily = FontFamily.SansSerif,
                 fontStyle = FontStyle.Normal,
                 fontWeight = FontWeight.SemiBold,

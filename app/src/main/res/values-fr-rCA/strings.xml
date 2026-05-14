@@ -199,5 +199,6 @@
     <string name="main_topic_channel_count">%s chaînes</string>
     <string name="search_daily_shorts_blank_text">Sélectionnez une date pour voir les Shorts populaires de ce jour-là.</string>
     <string name="search_recently">Recherches récentes</string>
+    <string name="main_trends_shorts_text">🔥 Quelle est la tendance du jour?</string>
 
 </resources>
