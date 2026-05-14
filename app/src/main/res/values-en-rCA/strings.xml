@@ -185,4 +185,5 @@
     <string name="main_topic_channel_count">%s channels</string>
     <string name="search_daily_shorts_blank_text">날짜를 선택하면\n 해당 날의 인기 쇼츠를 볼 수 있어요</string>
     <string name="search_recently">Recent searches</string>
+    <string name="main_trends_shorts_text">🔥 "What's trending today?"</string>
 </resources>

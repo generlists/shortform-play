@@ -183,4 +183,5 @@
     <string name="main_topic_channel_count">%s 個頻道</string>
     <string name="search_daily_shorts_blank_text">選擇日期後\n可以查看當天的熱門 Shorts</string>
     <string name="search_recently">最近搜尋</string>
+    <string name="main_trends_shorts_text">🔥 今天的趨勢是什麼？</string>
 </resources>

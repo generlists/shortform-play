@@ -92,7 +92,8 @@ private fun SettingsService(
             Modifier
                 .clickable {
                     runLinkItem(context, item, viewModel)
-                }.align(Alignment.CenterVertically),
+                }
+                .align(Alignment.CenterVertically),
             contentAlignment = Alignment.CenterStart,
         ) {
             Text(
@@ -158,6 +159,8 @@ private fun runLinkItem(
                     STRINGS.NOTICES_URL_EN
                 } else if (country == "KR") {
                     STRINGS.NOTICES_URL
+                } else if (country == "ID") {
+                    STRINGS.NOTICES_URL_ID
                 } else {
                     STRINGS.NOTICES_URL_EN
                 },

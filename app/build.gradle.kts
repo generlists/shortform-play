@@ -39,8 +39,8 @@ android {
         applicationId = "com.sean.ratel.android"
         minSdk = 28
         targetSdk = 36
-        versionCode = 11000
-        versionName = "1.1.0.0"
+        versionCode = 11001
+        versionName = "1.1.0.1"
         testInstrumentationRunner = "com.sean.ratel.android.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -140,6 +140,11 @@ android {
             )
             buildConfigField(
                 "String",
+                "NOTICES_URL_ID",
+                "\"${localProperties.getProperty("NOTICES_URL_ID")}\"",
+            )
+            buildConfigField(
+                "String",
                 "REGAL_URL",
                 "\"${localProperties.getProperty("REGAL_URL")}\"",
             )
@@ -223,6 +228,11 @@ android {
                 "String",
                 "NOTICES_URL_EN",
                 "\"${localProperties.getProperty("NOTICES_URL_EN")}\"",
+            )
+            buildConfigField(
+                "String",
+                "NOTICES_URL_ID",
+                "\"${localProperties.getProperty("NOTICES_URL_ID")}\"",
             )
             buildConfigField(
                 "String",

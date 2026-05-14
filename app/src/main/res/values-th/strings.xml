@@ -189,4 +189,5 @@
     <string name="main_topic_channel_count">%s ช่อง</string>
     <string name="search_daily_shorts_blank_text">เลือกวันที่เพื่อดู Shorts ยอดนิยมของวันนั้น</string>
     <string name="search_recently">การค้นหาล่าสุด</string>
+    <string name="main_trends_shorts_text">🔥 เทรนด์วันนี้คืออะไร?</string>
 </resources>
