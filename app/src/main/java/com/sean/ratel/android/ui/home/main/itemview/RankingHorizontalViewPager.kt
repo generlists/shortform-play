@@ -100,21 +100,21 @@ fun RankingHorizontalScrollView(
     val channelSearchTitle = channelSearchData.title
     val channelSearchList =
         if (channelSearchData.searchList.size > 10) {
-            channelSearchData.searchList.subList(0, 10)
+            channelSearchData.searchList.take(10)
         } else {
             channelSearchData.searchList
         }
     val channelSubscriptionTitle = channelSubscriptionData.title
     val channelSubscriptionList =
         if (channelSubscriptionData.subscriptionList.size > 10) {
-            channelSubscriptionData.subscriptionList.subList(0, 10)
+            channelSubscriptionData.subscriptionList.take(10)
         } else {
             channelSubscriptionData.subscriptionList
         }
     val channelSubscriptionUpTitle = channelSubscriptionUpData.title
     val channelSubscriptionUpList =
         if (channelSubscriptionUpData.subscriptionUpList.size > 10) {
-            channelSubscriptionUpData.subscriptionUpList.subList(0, 10)
+            channelSubscriptionUpData.subscriptionUpList.take(10)
         } else {
             channelSubscriptionUpData.subscriptionUpList
         }

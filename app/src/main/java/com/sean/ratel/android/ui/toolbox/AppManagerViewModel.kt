@@ -75,9 +75,17 @@ AppManagerViewModel
                             _contents.sortedByDescending { LocalDate.parse(it.lastUpdateTime, formatter) }
                         }
 
-                        1 -> _contents.sortedByDescending { (it.appTitle) }
-                        2 -> _contents.sortedByDescending { (it.apkSize).toDouble() }
-                        else -> _contents.sortedBy { it.lastUpdateTime }
+                        1 -> {
+                            _contents.sortedByDescending { (it.appTitle) }
+                        }
+
+                        2 -> {
+                            _contents.sortedByDescending { (it.apkSize).toDouble() }
+                        }
+
+                        else -> {
+                            _contents.sortedBy { it.lastUpdateTime }
+                        }
                     }
                 // 전체로 바꾸는 것은 compose 가 안되서 지우고 다시 추가
                 _contents.clear()
