@@ -79,8 +79,7 @@ fun EditorPickHorizontalList(
     val pickList = editorPickData.pickList
     val editorList =
         if (pickList.isNotEmpty()) {
-            editorPickData.pickList.subList(
-                0,
+            editorPickData.pickList.take(
                 RemoteConfig.getRemoteConfigIntValue(MAX_EDITOR_PICK_SIZE),
             )
         } else {

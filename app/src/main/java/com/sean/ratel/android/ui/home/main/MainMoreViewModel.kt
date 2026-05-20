@@ -262,8 +262,7 @@ class MainMoreViewModel
                     _popularShortsFormMoreList.value = items.first.shortformVideoList
                     _currentDataList.value =
                         _popularShortsFormMoreList.value.videoSearchList.searchList
-                            .subList(
-                                0,
+                            .take(
                                 INIT_MAX_SIZE,
                             ).toMutableList()
                 }
@@ -272,7 +271,7 @@ class MainMoreViewModel
                     _editorPickMoreList.value = items.first.editorPickList
                     _currentDataList.value =
                         _editorPickMoreList.value.pickList
-                            .subList(0, INIT_MAX_SIZE)
+                            .take(INIT_MAX_SIZE)
                             .toMutableList()
                 }
 
@@ -280,7 +279,7 @@ class MainMoreViewModel
                     _recommendMoreList.value = items.first.shortformRecommendList
                     _currentDataList.value =
                         _recommendMoreList.value.recommendList
-                            .subList(0, INIT_MAX_SIZE)
+                            .take(INIT_MAX_SIZE)
                             .toMutableList()
                 }
 
@@ -288,7 +287,7 @@ class MainMoreViewModel
                     _channelMoreList.value = items.first.channelVideoList
                     _currentDataList.value =
                         _channelMoreList.value.channelSearchList.searchList
-                            .subList(0, INIT_MAX_SIZE)
+                            .take(INIT_MAX_SIZE)
                             .toMutableList()
                 }
 
@@ -296,7 +295,7 @@ class MainMoreViewModel
                     _subscriptionMoreList.value = items.first.channelSubscriptionList
                     _currentDataList.value =
                         _subscriptionMoreList.value.subscriptionList
-                            .subList(0, INIT_MAX_SIZE)
+                            .take(INIT_MAX_SIZE)
                             .toMutableList()
                 }
 
@@ -304,7 +303,7 @@ class MainMoreViewModel
                     _subscriptionUpMoreList.value = items.first.channelSubscriptionUpList
                     _currentDataList.value =
                         _subscriptionUpMoreList.value.subscriptionUpList
-                            .subList(0, INIT_MAX_SIZE)
+                            .take(INIT_MAX_SIZE)
                             .toMutableList()
                 }
 
@@ -316,8 +315,7 @@ class MainMoreViewModel
                                 recentlyWatchList.toMutableList()
                             } else {
                                 recentlyWatchList
-                                    .subList(
-                                        0,
+                                    .take(
                                         INIT_MAX_SIZE,
                                     ).toMutableList()
                             }
