@@ -108,10 +108,7 @@ class MainActivity : FragmentActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
-        // Remote Config
-        launch {
-            mainViewModel.firebaseRemoteConfig(remoteConfig)
-        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             installSplashScreen()
         }

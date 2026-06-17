@@ -190,4 +190,8 @@
     <string name="search_daily_shorts_blank_text">เลือกวันที่เพื่อดู Shorts ยอดนิยมของวันนั้น</string>
     <string name="search_recently">การค้นหาล่าสุด</string>
     <string name="main_trends_shorts_text">🔥 เทรนด์วันนี้คืออะไร?</string>
+
+    <string name="server_maintaing">🚧 กำลังปิดปรับปรุงระบบ</string>
+    <string name="server_maintaing_message">ขณะนี้กำลังดำเนินการปรับปรุงระบบเพื่อให้บริการที่ดียิ่งขึ้น\n</string>
+    <string name="server_maintaing_message_time">%1$s\nเริ่ม: 📅 %2$s\nสิ้นสุด: 📅 %3$s\n</string>
 </resources>

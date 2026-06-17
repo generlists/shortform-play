@@ -13,9 +13,12 @@ import com.sean.ratel.android.data.android.permission.PermissionManager
 import com.sean.ratel.android.data.api.ApiResult
 import com.sean.ratel.android.data.api.ApiResult.Loading.safeApiCall
 import com.sean.ratel.android.data.common.IntegrityManager
+import com.sean.ratel.android.data.common.RemoteConfig
+import com.sean.ratel.android.data.common.RemoteConfig.SERVER_MAINTAIN
 import com.sean.ratel.android.data.dto.IntegrityExchangeReq
 import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.data.dto.ServerMaintainResponse
 import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.data.local.pref.AuthTokenPreference
 import com.sean.ratel.android.data.log.GALog
@@ -78,7 +81,11 @@ class SplashViewModel
         private val _hasLoadedOnce = MutableStateFlow(false)
         val hasLoadedOnce: StateFlow<Boolean> = _hasLoadedOnce
 
+        private val _serverMainTain = MutableStateFlow<ServerMaintainResponse?>(null)
+        val serverMainTain: StateFlow<ServerMaintainResponse?> = _serverMainTain
+
         init {
+            initServerConfig()
             viewModelScope.launch {
                 prefs.updateTokenCache()
                 val token = prefs.getAccessToken()
@@ -324,6 +331,20 @@ class SplashViewModel
                 actionName,
                 parameter,
             )
+        }
+
+        private fun initServerConfig() {
+            viewModelScope.launch {
+                RemoteConfig.complete.collect { isLoadComplete ->
+                    RLog.e("SPLASH", "isLoadComplete : $isLoadComplete")
+                    if (isLoadComplete) {
+                        val mainTainConfig =
+                            RemoteConfig.getRemoteConfigServerMaintainValue(context, SERVER_MAINTAIN)
+                        _serverMainTain.value = mainTainConfig
+                        RLog.e("SPLASH", "liveMainTain : $mainTainConfig")
+                    }
+                }
+            }
         }
 
         companion object {

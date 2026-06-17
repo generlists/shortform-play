@@ -8,6 +8,7 @@ import com.sean.ratel.android.data.api.Networking
 import com.sean.ratel.android.data.api.interceptor.AuthInterceptor
 import com.sean.ratel.android.data.api.youtube.FireBaseApi
 import com.sean.ratel.android.data.api.youtube.YouTubeSearchApi
+import com.sean.ratel.android.data.common.STRINGS.REMOTE_CONFIg_INTERVAL
 import com.sean.ratel.android.di.qualifier.AuthOKttpClient
 import com.sean.ratel.android.di.qualifier.ContentType
 import com.sean.ratel.android.di.qualifier.FireBaseBaseUrl
@@ -94,5 +95,5 @@ object NetworkModule {
     @Provides
     @Singleton
     @RemoteIntervalTime
-    fun provideRemoteIntervalTime(): Long = 3600
+    fun provideRemoteIntervalTime(): Long = REMOTE_CONFIg_INTERVAL
 }

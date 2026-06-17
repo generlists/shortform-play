@@ -1,7 +1,6 @@
 package com.sean.ratel.android.ui.splash
 
 import android.os.Build
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -33,10 +32,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.storage.FirebaseStorage
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
@@ -48,18 +49,22 @@ import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.ShortFormSelectDialog
 import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.push.PushViewModel
+import com.sean.ratel.android.ui.theme.APP_ALERT_BODY_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
 import com.sean.ratel.android.utils.PhoneUtil.qnaResource
+import com.sean.ratel.android.utils.TimeUtil.localeFormatTimestamp
 import com.sean.ratel.android.utils.UIUtil.getCountryCode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
+import java.util.concurrent.TimeUnit
 
 enum class SplashStep {
     NETWORK,
+    SERVER_MAINTAIN,
     NOTIFICATION,
     AUTH,
     INIT,
@@ -73,15 +78,15 @@ fun Splash(
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
+    finish: () -> Unit = {},
 ) {
     var step by remember { mutableStateOf(SplashStep.NETWORK) }
     LaunchedEffect(Unit) {
         step = SplashStep.NETWORK
     }
-    val autoCheck by splashViewModel.authCheck.collectAsState()
 
-    BackHandler { splashViewModel.navigator.finish() }
-
+    BackHandler { finish() }
+    // convertToTimeStamp("20260617:22", "20260617:24")
     Box(modifier = Modifier.fillMaxSize()) {
         // RLog.d("STEP", "START  $step ,  authCheck : $autoCheck")
 
@@ -91,8 +96,21 @@ fun Splash(
                     splashViewModel = splashViewModel,
                     pass = {
                         RLog.d("STEP", "move NETWORK -> NOTIFICATION")
-                        step = SplashStep.NOTIFICATION
+                        step = SplashStep.SERVER_MAINTAIN
                     },
+                )
+            }
+
+            SplashStep.SERVER_MAINTAIN -> {
+                ServerMaintainAlert(
+                    splashViewModel = splashViewModel,
+                    pass = { pass ->
+                        if (pass) {
+                            step = SplashStep.NOTIFICATION
+                            RLog.d("STEP", "move SERVER_MAINTAIN -> NOTIFICATION")
+                        }
+                    },
+                    finish = finish,
                 )
             }
 
@@ -114,7 +132,6 @@ fun Splash(
                     splashViewModel = splashViewModel,
                     pass = { pass ->
                         RLog.d("STEP", "move AUTH -> INIT")
-                        // RLog.d("SPLASH", "pass : A $pass")
                         if (pass) step = SplashStep.INIT
                     },
                 )
@@ -181,14 +198,14 @@ private fun NotificationPermission(
     LaunchedEffect(Unit) {
         if (!hasRequested) {
             hasRequested = true
-            RLog.d("KKKKKK", "grant")
+            RLog.d("SPLASH", "grant")
             // 33 이상만 권한 요청
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 val grant = permissionManager.has(permission = requestPermission)
                 val rationale =
                     permissionManager.shouldShowRationale(permission = requestPermission)
 
-                RLog.d("KKKKKK", "grant $grant , rationale : $rationale")
+                RLog.d("SPLASH", "grant $grant , rationale : $rationale")
                 if (!grant) {
                     kotlinx.coroutines.android.awaitFrame()
                     notificationLauncher.launch(requestPermission)
@@ -328,6 +345,49 @@ private fun AuthCheckAlert(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
+private fun ServerMaintainAlert(
+    splashViewModel: SplashViewModel,
+    pass: (Boolean) -> Unit,
+    finish: () -> Unit = {},
+) {
+    val serverMaintain by splashViewModel.serverMainTain.collectAsStateWithLifecycle()
+    val configComplete by RemoteConfig.complete.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    RLog.e("SPLASH", "isMainTain : ${serverMaintain?.maintain} , configComplete : $configComplete")
+
+    if (!configComplete) {
+        pass(false)
+    } else {
+        if (serverMaintain?.maintain == true) {
+            val message = serverMaintain?.message
+            val startTime = localeFormatTimestamp(serverMaintain?.startTime ?: System.currentTimeMillis())
+            val endTime = localeFormatTimestamp(serverMaintain?.endTime ?: TimeUnit.HOURS.toMillis(1))
+            RLog.d("SPLASH", "startTime : ${serverMaintain?.startTime} , endTime : ${serverMaintain?.endTime}")
+            ShortFormCommonAlertDialog(
+                onDismiss = { _ ->
+                    finish()
+                },
+                bodyText =
+                    String.format(
+                        context.getString(R.string.server_maintaing_message_time),
+                        message,
+                        startTime,
+                        endTime,
+                    ),
+                confirmText = context.getString(R.string.alert_ok),
+                cancelText = null,
+                title = serverMaintain?.title ?: "",
+                bodyTextColor = APP_ALERT_BODY_TEXT_COLOR,
+            )
+        } else {
+            pass(true)
+        }
+    }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
 fun InitialDataAndAD(
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
@@ -335,7 +395,6 @@ fun InitialDataAndAD(
     pass: (Boolean) -> Unit,
 ) {
     val locale by splashViewModel.locale.collectAsState(initial = null)
-    Log.d("REQUESTSSSSS", "locale: $locale")
     val hasLoadedOnce by splashViewModel.hasLoadedOnce.collectAsState()
     var showCheck by remember(hasLoadedOnce) { mutableStateOf(false) }
 
@@ -379,11 +438,14 @@ fun InitialDataAndAD(
                 defaultCountryCode = getCountryCode(),
                 options = options,
                 onClick = { countryCode ->
-                    Log.d("REQUESTSSSSS", "befor locale : $locale , after countryCode : $countryCode")
+                    RLog.d(
+                        "SPLASH",
+                        "befor locale : $locale , after countryCode : $countryCode",
+                    )
                     coroutineScope.launch {
                         splashViewModel.setLocale(countryCode)
                     }
-                    Log.d("REQUESTSSSSS", "final locale : $locale")
+                    RLog.d("SPLASH", "final locale : $locale")
 
                     val value = locale ?: "KR"
                     splashViewModel.sendGALog(
@@ -401,9 +463,9 @@ fun InitialDataAndAD(
                         // pass(true)
                         // RLog.d("SPLASH", "newUpdate : $newUpdate")
                     }
-//                    if(mainTrendComplete){
-//                        pass(true)
-//                    }
+                    //                    if(mainTrendComplete){
+                    //                        pass(true)
+                    //                    }
                 },
                 onDismiss = {},
             )

@@ -1,8 +1,17 @@
 package com.sean.ratel.android.data.common
 
+import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue
+import com.sean.player.utils.log.RLog
+import com.sean.ratel.android.R
+import com.sean.ratel.android.data.dto.ServerMaintainResponse
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 object RemoteConfig {
+    private val _complete = MutableStateFlow(false)
+    val complete = _complete.asStateFlow()
+
     val MAIN_AD_KEY: String = "main_ad"
     val MAIN_SHORTFORM_KEY: String = "main_shortform_ad"
     val MAX_EDITOR_PICK_SIZE: String = "max_editor_pick_size"
@@ -23,13 +32,35 @@ object RemoteConfig {
     val DAILY_RANKING_ORDER: String = "daily_ranking_order"
     val RECOMMEND_SHORTFORM_ORDER: String = "recommend_shortform_order"
 
+    val SERVER_MAINTAIN: String = "server_maintain"
+    val SERVER_MAINTAIN_START_TIME: String = "server_maintain_start"
+    val SERVER_MAINTAIN_END_TIME: String = "server_maintain_end"
+
     private val map = hashMapOf<String, Any>()
 
     fun setRemoteConfig(remoteConfigKey: Map<String, FirebaseRemoteConfigValue>) {
         remoteConfigKey.map {
-            when (it.key) {
-                BANNER_AD_VISIBILITY -> map.put(it.key, it.value.asBoolean())
-                else -> map.put(it.key, it.value.asLong())
+            val stringValue = it.value.asString()
+            when {
+                stringValue.toBooleanStrictOrNull() != null -> {
+                    map.put(it.key, stringValue.toBoolean())
+                }
+
+                stringValue.toLongOrNull() != null -> {
+                    map.put(it.key, stringValue.toLong())
+                }
+
+                stringValue.toDoubleOrNull() != null -> {
+                    map.put(it.key, stringValue.toDouble())
+                }
+
+                stringValue.isNotEmpty() -> {
+                    map.put(it.key, stringValue)
+                }
+
+                else -> {
+                    throw IllegalArgumentException("Unsupported value type: ${it.key}")
+                }
             }
         }
     }
@@ -46,5 +77,33 @@ object RemoteConfig {
             return (map[key] as? Long)?.toInt() ?: -99999
         }
         return -99999
+    }
+
+    fun getRemoteConfigServerMaintainValue(
+        context: Context,
+        key: String,
+    ): ServerMaintainResponse? {
+        // 성공
+        RLog.d("SPLASH", "key : ${map[key]}")
+
+        if (map[key] is Long && map[key] == 1L) {
+            val startTime =
+                map[SERVER_MAINTAIN_START_TIME] as? Long ?: System.currentTimeMillis()
+            val endTime = map[SERVER_MAINTAIN_END_TIME] as? Long ?: System.currentTimeMillis()
+
+            return ServerMaintainResponse(
+                maintain = true,
+                code = -99999,
+                title = context.getString(R.string.server_maintaing),
+                message = context.getString(R.string.server_maintaing_message),
+                startTime = startTime,
+                endTime = endTime,
+            )
+        }
+        return null
+    }
+
+    fun loadComplete(complete: Boolean) {
+        _complete.value = complete
     }
 }

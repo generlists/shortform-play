@@ -185,4 +185,8 @@
     <string name="search_recently">最近の検索</string>
     <string name="main_trends_shorts_text">🔥 今日のトレンドは？</string>
 
+    <string name="server_maintaing">🚧 サーバーメンテナンス中</string>
+    <string name="server_maintaing_message">より良いサービスを提供するため、現在メンテナンスを実施しております。\n</string>
+    <string name="server_maintaing_message_time">%1$s\n開始: 📅 %2$s\n終了: 📅 %3$s\n</string>
+
 </resources>

@@ -9,8 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.RANDOM_GA_END_SIZE
@@ -524,38 +522,6 @@ class MainViewModel
 
         suspend fun setWatchVideoList() {
             _watchVideoList.value = getRecentVideo()
-        }
-
-        suspend fun firebaseRemoteConfig(remoteConfig: FirebaseRemoteConfig) {
-            remoteConfig
-                .setDefaultsAsync(R.xml.remote_config_defaults)
-                .addOnSuccessListener {
-                    RemoteConfig.setRemoteConfig(remoteConfig.all)
-                }.addOnFailureListener(
-                    object : OnFailureListener {
-                        override fun onFailure(p0: Exception) {
-                            RLog.e(TAG, "Fail RemoteConfig $p0")
-                        }
-                    },
-                )
-
-            // 2. 서버 값 가져오기 (캐시 0초로 강제 새로고침)
-            remoteConfig
-                .fetchAndActivate()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        val updated = task.result
-                        RLog.d("RemoteConfig", "Fetch success. Updated: $updated")
-                        // 실제 값 로그 출력
-                        remoteConfig.all.forEach { entry ->
-                            RLog.d(TAG, "${entry.key} = ${entry.value.asString()}")
-                        }
-
-                        RemoteConfig.setRemoteConfig(remoteConfig.all)
-                    } else {
-                        RLog.e(TAG, "Fetch failed: ${task.exception}")
-                    }
-                }
         }
 
         private fun isCurrentPageMoreView(): Boolean {
