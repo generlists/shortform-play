@@ -196,4 +196,8 @@
     <string name="search_daily_shorts_blank_text">Pilih tanggal untuk melihat Shorts populer pada hari itu.</string>
     <string name="search_recently">Pencarian terbaru</string>
     <string name="main_trends_shorts_text">🔥 Apa yang trending hari ini?</string>
+
+    <string name="server_maintaing">🚧 Pemeliharaan Server</string>
+    <string name="server_maintaing_message">Kami sedang melakukan pemeliharaan untuk memberikan layanan yang lebih baik.\n</string>
+    <string name="server_maintaing_message_time">%1$s\nMulai: 📅 %2$s\nSelesai: 📅 %3$s\n</string>
 </resources>

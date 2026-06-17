@@ -201,4 +201,8 @@
     <string name="search_recently">Recherches récentes</string>
     <string name="main_trends_shorts_text">🔥 Quelle est la tendance du jour?</string>
 
+    <string name="server_maintaing">🚧 Maintenance du service</string>
+    <string name="server_maintaing_message">Nous effectuons actuellement une maintenance afin d\'améliorer notre service.\n</string>
+    <string name="server_maintaing_message_time">%1$s\nDébut : 📅 %2$s\nFin : 📅 %3$s\n</string>
+
 </resources>

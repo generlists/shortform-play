@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 object TimeUtil {
     fun formatMillisToDate(millis: Long): String {
@@ -335,4 +336,56 @@ object TimeUtil {
                 "$value $text yang lalu"
             }
         }
+
+    // 한국기준 타임스탬프 리턴
+    fun convertToTimeStamp(
+        startDate: String,
+        endDate: String,
+    ) {
+        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd:HH")
+        val startTime = LocalDateTime.parse(startDate, formatter)
+        val endTime = LocalDateTime.parse(endDate, formatter)
+
+        val startTimestamp =
+            startTime
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toInstant()
+                .toEpochMilli()
+        val endTimestamp =
+            endTime
+                .atZone(ZoneId.of("Asia/Seoul"))
+                .toInstant()
+                .toEpochMilli()
+
+        RLog.d("TIME", "startTimestamp : $startTimestamp ,  endTimestamp : $endTimestamp")
+    }
+
+    // 국가별로 시간과 다국어 적용
+    fun localeFormatTimestamp(
+        timestamp: Long,
+        locale: Locale = Locale.getDefault(),
+    ): String {
+        RLog.d("TIME", "startTimestamp : $timestamp ,  endTimestamp : $timestamp")
+        val zoneId = ZoneId.systemDefault()
+        val dateTime =
+            Instant
+                .ofEpochMilli(timestamp)
+                .atZone(zoneId)
+
+        val formatter =
+            when (locale.language) {
+                "ko" -> DateTimeFormatter.ofPattern("yyyy년 M월 d일 a h시", locale)
+                "ja" -> DateTimeFormatter.ofPattern("yyyy年M月d日 H時", locale)
+                "zh" -> DateTimeFormatter.ofPattern("yyyy年M月d日 ah時", locale)
+                "th" -> DateTimeFormatter.ofPattern("d MMM yyyy HH:mm", locale)
+                "id" -> DateTimeFormatter.ofPattern("d MMM yyyy HH:mm", locale)
+                else -> DateTimeFormatter.ofPattern("MMM d, yyyy h:mm a", locale)
+            }
+
+        RLog.d("TIME", "timezone=${TimeZone.getDefault().id}")
+
+        RLog.d("TIME", "zoneId=${ZoneId.systemDefault()}")
+
+        return dateTime.format(formatter)
+    }
 }

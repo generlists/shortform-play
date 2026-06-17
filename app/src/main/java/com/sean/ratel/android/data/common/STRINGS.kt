@@ -22,6 +22,7 @@ object STRINGS {
     const val MAX_ADAPTIVE_BANNER_SIZE = 100
 
     val REMAIN_AD_MARGIN = 24.dp
+    val REMOTE_CONFIg_INTERVAL = 10L
 
     val NOTIFICATON_ID = "notification_id"
     val NOTIFICATON_TYPE = "notification_type"

@@ -3,7 +3,6 @@ package com.sean.ratel.android.ui.ad
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.ads.LoadAdError
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,6 +15,7 @@ import javax.inject.Inject
  * 광고과련 Event ViewModel
  */
 @Suppress("ktlint:standard:property-naming")
+@Deprecated("라이브러리 교체로 다른 view Model 로 이관")
 @HiltViewModel
 class AdViewModel
     @Inject
@@ -24,9 +24,6 @@ class AdViewModel
     ) : ViewModel() {
         private val _bottomBarHeight = mutableStateOf(56)
         val bottomBarHeight = _bottomBarHeight
-
-        private val _adNativeFail = MutableStateFlow<LoadAdError?>(null)
-        val adNativeFail: StateFlow<LoadAdError?> = _adNativeFail
 
         private val _forceClearCache = MutableStateFlow(false)
         val forceClearCache: StateFlow<Boolean> = _forceClearCache

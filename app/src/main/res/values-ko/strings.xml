@@ -188,5 +188,8 @@
     <string name="search_recently">최근 검색</string>
     <string name="main_trends_shorts_text">🔥 오늘의 트랜드는?</string>
 
+    <string name="server_maintaing">🚧 서비스 점검중</string>
+    <string name="server_maintaing_message"> 더 나은 서비스를 위해 점검 중입니다.\n</string>
+    <string name="server_maintaing_message_time">%1$s\n시작: 📅 %2$s\n종료: 📅 %3$s\n</string>
 
 </resources>

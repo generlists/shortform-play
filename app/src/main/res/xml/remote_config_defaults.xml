@@ -64,4 +64,16 @@
         <key>recommend_shortform_order</key>
         <value>7</value>
     </entry>
+    <entry>
+        <key>server_maintain</key>
+        <value>0</value>
+    </entry>
+    <entry>
+        <key>server_maintain_start</key>
+        <value>1781701200000</value>
+    </entry>
+    <entry>
+        <key>server_maintain_end</key>
+        <value>1781708400000</value>
+    </entry>
 </defaultsMap>

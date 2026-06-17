@@ -184,4 +184,9 @@
     <string name="search_daily_shorts_blank_text">選擇日期後\n可以查看當天的熱門 Shorts</string>
     <string name="search_recently">最近搜尋</string>
     <string name="main_trends_shorts_text">🔥 今天的趨勢是什麼？</string>
+
+    <string name="server_maintaing">🚧 服務維護中</string>
+    <string name="server_maintaing_message">為了提供更好的服務，目前正在進行系統維護。\n</string>
+    <string name="server_maintaing_message_time">%1$s\n開始時間：📅 %2$s\n結束時間：📅 %3$s\n
+</string>
 </resources>

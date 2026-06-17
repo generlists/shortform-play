@@ -188,4 +188,8 @@
     <string name="search_daily_shorts_blank_text">Select a date to see popular Shorts from that day</string>
     <string name="search_recently">Recent searches</string>
     <string name="main_trends_shorts_text">🔥 "What's trending today?"</string>
+
+    <string name="server_maintaing">🚧 Service Maintenance</string>
+    <string name="server_maintaing_message">We are currently performing maintenance to provide a better service.\n</string>
+    <string name="server_maintaing_message_time">%1$s\n Start: 📅 %2$s\n End: 📅 %3$s\n</string>
 </resources>

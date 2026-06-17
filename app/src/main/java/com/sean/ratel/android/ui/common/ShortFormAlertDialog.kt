@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -48,10 +49,24 @@ fun ShortFormCommonAlertDialog(
     bodyText: String,
     confirmText: String,
     cancelText: String? = null,
+    title: String? = null,
+    bodyTextColor: Color = APP_TEXT_COLOR,
 ) {
     RatelDialogThemeOverlay {
         AlertDialog(
             onDismissRequest = {},
+            title = {
+                title?.let {
+                    Text(
+                        it,
+                        fontFamily = FontFamily.SansSerif,
+                        fontStyle = FontStyle.Normal,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 13.sp,
+                        color = APP_TEXT_COLOR,
+                    )
+                }
+            },
             text = {
                 Text(
                     bodyText,
@@ -59,7 +74,7 @@ fun ShortFormCommonAlertDialog(
                     fontStyle = FontStyle.Normal,
                     fontWeight = FontWeight.SemiBold,
                     fontSize = 14.sp,
-                    color = APP_TEXT_COLOR,
+                    color = bodyTextColor,
                 )
             },
             buttons = {
@@ -238,6 +253,14 @@ private fun ShortFormCommonAlertDialogPreView() {
             listOf(Pair<String, String>("대한 민국", "KR"), Pair<String, String>("미국", "US")),
             {},
             {},
+        )
+        ShortFormCommonAlertDialog(
+            onDismiss = {
+            },
+            "내용",
+            "확인",
+            null,
+            "서버점검중 입니다.",
         )
     }
 }
