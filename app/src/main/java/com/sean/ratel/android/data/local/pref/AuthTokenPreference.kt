@@ -5,8 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.sean.player.utils.log.RLog
 import kotlinx.coroutines.flow.first
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -30,11 +30,11 @@ class AuthTokenPreference
                 val remainingHours = remainingMs / 1000 / 3600
                 RLog.d(TAG, "남은 시간(시간 단위): $remainingHours")
                 RLog.d(TAG, "currentTime : ${System.currentTimeMillis()}")
-                cachedToken = if (System.currentTimeMillis() < exp) prefs [accessToken] else null
+                cachedToken = if (System.currentTimeMillis() < exp) prefs[accessToken] else null
             }
         }
 
-        suspend fun currentToken(): String? = dataStore.data.first() [accessToken]
+        suspend fun currentToken(): String? = dataStore.data.first()[accessToken]
 
         suspend fun saveAccessToken(
             token: String,

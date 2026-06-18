@@ -71,9 +71,9 @@ fun ShortFormPlayApp(
                 if (isTopViewVisible) {
                     HomeTopBar(
                         modifier = Modifier.padding(top = insetPaddingValue),
-                        mainViewModel,
-                        pushViewModel,
-                        currentRoute,
+                        mainViewModel = mainViewModel,
+                        pushViewModel = pushViewModel,
+                        isHomeNaviBar = currentRoute,
                         historyBack = {
                             mainViewModel.runNavigationBack(Destination.YouTube.route)
                         },

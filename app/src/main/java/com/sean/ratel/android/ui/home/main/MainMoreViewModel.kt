@@ -2,7 +2,6 @@ package com.sean.ratel.android.ui.home.main
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.dto.ChannelSubscriptionList
 import com.sean.ratel.android.data.dto.ChannelSubscriptionUpList
 import com.sean.ratel.android.data.dto.ChannelVideoList
@@ -19,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.withContext
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
 @Suppress("ktlint:standard:property-naming")

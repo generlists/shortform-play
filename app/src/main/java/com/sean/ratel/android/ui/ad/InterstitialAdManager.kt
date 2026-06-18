@@ -1,10 +1,9 @@
 package com.sean.ratel.android.ui.ad
 
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.common.RemoteConfig.END_AD_POSITION
 import com.sean.ratel.android.data.common.RemoteConfig.getRemoteConfigIntValue
-import com.sean.ratel.player.core.domain.YouTubeStreamPlayer
+import com.sean.ratel.player.core.data.domain.YouTubeStreamPlayer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -13,6 +12,7 @@ import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.AdsSdk
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
 import so.smartlab.common.ad.admob.data.model.AdMobInterstitialAdState
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 import javax.inject.Singleton
 

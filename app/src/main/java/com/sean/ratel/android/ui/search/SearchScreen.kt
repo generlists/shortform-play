@@ -41,7 +41,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
@@ -59,6 +58,7 @@ import com.sean.ratel.android.ui.theme.APP_FILTER_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_SEARCH_FILTER_BORDER
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import so.smartlab.common.utils.log.RLog
 
 private const val TAG = "ShortForm"
 

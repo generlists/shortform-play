@@ -46,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
@@ -59,6 +60,7 @@ import com.sean.ratel.android.utils.PhoneUtil.searchButton
 import com.sean.ratel.android.utils.PhoneUtil.shareAppLinkButton
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 import com.sean.ratel.android.utils.findActivity
+import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -304,8 +306,10 @@ fun NotificationIconButton(
 @Composable
 fun PIPButton(mainViewModel: MainViewModel?) {
     val context = LocalContext.current
-    val pipAction = mainViewModel?.pipClick?.collectAsState(initial = Pair(false, null))
+    val pipAction = mainViewModel?.pipClick?.collectAsStateWithLifecycle(initialValue = null)
     val pipButtonEnabled = remember { mutableStateOf(false) }
+    val fragment = mainViewModel?.topPipClick?.collectAsStateWithLifecycle()
+    val str = stringResource(R.string.setting_pip_go)
 
     LaunchedEffect(Unit) {
         mainViewModel?.buttonClickState?.collect {
@@ -323,15 +327,17 @@ fun PIPButton(mainViewModel: MainViewModel?) {
                         Toast
                             .makeText(
                                 context,
-                                context.getString(R.string.setting_pip_go),
+                                str,
                                 Toast.LENGTH_SHORT,
                             ).show()
 
                         mainViewModel?.goSettingView()
                     } else {
+                        RLog.d("PIP_CLICK", "currentFragment : $fragment")
                         val action = !(pipAction?.value?.first ?: false)
                         val viewPager = pipAction?.value?.second
                         mainViewModel?.setPIPClick(Pair(action, viewPager))
+                        fragment?.value?.onClickPipButton()
                     }
                 },
             ),

@@ -63,7 +63,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.google.firebase.analytics.FirebaseAnalytics.Event
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS
@@ -83,6 +82,7 @@ import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import com.sean.ratel.android.utils.UIUtil.getScreenWidthDp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import so.smartlab.common.utils.log.RLog
 import java.util.Locale
 
 @Suppress("ktlint:standard:function-naming")
@@ -300,8 +300,7 @@ fun AutoScrollImagePager(
                                             // Box 높이와 맞추기
                                             endY = heightInPx,
                                         ),
-                                    )
-                                    .height(150.dp)
+                                    ).height(150.dp)
                                     .align(Alignment.BottomCenter)
                                     .padding(top = 7.dp),
                             ) {

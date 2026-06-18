@@ -168,6 +168,9 @@ android {
                 )
 
             signingConfig = signingConfigs.getByName("debug")
+            manifestPlaceholders["IS_DEBUG"] = true
+            manifestPlaceholders["IS_DEBUG_UDP"] = false
+            manifestPlaceholders["IS_DEBUG_LINK_SOURCE"] = false
         }
         release {
 
@@ -259,6 +262,9 @@ android {
             manifestPlaceholders["admobAppId"] =
                 localProperties.getProperty("release_admobAppId", "")
             signingConfig = signingConfigs.getByName("release")
+            manifestPlaceholders["IS_DEBUG"] = false
+            manifestPlaceholders["IS_DEBUG_UDP"] = false
+            manifestPlaceholders["IS_DEBUG_LINK_SOURCE"] = false
         }
     }
 
@@ -271,8 +277,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlin {
-        jvmToolchain(11)
+    kotlinOptions {
+        jvmTarget = "11"
     }
     packaging {
         resources {
@@ -284,18 +290,24 @@ android {
             excludes.add("META-INF/NOTICE.txt")
         }
     }
-
-    hilt {
-        enableAggregatingTask = false // https://ovso.tistory.com/475
-    }
+    // DatabaseProvider 가 못찾는게 이 문제때문이라 주석 처리
+//    hilt {
+//        enableAggregatingTask = false // https://ovso.tistory.com/475
+//    }
 }
 
 dependencies {
 
-    implementation(libs.ai.shortformplay)
+    // player
+    implementation(libs.ai.shortformplay.core)
+    implementation(libs.ai.shortformplay.utils)
+    implementation(libs.ai.shortformplay.ui)
+
+    // common
     implementation(libs.so.smartlab.sdk.common.ad.android)
     implementation(libs.so.smartlab.sdk.common.push.android)
     implementation(libs.so.smartlab.sdk.common.review.android)
+    implementation(libs.so.smartlab.sdk.common.utils.android)
     // androidx
     // Lifecycle
     implementation(libs.androidx.core.ktx)

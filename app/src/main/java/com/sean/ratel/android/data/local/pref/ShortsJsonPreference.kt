@@ -4,7 +4,6 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.dto.MainShortsResponse
 import com.sean.ratel.android.data.dto.TrendShortsResponse
 import com.sean.ratel.android.utils.UIUtil.jsonToMainShortsObject
@@ -13,6 +12,7 @@ import com.sean.ratel.android.utils.UIUtil.mainShortsListToJson
 import com.sean.ratel.android.utils.UIUtil.trendsShortsListToJson
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 import javax.inject.Singleton
 

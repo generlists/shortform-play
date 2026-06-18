@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.RANDOM_GA_END_SIZE
 import com.sean.ratel.android.data.dto.MainShortFormList
@@ -22,6 +21,7 @@ import com.sean.ratel.android.data.repository.SearchResultDataRepository
 import com.sean.ratel.android.data.repository.SettingRepository
 import com.sean.ratel.android.ui.ad.AdTarget
 import com.sean.ratel.android.ui.ad.InterstitialAdManager
+import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.home.TopicFilterType
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -49,6 +49,7 @@ import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
 import so.smartlab.common.push.PushSDK
 import so.smartlab.common.review.ReviewManager
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 import kotlin.random.Random
 
@@ -166,6 +167,10 @@ class MainViewModel
         private val _currentCategory = MutableStateFlow<String>("0")
         val currentCategory: MutableStateFlow<String> = _currentCategory
 
+        private val _topPipClick =
+            MutableStateFlow<YouTubeEndFragment?>(null)
+        val topPipClick: StateFlow<YouTubeEndFragment?> = _topPipClick
+
         private val _interstitialAdStart =
             MutableSharedFlow<AdTarget>(
                 replay = 1,
@@ -177,7 +182,6 @@ class MainViewModel
             route: String,
             adStart: Boolean,
         ) {
-            // _interstitialAdStart.value = adStart
             _interstitialAdStart.tryEmit(AdTarget(route, adStart))
         }
 
@@ -188,6 +192,12 @@ class MainViewModel
                 "MainViewModel",
                 "_pipClick : ${_pipClick.value},  _isTopViewVisible : ${_isTopViewVisible.value}",
             )
+        }
+
+        fun setTopPipClick(fragment: YouTubeEndFragment?) {
+            RLog.d("first111111", "fragment : $fragment")
+
+            _topPipClick.value = fragment
         }
 
         fun setViewPager(viewPager2: ViewPager2?) {

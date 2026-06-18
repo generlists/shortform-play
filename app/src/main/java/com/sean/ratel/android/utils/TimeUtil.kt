@@ -1,7 +1,7 @@
 package com.sean.ratel.android.utils
 
 import android.annotation.SuppressLint
-import com.sean.player.utils.log.RLog
+import so.smartlab.common.utils.log.RLog
 import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.LocalDate

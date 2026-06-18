@@ -3,6 +3,7 @@ package com.sean.ratel.android.ui.end
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -54,28 +56,26 @@ import androidx.viewpager2.widget.ViewPager2
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.databinding.YoutubeVideoEndBinding
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.InterstitialAdManager
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.UpdateStateBar
-import com.sean.ratel.android.ui.pip.PIPViewModel
-import com.sean.ratel.android.ui.pip.PipResult
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.NetworkUtil
 import com.sean.ratel.android.utils.TimeUtil.formatTimeFromFloat
+import com.sean.ratel.player.core.data.domain.YouTubeStreamPlayer
+import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackState
+import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlayerError
+import com.sean.ratel.player.core.data.player.pip.PIPManager
+import com.sean.ratel.player.core.data.player.pip.PipResult
 import com.sean.ratel.player.core.data.player.youtube.YouTubeStreamPlayerAdapterImpl
 import com.sean.ratel.player.core.data.player.youtube.YouTubeStreamPlayerImpl
 import com.sean.ratel.player.core.data.player.youtube.adaptor.YouTubeStreamPlayerAdapter
-import com.sean.ratel.player.core.domain.YouTubeStreamPlayer
-import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlaybackState
-import com.sean.ratel.player.core.domain.model.youtube.YouTubeStreamPlayerError
 import com.sean.ratel.player.core.util.launch
 import com.sean.ratel.player.core.util.repeatOnStart
 import dagger.hilt.android.AndroidEntryPoint
@@ -84,6 +84,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
 /**
@@ -113,12 +114,14 @@ class YouTubeEndFragment(
 
     // hilt 로 주입했을경우 아래처럼 선천해야함
     private val youtubeContentEndViewModel: YouTubeContentEndViewModel by viewModels()
-    private val pipViewModel: PIPViewModel by viewModels()
+
+    @Inject
+    lateinit var pipManager: PIPManager
 
     // 최근본 영상 저장 하기위
     lateinit var mainViewModel: MainViewModel // lateinit으로 선언
 
-    private val adViewModel: AdViewModel by viewModels()
+    val rect = Rect()
 
     @Inject
     lateinit var iFramePlayerOptions: IFramePlayerOptions
@@ -188,27 +191,37 @@ class YouTubeEndFragment(
     }
 
     fun onClickPipButton() {
-        val videoSize = youTubeStreamPlayer.getVideoSize()
-        val isPlaying = youTubeStreamPlayer.isPlaying()
-        val visibleRect = Rect()
-        binding.root.getGlobalVisibleRect(visibleRect)
+        val v = binding.root.findViewById<ConstraintLayout>(R.id.end_root)
+
+        v.getGlobalVisibleRect(rect)
+
+        val screenWidth = v.width
+        val screenHeight = v.height
+
+        RLog.d(
+            "PIP_CLICK",
+            """
+            rootHeight=$screenHeight
+            rootWidth=$screenWidth
+            rect=$rect
+            rectHeight=${ rect.height()}}
+            hashCode=${this.hashCode()}}
+            """.trimIndent(),
+        )
 
         val enterPipMode =
-            pipViewModel.enterPipMode(
-                requireActivity(),
-                videoSize,
-                visibleRect,
-                isPlaying = isPlaying,
+
+            pipManager.enterPipMode(
+                videoSize = Size(1344, 2922),
+                rect = rect,
+                isPlaying = true,
+                isFirst = null,
+                isLast = null,
             )
 
         when (enterPipMode) {
             PipResult.NoSystemFeature -> {
-                Toast
-                    .makeText(
-                        requireActivity(),
-                        requireActivity().getString(R.string.pip_memory_error),
-                        Toast.LENGTH_LONG,
-                    ).show()
+                Toast.makeText(requireActivity(), "PIP error", Toast.LENGTH_LONG).show()
             }
 
             PipResult.NoPermission -> {
@@ -235,6 +248,7 @@ class YouTubeEndFragment(
             ) { pipclick, currentSelection ->
                 Pair(pipclick, currentSelection)
             }.collect { pair ->
+                RLog.d("000000", "pair : ${pair.first.first}")
                 if (!pair.first.first) {
                     youTubeStreamPlayer.pause()
                     youTubeStreamPlayer.setMute(true)
@@ -452,8 +466,7 @@ class YouTubeEndFragment(
                 val visibleRect = Rect()
                 binding.root.getGlobalVisibleRect(visibleRect)
 
-                pipViewModel.updatePipParams(
-                    requireActivity(),
+                pipManager.updatePipParams(
                     youTubeStreamPlayer.isPlaying(),
                     youTubeStreamPlayer.getVideoSize(),
                     rect = visibleRect,

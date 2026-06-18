@@ -3,10 +3,10 @@ package com.sean.ratel.android.ui.push
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.repository.PushReceiverEntryPoint
 import dagger.hilt.android.EntryPointAccessors
 import so.smartlab.common.push.fcm.data.domain.PushEvent
+import so.smartlab.common.utils.log.RLog
 
 class PushEventReceiver : BroadcastReceiver() {
     override fun onReceive(

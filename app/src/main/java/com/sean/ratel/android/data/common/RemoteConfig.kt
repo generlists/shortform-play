@@ -2,11 +2,11 @@ package com.sean.ratel.android.data.common
 
 import android.content.Context
 import com.google.firebase.remoteconfig.FirebaseRemoteConfigValue
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.ServerMaintainResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import so.smartlab.common.utils.log.RLog
 
 object RemoteConfig {
     private val _complete = MutableStateFlow(false)

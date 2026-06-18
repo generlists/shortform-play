@@ -14,7 +14,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
@@ -41,6 +40,7 @@ import com.sean.ratel.android.ui.splash.SplashViewModel
 import com.sean.ratel.android.ui.toolbox.AppManagerView
 import com.sean.ratel.android.ui.toolbox.AppManagerViewModel
 import kotlinx.coroutines.flow.combine
+import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
 @Composable

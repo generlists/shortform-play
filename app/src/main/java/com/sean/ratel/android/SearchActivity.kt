@@ -9,7 +9,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
@@ -17,6 +16,7 @@ import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.search.SearchScreen
 import com.sean.ratel.android.ui.search.SearchViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import so.smartlab.common.utils.log.RLog
 
 @AndroidEntryPoint
 class SearchActivity : FragmentActivity() {

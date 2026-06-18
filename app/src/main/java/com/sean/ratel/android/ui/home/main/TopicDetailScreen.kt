@@ -66,7 +66,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
@@ -87,6 +86,7 @@ import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.isTablet
 import com.sean.ratel.android.utils.UIUtil.pixelToDp
 import com.sean.ratel.android.utils.findActivity
+import so.smartlab.common.utils.log.RLog
 
 @OptIn(ExperimentalFoundationApi::class)
 @Suppress("ktlint:standard:function-naming")
