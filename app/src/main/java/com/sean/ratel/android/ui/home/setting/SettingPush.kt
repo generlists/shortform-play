@@ -49,7 +49,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.ui.push.PushChannelHelper
 import com.sean.ratel.android.ui.push.PushChannelIds
 import com.sean.ratel.android.ui.push.PushViewModel
@@ -59,6 +58,7 @@ import com.sean.ratel.android.ui.theme.RatelappTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
 @Composable

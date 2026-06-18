@@ -6,7 +6,6 @@ import com.google.android.play.core.integrity.IntegrityManagerFactory
 import com.google.android.play.core.integrity.StandardIntegrityException
 import com.google.android.play.core.integrity.StandardIntegrityManager
 import com.google.android.play.core.integrity.StandardIntegrityManager.StandardIntegrityTokenRequest
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.api.ApiResult
 import com.sean.ratel.android.data.api.ApiResult.Loading.safeApiCall
@@ -19,6 +18,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.resume

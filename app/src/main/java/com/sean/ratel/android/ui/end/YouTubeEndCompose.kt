@@ -67,7 +67,6 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.YouTubeUtils
@@ -84,6 +83,7 @@ import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import com.sean.ratel.android.utils.findActivity
 import kotlinx.coroutines.launch
+import so.smartlab.common.utils.log.RLog
 import java.util.Locale
 
 @Suppress("ktlint:standard:function-naming")

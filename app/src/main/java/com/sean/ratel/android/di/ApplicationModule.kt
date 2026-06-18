@@ -52,7 +52,7 @@ import com.sean.ratel.android.di.qualifier.Region
 import com.sean.ratel.android.di.qualifier.RemoteIntervalTime
 import com.sean.ratel.android.di.qualifier.TestHashId
 import com.sean.ratel.android.utils.PhoneUtil
-import com.sean.ratel.player.core.domain.api.UserAgentProvider
+import com.sean.ratel.player.core.data.domain.api.UserAgentProvider
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

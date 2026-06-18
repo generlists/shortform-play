@@ -16,7 +16,6 @@ import androidx.viewpager2.widget.ViewPager2
 import com.google.android.gms.ads.AdSize
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.MAIN_AD_KEY
 import com.sean.ratel.android.data.common.RemoteConfig.MAIN_SHORTFORM_KEY
@@ -26,6 +25,7 @@ import com.sean.ratel.android.data.dto.TrendShortsResponse
 import com.sean.ratel.android.ui.end.YouTubeContentEndViewModel
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.navigation.Destination
+import so.smartlab.common.utils.log.RLog
 import java.text.DecimalFormat
 import java.util.Locale
 import kotlin.random.Random

@@ -19,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.api.UiState
@@ -37,6 +36,7 @@ import com.sean.ratel.android.ui.search.DailySearchResultScreen
 import com.sean.ratel.android.ui.search.SearchFilterActions
 import com.sean.ratel.android.ui.search.SearchViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import so.smartlab.common.utils.log.RLog
 import java.time.LocalDate
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter

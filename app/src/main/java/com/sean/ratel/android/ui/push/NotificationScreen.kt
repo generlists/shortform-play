@@ -57,7 +57,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.net.toUri
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
@@ -81,6 +80,7 @@ import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.findActivity
 import kotlinx.coroutines.delay
+import so.smartlab.common.utils.log.RLog
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

@@ -25,13 +25,13 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.ui.push.PushChannelHelper.openChannelNotificationSettings
 import com.sean.ratel.android.ui.push.PushChannelIds
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import kotlinx.coroutines.launch
+import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
 @Composable

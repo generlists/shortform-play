@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.widget.ViewPager2
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.dto.MainShortsModel
@@ -31,9 +30,11 @@ import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.UIUtil.findCurrentFragment
+import com.sean.ratel.android.utils.UIUtil.getEndFragment
 import com.sean.ratel.android.utils.findActivity
 import com.sean.ratel.android.utils.findFragmentActivity
 import kotlinx.coroutines.launch
+import so.smartlab.common.utils.log.RLog
 
 private const val TAG = "YouTubeContentEnd"
 
@@ -448,6 +449,11 @@ fun FragmentContainer(
                         override fun onPageSelected(position: Int) {
                             RLog.d(TAG, "position : $position")
                             mainViewModel.setCurrentSelection(position)
+                            // PIP 를 위해 현재 보이는 Fragment 를 넘긴다.
+                            activity?.let {
+                                val currentFragment = getEndFragment(activity, this@apply)
+                                mainViewModel.setTopPipClick(currentFragment)
+                            }
                         }
 
                         override fun onPageScrollStateChanged(state: Int) {

@@ -3,8 +3,8 @@ package com.sean.ratel.android.utils
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import com.sean.player.utils.log.RLog
 import dagger.hilt.android.qualifiers.ApplicationContext
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 import javax.inject.Singleton
 

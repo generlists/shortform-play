@@ -20,13 +20,13 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.R
 import com.sean.ratel.android.SearchActivity
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.data.common.STRINGS.MY_EMAIL_ACCOUNT
 import com.sean.ratel.android.utils.UIUtil.toBundle
+import so.smartlab.common.utils.log.RLog
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import kotlin.math.ceil

@@ -17,10 +17,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalDensity
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.lifecycleScope
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import so.smartlab.common.utils.log.RLog
 
 object ComposeUtil {
     @Composable

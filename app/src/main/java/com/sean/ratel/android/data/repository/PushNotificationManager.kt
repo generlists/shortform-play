@@ -12,7 +12,6 @@ import androidx.core.app.NotificationCompat
 import androidx.core.net.toUri
 import coil.ImageLoader
 import coil.request.ImageRequest
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.NOTIFICATON_CLICK
@@ -33,6 +32,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import so.smartlab.common.push.fcm.data.domain.PushType
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 import javax.inject.Singleton
 

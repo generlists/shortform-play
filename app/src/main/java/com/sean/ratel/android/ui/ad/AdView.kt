@@ -19,7 +19,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.ui.ad.AdBannerLocation.BOTTOM
 import com.sean.ratel.android.ui.ad.AdBannerLocation.TOP
@@ -31,6 +30,7 @@ import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
 import so.smartlab.common.ad.admob.ui.kind.AdaptiveInLineBannerView
 import so.smartlab.common.ad.admob.ui.kind.FixedBannerView
+import so.smartlab.common.utils.log.RLog
 
 const val TAG = "ADView"
 

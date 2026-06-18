@@ -3,10 +3,10 @@ package com.sean.ratel.android.data.log
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.utils.TimeUtil
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
 class GALog

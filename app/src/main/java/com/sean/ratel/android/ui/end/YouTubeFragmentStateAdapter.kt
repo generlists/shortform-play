@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.dto.MainShortsModel
+import so.smartlab.common.utils.log.RLog
 
 class YouTubeFragmentStateAdapter(
     activity: FragmentActivity,
@@ -34,15 +34,14 @@ class YouTubeFragmentStateAdapter(
         return id.hashCode().toLong()
     }
 
-    override fun createFragment(position: Int): Fragment {
-        return YouTubeEndFragment.newInstance(
+    override fun createFragment(position: Int): Fragment =
+        YouTubeEndFragment.newInstance(
             viewPager2,
             position,
             fromSearch,
             dataList.size,
             dataList[position],
         )
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun submitList(newList: List<MainShortsModel>) {

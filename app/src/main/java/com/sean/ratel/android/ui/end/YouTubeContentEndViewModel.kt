@@ -8,7 +8,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.api.ApiResult
 import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.dto.MainShortFormList
@@ -36,6 +35,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import so.smartlab.common.review.ReviewManager
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
 @Suppress("ktlint:standard:property-naming")

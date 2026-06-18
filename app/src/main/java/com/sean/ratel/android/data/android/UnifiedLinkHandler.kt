@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
 import com.sean.ratel.android.ui.home.ViewType
@@ -12,6 +11,7 @@ import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.getAppVersionCode
 import dagger.hilt.android.qualifiers.ApplicationContext
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
 class UnifiedLinkHandler

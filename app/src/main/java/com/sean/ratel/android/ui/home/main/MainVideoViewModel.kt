@@ -2,12 +2,12 @@ package com.sean.ratel.android.ui.home.main
 
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.navigation.Navigator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
 @Suppress("ktlint:standard:property-naming")

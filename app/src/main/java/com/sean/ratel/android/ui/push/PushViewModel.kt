@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import coil.ImageLoader
 import com.google.gson.Gson
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.android.permission.PermissionProvider
 import com.sean.ratel.android.data.domain.model.push.PushModel
 import com.sean.ratel.android.data.domain.model.push.toPushModel
@@ -31,6 +30,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import so.smartlab.common.push.PushSDK
 import so.smartlab.common.push.fcm.data.domain.PushEvent
+import so.smartlab.common.utils.log.RLog
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId

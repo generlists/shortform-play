@@ -20,7 +20,6 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.android.UnifiedLinkHandler
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.APP_MANAGER
 import com.sean.ratel.android.data.android.UnifiedLinkHandler.Companion.HOME
@@ -45,13 +44,13 @@ import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Destination.Screen.Companion.BASE_DEEPLINK_URL
-import com.sean.ratel.android.ui.pip.PipAction
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.UIUtil.getEndFragment
-import com.sean.ratel.android.utils.UIUtil.hasPipPermission
+import com.sean.ratel.player.core.data.player.pip.PIPManager
+import com.sean.ratel.player.core.data.player.pip.PipAction
 import com.sean.ratel.player.core.util.launch
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -61,6 +60,7 @@ import so.smartlab.common.ad.admob.data.GoogleMobileAdsConsentManager
 import so.smartlab.common.review.ReviewManager
 import so.smartlab.common.review.ui.ReviewDialog
 import so.smartlab.common.review.ui.ReviewDialogTheme
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
 /**
@@ -77,6 +77,9 @@ class MainActivity : FragmentActivity() {
 
     @Inject
     lateinit var reviewManager: ReviewManager
+
+    @Inject
+    lateinit var pipManager: PIPManager
 
     val mainViewModel by viewModels<MainViewModel>()
     val adViewModel by viewModels<AdViewModel>()
@@ -127,6 +130,8 @@ class MainActivity : FragmentActivity() {
             }
         }
         if (googleMobileAdsConsentManager.canRequestAds) mainViewModel.initAdMobSDK(this)
+
+        pipManager.bind(this)
 
         setContent {
             ReviewDialog(reviewManager, theme = default())
@@ -283,8 +288,12 @@ class MainActivity : FragmentActivity() {
         }
         launch {
             mainViewModel.viewPager2.collect {
+                RLog.d("OOOOOOOOOO", "viewPager2 : $it , isInPictureInPictureMode $isInPictureInPictureMode")
                 mainViewModel.setPIPClick(Pair(isInPictureInPictureMode, it))
             }
+        }
+        launch {
+            pipManager.refreshActions()
         }
     }
 
@@ -316,40 +325,6 @@ class MainActivity : FragmentActivity() {
                 PipAction.isPlayAction(intent) -> pipButtonState.tryEmit(PipAction.PLAY.intentExtraValue)
                 PipAction.isPreviousAction(intent) -> pipButtonState.tryEmit(PipAction.SKIP_PREVIOUS.intentExtraValue)
                 PipAction.isNextAction(intent) -> pipButtonState.tryEmit(PipAction.SKIP_NEXT.intentExtraValue)
-            }
-        }
-    }
-
-    @Override
-    override fun onResume() {
-        super.onResume()
-        pipClickProcess()
-    }
-
-    private fun pipClickProcess() {
-        launch {
-            combine(
-                mainViewModel.pipClick,
-                mainViewModel.viewPager2,
-            ) { pipClick, viewPager2 ->
-
-                Pair(pipClick, viewPager2)
-            }.collect { combinedResult ->
-
-                val (pipClick, viewPager2) = combinedResult
-
-                if (pipClick.first) {
-                    val currentIndex = pipClick.second?.currentItem ?: 0
-                    val fragmentManager =
-                        (this@MainActivity as FragmentActivity).supportFragmentManager
-                    val itemId = viewPager2?.adapter?.getItemId(currentIndex)
-                    val fragment =
-                        fragmentManager.findFragmentByTag("f$itemId") as? YouTubeEndFragment
-                    if (hasPipPermission()) {
-                        fragment?.onClickPipButton()
-                        currentItem.value = pipClick.second?.currentItem ?: 0
-                    }
-                }
             }
         }
     }

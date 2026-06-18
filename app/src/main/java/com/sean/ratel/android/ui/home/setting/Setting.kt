@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.ad.AdViewModel
@@ -35,6 +34,7 @@ import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.PhoneUtil
 import so.smartlab.common.ad.admob.data.model.AdMobBannerState
+import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
 @Composable

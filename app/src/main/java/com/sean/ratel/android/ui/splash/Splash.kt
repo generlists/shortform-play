@@ -34,7 +34,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.storage.FirebaseStorage
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.RemoteConfig
@@ -60,6 +59,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
+import so.smartlab.common.utils.log.RLog
 import java.util.concurrent.TimeUnit
 
 enum class SplashStep {

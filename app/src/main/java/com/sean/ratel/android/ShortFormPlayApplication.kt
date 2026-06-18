@@ -2,9 +2,9 @@ package com.sean.ratel.android
 
 import android.app.Application
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.data.common.RemoteConfig
 import dagger.hilt.android.HiltAndroidApp
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -53,7 +53,7 @@ class ShortFormPlayApplication : Application() {
                             RemoteConfig.setRemoteConfig(remoteConfig.all)
                         } else {
                             RLog.e(
-                                "hbungshin",
+                                "ShortFormPlayApplication",
                                 "Fetch failed: ${task.exception}",
                             )
                         }
@@ -62,7 +62,7 @@ class ShortFormPlayApplication : Application() {
                         onComplete()
                     }
             }.addOnFailureListener {
-                RLog.e("Application", "Default load failed: $it")
+                RLog.e("ShortFormPlayApplication", "Default load failed: $it")
 
                 onComplete()
             }

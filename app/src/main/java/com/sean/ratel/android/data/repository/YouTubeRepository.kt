@@ -5,7 +5,6 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.sean.player.utils.log.RLog
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.api.ApiResult
 import com.sean.ratel.android.data.api.NoConnectivityException
@@ -32,6 +31,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.HttpException
+import so.smartlab.common.utils.log.RLog
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
