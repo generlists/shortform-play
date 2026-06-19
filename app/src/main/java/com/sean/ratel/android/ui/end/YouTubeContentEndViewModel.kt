@@ -27,6 +27,7 @@ import com.sean.ratel.android.utils.UIUtil.getLanguageCode
 import com.sean.ratel.android.utils.onLikeClicked
 import com.sean.ratel.android.utils.onSaveClicked
 import com.sean.ratel.android.utils.onVideoWatched
+import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackRate
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -140,6 +141,10 @@ YouTubeContentEndViewModel
         private val _topicGroupList = MutableStateFlow<List<MainShortsModel>>(emptyList())
         val topicGroupList: StateFlow<List<MainShortsModel>?> = _topicGroupList
 
+        private val _currentPlaySpeed = MutableStateFlow(YouTubeStreamPlaybackRate.RATE_1)
+
+        val currentPlaySpeed: StateFlow<YouTubeStreamPlaybackRate> = _currentPlaySpeed
+
         fun setAdProcessing(loading: Int) {
             _adProcessing.value += mapOf<Int, Boolean>(loading to true)
         }
@@ -150,6 +155,10 @@ YouTubeContentEndViewModel
 
         fun setAdLoading(loading: Boolean) {
             _isAdLoading.value = loading
+        }
+
+        fun setPlaySpeed(speed: YouTubeStreamPlaybackRate) {
+            _currentPlaySpeed.value = speed
         }
 
         fun setLoading(loading: Boolean) {

@@ -189,4 +189,7 @@
     <string name="server_maintaing_message">より良いサービスを提供するため、現在メンテナンスを実施しております。\n</string>
     <string name="server_maintaing_message_time">%1$s\n開始: 📅 %2$s\n終了: 📅 %3$s\n</string>
 
+    <string name="end_speed">1.0X</string>
+    <string name="play_speed">再生速度</string>
+
 </resources>

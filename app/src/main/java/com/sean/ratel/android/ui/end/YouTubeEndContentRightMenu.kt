@@ -36,4 +36,9 @@ enum class YouTubeEndContentRightMenu(
         R.drawable.ic_volume_off,
         R.string.end_sound_on,
     ),
+    SPEED(
+        R.drawable.ic_speed,
+        R.drawable.ic_speed,
+        R.string.end_speed,
+    ),
 }

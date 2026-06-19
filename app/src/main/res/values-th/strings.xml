@@ -194,4 +194,7 @@
     <string name="server_maintaing">🚧 กำลังปิดปรับปรุงระบบ</string>
     <string name="server_maintaing_message">ขณะนี้กำลังดำเนินการปรับปรุงระบบเพื่อให้บริการที่ดียิ่งขึ้น\n</string>
     <string name="server_maintaing_message_time">%1$s\nเริ่ม: 📅 %2$s\nสิ้นสุด: 📅 %3$s\n</string>
+
+    <string name="end_speed">1.0X</string>
+    <string name="play_speed">ความเร็วในการเล่น</string>
 </resources>

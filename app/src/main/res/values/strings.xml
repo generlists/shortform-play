@@ -198,4 +198,8 @@
 
     <string name="server_maintaing_message_time">%1$s\nStart: 📅 %2$s\nEnd: 📅 %3$s\n</string>
 
+    <string name="end_speed">1.0X</string>
+    <string name="play_speed">Playback Speed</string>
+
+
 </resources>

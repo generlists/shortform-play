@@ -188,6 +188,13 @@ class YouTubeEndFragment(
                 }
             }
         }
+        repeatOnStart {
+            youTubeStreamPlayer.videoSpeedChange.collect {
+                it?.let {
+                    youtubeContentEndViewModel.setPlaySpeed(it)
+                }
+            }
+        }
     }
 
     fun onClickPipButton() {
@@ -248,7 +255,6 @@ class YouTubeEndFragment(
             ) { pipclick, currentSelection ->
                 Pair(pipclick, currentSelection)
             }.collect { pair ->
-                RLog.d("000000", "pair : ${pair.first.first}")
                 if (!pair.first.first) {
                     youTubeStreamPlayer.pause()
                     youTubeStreamPlayer.setMute(true)
@@ -703,6 +709,9 @@ class YouTubeEndFragment(
                     mainShortsModel,
                     onSoundChange = { sound ->
                         youTubeStreamPlayer.setMute(!sound)
+                    },
+                    speedChange = {
+                        youTubeStreamPlayer.setPlaybackRate(it)
                     },
                 )
             }

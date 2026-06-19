@@ -187,6 +187,7 @@
 
     <string name="server_maintaing">🚧 服務維護中</string>
     <string name="server_maintaing_message">為了提供更好的服務，目前正在進行系統維護。\n</string>
-    <string name="server_maintaing_message_time">%1$s\n開始時間：📅 %2$s\n結束時間：📅 %3$s\n
-</string>
+    <string name="server_maintaing_message_time">%1$s\n開始時間：📅 %2$s\n結束時間：📅 %3$s\n</string>
+    <string name="end_speed">1.0X</string>
+    <string name="play_speed">播放速度</string>
 </resources>

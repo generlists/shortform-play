@@ -200,4 +200,7 @@
     <string name="server_maintaing">🚧 Pemeliharaan Server</string>
     <string name="server_maintaing_message">Kami sedang melakukan pemeliharaan untuk memberikan layanan yang lebih baik.\n</string>
     <string name="server_maintaing_message_time">%1$s\nMulai: 📅 %2$s\nSelesai: 📅 %3$s\n</string>
+
+    <string name="end_speed">1.0X</string>
+    <string name="play_speed">Kecepatan pemutaran</string>
 </resources>
