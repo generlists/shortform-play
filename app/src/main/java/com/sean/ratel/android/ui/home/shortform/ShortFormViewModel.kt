@@ -105,7 +105,18 @@ class ShortFormViewModel
                 listOfNotNull(topicItem.popularlist, topicItem.viewlist, topicItem.subscriberlist)
                     .flatMap { filterList -> filterList.topicList }
                     .flatMap { groupItem -> groupItem.topicList }
-                    .map { it.copy(shortsVideoModel = it.shortsVideoModel?.copy(categoryName = topicItem.topicName)) }
+                    .map {
+                        it.copy(
+                            shortsVideoModel =
+                                it.shortsVideoModel?.let { video ->
+                                    video.copy(
+                                        topicName = topicItem.topicName,
+                                        copyCategory = video.categoryName,
+                                        categoryName = topicItem.topicName,
+                                    )
+                                },
+                        )
+                    }
             }
 
         fun maxMoreIndex(categoryKey: String): Int {
@@ -164,7 +175,10 @@ class ShortFormViewModel
                 updatedMap[categoryKey] = existingList + nextList
                 _categoryByContents.value = updatedMap // 전체 Map을 새로 할당하여 StateFlow 업데이트
             }
-            RLog.d("LLLLLLLLLLLLL", "moreContent _categoryByContents.value ${_categoryByContents.value.get("10")?.size}")
+            RLog.d(
+                "LLLLLLLLLLLLL",
+                "moreContent _categoryByContents.value ${_categoryByContents.value.get("10")?.size}",
+            )
         }
 
         companion object {

@@ -178,6 +178,13 @@ class MainViewModel
             )
         val interstitialAdStart: SharedFlow<AdTarget> = _interstitialAdStart.asSharedFlow()
 
+        private val _currentMainShorts = MutableStateFlow<MainShortsModel?>(null)
+        val currentMainShorts: MutableStateFlow<MainShortsModel?> = _currentMainShorts
+
+        fun setMainShortsModel(mainShortsModel: MainShortsModel?) {
+            _currentMainShorts.value = mainShortsModel
+        }
+
         fun setInterstitialAdStart(
             route: String,
             adStart: Boolean,
@@ -195,8 +202,6 @@ class MainViewModel
         }
 
         fun setTopPipClick(fragment: YouTubeEndFragment?) {
-            RLog.d("first111111", "fragment : $fragment")
-
             _topPipClick.value = fragment
         }
 

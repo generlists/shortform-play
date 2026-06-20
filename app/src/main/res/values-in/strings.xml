@@ -203,4 +203,12 @@
 
     <string name="end_speed">1.0X</string>
     <string name="play_speed">Kecepatan pemutaran</string>
+    <string name="more_channel_title">Channel</string>
+    <string name="more_channel_start_date">Tanggal Pembuatan Channel</string>
+    <string name="more_channel_view_count">Total Tayangan</string>
+    <string name="more_topic">Topik</string>
+    <string name="more_video_title">Video</string>
+    <string name="more_video_like">Suka</string>
+    <string name="more_video_search">Tayangan</string>
+    <string name="more_video_comment">Komentar</string>
 </resources>

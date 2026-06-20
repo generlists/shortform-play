@@ -194,4 +194,12 @@
     <string name="server_maintaing_message_time">%1$s\n Start: 📅 %2$s\n End: 📅 %3$s\n</string>
     <string name="end_speed">1.0X</string>
     <string name="play_speed">Playback Speed</string>
+    <string name="more_channel_title">Channel</string>
+    <string name="more_channel_start_date">Channel Start Date</string>
+    <string name="more_channel_view_count">Total Views</string>
+    <string name="more_topic">Topic</string>
+    <string name="more_video_title">Video</string>
+    <string name="more_video_like">Likes</string>
+    <string name="more_video_search">Views</string>
+    <string name="more_video_comment">Comments</string>
 </resources>

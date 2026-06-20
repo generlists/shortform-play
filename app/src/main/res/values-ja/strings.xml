@@ -191,5 +191,13 @@
 
     <string name="end_speed">1.0X</string>
     <string name="play_speed">再生速度</string>
+    <string name="more_channel_title">チャンネル</string>
+    <string name="more_channel_start_date">チャンネル開設日</string>
+    <string name="more_channel_view_count">総再生回数</string>
+    <string name="more_topic">トピック</string>
+    <string name="more_video_title">動画</string>
+    <string name="more_video_like">高評価</string>
+    <string name="more_video_search">再生回数</string>
+    <string name="more_video_comment">コメント数</string>
 
 </resources>

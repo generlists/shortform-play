@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -77,6 +79,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS.YOUTUBE_APP_BY_CHANNEL_ID
 import com.sean.ratel.android.data.common.YouTubeUtils
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
@@ -89,6 +92,7 @@ import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.GetCommentLauncher
 import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
+import com.sean.ratel.android.utils.PhoneUtil.goYoutubeApp
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import com.sean.ratel.android.utils.findActivity
 import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackRate
@@ -107,6 +111,8 @@ fun EndBottomContents(
     val rightMenuWidth by remember { youTubeContentEndViewModel.rightMenuWidth }
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val context = LocalContext.current
+    val activity = context.findActivity()
 
     val channelThumbnail =
         remember(channelModel) {
@@ -171,32 +177,76 @@ fun EndBottomContents(
                     }
                 }
                 Row(Modifier.wrapContentSize(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = channelModel?.channelTitle ?: "no title",
+                    Row(
                         Modifier
-                            .wrapContentHeight()
-                            .width(220.dp)
-                            .alpha(0.9f)
-                            .padding(start = 7.dp),
-                        fontFamily = FontFamily.SansSerif,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 11.sp,
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style =
-                            TextStyle(
-                                shadow =
-                                    Shadow(
-                                        color = Color.Black,
-                                        // 그림자의 위치 (x, y)
-                                        offset = Offset(2f, 2f),
-                                        // 그림자의 흐림 정도
-                                        blurRadius = 4f,
+                            .width(240.dp)
+                            .wrapContentHeight(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(
+                            Modifier
+                                .wrapContentSize()
+                                .weight(0.6f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Box(Modifier.wrapContentSize(), contentAlignment = Alignment.CenterStart) {
+                                Text(
+                                    text = channelModel?.channelTitle ?: "no title",
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .alpha(0.9f)
+                                        .padding(start = 7.dp),
+                                    fontFamily = FontFamily.SansSerif,
+                                    fontStyle = FontStyle.Normal,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp,
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style =
+                                        TextStyle(
+                                            shadow =
+                                                Shadow(
+                                                    color = Color.Black,
+                                                    // 그림자의 위치 (x, y)
+                                                    offset = Offset(2f, 2f),
+                                                    // 그림자의 흐림 정도
+                                                    blurRadius = 4f,
+                                                ),
+                                        ),
+                                )
+                            }
+                            Text(
+                                formatNumberByLocale(
+                                    (channelModel?.subscriberCount?.toLong() ?: 0L),
+                                    Locale.getDefault(),
+                                ),
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 7.dp, top = 3.dp)
+                                    .wrapContentHeight(),
+                                color = Color.White,
+                                style =
+                                    TextStyle(
+                                        shadow =
+                                            Shadow(
+                                                color = Color.Black,
+                                                offset = Offset(2f, 2f),
+                                                blurRadius = 4f,
+                                            ),
                                     ),
-                            ),
-                    )
+                                fontSize = 11.sp,
+                            )
+                        }
+
+                        SubscribeButton(onClick = {
+                            channelModel?.channelId?.let { channelId ->
+                                val url = YOUTUBE_APP_BY_CHANNEL_ID(channelId)
+                                goYoutubeApp(activity ?: context, url)
+                            }
+                        })
+                    }
+
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                         Text(
                             disPlayViewCount(viewCount = videoModel?.viewCount ?: "1111110"),
@@ -758,6 +808,47 @@ fun PlaybackRateBottomSheet(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+@Suppress("ktlint:standard:function-naming")
+fun SubscribeButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            Modifier
+                .padding(top = 10.dp, bottom = 10.dp)
+                .wrapContentSize()
+                .clip(RoundedCornerShape(50))
+                .border(
+                    width = 1.5.dp,
+                    color = APP_TEXT_COLOR,
+                    shape = RoundedCornerShape(50),
+                ).background(Color(0x33000000))
+                .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            modifier = Modifier.wrapContentSize().padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Notifications,
+                contentDescription = null,
+                tint = APP_TEXT_COLOR,
+                modifier = Modifier.size(16.dp),
+            )
+            Text(
+                text = "구독하기",
+                color = APP_TEXT_COLOR,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+            )
         }
     }
 }

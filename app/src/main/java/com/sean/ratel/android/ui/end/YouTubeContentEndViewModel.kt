@@ -1,6 +1,7 @@
 package com.sean.ratel.android.ui.end
 
 import android.app.Activity
+import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -116,9 +117,9 @@ YouTubeContentEndViewModel
         private val _isProgress = MutableStateFlow<Boolean>(true)
         val isProgress: StateFlow<Boolean> = _isProgress
 
-        private val _channelId = savedStateHandle.get<String>(ARG_PARAM)
-        private val _topicId = savedStateHandle.get<String>(ARG_TOPIC_ID)
-        private val _filterType = savedStateHandle.get<String>(ARG_FILTER_TYPE)
+        private val channelId = savedStateHandle.get<String>(ARG_PARAM)
+        private val topicId = savedStateHandle.get<String>(ARG_TOPIC_ID)
+        private val filterType = savedStateHandle.get<String>(ARG_FILTER_TYPE)
 
         private val _searchShots = MutableStateFlow<List<MainShortsModel>>(emptyList())
         val searchShots: StateFlow<List<MainShortsModel>> = _searchShots
@@ -198,11 +199,11 @@ YouTubeContentEndViewModel
             if (_imageFlowShortsList.value.isNotEmpty()) {
                 _imageFlowShortsList.value = emptyList() // clear 대신 새로운 빈 리스트 할당
             }
-            val headList = _mainFromShorts.value.first.topFiveList.fiveList[_channelId]
+            val headList = _mainFromShorts.value.first.topFiveList.fiveList[channelId]
 
             val tailList =
                 _mainFromShorts.value.first.topFiveList.fiveList
-                    .filter { it.key != _channelId }
+                    .filter { it.key != channelId }
                     .flatMap { it.value }
 
             if (headList != null) {
@@ -342,7 +343,7 @@ YouTubeContentEndViewModel
 
         // 전체 영상이 아니고 현재 보여지는 view 영상을 넘겨준다.
         fun setShortFormVideoData(selectedIndex: Int) {
-            val categoryId = _channelId
+            val categoryId = channelId
 
             if (_shortFormVideoList.value.isNotEmpty()) {
                 _shortFormVideoList.value = emptyList()
@@ -534,35 +535,53 @@ YouTubeContentEndViewModel
         }
 
         fun setTopicChannelData() {
-            val filterType = TopicFilterType.valueOf(_filterType ?: TopicFilterType.Popular.name)
-            val startChannelId = _channelId
-            val topicKey = _topicId
+            val filterType = TopicFilterType.valueOf(filterType ?: TopicFilterType.Popular.name)
+            val startChannelId = channelId
+            val topicKey = topicId
 
             RLog.d(TAG, "filterType : $filterType channelId : $startChannelId topicKey : $topicKey")
 
             if (_topicChannelList.value.isNotEmpty()) {
                 _topicChannelList.value = emptyList() // clear 대신 새로운 빈 리스트 할당
             }
-            val filterList =
-                when (filterType) {
-                    TopicFilterType.Popular -> {
-                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-                            ?.popularlist
-                            ?.topicList
-                    }
-
-                    TopicFilterType.Views -> {
-                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-                            ?.viewlist
-                            ?.topicList
-                    }
-
-                    TopicFilterType.Subscriber -> {
-                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-                            ?.subscriberlist
-                            ?.topicList
+            val result =
+                _mainFromShorts.value.first.topicList.topicList.values.map { topicItem ->
+                    topicItem.popularlist?.topicList?.map { toplist ->
+                        toplist.topicList.map { shortsItem ->
+                            shortsItem.copy(
+                                shortsVideoModel =
+                                    shortsItem.shortsVideoModel?.copy(
+                                        topicName = topicItem.topicName,
+                                    ),
+                            )
+                        }
                     }
                 }
+
+            val topicItem =
+                _mainFromShorts.value.first
+                    .topicList
+                    .topicList[topicKey]
+            val filterList =
+                when (filterType) {
+                    TopicFilterType.Views -> topicItem?.viewlist?.topicList
+                    TopicFilterType.Subscriber -> topicItem?.subscriberlist?.topicList
+                    TopicFilterType.Popular -> topicItem?.popularlist?.topicList
+                }?.map { childTopicItem ->
+
+                    childTopicItem.copy(
+                        topicList =
+                            childTopicItem.topicList.map { shortsItem ->
+                                shortsItem.copy(
+                                    shortsVideoModel =
+                                        shortsItem.shortsVideoModel?.copy(
+                                            topicName = topicItem?.topicName,
+                                        ),
+                                )
+                            },
+                    )
+                }
+
             val headList =
                 filterList
                     ?.flatMap { it.topicList }
@@ -576,13 +595,13 @@ YouTubeContentEndViewModel
                     ?.flatMap { it.topicList }
                     ?.filter { it.shortsChannelModel?.channelId != startChannelId } ?: listOf()
 
-//        headList?.forEach {
-//            Log.d("OKSSSSSSS","header :${it.shortsVideoModel?.title}")
-//        }
+            headList?.forEach {
+                Log.d("OKSSSSSSS", "header :${it.shortsVideoModel?.topicName}")
+            }
 
-//        tailList.forEach {
-//            Log.d("OKSSSSSSS","tail : ${it.shortsVideoModel?.title}")
-//        }
+            tailList.forEach {
+                Log.d("OKSSSSSSS", "tail : ${it.shortsVideoModel?.topicName}")
+            }
 
             if (headList != null) {
                 _topicChannelList.value = headList + tailList
@@ -591,34 +610,60 @@ YouTubeContentEndViewModel
         }
 
         fun setTopicGroupData(selectedIndex: Int) {
-            val filterType = TopicFilterType.valueOf(_filterType ?: TopicFilterType.Popular.name)
-            val topicKey = _topicId
+            val filterType = TopicFilterType.valueOf(filterType ?: TopicFilterType.Popular.name)
+            val topicKey = topicId
             RLog.d(TAG, "filterType : $filterType ,  topicKey : $topicKey ")
 
             // 리스트가 비어있지 않으면 빈 리스트로 초기화
             if (_topicGroupList.value.isNotEmpty()) {
                 _topicGroupList.value = emptyList() // clear 대신 새로운 빈 리스트 할당
             }
+
+            val topicItem =
+
+                _mainFromShorts.value.first
+                    .topicList
+                    .topicList[topicKey]
+
             val filterList =
+
                 when (filterType) {
-                    TopicFilterType.Popular -> {
-                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-                            ?.popularlist
-                            ?.topicList
-                    }
+                    TopicFilterType.Views -> topicItem?.viewlist?.topicList
+                    TopicFilterType.Subscriber -> topicItem?.subscriberlist?.topicList
+                    TopicFilterType.Popular -> topicItem?.popularlist?.topicList
+                }?.map { childTopicItem ->
 
-                    TopicFilterType.Views -> {
-                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-                            ?.viewlist
-                            ?.topicList
-                    }
-
-                    TopicFilterType.Subscriber -> {
-                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-                            ?.subscriberlist
-                            ?.topicList
-                    }
+                    childTopicItem.copy(
+                        topicList =
+                            childTopicItem.topicList.map { shortsItem ->
+                                shortsItem.copy(
+                                    shortsVideoModel =
+                                        shortsItem.shortsVideoModel?.copy(
+                                            topicName = topicItem?.topicName,
+                                        ),
+                                )
+                            },
+                    )
                 }
+//                when (filterType) {
+//                    TopicFilterType.Popular -> {
+//                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+//                            ?.popularlist
+//                            ?.topicList
+//                    }
+//
+//                    TopicFilterType.Views -> {
+//                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+//                            ?.viewlist
+//                            ?.topicList
+//                    }
+//
+//                    TopicFilterType.Subscriber -> {
+//                        _mainFromShorts.value.first.topicList.topicList[topicKey]
+//                            ?.subscriberlist
+//                            ?.topicList
+//                    }
+//                }
             val groupList = filterList?.flatMap { it.topicList }
             val size = groupList?.size ?: 0
 

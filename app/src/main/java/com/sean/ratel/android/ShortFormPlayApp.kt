@@ -17,7 +17,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -27,9 +29,11 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sean.ratel.android.data.common.RemoteConfig
+import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.FullScreenToggleView
+import com.sean.ratel.android.ui.end.YouTubeEndMoreView
 import com.sean.ratel.android.ui.home.HomeBottomBar
 import com.sean.ratel.android.ui.home.HomeTopBar
 import com.sean.ratel.android.ui.navigation.Destination
@@ -61,6 +65,8 @@ fun ShortFormPlayApp(
 
         val currentRoute = navBackStackEntry?.destination?.route ?: Destination.Splash.route
         val itemClick by remember { mainViewModel.itemClicked }
+        var endMoreClick by remember { mutableStateOf(false) }
+        var currentShorts by remember { mutableStateOf<MainShortsModel?>(null) }
         val context = LocalContext.current
         val activity = context.findActivity()
         val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
@@ -79,6 +85,10 @@ fun ShortFormPlayApp(
                         },
                         privacyOptionClick = { mainViewModel.runPrivacyOptionMenu(activity) },
                         notificationPage = { pushViewModel.goNotificationPage() },
+                        endMoreClick = {
+                            endMoreClick = true
+                            currentShorts = it
+                        },
                     )
                 }
             },
@@ -138,6 +148,17 @@ fun ShortFormPlayApp(
                 currentRoute == Destination.Home.Main.TrendShortsMore.route
             ) {
                 LoadingPlaceholder(loading = isHomeVisible)
+            }
+
+            if (endMoreClick) {
+                currentShorts?.let {
+                    YouTubeEndMoreView(
+                        mainViewModel = mainViewModel,
+                        currentShortsModel = it,
+                    ) {
+                        endMoreClick = false
+                    }
+                }
             }
         }
     }

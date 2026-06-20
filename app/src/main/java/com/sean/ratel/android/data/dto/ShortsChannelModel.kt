@@ -12,6 +12,7 @@ data class ShortsChannelModel(
     var publishDate: String,
     var channelTitle: String,
     var channelDescription: String,
+    var customUrl: String? = null,
     var viewCount: String? = null,
     var subscriberCount: String? = null,
     var brandExternalUrl: String? = null,

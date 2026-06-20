@@ -193,5 +193,15 @@
     <string name="server_maintaing_message_time">%1$s\n시작: 📅 %2$s\n종료: 📅 %3$s\n</string>
 
     <string name="end_speed">1.0X</string>
+    <string name="play_speed">재생 속도</string>
+
+    <string name="more_channel_title">채널</string>
+    <string name="more_channel_start_date">채널 시작일</string>
+    <string name="more_channel_view_count">총 조회수</string>
+    <string name="more_topic">토픽</string>
+    <string name="more_video_title">영상</string>
+    <string name="more_video_like">좋아요</string>
+    <string name="more_video_search">조회수</string>
+    <string name="more_video_comment">댓글수</string>
 
 </resources>

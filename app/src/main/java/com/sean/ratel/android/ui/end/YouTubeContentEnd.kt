@@ -453,6 +453,7 @@ fun FragmentContainer(
                             activity?.let {
                                 val currentFragment = getEndFragment(activity, this@apply)
                                 mainViewModel.setTopPipClick(currentFragment)
+                                currentFragment?.setCurrentMainShorts()
                             }
                         }
 

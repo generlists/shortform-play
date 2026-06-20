@@ -241,6 +241,10 @@ class YouTubeEndFragment(
         }
     }
 
+    fun setCurrentMainShorts() {
+        mainViewModel.setMainShortsModel(mainShortsModel)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
