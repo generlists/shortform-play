@@ -215,5 +215,7 @@
     <string name="more_video_like">J’aime</string>
     <string name="more_video_search">Vues</string>
     <string name="more_video_comment">Commentaires</string>
+    <string name="setting_play_caption">Afficher les sous-titres</string>
+    <string name="setting_play_caption_description">Même activé, les sous-titres ne s’affichent pas si la vidéo n’en contient pas.</string>
 
 </resources>

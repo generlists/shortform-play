@@ -199,5 +199,7 @@
     <string name="more_video_like">高評価</string>
     <string name="more_video_search">再生回数</string>
     <string name="more_video_comment">コメント数</string>
+    <string name="setting_play_caption">字幕を表示</string>
+    <string name="setting_play_caption_description">ONでも、動画に字幕がない場合は表示されません。</string>
 
 </resources>

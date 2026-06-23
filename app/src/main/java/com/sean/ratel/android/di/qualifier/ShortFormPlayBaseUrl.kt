@@ -5,3 +5,7 @@ import javax.inject.Qualifier
 @Qualifier
 @Retention(AnnotationRetention.BINARY)
 annotation class ShortFormPlayBaseUrl
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class CaptionOptionValue

@@ -1,13 +1,13 @@
 package com.sean.ratel.android.utils
 
 import android.app.Activity
-import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import so.smartlab.common.review.EmotionAction
 import so.smartlab.common.review.ReviewManager
 import so.smartlab.common.review.ReviewTrigger
+import so.smartlab.common.utils.log.RLog
 
 /**
  * 영상 시청 완료 추적
@@ -261,7 +261,7 @@ fun ReviewManager.onLikeClicked(
 ): Int {
     trackEmotionAction(EmotionAction.LIKE)
     val newCount = currentCount + 1
-    Log.d("ReviewKit", "newCount : $newCount , threshold : $threshold")
+    RLog.d("ReviewKit", "newCount : $newCount , threshold : $threshold")
 
     if (newCount == threshold) {
         scope.launch {

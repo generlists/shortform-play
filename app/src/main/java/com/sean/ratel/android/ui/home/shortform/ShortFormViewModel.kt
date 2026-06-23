@@ -67,12 +67,10 @@ class ShortFormViewModel
 
             _shortsList.value.addAll(zipList)
             _topicList.value = list.topicList.topicList
-            RLog.d("LLLLLLLLLLLLL", "setVideoMap")
             setCategoryByYouTubeVideoList()
         }
 
         fun initData() {
-            RLog.d("LLLLLLLLLLLLL", "initData")
             // 참조를 바꿔야 변경 가능
             // _categoryByContents.value.clear()
             _categoryByContents.value = mutableMapOf()
@@ -90,7 +88,6 @@ class ShortFormViewModel
                     .mapKeys { it.key ?: "99" }
 
             categoryMap += getTopicVideoList(_topicList.value)
-            RLog.d("LLLLLLLLLLLLL", "setCategoryByYouTubeVideoList")
             setVideoMap(categoryMap)
         }
 

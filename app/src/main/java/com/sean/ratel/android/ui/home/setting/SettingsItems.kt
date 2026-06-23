@@ -53,6 +53,11 @@ enum class SettingsItems(
         R.string.setting_play_wifi_play,
         R.string.setting_play_wifi_play_discription,
     ),
+    SERVICE_VIDEO_CAPTION(
+        null,
+        R.string.setting_play_caption,
+        R.string.setting_play_caption_description,
+    ),
     SERVICE_PUSH(
         null,
         R.string.setting_push_management,

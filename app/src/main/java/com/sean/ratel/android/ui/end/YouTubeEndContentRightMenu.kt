@@ -41,4 +41,9 @@ enum class YouTubeEndContentRightMenu(
         R.drawable.ic_speed,
         R.string.end_speed,
     ),
+    CAPTION(
+        R.drawable.ic_caption_enabled,
+        R.drawable.ic_caption_disabled,
+        R.string.setting_play_caption,
+    ),
 }

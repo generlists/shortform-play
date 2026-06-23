@@ -198,4 +198,6 @@
     <string name="more_video_like">按讚數</string>
     <string name="more_video_search">觀看次數</string>
     <string name="more_video_comment">留言數</string>
+    <string name="setting_play_caption">顯示字幕</string>
+    <string name="setting_play_caption_description">即使已開啟，如果影片沒有字幕也不會顯示。</string>
 </resources>

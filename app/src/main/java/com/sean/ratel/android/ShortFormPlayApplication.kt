@@ -3,7 +3,12 @@ package com.sean.ratel.android
 import android.app.Application
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig
+import com.sean.ratel.android.data.local.pref.SettingPreference
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
@@ -11,6 +16,12 @@ import javax.inject.Inject
 class ShortFormPlayApplication : Application() {
     @Inject
     lateinit var remoteConfig: FirebaseRemoteConfig
+
+    @Inject
+    lateinit var settingPreference: SettingPreference
+    private val applicationScope =
+
+        CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
         super.onCreate()
@@ -24,6 +35,10 @@ class ShortFormPlayApplication : Application() {
         firebaseRemoteConfig(remoteConfig, onComplete = {
             RemoteConfig.loadComplete(true)
         })
+
+        applicationScope.launch {
+            settingPreference.initialize()
+        }
     }
 
     fun firebaseRemoteConfig(

@@ -95,6 +95,7 @@ import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.PhoneUtil.goYoutubeApp
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import com.sean.ratel.android.utils.findActivity
+import com.sean.ratel.player.core.com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackCaptionState
 import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackRate
 import kotlinx.coroutines.launch
 import so.smartlab.common.utils.log.RLog
@@ -363,6 +364,8 @@ fun RightContentArea(
     mainShortsModel: MainShortsModel?,
     onSoundChange: (Boolean) -> Unit,
     speedChange: (YouTubeStreamPlaybackRate) -> Unit,
+    availableCaption: Boolean,
+    enableCaption: (Boolean) -> Unit,
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -379,7 +382,21 @@ fun RightContentArea(
     var speedClick by remember { mutableStateOf(false) }
     val currentRate by youTubeContentEndViewModel.currentPlaySpeed.collectAsStateWithLifecycle()
 
+    val captionAvailable =
+        when {
+            !availableCaption -> {
+                YouTubeStreamPlaybackCaptionState.UNSUPPORTED
+            }
+
+            else -> {
+                YouTubeStreamPlaybackCaptionState.ENABLED
+            }
+        }
+
+    var caption by remember(availableCaption) { mutableStateOf(availableCaption) }
+
     val coroutine = rememberCoroutineScope()
+    RLog.d("CCAAMMMM", "availableCaption : $captionAvailable , caption : $caption")
 
     LaunchedEffect(like || disLike) {
         like =
@@ -438,15 +455,23 @@ fun RightContentArea(
                                                 like,
                                                 disLike,
                                                 sound,
-                                                onChanged = { pLike, pDisLike, pSound, pSpeedClick ->
+                                                caption,
+                                                onChanged = { pLike, pDisLike, pSound, pSpeedClick, pCaption ->
                                                     RLog.d(
-                                                        "KKKKKKKK",
-                                                        "pLike : $pLike , pDisLike : $pDisLike pSound : $pSound , sound : $sound",
+                                                        "Comppose",
+                                                        "pLike : $pLike , " +
+                                                            "pDisLike : $pDisLike" +
+                                                            " pSound : $pSound , " +
+                                                            "sound : $sound " +
+                                                            "pCaption : $pCaption",
                                                     )
                                                     like = pLike
                                                     disLike = pDisLike
                                                     sound = pSound
                                                     speedClick = pSpeedClick
+                                                    caption = pCaption
+                                                    enableCaption(pCaption)
+
                                                     onSoundChange(sound)
                                                     if (like) {
                                                         activity?.let {
@@ -466,7 +491,7 @@ fun RightContentArea(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Image(
-                                painter = setImageView(item, like, disLike, sound),
+                                painter = setImageView(item, like, disLike, sound, caption, captionAvailable),
                                 contentDescription = null,
                                 modifier =
                                     Modifier
@@ -609,6 +634,12 @@ private fun disPlayRightMenu(
         YouTubeEndContentRightMenu.SPEED -> {
             "${currentSpeed.rate}X"
         }
+
+        YouTubeEndContentRightMenu.CAPTION -> {
+            stringResource(
+                R.string.setting_play_caption,
+            )
+        }
     }
 }
 
@@ -620,7 +651,8 @@ private suspend fun toggleRightEvent(
     like: Boolean,
     disLike: Boolean,
     sound: Boolean,
-    onChanged: (Boolean, Boolean, Boolean, Boolean) -> Unit,
+    caption: Boolean,
+    onChanged: (Boolean, Boolean, Boolean, Boolean, Boolean) -> Unit,
     shareLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>?,
     commentLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>?,
 ) {
@@ -631,10 +663,10 @@ private suspend fun toggleRightEvent(
             if (!like) {
                 youTubeContentEndViewModel?.likeDisLike(likeKey, mainShortsModel)
                 youTubeContentEndViewModel?.canCelLikeDisLike(disLikeKey)
-                onChanged(true, !disLike, sound, false)
+                onChanged(true, !disLike, sound, false, caption)
             } else {
                 youTubeContentEndViewModel?.canCelLikeDisLike(likeKey)
-                onChanged(false, disLike, sound, false)
+                onChanged(false, disLike, sound, false, caption)
             }
         }
 
@@ -645,16 +677,16 @@ private suspend fun toggleRightEvent(
             if (!disLike) {
                 youTubeContentEndViewModel?.likeDisLike(disLikeKey, mainShortsModel)
                 youTubeContentEndViewModel?.canCelLikeDisLike(likeKey)
-                onChanged(!like, true, sound, false)
+                onChanged(!like, true, sound, false, caption)
             } else {
                 youTubeContentEndViewModel?.canCelLikeDisLike(disLikeKey)
-                onChanged(like, false, sound, false)
+                onChanged(like, false, sound, false, caption)
             }
         }
 
         YouTubeEndContentRightMenu.Sound -> {
             youTubeContentEndViewModel?.setSoundOff(!sound)
-            onChanged(like, disLike, !sound, false)
+            onChanged(like, disLike, !sound, false, caption)
         }
 
         YouTubeEndContentRightMenu.Comment -> {
@@ -674,7 +706,11 @@ private suspend fun toggleRightEvent(
         }
 
         YouTubeEndContentRightMenu.SPEED -> {
-            onChanged(like, disLike, sound, true)
+            onChanged(like, disLike, sound, true, caption)
+        }
+
+        YouTubeEndContentRightMenu.CAPTION -> {
+            onChanged(like, disLike, sound, false, !caption)
         }
     }
 }
@@ -685,6 +721,8 @@ private fun setImageView(
     like: Boolean,
     disLike: Boolean,
     sound: Boolean,
+    caption: Boolean,
+    availableCaption: YouTubeStreamPlaybackCaptionState,
 ): Painter {
     when (item) {
         YouTubeEndContentRightMenu.Like -> {
@@ -697,6 +735,16 @@ private fun setImageView(
 
         YouTubeEndContentRightMenu.Sound -> {
             return if (sound) painterResource(item.selectedResourceId) else painterResource(item.unSelectedResourceId)
+        }
+
+        YouTubeEndContentRightMenu.CAPTION -> {
+            return if (!caption ||
+                availableCaption == YouTubeStreamPlaybackCaptionState.UNSUPPORTED
+            ) {
+                painterResource(item.unSelectedResourceId)
+            } else {
+                painterResource(item.selectedResourceId)
+            }
         }
 
         else -> {
@@ -859,6 +907,6 @@ fun SubscribeButton(
 private fun PlayControllerRightMenuPreView() {
     RatelappTheme {
         val youTubeContentEndViewModel: YouTubeContentEndViewModel = hiltViewModel()
-        RightContentArea(youTubeContentEndViewModel, null, {}, {})
+        RightContentArea(youTubeContentEndViewModel, null, {}, {}, false, {})
     }
 }

@@ -205,4 +205,6 @@
     <string name="more_video_like">ถูกใจ</string>
     <string name="more_video_search">ยอดเข้าชม</string>
     <string name="more_video_comment">ความคิดเห็น</string>
+    <string name="setting_play_caption">แสดงคำบรรยาย</string>
+    <string name="setting_play_caption_description">แม้จะเปิดใช้งาน แต่จะไม่แสดงหากวิดีโอไม่มีคำบรรยาย</string>
 </resources>
