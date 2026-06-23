@@ -18,4 +18,5 @@ data class ShortsVideoModel(
     var viewCount: String? = "0",
     var likeCount: String? = "0",
     var commentCount: String? = "0",
+    var copyCategory: String? = null,
 ) : Parcelable

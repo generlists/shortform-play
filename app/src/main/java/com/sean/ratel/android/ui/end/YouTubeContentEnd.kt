@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.end
 
-import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -158,7 +157,7 @@ fun YouTubeContentEnd(
                     searchRequestLoading.value = true
 
                     selectedVideoId?.let {
-                        Log.d("hbungshin", "requestYouTubeShortsSearchToEnd selectedVideoId : $selectedVideoId")
+                        RLog.d("hbungshin", "requestYouTubeShortsSearchToEnd selectedVideoId : $selectedVideoId")
                         youTubeContentEndViewModel.requestYouTubeShortsSearchToEnd(
                             it,
                             categoryShortsList,
@@ -453,6 +452,7 @@ fun FragmentContainer(
                             activity?.let {
                                 val currentFragment = getEndFragment(activity, this@apply)
                                 mainViewModel.setTopPipClick(currentFragment)
+                                currentFragment?.setCurrentMainShorts()
                             }
                         }
 

@@ -194,4 +194,17 @@
     <string name="server_maintaing">🚧 กำลังปิดปรับปรุงระบบ</string>
     <string name="server_maintaing_message">ขณะนี้กำลังดำเนินการปรับปรุงระบบเพื่อให้บริการที่ดียิ่งขึ้น\n</string>
     <string name="server_maintaing_message_time">%1$s\nเริ่ม: 📅 %2$s\nสิ้นสุด: 📅 %3$s\n</string>
+
+    <string name="end_speed">1.0X</string>
+    <string name="play_speed">ความเร็วในการเล่น</string>
+    <string name="more_channel_title">ช่อง</string>
+    <string name="more_channel_start_date">วันที่สร้างช่อง</string>
+    <string name="more_channel_view_count">ยอดเข้าชมทั้งหมด</string>
+    <string name="more_topic">หัวข้อ</string>
+    <string name="more_video_title">วิดีโอ</string>
+    <string name="more_video_like">ถูกใจ</string>
+    <string name="more_video_search">ยอดเข้าชม</string>
+    <string name="more_video_comment">ความคิดเห็น</string>
+    <string name="setting_play_caption">แสดงคำบรรยาย</string>
+    <string name="setting_play_caption_description">แม้จะเปิดใช้งาน แต่จะไม่แสดงหากวิดีโอไม่มีคำบรรยาย</string>
 </resources>

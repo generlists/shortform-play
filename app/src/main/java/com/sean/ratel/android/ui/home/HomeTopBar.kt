@@ -49,6 +49,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.navigation.Destination
@@ -72,6 +73,7 @@ fun HomeTopBar(
     historyBack: () -> Unit,
     privacyOptionClick: () -> Unit,
     notificationPage: () -> Unit = {},
+    endMoreClick: (MainShortsModel?) -> Unit,
 ) {
     Box(
         modifier =
@@ -170,10 +172,10 @@ fun HomeTopBar(
                         modifier = Modifier.align(Alignment.CenterVertically),
                         historyBack,
                     )
-                    TitleBox()
                     Spacer(modifier = Modifier.weight(1f))
+                    SearchIconButton(mainViewModel)
                     PIPButton(mainViewModel)
-                    SharerIconButton(mainViewModel)
+                    MoreInfoButton(mainViewModel = mainViewModel, moreClick = endMoreClick)
                 }
             }
         }
@@ -372,6 +374,28 @@ fun PrivacyOptionMenu(
                     tint = Color.White,
                 )
             }
+        }
+    }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
+fun MoreInfoButton(
+    mainViewModel: MainViewModel,
+    moreClick: (MainShortsModel?) -> Unit,
+) {
+    Box(
+        modifier = Modifier.wrapContentSize(),
+    ) {
+        val currentShorts by mainViewModel.currentMainShorts.collectAsStateWithLifecycle()
+        IconButton(onClick = {
+            moreClick(currentShorts)
+        }) {
+            Icon(
+                imageVector = Icons.Filled.MoreVert,
+                contentDescription = null,
+                tint = Color.White,
+            )
         }
     }
 }

@@ -187,6 +187,17 @@
 
     <string name="server_maintaing">🚧 服務維護中</string>
     <string name="server_maintaing_message">為了提供更好的服務，目前正在進行系統維護。\n</string>
-    <string name="server_maintaing_message_time">%1$s\n開始時間：📅 %2$s\n結束時間：📅 %3$s\n
-</string>
+    <string name="server_maintaing_message_time">%1$s\n開始時間：📅 %2$s\n結束時間：📅 %3$s\n</string>
+    <string name="end_speed">1.0X</string>
+    <string name="play_speed">播放速度</string>
+    <string name="more_channel_title">頻道</string>
+    <string name="more_channel_start_date">頻道建立日期</string>
+    <string name="more_channel_view_count">總觀看次數</string>
+    <string name="more_topic">主題</string>
+    <string name="more_video_title">影片</string>
+    <string name="more_video_like">按讚數</string>
+    <string name="more_video_search">觀看次數</string>
+    <string name="more_video_comment">留言數</string>
+    <string name="setting_play_caption">顯示字幕</string>
+    <string name="setting_play_caption_description">即使已開啟，如果影片沒有字幕也不會顯示。</string>
 </resources>

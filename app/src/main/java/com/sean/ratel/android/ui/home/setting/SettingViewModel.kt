@@ -66,6 +66,8 @@ class SettingViewModel
 
         suspend fun getWifiOnlyPlay(): Boolean = settingRepository.getWifiOnlyPlay()
 
+        fun getCaptionEnabled(): Boolean = settingRepository.getCaptionEnabled()
+
         suspend fun getSoundOnOff(): Boolean = settingRepository.getSoundOnOff()
 
         val locale: StateFlow<String?> =
@@ -93,6 +95,10 @@ class SettingViewModel
 
         suspend fun setWifiOnlyPlay(isWifiOnly: Boolean) {
             settingRepository.setWifiOnlyPlay(isWifiOnly)
+        }
+
+        suspend fun setCaptionEnabled(caption: Boolean) {
+            settingRepository.setCaptionEnabled(caption)
         }
 
         suspend fun setLocale(locale: String) {

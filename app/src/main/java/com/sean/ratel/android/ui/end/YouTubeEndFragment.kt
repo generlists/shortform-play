@@ -3,6 +3,7 @@ package com.sean.ratel.android.ui.end
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
@@ -42,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -64,10 +66,12 @@ import com.sean.ratel.android.databinding.YoutubeVideoEndBinding
 import com.sean.ratel.android.ui.ad.InterstitialAdManager
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.UpdateStateBar
+import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.NetworkUtil
 import com.sean.ratel.android.utils.TimeUtil.formatTimeFromFloat
+import com.sean.ratel.player.core.com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackCaptionState
 import com.sean.ratel.player.core.data.domain.YouTubeStreamPlayer
 import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackState
 import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlayerError
@@ -83,6 +87,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
@@ -100,10 +105,6 @@ class YouTubeEndFragment(
 
     private val binding get() = _binding!!
 
-    lateinit var youTubePlayerView: YouTubePlayerView
-    private lateinit var youTubeStreamPlayer: YouTubeStreamPlayer
-    private lateinit var youtubeStreamPlayerAdapter: YouTubeStreamPlayerAdapter
-
     private var mainShortsModel: MainShortsModel? = null
     private var createPosition = 0
 
@@ -119,11 +120,13 @@ class YouTubeEndFragment(
     lateinit var pipManager: PIPManager
 
     // 최근본 영상 저장 하기위
-    lateinit var mainViewModel: MainViewModel // lateinit으로 선언
+    lateinit var mainViewModel: MainViewModel
+    lateinit var settingViewModel: SettingViewModel
 
     val rect = Rect()
-
-    @Inject
+    lateinit var youTubePlayerView: YouTubePlayerView
+    private lateinit var youTubeStreamPlayer: YouTubeStreamPlayer
+    private lateinit var youtubeStreamPlayerAdapter: YouTubeStreamPlayerAdapter
     lateinit var iFramePlayerOptions: IFramePlayerOptions
 
     @Inject
@@ -188,6 +191,13 @@ class YouTubeEndFragment(
                 }
             }
         }
+        repeatOnStart {
+            youTubeStreamPlayer.videoSpeedChange.collect {
+                it?.let {
+                    youtubeContentEndViewModel.setPlaySpeed(it)
+                }
+            }
+        }
     }
 
     fun onClickPipButton() {
@@ -234,9 +244,14 @@ class YouTubeEndFragment(
         }
     }
 
+    fun setCurrentMainShorts() {
+        mainViewModel.setMainShortsModel(mainShortsModel)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
+        settingViewModel = ViewModelProvider(requireActivity())[SettingViewModel::class.java]
     }
 
     override fun onPause() {
@@ -248,7 +263,6 @@ class YouTubeEndFragment(
             ) { pipclick, currentSelection ->
                 Pair(pipclick, currentSelection)
             }.collect { pair ->
-                RLog.d("000000", "pair : ${pair.first.first}")
                 if (!pair.first.first) {
                     youTubeStreamPlayer.pause()
                     youTubeStreamPlayer.setMute(true)
@@ -383,6 +397,10 @@ class YouTubeEndFragment(
 
         youtubeStreamPlayerAdapter = YouTubeStreamPlayerAdapterImpl(youTubePlayerView)
 
+        // Log.d("CCAAMMMM", "getCaptionEnabled : ${settingViewModel.getCaptionEnabled()}")
+
+        iFramePlayerOptions = iFrameOption(settingViewModel.getCaptionEnabled())
+
         youTubeStreamPlayer =
             YouTubeStreamPlayerImpl(
                 lifecycle,
@@ -413,6 +431,7 @@ class YouTubeEndFragment(
         composeView?.setContent {
             val pipButtonClick = remember { mutableStateOf(false) }
             val currentSelection = remember { mutableStateOf(0) }
+
             launch {
                 combine(
                     mainViewModel.pipClick,
@@ -547,7 +566,7 @@ class YouTubeEndFragment(
         mainShortsModel?.shortsVideoModel?.videoId?.let { videoId ->
             RLog.d(
                 "PLAYER",
-                "state : PREPARE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
+                "state :Ii7ASTtlLso  PREPARE $videoId , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
             )
 
             youTubeStreamPlayer.loadVideo(videoId, 0f)
@@ -623,7 +642,7 @@ class YouTubeEndFragment(
                     val isSoundOff = youtubeContentEndViewModel.getSoundOff()
 
                     if (selection == createPosition) {
-                        RLog.d("hbungshin", "selection : $selection , isSoundOff  $isSoundOff")
+                        RLog.d("YouTubeFragment", "selection : $selection , isSoundOff  $isSoundOff")
                         delay(1000)
                         youTubeStreamPlayer.setMute(!isSoundOff)
                     }
@@ -693,16 +712,49 @@ class YouTubeEndFragment(
     @Suppress("ktlint:standard:function-naming")
     @Composable
     fun BottomContentsArea(mainShortsModel: MainShortsModel?) {
+        val topBarHeight = mainViewModel.topBarHeight.collectAsState(53)
+        var availableCaption by remember { mutableStateOf(false) }
+        // 최초한번만 받기
+        LaunchedEffect(Unit) {
+            availableCaption =
+                youTubeStreamPlayer.captionAvailable
+                    .first()
+        }
+        val captionAvailable =
+            when {
+                !availableCaption -> {
+                    YouTubeStreamPlaybackCaptionState.UNSUPPORTED
+                }
+
+                else -> {
+                    YouTubeStreamPlaybackCaptionState.ENABLED
+                }
+            }
+        RLog.d("CCAAMMMM", "availableCaption: $availableCaption")
         Box(
             Modifier
                 .fillMaxSize(),
         ) {
-            Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(Modifier.fillMaxSize().padding(bottom = topBarHeight.value.dp), contentAlignment = Alignment.Center) {
                 RightContentArea(
                     youtubeContentEndViewModel,
                     mainShortsModel,
                     onSoundChange = { sound ->
                         youTubeStreamPlayer.setMute(!sound)
+                    },
+                    speedChange = {
+                        youTubeStreamPlayer.setPlaybackRate(it)
+                    },
+                    availableCaption = availableCaption,
+                    enableCaption = { enabled ->
+
+                        if (captionAvailable == YouTubeStreamPlaybackCaptionState.UNSUPPORTED) return@RightContentArea
+                        Log.d("CCAAMMMM", "callback enabled : $enabled")
+                        if (enabled) {
+                            youTubeStreamPlayer.enableCaptions(Locale.current.language)
+                        } else {
+                            youTubeStreamPlayer.disableCaptions()
+                        }
                     },
                 )
             }
@@ -825,6 +877,14 @@ class YouTubeEndFragment(
             fragment.arguments = args
             return fragment
         }
+
+        fun iFrameOption(captionEnabled: Boolean): IFramePlayerOptions =
+            IFramePlayerOptions
+                .Builder()
+                .controls(0)
+                .ccLoadPolicy(if (captionEnabled) 1 else 0)
+                .fullscreen(1)
+                .build()
     }
 
     @Suppress("ktlint:standard:function-naming")

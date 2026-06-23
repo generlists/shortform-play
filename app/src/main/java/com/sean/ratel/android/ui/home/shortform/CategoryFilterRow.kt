@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.home.shortform
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
@@ -48,7 +47,7 @@ fun CategoryFilterRow(
     val categories = categoryMap.keys.toList()
     val categoryList = categoryMap.values.toList()
     var selectedCategory by remember(categories) { mutableStateOf(categories.firstOrNull() ?: "") }
-    Log.d("hbungshin", "selectedCategory : $selectedCategory")
+    RLog.d("SSSSSOOOFF", "selectedCategory : $selectedCategory")
     val scrollState = rememberScrollState()
     val density = LocalDensity.current
     val adMargin = 16

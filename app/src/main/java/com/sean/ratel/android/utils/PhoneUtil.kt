@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityOptionsCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.R
 import com.sean.ratel.android.SearchActivity
@@ -164,12 +165,13 @@ object PhoneUtil {
 
     fun sendEmail(
         context: Context,
-        subject: String,
-        body: String,
+        subject: String? = null,
+        body: String? = null,
+        emailAddress: String = MY_EMAIL_ACCOUNT,
     ) {
         val intent =
             Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:$MY_EMAIL_ACCOUNT") // 이메일만 처리하는 인텐트
+                data = "mailto:$emailAddress".toUri() // 이메일만 처리하는 인텐트
                 putExtra(Intent.EXTRA_SUBJECT, subject) // 이메일 제목
                 putExtra(Intent.EXTRA_TEXT, body) // 이메일 본문
             }

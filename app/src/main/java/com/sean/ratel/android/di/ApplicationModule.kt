@@ -19,7 +19,6 @@ import com.google.firebase.analytics.analytics
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
-import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.options.IFramePlayerOptions
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.android.permission.PermissionManager
@@ -115,14 +114,15 @@ object ApplicationModule {
         return remoteConfig
     }
 
-    @Provides
-    @Singleton
-    fun provideWidthIFramePlayerOption(): IFramePlayerOptions =
-        IFramePlayerOptions
-            .Builder()
-            .controls(0)
-            .fullscreen(1) // enable full screen button
-            .build()
+//    @Provides
+//    @Singleton
+//    fun provideWidthIFramePlayerOption(): IFramePlayerOptions =
+//        IFramePlayerOptions
+//            .Builder()
+//            .controls(0)
+//            .ccLoadPolicy(1)
+//            .fullscreen(1) // enable full screen button
+//            .build()
 
     @Provides
     fun provideYouTubePlayerTracker(): YouTubePlayerTracker = YouTubePlayerTracker()
@@ -366,3 +366,8 @@ object ApplicationModule {
     @DebugMode
     fun provideDebugMode(): Boolean = BuildConfig.DEBUG
 }
+
+// @Provides
+// @Singleton
+// @CaptionOptionValue
+// fun provideCaptionOptionValue(settingRepository: SettingRepository): Flow<Boolean> = settingRepository.captionEnabledFlow

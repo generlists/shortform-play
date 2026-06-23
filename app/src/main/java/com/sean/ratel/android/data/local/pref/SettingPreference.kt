@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.text.get
 
 @Singleton
 class SettingPreference
@@ -17,11 +18,19 @@ class SettingPreference
     constructor(
         private val dataStore: DataStore<Preferences>,
     ) {
+        private var captionEnabledCache = true
+
+        suspend fun initialize() {
+            captionEnabledCache =
+                dataStore.data.map { it[captionEnabled] }.first() ?: true
+        }
+
         private val autoPlay = booleanPreferencesKey("AUTO_PLAY")
         private val loopPlay = booleanPreferencesKey("LOOP_PLAY")
         private val pipPlay = booleanPreferencesKey("PIP_PLAY")
         private val soundOnOff = booleanPreferencesKey("SOUND_ONOFF")
         private val wifiPlay = booleanPreferencesKey("WIFI_ONLY")
+        private val captionEnabled = booleanPreferencesKey("CAPTION_ENABLE")
         private val localeString = stringPreferencesKey("LOCALE")
         private val newUpdate = booleanPreferencesKey("NEW_LOCALE")
 
@@ -39,6 +48,11 @@ class SettingPreference
 
         suspend fun setWifiOnlyPlay(isWifiPlay: Boolean) {
             dataStore.edit { it[wifiPlay] = isWifiPlay }
+        }
+
+        suspend fun setCaptionEnabled(caption: Boolean) {
+            captionEnabledCache = caption
+            dataStore.edit { it[captionEnabled] = caption }
         }
 
         suspend fun setSoundOnOff(isSound: Boolean) {
@@ -60,6 +74,8 @@ class SettingPreference
         suspend fun getPIPPlay(): Boolean = dataStore.data.map { it[pipPlay] }.first() ?: true
 
         suspend fun getWifiOnlyPlay(): Boolean = dataStore.data.map { it[wifiPlay] }.first() ?: true
+
+        fun getCaptionEnabled(): Boolean = captionEnabledCache
 
         suspend fun getSoundOnOff(): Boolean = dataStore.data.map { it[soundOnOff] }.first() ?: false
 

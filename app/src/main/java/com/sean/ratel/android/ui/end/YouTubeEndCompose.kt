@@ -9,6 +9,7 @@ import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
@@ -27,8 +28,16 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -67,21 +76,27 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.data.common.STRINGS.YOUTUBE_APP_BY_CHANNEL_ID
 import com.sean.ratel.android.data.common.YouTubeUtils
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
+import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.GetCommentLauncher
 import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
+import com.sean.ratel.android.utils.PhoneUtil.goYoutubeApp
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import com.sean.ratel.android.utils.findActivity
+import com.sean.ratel.player.core.com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackCaptionState
+import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackRate
 import kotlinx.coroutines.launch
 import so.smartlab.common.utils.log.RLog
 import java.util.Locale
@@ -97,6 +112,8 @@ fun EndBottomContents(
     val rightMenuWidth by remember { youTubeContentEndViewModel.rightMenuWidth }
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val context = LocalContext.current
+    val activity = context.findActivity()
 
     val channelThumbnail =
         remember(channelModel) {
@@ -161,32 +178,76 @@ fun EndBottomContents(
                     }
                 }
                 Row(Modifier.wrapContentSize(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = channelModel?.channelTitle ?: "no title",
+                    Row(
                         Modifier
-                            .wrapContentHeight()
-                            .width(220.dp)
-                            .alpha(0.9f)
-                            .padding(start = 7.dp),
-                        fontFamily = FontFamily.SansSerif,
-                        fontStyle = FontStyle.Normal,
-                        fontWeight = FontWeight.SemiBold,
-                        fontSize = 11.sp,
-                        color = Color.White,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style =
-                            TextStyle(
-                                shadow =
-                                    Shadow(
-                                        color = Color.Black,
-                                        // 그림자의 위치 (x, y)
-                                        offset = Offset(2f, 2f),
-                                        // 그림자의 흐림 정도
-                                        blurRadius = 4f,
+                            .width(240.dp)
+                            .wrapContentHeight(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Column(
+                            Modifier
+                                .wrapContentSize()
+                                .weight(0.6f),
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Box(Modifier.wrapContentSize(), contentAlignment = Alignment.CenterStart) {
+                                Text(
+                                    text = channelModel?.channelTitle ?: "no title",
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .alpha(0.9f)
+                                        .padding(start = 7.dp),
+                                    fontFamily = FontFamily.SansSerif,
+                                    fontStyle = FontStyle.Normal,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 14.sp,
+                                    color = Color.White,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style =
+                                        TextStyle(
+                                            shadow =
+                                                Shadow(
+                                                    color = Color.Black,
+                                                    // 그림자의 위치 (x, y)
+                                                    offset = Offset(2f, 2f),
+                                                    // 그림자의 흐림 정도
+                                                    blurRadius = 4f,
+                                                ),
+                                        ),
+                                )
+                            }
+                            Text(
+                                formatNumberByLocale(
+                                    (channelModel?.subscriberCount?.toLong() ?: 0L),
+                                    Locale.getDefault(),
+                                ),
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 7.dp, top = 3.dp)
+                                    .wrapContentHeight(),
+                                color = Color.White,
+                                style =
+                                    TextStyle(
+                                        shadow =
+                                            Shadow(
+                                                color = Color.Black,
+                                                offset = Offset(2f, 2f),
+                                                blurRadius = 4f,
+                                            ),
                                     ),
-                            ),
-                    )
+                                fontSize = 11.sp,
+                            )
+                        }
+
+                        SubscribeButton(onClick = {
+                            channelModel?.channelId?.let { channelId ->
+                                val url = YOUTUBE_APP_BY_CHANNEL_ID(channelId)
+                                goYoutubeApp(activity ?: context, url)
+                            }
+                        })
+                    }
+
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                         Text(
                             disPlayViewCount(viewCount = videoModel?.viewCount ?: "1111110"),
@@ -299,9 +360,12 @@ fun PlayButton(
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun RightContentArea(
-    youTubeContentEndViewModel: YouTubeContentEndViewModel?,
+    youTubeContentEndViewModel: YouTubeContentEndViewModel,
     mainShortsModel: MainShortsModel?,
     onSoundChange: (Boolean) -> Unit,
+    speedChange: (YouTubeStreamPlaybackRate) -> Unit,
+    availableCaption: Boolean,
+    enableCaption: (Boolean) -> Unit,
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -315,17 +379,33 @@ fun RightContentArea(
     var like by remember { mutableStateOf(false) }
     var disLike by remember { mutableStateOf(false) }
     var sound by remember { mutableStateOf(false) }
+    var speedClick by remember { mutableStateOf(false) }
+    val currentRate by youTubeContentEndViewModel.currentPlaySpeed.collectAsStateWithLifecycle()
+
+    val captionAvailable =
+        when {
+            !availableCaption -> {
+                YouTubeStreamPlaybackCaptionState.UNSUPPORTED
+            }
+
+            else -> {
+                YouTubeStreamPlaybackCaptionState.ENABLED
+            }
+        }
+
+    var caption by remember(availableCaption) { mutableStateOf(availableCaption) }
 
     val coroutine = rememberCoroutineScope()
+    RLog.d("CCAAMMMM", "availableCaption : $captionAvailable , caption : $caption")
 
     LaunchedEffect(like || disLike) {
         like =
-            youTubeContentEndViewModel?.getLikeDisLikeVideo("like${mainShortsModel?.shortsVideoModel?.videoId}")
+            youTubeContentEndViewModel.getLikeDisLikeVideo("like${mainShortsModel?.shortsVideoModel?.videoId}")
                 ?: false
         disLike =
-            youTubeContentEndViewModel?.getLikeDisLikeVideo("disLike${mainShortsModel?.shortsVideoModel?.videoId}")
+            youTubeContentEndViewModel.getLikeDisLikeVideo("disLike${mainShortsModel?.shortsVideoModel?.videoId}")
                 ?: false
-        sound = youTubeContentEndViewModel?.getSoundOff() ?: false
+        sound = youTubeContentEndViewModel.getSoundOff() ?: false
     }
 
     Box(
@@ -346,7 +426,7 @@ fun RightContentArea(
                                 .toDp()
                                 .value
                         }
-                    youTubeContentEndViewModel?.setRightButtonWidth(rightMenuHeight.toInt())
+                    youTubeContentEndViewModel.setRightButtonWidth(rightMenuHeight.toInt())
                 },
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
@@ -375,18 +455,27 @@ fun RightContentArea(
                                                 like,
                                                 disLike,
                                                 sound,
-                                                onChanged = { pLike, pDisLike, pSound ->
+                                                caption,
+                                                onChanged = { pLike, pDisLike, pSound, pSpeedClick, pCaption ->
                                                     RLog.d(
-                                                        "KKKKKKKK",
-                                                        "pLike : $pLike , pDisLike : $pDisLike pSound : $pSound , sound : $sound",
+                                                        "Comppose",
+                                                        "pLike : $pLike , " +
+                                                            "pDisLike : $pDisLike" +
+                                                            " pSound : $pSound , " +
+                                                            "sound : $sound " +
+                                                            "pCaption : $pCaption",
                                                     )
                                                     like = pLike
                                                     disLike = pDisLike
                                                     sound = pSound
+                                                    speedClick = pSpeedClick
+                                                    caption = pCaption
+                                                    enableCaption(pCaption)
+
                                                     onSoundChange(sound)
                                                     if (like) {
                                                         activity?.let {
-                                                            youTubeContentEndViewModel?.onLikeClicked(
+                                                            youTubeContentEndViewModel.onLikeClicked(
                                                                 activity,
                                                             )
                                                         }
@@ -402,7 +491,7 @@ fun RightContentArea(
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Image(
-                                painter = setImageView(item, like, disLike, sound),
+                                painter = setImageView(item, like, disLike, sound, caption, captionAvailable),
                                 contentDescription = null,
                                 modifier =
                                     Modifier
@@ -411,7 +500,7 @@ fun RightContentArea(
                             )
 
                             Text(
-                                text = disPlayRightMenu(videoModel, item, sound) ?: "",
+                                text = disPlayRightMenu(videoModel, item, sound, currentRate) ?: "",
                                 modifier = Modifier,
                                 fontSize = 10.sp,
                                 color = if (LocalInspectionMode.current) Color.Black else Color.White,
@@ -422,6 +511,7 @@ fun RightContentArea(
                         }
                     }
                 }
+
                 Spacer(
                     Modifier
                         .height(10.dp)
@@ -429,6 +519,13 @@ fun RightContentArea(
                 )
             }
         }
+    }
+    if (speedClick) {
+        PlaybackRateBottomSheet(currentRate, onRateSelected = {
+            speedChange(it)
+        }, onDismiss = {
+            speedClick = false
+        })
     }
 }
 
@@ -501,6 +598,7 @@ private fun disPlayRightMenu(
     videoModel: ShortsVideoModel?,
     item: YouTubeEndContentRightMenu,
     sound: Boolean,
+    currentSpeed: YouTubeStreamPlaybackRate,
 ): String? {
     val locale = Locale.getDefault()
 
@@ -532,6 +630,16 @@ private fun disPlayRightMenu(
                 )
             }
         }
+
+        YouTubeEndContentRightMenu.SPEED -> {
+            "${currentSpeed.rate}X"
+        }
+
+        YouTubeEndContentRightMenu.CAPTION -> {
+            stringResource(
+                R.string.setting_play_caption,
+            )
+        }
     }
 }
 
@@ -543,7 +651,8 @@ private suspend fun toggleRightEvent(
     like: Boolean,
     disLike: Boolean,
     sound: Boolean,
-    onChanged: (Boolean, Boolean, Boolean) -> Unit,
+    caption: Boolean,
+    onChanged: (Boolean, Boolean, Boolean, Boolean, Boolean) -> Unit,
     shareLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>?,
     commentLauncher: ManagedActivityResultLauncher<Intent, ActivityResult>?,
 ) {
@@ -554,10 +663,10 @@ private suspend fun toggleRightEvent(
             if (!like) {
                 youTubeContentEndViewModel?.likeDisLike(likeKey, mainShortsModel)
                 youTubeContentEndViewModel?.canCelLikeDisLike(disLikeKey)
-                onChanged(true, !disLike, sound)
+                onChanged(true, !disLike, sound, false, caption)
             } else {
                 youTubeContentEndViewModel?.canCelLikeDisLike(likeKey)
-                onChanged(false, disLike, sound)
+                onChanged(false, disLike, sound, false, caption)
             }
         }
 
@@ -568,16 +677,16 @@ private suspend fun toggleRightEvent(
             if (!disLike) {
                 youTubeContentEndViewModel?.likeDisLike(disLikeKey, mainShortsModel)
                 youTubeContentEndViewModel?.canCelLikeDisLike(likeKey)
-                onChanged(!like, true, sound)
+                onChanged(!like, true, sound, false, caption)
             } else {
                 youTubeContentEndViewModel?.canCelLikeDisLike(disLikeKey)
-                onChanged(like, false, sound)
+                onChanged(like, false, sound, false, caption)
             }
         }
 
         YouTubeEndContentRightMenu.Sound -> {
             youTubeContentEndViewModel?.setSoundOff(!sound)
-            onChanged(like, disLike, !sound)
+            onChanged(like, disLike, !sound, false, caption)
         }
 
         YouTubeEndContentRightMenu.Comment -> {
@@ -595,6 +704,14 @@ private suspend fun toggleRightEvent(
                 YouTubeUtils.shareVideo(context, it, shareLauncher)
             }
         }
+
+        YouTubeEndContentRightMenu.SPEED -> {
+            onChanged(like, disLike, sound, true, caption)
+        }
+
+        YouTubeEndContentRightMenu.CAPTION -> {
+            onChanged(like, disLike, sound, false, !caption)
+        }
     }
 }
 
@@ -604,6 +721,8 @@ private fun setImageView(
     like: Boolean,
     disLike: Boolean,
     sound: Boolean,
+    caption: Boolean,
+    availableCaption: YouTubeStreamPlaybackCaptionState,
 ): Painter {
     when (item) {
         YouTubeEndContentRightMenu.Like -> {
@@ -616,6 +735,16 @@ private fun setImageView(
 
         YouTubeEndContentRightMenu.Sound -> {
             return if (sound) painterResource(item.selectedResourceId) else painterResource(item.unSelectedResourceId)
+        }
+
+        YouTubeEndContentRightMenu.CAPTION -> {
+            return if (!caption ||
+                availableCaption == YouTubeStreamPlaybackCaptionState.UNSUPPORTED
+            ) {
+                painterResource(item.unSelectedResourceId)
+            } else {
+                painterResource(item.selectedResourceId)
+            }
         }
 
         else -> {
@@ -674,11 +803,110 @@ fun SystemNavigationShowHideScreen() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@Suppress("ktlint:standard:function-naming")
+fun PlaybackRateBottomSheet(
+    currentRate: YouTubeStreamPlaybackRate,
+    onRateSelected: (YouTubeStreamPlaybackRate) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    val rates = YouTubeStreamPlaybackRate.entries.filter { it != YouTubeStreamPlaybackRate.UNKNOWN }
+
+    ModalBottomSheet(
+        sheetState =
+            rememberModalBottomSheetState(
+                skipPartiallyExpanded = true,
+            ),
+        containerColor = APP_BACKGROUND,
+        contentColor = Color.White,
+        scrimColor = Color.Transparent,
+        onDismissRequest = onDismiss,
+    ) {
+        Column(modifier = Modifier.padding(bottom = 8.dp)) {
+            Text(
+                text = stringResource(R.string.play_speed),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+            rates.forEach { rate ->
+                val isSelected = rate == currentRate
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onRateSelected(rate)
+                                onDismiss()
+                            }.padding(horizontal = 16.dp, vertical = 14.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = "${rate.rate}x",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = if (isSelected) APP_TEXT_COLOR else Color.White,
+                        modifier = Modifier.weight(1f),
+                    )
+                    if (isSelected) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = null,
+                            tint = APP_TEXT_COLOR,
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+@Suppress("ktlint:standard:function-naming")
+fun SubscribeButton(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier =
+            Modifier
+                .padding(top = 10.dp, bottom = 10.dp)
+                .wrapContentSize()
+                .clip(RoundedCornerShape(50))
+                .border(
+                    width = 1.5.dp,
+                    color = APP_TEXT_COLOR,
+                    shape = RoundedCornerShape(50),
+                ).background(Color(0x33000000))
+                .clickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(
+            modifier = Modifier.wrapContentSize().padding(start = 10.dp, end = 10.dp, top = 5.dp, bottom = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.Notifications,
+                contentDescription = null,
+                tint = APP_TEXT_COLOR,
+                modifier = Modifier.size(16.dp),
+            )
+            Text(
+                text = "구독하기",
+                color = APP_TEXT_COLOR,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+            )
+        }
+    }
+}
+
 @Suppress("ktlint:standard:function-naming")
 @Preview(showBackground = true)
 @Composable
 private fun PlayControllerRightMenuPreView() {
     RatelappTheme {
-        RightContentArea(null, null, {})
+        val youTubeContentEndViewModel: YouTubeContentEndViewModel = hiltViewModel()
+        RightContentArea(youTubeContentEndViewModel, null, {}, {}, false, {})
     }
 }

@@ -72,6 +72,7 @@ fun SettingsVideo(viewModel: SettingViewModel?) {
             SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_PIP_PLAY)
             SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_SOUND)
             SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_WIFI_STATE)
+            SettingsVideo(viewModel, SettingsItems.SERVICE_VIDEO_CAPTION)
         }
     }
 }
@@ -88,7 +89,8 @@ private fun SettingsVideo(
     var wifiOnlySwitchValue by rememberSaveable { mutableStateOf(false) }
     var pipModeSwitchValue by rememberSaveable { mutableStateOf(false) }
     var soundOnOffSwitchValue by rememberSaveable { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope() // 코루틴 스코프 생성
+    var captionEnabledValue by rememberSaveable { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(Unit) {
         viewModel?.setPIPPlay(context.hasPipPermission())
@@ -98,6 +100,7 @@ private fun SettingsVideo(
         pipModeSwitchValue = viewModel?.getPIPPlay() ?: context.hasPipPermission()
         soundOnOffSwitchValue = viewModel?.getSoundOnOff() ?: true
         wifiOnlySwitchValue = viewModel?.getWifiOnlyPlay() ?: true
+        captionEnabledValue = viewModel?.getCaptionEnabled() ?: true
     }
     val pipSettingsLauncher =
         rememberLauncherForActivityResult(
@@ -161,6 +164,8 @@ private fun SettingsVideo(
                             pipModeSwitchValue
                         } else if (item == SettingsItems.SERVICE_VIDEO_SOUND) {
                             soundOnOffSwitchValue
+                        } else if (item == SettingsItems.SERVICE_VIDEO_CAPTION) {
+                            captionEnabledValue
                         } else {
                             false
                         },
@@ -173,6 +178,10 @@ private fun SettingsVideo(
                             wifiOnlySwitchValue = s
                         } else if (item == SettingsItems.SERVICE_VIDEO_SOUND) {
                             soundOnOffSwitchValue = s
+                        } else if (item == SettingsItems.SERVICE_VIDEO_CAPTION) {
+                            coroutineScope.launch {
+                                captionEnabledValue = s
+                            }
                         } else if (item == SettingsItems.SERVICE_VIDEO_PIP_PLAY) {
                             val intent =
                                 Intent("android.settings.PICTURE_IN_PICTURE_SETTINGS").apply {
@@ -237,6 +246,7 @@ suspend fun settingPlayOption(
             SettingsItems.SERVICE_VIDEO_LOOP_PLAY -> viewModel?.setLoopPlay(switchValue)
             SettingsItems.SERVICE_VIDEO_SOUND -> viewModel?.setSoundOff(switchValue)
             SettingsItems.SERVICE_VIDEO_WIFI_STATE -> viewModel?.setWifiOnlyPlay(switchValue)
+            SettingsItems.SERVICE_VIDEO_CAPTION -> viewModel?.setCaptionEnabled(switchValue)
             else -> Unit
         }
     }

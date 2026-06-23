@@ -205,4 +205,17 @@
     <string name="server_maintaing_message">Nous effectuons actuellement une maintenance afin d\'améliorer notre service.\n</string>
     <string name="server_maintaing_message_time">%1$s\nDébut : 📅 %2$s\nFin : 📅 %3$s\n</string>
 
+    <string name="end_speed">1.0X</string>
+    <string name="play_speed">Vitesse de lecture</string>
+    <string name="more_channel_title">Chaîne</string>
+    <string name="more_channel_start_date">Date de création de la chaîne</string>
+    <string name="more_channel_view_count">Nombre total de vues</string>
+    <string name="more_topic">Sujet</string>
+    <string name="more_video_title">Vidéo</string>
+    <string name="more_video_like">J’aime</string>
+    <string name="more_video_search">Vues</string>
+    <string name="more_video_comment">Commentaires</string>
+    <string name="setting_play_caption">Afficher les sous-titres</string>
+    <string name="setting_play_caption_description">Même activé, les sous-titres ne s’affichent pas si la vidéo n’en contient pas.</string>
+
 </resources>

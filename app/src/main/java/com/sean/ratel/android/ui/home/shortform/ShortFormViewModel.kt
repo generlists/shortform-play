@@ -67,12 +67,10 @@ class ShortFormViewModel
 
             _shortsList.value.addAll(zipList)
             _topicList.value = list.topicList.topicList
-            RLog.d("LLLLLLLLLLLLL", "setVideoMap")
             setCategoryByYouTubeVideoList()
         }
 
         fun initData() {
-            RLog.d("LLLLLLLLLLLLL", "initData")
             // 참조를 바꿔야 변경 가능
             // _categoryByContents.value.clear()
             _categoryByContents.value = mutableMapOf()
@@ -90,7 +88,6 @@ class ShortFormViewModel
                     .mapKeys { it.key ?: "99" }
 
             categoryMap += getTopicVideoList(_topicList.value)
-            RLog.d("LLLLLLLLLLLLL", "setCategoryByYouTubeVideoList")
             setVideoMap(categoryMap)
         }
 
@@ -105,7 +102,18 @@ class ShortFormViewModel
                 listOfNotNull(topicItem.popularlist, topicItem.viewlist, topicItem.subscriberlist)
                     .flatMap { filterList -> filterList.topicList }
                     .flatMap { groupItem -> groupItem.topicList }
-                    .map { it.copy(shortsVideoModel = it.shortsVideoModel?.copy(categoryName = topicItem.topicName)) }
+                    .map {
+                        it.copy(
+                            shortsVideoModel =
+                                it.shortsVideoModel?.let { video ->
+                                    video.copy(
+                                        topicName = topicItem.topicName,
+                                        copyCategory = video.categoryName,
+                                        categoryName = topicItem.topicName,
+                                    )
+                                },
+                        )
+                    }
             }
 
         fun maxMoreIndex(categoryKey: String): Int {
@@ -164,7 +172,10 @@ class ShortFormViewModel
                 updatedMap[categoryKey] = existingList + nextList
                 _categoryByContents.value = updatedMap // 전체 Map을 새로 할당하여 StateFlow 업데이트
             }
-            RLog.d("LLLLLLLLLLLLL", "moreContent _categoryByContents.value ${_categoryByContents.value.get("10")?.size}")
+            RLog.d(
+                "LLLLLLLLLLLLL",
+                "moreContent _categoryByContents.value ${_categoryByContents.value.get("10")?.size}",
+            )
         }
 
         companion object {

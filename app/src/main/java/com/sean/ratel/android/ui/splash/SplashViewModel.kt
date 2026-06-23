@@ -2,7 +2,6 @@ package com.sean.ratel.android.ui.splash
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -307,7 +306,7 @@ class SplashViewModel
                 )
 
         suspend fun setLocale(locale: String) {
-            Log.d("hbungshin", "locale : $locale")
+            RLog.d("SPLASH", "locale : $locale")
             settingRepository.setLocale(locale)
         }
 

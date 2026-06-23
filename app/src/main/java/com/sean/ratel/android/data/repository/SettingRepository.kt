@@ -27,6 +27,10 @@ SettingRepository
             settingPreference.setSoundOnOff(isSound)
         }
 
+        suspend fun setCaptionEnabled(caption: Boolean) {
+            settingPreference.setCaptionEnabled(caption)
+        }
+
         suspend fun setWifiOnlyPlay(isWifiPlay: Boolean) {
             settingPreference.setWifiOnlyPlay(isWifiPlay)
         }
@@ -46,6 +50,8 @@ SettingRepository
         suspend fun getSoundOnOff(): Boolean = settingPreference.getSoundOnOff()
 
         suspend fun getWifiOnlyPlay(): Boolean = settingPreference.getWifiOnlyPlay()
+
+        fun getCaptionEnabled(): Boolean = settingPreference.getCaptionEnabled()
 
         suspend fun getPIPPlay() = settingPreference.getPIPPlay()
 
