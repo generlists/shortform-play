@@ -7,11 +7,14 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.runtime.getValue
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.search.SearchScreen
 import com.sean.ratel.android.ui.search.SearchViewModel
@@ -23,6 +26,7 @@ class SearchActivity : FragmentActivity() {
     val searchViewModel by viewModels<SearchViewModel>()
     val adViewModel by viewModels<AdViewModel>()
     val mainViewModel by viewModels<MainViewModel>()
+    val billingViewModel by viewModels<BillingViewModel>()
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,6 +43,7 @@ class SearchActivity : FragmentActivity() {
                 searchViewModel,
                 adViewModel,
                 mainViewModel,
+                billingViewModel,
                 finish = { finish() },
             )
         }
@@ -49,7 +54,7 @@ class SearchActivity : FragmentActivity() {
             actionName = GASplashAnalytics.Action.VIEW,
             parameter = mapOf(),
         )
-        mainViewModel.setInterstitialAdStart(Destination.Search.route, true)
+        mainViewModel.setInterstitialAdStart(Destination.Search.route, !billingViewModel.isAdRemoved.value)
         deeLink(intent)
     }
 

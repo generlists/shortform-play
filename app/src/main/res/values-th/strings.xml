@@ -207,4 +207,20 @@
     <string name="more_video_comment">ความคิดเห็น</string>
     <string name="setting_play_caption">แสดงคำบรรยาย</string>
     <string name="setting_play_caption_description">แม้จะเปิดใช้งาน แต่จะไม่แสดงหากวิดีโอไม่มีคำบรรยาย</string>
+
+    <!-- Thai -->
+    <string name="promotion_title">🔥 ลบโฆษณา ลดพิเศษฉลองเปิดตัว 39%! 🔥</string>
+    <string name="promotion_des">ลบโฆษณาถาวร และสร้างวิดีโอสะสมของคุณได้อย่างราบรื่นไม่มีสะดุด</string>
+    <string name="promotion_badge">โปรโมชั่นพิเศษ</string>
+    <string name="promotion_original_price">ราคาปกติ %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">ซื้อในราคาส่วนลด</string>
+    <string name="remove_ad">ลบโฆษณา</string>
+    <string name="banner_ad_remove">ลบโฆษณาแบนเนอร์</string>
+    <string name="inter_ad_remove">ลบโฆษณาคั่นหน้า</string>
+    <string name="purchase">ซื้อ</string>
+    <string name="original_price">THB%d</string>
+    <string name="setting_banner_discount">ลด %1$s%% ตอนนี้ · %2$s</string>
+    <string name="response_api_exception">[%s] เกิดข้อผิดพลาดที่ไม่คาดคิด โปรดลองอีกครั้งในภายหลัง</string>
+
 </resources>

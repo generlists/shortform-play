@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -31,11 +32,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_10
@@ -47,6 +50,7 @@ import com.sean.ratel.android.utils.findActivity
 @Composable
 fun SettingsApp(
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     viewModel: SettingViewModel?,
 ) {
     Column(
@@ -57,6 +61,7 @@ fun SettingsApp(
     ) {
         val context = LocalContext.current
         val activity = context.findActivity()
+        val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
         AppTitle()
         Card(
             modifier =
@@ -73,7 +78,7 @@ fun SettingsApp(
             SettingsApp(SettingsItems.SETTING_APP_MANAGER, viewModel) {
                 mainViewModel.setInterstitialAdStart(
                     Destination.SettingAppManagerDetail.route,
-                    true,
+                    !isAdRemoved,
                 )
                 viewModel?.runAppDetail()
                 viewModel?.sendGALog(

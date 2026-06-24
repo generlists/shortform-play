@@ -52,6 +52,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
@@ -64,6 +66,7 @@ import com.sean.ratel.android.data.dto.ShortsChannelModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.common.preview.MainParameterProvider
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.Background_op_20
@@ -74,6 +77,7 @@ import so.smartlab.common.utils.log.RLog
 @Composable
 fun HomeRecommendList(
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     recommendList: RecommendList,
 ) {
     Card(
@@ -87,7 +91,7 @@ fun HomeRecommendList(
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
     ) {
         Spacer(Modifier.height(8.dp))
-        TitleArea(mainViewModel, recommendList.title)
+        TitleArea(mainViewModel, billingViewModel, recommendList.title)
         Spacer(Modifier.height(8.dp))
         val list = recommendList.recommendList
         val items =
@@ -135,10 +139,12 @@ fun HomeRecommendList(
 @Composable
 private fun TitleArea(
     viewModel: MainViewModel?,
+    billingViewModel: BillingViewModel,
     title: String,
 ) {
     var textWidth by remember { mutableStateOf(0f) }
     val context = LocalContext.current
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
 
     Box(
         Modifier
@@ -201,7 +207,7 @@ private fun TitleArea(
                     onClick = {
                         viewModel?.setInterstitialAdStart(
                             Destination.Home.Main.RecommendMore.route,
-                            true,
+                            !isAdRemoved,
                         )
                         viewModel?.goMoreContent(
                             Destination.Home.Main.RecommendMore.route,
@@ -502,6 +508,6 @@ private fun HeaderPreview(
 ) {
     RLog.d("", "$list")
     RatelappTheme {
-        TitleArea(null, "당신이 좋아할만한")
+        TitleArea(null, billingViewModel = hiltViewModel(), "당신이 좋아할만한")
     }
 }

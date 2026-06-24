@@ -5,6 +5,8 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.Firebase
+import com.google.firebase.analytics.analytics
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import com.sean.ratel.android.data.android.permission.PermissionManager
@@ -33,6 +35,7 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -85,6 +88,7 @@ class SplashViewModel
 
         init {
             initServerConfig()
+            createUserId()
             viewModelScope.launch {
                 prefs.updateTokenCache()
                 val token = prefs.getAccessToken()
@@ -342,6 +346,16 @@ class SplashViewModel
                         _serverMainTain.value = mainTainConfig
                         RLog.e("SPLASH", "liveMainTain : $mainTainConfig")
                     }
+                }
+            }
+        }
+
+        fun createUserId() {
+            viewModelScope.launch {
+                val userId = settingRepository.userIdFlow.first()
+                if (userId == null) {
+                    settingRepository.setUserId()
+                    Firebase.analytics.setUserId(userId)
                 }
             }
         }

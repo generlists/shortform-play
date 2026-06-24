@@ -55,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.DrawablePainter
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
@@ -63,6 +64,7 @@ import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.MAX_RECENTLY_SIZE
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
@@ -72,8 +74,12 @@ import com.sean.ratel.android.utils.ComposeUtil.pxToDp
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun RecentVideoWatchList(viewModel: MainViewModel) {
+fun RecentVideoWatchList(
+    viewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
+) {
     val watchList = viewModel.watchVideoList.collectAsState()
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
 
     if (watchList.value.isEmpty()) return
 
@@ -158,7 +164,7 @@ fun RecentVideoWatchList(viewModel: MainViewModel) {
                             isHome = true,
                             size = 32.dp,
                             onClick = {
-                                viewModel.setInterstitialAdStart(Destination.Home.Main.RecentlyWatchMore.route, true)
+                                viewModel.setInterstitialAdStart(Destination.Home.Main.RecentlyWatchMore.route, !isAdRemoved)
                                 viewModel.goMoreContent(
                                     Destination.Home.Main.RecentlyWatchMore.route,
                                     ViewType.RecentlyWatch,

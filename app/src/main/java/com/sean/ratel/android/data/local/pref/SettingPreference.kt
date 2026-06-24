@@ -5,6 +5,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.sean.ratel.android.utils.PhoneUtil.generateShortUUID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -25,6 +26,7 @@ class SettingPreference
                 dataStore.data.map { it[captionEnabled] }.first() ?: true
         }
 
+        private val userId = stringPreferencesKey("USER_ID")
         private val autoPlay = booleanPreferencesKey("AUTO_PLAY")
         private val loopPlay = booleanPreferencesKey("LOOP_PLAY")
         private val pipPlay = booleanPreferencesKey("PIP_PLAY")
@@ -67,6 +69,12 @@ class SettingPreference
             dataStore.edit { it[newUpdate] = upate }
         }
 
+        suspend fun setUserId() {
+            dataStore.edit { prefs ->
+                prefs[userId] = generateShortUUID()
+            }
+        }
+
         suspend fun getAutoPlay(): Boolean = dataStore.data.map { it[autoPlay] }.first() ?: true
 
         suspend fun getLoopPlay(): Boolean = dataStore.data.map { it[loopPlay] }.first() ?: true
@@ -80,4 +88,9 @@ class SettingPreference
         suspend fun getSoundOnOff(): Boolean = dataStore.data.map { it[soundOnOff] }.first() ?: false
 
         fun getLocale(): Flow<String?> = dataStore.data.map { it[localeString] }
+
+        val userIdFlow: Flow<String?> =
+            dataStore.data.map { prefs ->
+                prefs[userId]
+            }
     }

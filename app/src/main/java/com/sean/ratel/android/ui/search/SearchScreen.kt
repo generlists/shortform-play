@@ -52,6 +52,7 @@ import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.preview.ShortsVideoParameterProvider
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_FILTER_BACKGROUND
@@ -69,6 +70,7 @@ fun SearchScreen(
     searchViewModel: SearchViewModel,
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     finish: () -> Unit,
 ) {
     val sessionId by searchViewModel.sessionId.collectAsState()
@@ -111,7 +113,7 @@ fun SearchScreen(
                         .background(APP_BACKGROUND)
                         .padding(paddingValues),
             ) {
-                SearchMain(searchViewModel, adViewModel, mainViewModel)
+                SearchMain(searchViewModel, adViewModel, mainViewModel,billingViewModel)
             }
         }
     }
@@ -146,6 +148,7 @@ fun SearchMain(
     searchViewModel: SearchViewModel,
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel
 ) {
     val searchType = rememberSaveable { mutableStateOf(SearchType.VideoSearch) }
     Spacer(Modifier.height(10.dp))
@@ -188,6 +191,7 @@ fun SearchMain(
                         mainViewModel,
                         searchViewModel,
                         adViewModel,
+                        billingViewModel,
                         {},
                     )
                 }
@@ -197,6 +201,7 @@ fun SearchMain(
                         searchViewModel,
                         adViewModel,
                         mainViewModel,
+                        billingViewModel
                     )
                 }
             }

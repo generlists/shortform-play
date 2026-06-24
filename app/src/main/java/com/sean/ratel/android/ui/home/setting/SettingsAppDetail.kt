@@ -20,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,9 +34,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_10
@@ -44,7 +47,10 @@ import com.sean.ratel.android.utils.PhoneUtil.getAppVersionName
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun SettingsAppDetail(viewModel: SettingViewModel?) {
+fun SettingsAppDetail(
+    viewModel: SettingViewModel?,
+    billingViewModel: BillingViewModel,
+) {
     // val scrollState = rememberScrollState()
     Column(
         Modifier
@@ -64,8 +70,8 @@ fun SettingsAppDetail(viewModel: SettingViewModel?) {
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.outlineVariant),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
-            SettingsApp(SettingsItems.SETTING_APP_VERSION, viewModel, isArrow = false)
-            SettingsApp(SettingsItems.SETTING_APP_OPEN_SOURCE, viewModel)
+            SettingsApp(SettingsItems.SETTING_APP_VERSION, viewModel, billingViewModel, isArrow = false)
+            SettingsApp(SettingsItems.SETTING_APP_OPEN_SOURCE, viewModel, billingViewModel)
         }
     }
 }
@@ -75,10 +81,12 @@ fun SettingsAppDetail(viewModel: SettingViewModel?) {
 private fun SettingsApp(
     item: SettingsItems,
     viewModel: SettingViewModel?,
+    billingViewModel: BillingViewModel,
     mainViewModel: MainViewModel = hiltViewModel(),
     isArrow: Boolean = true,
 ) {
     val context = LocalContext.current
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     Row(
         Modifier
             .padding(horizontal = 20.dp, vertical = 16.dp)
@@ -90,7 +98,7 @@ private fun SettingsApp(
             if (isArrow) {
                 Modifier.then(
                     Modifier.clickable {
-                        mainViewModel.setInterstitialAdStart(Destination.SettingAppLicense.route, true)
+                        mainViewModel.setInterstitialAdStart(Destination.SettingAppLicense.route, !isAdRemoved)
                         viewModel?.goAppSettingsOpenSourceLicense()
                         viewModel?.sendGALog(
                             Event.SCREEN_VIEW,
@@ -178,6 +186,6 @@ private fun AppTitle() {
 @Composable
 private fun SettingViewPreView() {
     RatelappTheme {
-        SettingsAppDetail(null)
+        SettingsAppDetail(null, hiltViewModel())
     }
 }

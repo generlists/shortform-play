@@ -1,6 +1,9 @@
 package com.sean.ratel.android.data.repository
 
+import androidx.datastore.preferences.core.edit
 import com.sean.ratel.android.data.local.pref.SettingPreference
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -43,6 +46,10 @@ SettingRepository
             settingPreference.setNewUpdate(update)
         }
 
+        suspend fun setUserId() {
+            settingPreference.setUserId()
+        }
+
         suspend fun getAutoPlay() = settingPreference.getAutoPlay()
 
         suspend fun getLoopPlay(): Boolean = settingPreference.getLoopPlay()
@@ -56,4 +63,6 @@ SettingRepository
         suspend fun getPIPPlay() = settingPreference.getPIPPlay()
 
         fun getLocale() = settingPreference.getLocale()
+
+        val userIdFlow: Flow<String?> = settingPreference.userIdFlow
     }

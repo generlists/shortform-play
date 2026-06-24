@@ -56,6 +56,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.TopicItem
@@ -63,6 +64,7 @@ import com.sean.ratel.android.data.dto.TopicList
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
@@ -73,6 +75,7 @@ import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 @Composable
 fun TopicCardPager(
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     topicList: TopicList,
 ) {
     if (topicList.topicList.isEmpty()) return
@@ -112,7 +115,7 @@ fun TopicCardPager(
                         val selectedIndex = index % topicItems.keys.size
 
                         val topicItem = topicItems.values.toList()[selectedIndex]
-                        TopicCard(mainViewModel, topicItem)
+                        TopicCard(mainViewModel, billingViewModel, topicItem)
                     }
                 }
             }
@@ -175,13 +178,15 @@ private fun TitleArea(
 @Composable
 fun TopicCard(
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     topic: TopicItem,
 ) {
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     Box(
         Modifier
             .fillMaxSize()
             .clickable {
-                mainViewModel.setInterstitialAdStart(Destination.Home.Main.TopicListDetail.route, true)
+                mainViewModel.setInterstitialAdStart(Destination.Home.Main.TopicListDetail.route, !isAdRemoved)
                 mainViewModel.goMoreContent(
                     route = Destination.Home.Main.TopicListDetail.route,
                     viewType = ViewType.MainTopic,

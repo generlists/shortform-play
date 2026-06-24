@@ -13,6 +13,7 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -40,6 +41,7 @@ import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.navigation.Destination.Screen.Companion.BASE_DEEPLINK_URL
@@ -83,6 +85,7 @@ class MainActivity : FragmentActivity() {
     val mainViewModel by viewModels<MainViewModel>()
     val adViewModel by viewModels<AdViewModel>()
     val pushViewModel by viewModels<PushViewModel>()
+    val billingViewModel by viewModels<BillingViewModel>()
 
     @Inject
     lateinit var log: GALog
@@ -130,7 +133,14 @@ class MainActivity : FragmentActivity() {
                 )
             }
         }
-        if (googleMobileAdsConsentManager.canRequestAds) mainViewModel.initAdMobSDK(this)
+
+        if (googleMobileAdsConsentManager.canRequestAds) {
+            RLog.e("SPLASH", "isAdRemove Start1111 ${billingViewModel.isAdRemoved.value}")
+
+            if (!billingViewModel.isAdRemoved.value) {
+                mainViewModel.initAdMobSDK(this)
+            }
+        }
 
         pipManager.bind(this)
 
@@ -140,6 +150,7 @@ class MainActivity : FragmentActivity() {
                 mainViewModel = mainViewModel,
                 adViewModel = adViewModel,
                 pushViewModel = pushViewModel,
+                billingViewModel = billingViewModel,
                 finish = { finish() },
             )
         }

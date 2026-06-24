@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.util.Patterns
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -15,9 +16,11 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -28,11 +31,18 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import com.sean.ratel.android.MainViewModel
+import com.sean.ratel.android.data.api.UiState
+import com.sean.ratel.android.premiumDefault
+import com.sean.ratel.android.ui.end.LoadingArea
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
+import com.sean.ratel.player.ui.ThemeMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import so.smartlab.common.iap.ui.PremiumBottomSheet
 import so.smartlab.common.utils.log.RLog
 
 object ComposeUtil {
@@ -278,4 +288,77 @@ object ComposeUtil {
             modifier = modifier,
         )
     }
+
+    @Composable
+    @Suppress("ktlint:standard:function-naming")
+    fun PremiumPopup(
+        billingViewModel: BillingViewModel,
+        forceDonotMessageRow: Boolean = false,
+        show: (Boolean, AdRemoveButtonType) -> Unit,
+    ) {
+        val context = LocalContext.current
+        val activity = context.findActivity()
+        val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
+        val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle()
+        val isDonotAain by billingViewModel.doNotShowAgain.collectAsStateWithLifecycle()
+        val coroutine = rememberCoroutineScope()
+
+        RLog.d("In App Purchase", "isAdRemoved : $isAdRemoved isDonotAain : $isDonotAain")
+        if (isAdRemoved) return
+
+        RLog.d("In App Purchase", "premiumData : $premiumData")
+
+        when (val state = premiumData) {
+            is UiState.Loading, UiState.Idle -> {
+                // 로딩 인디케이터
+                LoadingArea(isLoading = true)
+            }
+
+            is UiState.Success -> {
+                RLog.d(
+                    "In App Purchase",
+                    "forceDonotMessageRow : $forceDonotMessageRow isPromotionActive : ${state.data.isPromotionActive}",
+                )
+                PremiumBottomSheet(
+                    data = state.data,
+                    colors = premiumDefault(),
+                    onPurchaseClick = {
+                        activity?.let {
+                            RLog.d("IAP", "purchase")
+                            billingViewModel.purchase(activity)
+                            show(false, AdRemoveButtonType.PurChase)
+                        } ?: run {
+                            RLog.d("In App Purchase", "activity not founded error")
+                        }
+                    },
+                    showDoNotShowAgain = if (forceDonotMessageRow) null else isDonotAain,
+                    onRestoreClick = {
+                        billingViewModel.restore()
+                        show(false, AdRemoveButtonType.Restore)
+                    },
+                    onDismiss = {
+                        show(false, AdRemoveButtonType.DisMiss)
+                    },
+                    onDoNotShowAgain = {
+                        coroutine.launch {
+                            RLog.d("In App Purchase", "[APP] do not check : $it")
+                            billingViewModel.markDoNotShowAgain(it)
+                            show(false, AdRemoveButtonType.DoNotAgain)
+                        }
+                    },
+                )
+            }
+
+            is UiState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+}
+
+enum class AdRemoveButtonType {
+    PurChase,
+    Restore,
+    DoNotAgain,
+    DisMiss,
 }

@@ -202,4 +202,20 @@
     <string name="setting_play_caption">字幕を表示</string>
     <string name="setting_play_caption_description">ONでも、動画に字幕がない場合は表示されません。</string>
 
+
+    <string name="promotion_title">🔥【広告削除】リリース記念 39%OFF！🔥</string>
+    <string name="promotion_des">広告を永久に削除して、自分だけのスクラップ動画を快適に楽しみましょう。</string>
+    <string name="promotion_badge">期間限定セール</string>
+    <string name="promotion_original_price">通常価格 %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">割引価格で購入</string>
+    <string name="remove_ad">広告を削除</string>
+    <string name="banner_ad_remove">バナー広告を削除</string>
+    <string name="inter_ad_remove">全画面広告を削除</string>
+    <string name="purchase">購入する</string>
+    <string name="original_price">JPY%d</string>
+    <string name="setting_banner_discount">今すぐ %1$s%% OFF · %2$s</string>
+    <string name="response_api_exception">[%s] 予期しないエラーが発生しました。しばらくしてから再度お試しください。</string>
+
+
 </resources>

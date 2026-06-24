@@ -218,4 +218,20 @@
     <string name="setting_play_caption">Afficher les sous-titres</string>
     <string name="setting_play_caption_description">Même activé, les sous-titres ne s’affichent pas si la vidéo n’en contient pas.</string>
 
+
+    <string name="promotion_title">🔥 [Suppression des publicités] Offre de lancement -39 % ! 🔥</string>
+    <string name="promotion_des">Supprimez définitivement les publicités et profitez pleinement de vos vidéos enregistrées.</string>
+    <string name="promotion_badge">Offre limitée</string>
+    <string name="promotion_original_price">Prix normal %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">Acheter au prix réduit</string>
+    <string name="remove_ad">Supprimer les publicités</string>
+    <string name="banner_ad_remove">Supprimer les bannières publicitaires</string>
+    <string name="inter_ad_remove">Supprimer les publicités plein écran</string>
+    <string name="purchase">Acheter</string>
+    <string name="original_price">CAD%d</string>
+    <string name="setting_banner_discount">%1$s%% de réduction · %2$s</string>
+    <string name="response_api_exception">[%s] "Une erreur inattendue s'est produite. Veuillez réessayer plus tard."</string>
+
+
 </resources>

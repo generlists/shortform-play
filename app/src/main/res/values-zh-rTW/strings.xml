@@ -200,4 +200,20 @@
     <string name="more_video_comment">留言數</string>
     <string name="setting_play_caption">顯示字幕</string>
     <string name="setting_play_caption_description">即使已開啟，如果影片沒有字幕也不會顯示。</string>
+
+
+    <string name="promotion_title">🔥【移除廣告】上市紀念 39% 特價！🔥</string>
+    <string name="promotion_des">永久移除廣告，盡情打造專屬於您的影片收藏。</string>
+    <string name="promotion_badge">限時優惠</string>
+    <string name="promotion_original_price">原價 %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">以優惠價格購買</string>
+    <string name="remove_ad">移除廣告</string>
+    <string name="banner_ad_remove">移除橫幅廣告</string>
+    <string name="inter_ad_remove">移除插頁廣告</string>
+    <string name="purchase">購買</string>
+    <string name="original_price">TWD%d</string>
+    <string name="setting_banner_discount">立即享 %1$s%% 折扣 · %2$s</string>
+    <string name="response_api_exception">[%s] 發生未預期的錯誤，請稍後再試。</string>
+
 </resources>

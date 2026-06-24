@@ -53,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.DrawablePainter
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
@@ -60,6 +61,7 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.Background_op_20
@@ -70,10 +72,12 @@ import com.sean.ratel.android.utils.ComposeUtil.pxToDp
 @Composable
 fun TrendShortsList(
     viewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     trendShortsData: TrendsShortFormList,
 ) {
     var textWidth by remember { mutableStateOf(0f) }
     val context = LocalContext.current
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
 
     val trendShorts = viewModel.mainTrendShortsList.collectAsState().value
     val trendShortsTitle = trendShortsData.title
@@ -153,7 +157,7 @@ fun TrendShortsList(
                             isHome = true,
                             size = 32.dp,
                             onClick = {
-                                viewModel.setInterstitialAdStart(Destination.Home.Main.TrendShortsMore.route, true)
+                                viewModel.setInterstitialAdStart(Destination.Home.Main.TrendShortsMore.route, !isAdRemoved)
                                 viewModel.goMoreContent(
                                     Destination.Home.Main.TrendShortsMore.route,
                                     ViewType.TrendShortsMore,

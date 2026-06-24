@@ -20,6 +20,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.api.UiState
@@ -29,6 +30,7 @@ import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.end.LoadingArea
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
@@ -42,6 +44,7 @@ fun SearchComposeUi(
     mainViewModel: MainViewModel,
     searchViewModel: SearchViewModel,
     adViewModel: AdViewModel,
+    billingViewModel: BillingViewModel,
     finish: () -> Unit,
 ) {
     RatelappTheme {
@@ -59,6 +62,7 @@ fun SearchComposeUi(
         val searchRetryState = searchViewModel.searchRetry.collectAsState()
         val searchLoading = searchViewModel.searchLoading.collectAsState()
         val apiState = searchViewModel.uiState.collectAsState()
+        val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
         Scaffold(
             modifier =
                 Modifier
@@ -100,7 +104,7 @@ fun SearchComposeUi(
                     // 처음 저장된 자동완성 리스트
                     SearchUiState.UserSuggest -> {
                         UserSuggestListScreen(searchViewModel) { userSelect ->
-                            mainViewModel.setInterstitialAdStart(Destination.Search.route, true)
+                            mainViewModel.setInterstitialAdStart(Destination.Search.route, !isAdRemoved)
                             val locale = localeFromCountryCode(currentLocale)
                             val keyword = "$userSelect + ${
                                 getAppLocaleByStringResource(

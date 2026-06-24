@@ -24,17 +24,20 @@ import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.android.permission.PermissionManager
 import com.sean.ratel.android.data.android.permission.PermissionProvider
 import com.sean.ratel.android.data.common.AppAdsConfig
+import com.sean.ratel.android.data.common.AppBillingConfig
 import com.sean.ratel.android.data.common.AppPushConfig
 import com.sean.ratel.android.data.common.AppReviewConfig
 import com.sean.ratel.android.data.common.STRINGS
 import com.sean.ratel.android.di.qualifier.AdOpenUnitId
 import com.sean.ratel.android.di.qualifier.AdaptiveBannerUnitId
 import com.sean.ratel.android.di.qualifier.AdmobUnitId
+import com.sean.ratel.android.di.qualifier.AdsRemoveProductId
 import com.sean.ratel.android.di.qualifier.AllowReviewOnResume
 import com.sean.ratel.android.di.qualifier.ApiUrl
 import com.sean.ratel.android.di.qualifier.AppId
 import com.sean.ratel.android.di.qualifier.AppVersion
 import com.sean.ratel.android.di.qualifier.BannerUnitId
+import com.sean.ratel.android.di.qualifier.ConsumeProductId
 import com.sean.ratel.android.di.qualifier.DebugMode
 import com.sean.ratel.android.di.qualifier.DeviceModel
 import com.sean.ratel.android.di.qualifier.EmotionScoreThreshold
@@ -47,10 +50,14 @@ import com.sean.ratel.android.di.qualifier.MinDaysBetweenInAppAttempts
 import com.sean.ratel.android.di.qualifier.MinDaysSinceInstall
 import com.sean.ratel.android.di.qualifier.MinLaunchCount
 import com.sean.ratel.android.di.qualifier.NativeAdUnitId
+import com.sean.ratel.android.di.qualifier.OfferId
 import com.sean.ratel.android.di.qualifier.Region
 import com.sean.ratel.android.di.qualifier.RemoteIntervalTime
+import com.sean.ratel.android.di.qualifier.RemoveAdsOriginalPriceMicros
+import com.sean.ratel.android.di.qualifier.SubscriptionProductId
 import com.sean.ratel.android.di.qualifier.TestHashId
 import com.sean.ratel.android.utils.PhoneUtil
+import com.sean.ratel.android.utils.UIUtil.formatPrice
 import com.sean.ratel.player.core.data.domain.api.UserAgentProvider
 import dagger.Module
 import dagger.Provides
@@ -59,6 +66,8 @@ import dagger.hilt.android.UnstableApi
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import so.smartlab.common.ad.admob.data.repository.AdsConfigProvider
+import so.smartlab.common.iap.BillingConfig
+import so.smartlab.common.iap.BillingManager
 import so.smartlab.common.push.fcm.data.repository.PushConfigProvider
 import so.smartlab.common.review.ReviewConfig
 import so.smartlab.common.review.data.FirebaseReviewAnalytics
@@ -113,16 +122,6 @@ object ApplicationModule {
         remoteConfig.setConfigSettingsAsync(configSettings)
         return remoteConfig
     }
-
-//    @Provides
-//    @Singleton
-//    fun provideWidthIFramePlayerOption(): IFramePlayerOptions =
-//        IFramePlayerOptions
-//            .Builder()
-//            .controls(0)
-//            .ccLoadPolicy(1)
-//            .fullscreen(1) // enable full screen button
-//            .build()
 
     @Provides
     fun provideYouTubePlayerTracker(): YouTubePlayerTracker = YouTubePlayerTracker()
@@ -290,6 +289,59 @@ object ApplicationModule {
 
     @Provides
     @Singleton
+    fun provideIAPConfigProvider(
+        @AdsRemoveProductId adsRemoveProductId: String,
+        @OfferId offerId: String,
+        @SubscriptionProductId subscriptionProductId: List<String>,
+        @ConsumeProductId consumeProductId: List<String>,
+        @RemoveAdsOriginalPriceMicros removeAdsOriginalPriceMicros: Float,
+    ): BillingConfig =
+        AppBillingConfig(
+            adsRemoveProductId,
+            offerId,
+            subscriptionProductId,
+            consumeProductId,
+            removeAdsOriginalPriceMicros,
+        )
+
+    @Provides
+    @Singleton
+    fun provideOptionalBillingConfigProvider(provider: BillingConfig): Optional<BillingConfig> = Optional.of(provider)
+
+    @Provides
+    @Singleton
+    fun providerBillingManager(
+        @ApplicationContext context: Context,
+        config: BillingConfig,
+    ): BillingManager = BillingManager(context, config)
+
+    @Provides
+    @Singleton
+    @RemoveAdsOriginalPriceMicros
+    fun provideRemoveAdsOriginalPrice(): Float = formatPrice(Locale.getDefault())
+
+    @Provides
+    @Singleton
+    @OfferId
+    fun provideOfferId(): String = "launch-sale"
+
+    @Provides
+    @Singleton
+    @AdsRemoveProductId
+    fun provideAdRemoveId(): String = BuildConfig.AD_REMOVE_PRODUCT_ID
+
+    @Provides
+    @Singleton
+    @SubscriptionProductId
+    fun provideSubscriptionId(): List<String> = emptyList()
+
+    @Provides
+    @Singleton
+    @ConsumeProductId
+    fun provideConsumeId(): List<String> = emptyList()
+
+    @Provides
+    @Singleton
     fun provideAnalyticsProvider(): ReviewAnalytics = FirebaseReviewAnalytics(Firebase.analytics)
 
     /**
@@ -366,8 +418,3 @@ object ApplicationModule {
     @DebugMode
     fun provideDebugMode(): Boolean = BuildConfig.DEBUG
 }
-
-// @Provides
-// @Singleton
-// @CaptionOptionValue
-// fun provideCaptionOptionValue(settingRepository: SettingRepository): Flow<Boolean> = settingRepository.captionEnabledFlow

@@ -77,4 +77,6 @@ object STRINGS {
             Pair(context.getString(R.string.select_country_tailand), "TH"),
             Pair(context.getString(R.string.select_country_canada_en), "CA"),
         )
+
+    fun getAvataUrl(userName: String?): String = "https://api.dicebear.com/7.x/adventurer/png?&size=180&seed=$userName"
 }

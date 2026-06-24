@@ -69,6 +69,7 @@ fun HomeTopBar(
     modifier: Modifier,
     mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
+    billingViewModel: BillingViewModel,
     isHomeNaviBar: String,
     historyBack: () -> Unit,
     privacyOptionClick: () -> Unit,
@@ -165,7 +166,7 @@ fun HomeTopBar(
                     TitleBox()
                     Spacer(modifier = Modifier.weight(1f))
                     PrivacyOptionMenu(isPrivacy.value, privacyOptionClick)
-                    NotificationIconButton(notificationPage, mainViewModel, pushViewModel)
+                    NotificationIconButton(notificationPage, mainViewModel, pushViewModel, billingViewModel)
                     SearchIconButton(mainViewModel)
                 } else if (isHomeNaviBar == Destination.YouTube.route) {
                     BackButton(
@@ -267,12 +268,13 @@ fun NotificationIconButton(
     notificationPage: () -> Unit,
     mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     val permission by pushViewModel.hasPermission.collectAsState()
     val hasNewPush by pushViewModel.hasNewPush.collectAsState()
-
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     IconButton(onClick = {
-        mainViewModel.setInterstitialAdStart(Destination.Notifcation.route, true)
+        mainViewModel.setInterstitialAdStart(Destination.Notifcation.route, !isAdRemoved)
         notificationPage()
     }) {
         val icon =

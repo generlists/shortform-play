@@ -29,6 +29,7 @@ val APP_SEARCH_FILTER_USELECT = Color(0xFF555555)
 val APP_SEARCH_FILTER_EMTPY_MESSAGE = Color(0xFF161616)
 val APP_SEARCH_FILTER_EMTPY_BORDER = Color(0xFF2A2A2A)
 val APP_ALERT_BODY_TEXT_COLOR = Color(0xFFEAEAEA)
+val APP_NAVIGATION_COLOR = Color(0xFF000000)
 
 val Background = Color(android.graphics.Color.parseColor("#F6F6F6"))
 val Background_op_20 = Color(android.graphics.Color.parseColor("#33000000"))

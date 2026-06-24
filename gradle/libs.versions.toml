@@ -69,10 +69,12 @@ utils="0.0.1"
 google-admob="0.0.3"
 push="0.0.2"
 review="0.0.8"
+iap="0.0.6"
 
 
 [libraries]
 ai-shortformplay-core ={ module = "ai.shortform-play.sdk.ratel.player.android:player-core", version.ref = "shortform-play-core" }
+so-smartlab-sdk-common-iap-android ={ module = "so.smartlab.sdk.common:iap-android", version.ref = "iap" }
 ai-shortformplay-utils ={ module = "ai.shortform-play.sdk.ratel.player.android:player-utils", version.ref = "shortform-play-utils" }
 ai-shortformplay-ui ={ module = "ai.shortform-play.sdk.ratel.player.android:player-ui", version.ref = "shortform-play-ui" }
 

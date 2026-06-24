@@ -1,6 +1,8 @@
 package com.sean.ratel.android
 
 import android.app.Application
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.local.pref.SettingPreference
@@ -9,6 +11,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import so.smartlab.common.iap.BillingManager
 import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
@@ -19,8 +22,11 @@ class ShortFormPlayApplication : Application() {
 
     @Inject
     lateinit var settingPreference: SettingPreference
-    private val applicationScope =
 
+    @Inject
+    lateinit var billingManager: BillingManager
+
+    private val applicationScope =
         CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     override fun onCreate() {
@@ -39,6 +45,7 @@ class ShortFormPlayApplication : Application() {
         applicationScope.launch {
             settingPreference.initialize()
         }
+        billingManager.initialize(scope = ProcessLifecycleOwner.get().lifecycleScope)
     }
 
     fun firebaseRemoteConfig(

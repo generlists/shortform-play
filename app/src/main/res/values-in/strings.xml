@@ -213,4 +213,20 @@
     <string name="more_video_comment">Komentar</string>
     <string name="setting_play_caption">Tampilkan teks</string>
     <string name="setting_play_caption_description">Meskipun aktif, teks tidak akan muncul jika video tidak memiliki teks.</string>
+
+
+    <string name="promotion_title">🔥 [Hapus Iklan] Promo Peluncuran Diskon 39%! 🔥</string>
+    <string name="promotion_des">Hapus iklan selamanya dan nikmati membuat video koleksi pribadi Anda tanpa gangguan.</string>
+    <string name="promotion_badge">Promo Terbatas</string>
+    <string name="promotion_original_price">Harga Normal %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">Beli dengan Harga Diskon</string>
+    <string name="remove_ad">Hapus Iklan</string>
+    <string name="banner_ad_remove">Hapus Iklan Banner</string>
+    <string name="inter_ad_remove">Hapus Iklan Interstisial</string>
+    <string name="purchase">Beli</string>
+    <string name="original_price">IDR%d</string>
+    <string name="setting_banner_discount">Diskon %1$s%% Sekarang · %2$s</string>
+    <string name="response_api_exception">[%s] Terjadi kesalahan yang tidak terduga. Silakan coba lagi nanti.</string>
+
 </resources>
