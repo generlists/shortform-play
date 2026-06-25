@@ -52,6 +52,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
@@ -66,6 +67,7 @@ import com.sean.ratel.android.databinding.YoutubeVideoEndBinding
 import com.sean.ratel.android.ui.ad.InterstitialAdManager
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.UpdateStateBar
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
@@ -107,6 +109,7 @@ class YouTubeEndFragment(
 
     private var mainShortsModel: MainShortsModel? = null
     private var createPosition = 0
+    private var interstitialAdDisMissCount = 0
 
     //    private var selectedPosition = 0
     private var totalSize = 0
@@ -122,6 +125,7 @@ class YouTubeEndFragment(
     // 최근본 영상 저장 하기위
     lateinit var mainViewModel: MainViewModel
     lateinit var settingViewModel: SettingViewModel
+    lateinit var billingViewModel: BillingViewModel
 
     val rect = Rect()
     lateinit var youTubePlayerView: YouTubePlayerView
@@ -252,6 +256,7 @@ class YouTubeEndFragment(
         super.onCreate(savedInstanceState)
         mainViewModel = ViewModelProvider(requireActivity())[MainViewModel::class.java]
         settingViewModel = ViewModelProvider(requireActivity())[SettingViewModel::class.java]
+        billingViewModel = ViewModelProvider(requireActivity())[BillingViewModel::class.java]
     }
 
     override fun onPause() {
@@ -324,7 +329,7 @@ class YouTubeEndFragment(
                     initAdMobInitState = admobState,
                 )
             }.collect { adTriggerState ->
-                // RLog.d(TAG, "shouldTriggerAd : ${adTriggerState.shouldTriggerAd} , state : $adTriggerState")
+                RLog.d(TAG, "shouldTriggerAd : ${adTriggerState.fromSearch} , state : $adTriggerState")
 
                 intersitialAdManager.launchAdRequest(
                     createPosition,
@@ -332,9 +337,12 @@ class YouTubeEndFragment(
                     youTubeStreamPlayer,
                     fromSearchComplete = {
                         fromSearch = it
+                        Log.d("InterstitialAdPage", "fromSearch : $it")
+                        billingViewModel.setInterstitialAdDisMissCount(interstitialAdDisMissCount)
                     },
                     showLoading = {
                         showLoading(it)
+                        Log.d("InterstitialAdPage", "showLoading : $it")
                     },
                 )
             }
@@ -431,6 +439,9 @@ class YouTubeEndFragment(
         composeView?.setContent {
             val pipButtonClick = remember { mutableStateOf(false) }
             val currentSelection = remember { mutableStateOf(0) }
+            val adDissmissCount by billingViewModel.interstitialAdDisMissCount.collectAsStateWithLifecycle()
+
+            interstitialAdDisMissCount = remember { adDissmissCount }
 
             launch {
                 combine(
@@ -735,7 +746,12 @@ class YouTubeEndFragment(
             Modifier
                 .fillMaxSize(),
         ) {
-            Box(Modifier.fillMaxSize().padding(bottom = topBarHeight.value.dp), contentAlignment = Alignment.Center) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .padding(bottom = topBarHeight.value.dp),
+                contentAlignment = Alignment.Center,
+            ) {
                 RightContentArea(
                     youtubeContentEndViewModel,
                     mainShortsModel,

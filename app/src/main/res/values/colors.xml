@@ -12,5 +12,6 @@
     <color name="menu_gray_unselected">#808080</color>
     <color name="overlay_pressed">#19000000</color>
     <color name="star">#19000000</color>
-
+    <color name="splash_background">#FF03FFA3</color>
+    <color name="main_background">#f0f1f4</color>
 </resources>

@@ -21,6 +21,8 @@ object STRINGS {
 
     const val MAX_ADAPTIVE_BANNER_SIZE = 100
 
+    const val INTER_AD_MAX = 3
+
     val REMAIN_AD_MARGIN = 24.dp
     val REMOTE_CONFIg_INTERVAL = 10L
 

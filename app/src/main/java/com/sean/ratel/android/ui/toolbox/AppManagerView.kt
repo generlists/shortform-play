@@ -62,6 +62,7 @@ import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.DropDownMenuComposable
 import com.sean.ratel.android.ui.common.TopNavigationBar
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.main.itemview.MainSearchFilterView
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
@@ -79,6 +80,7 @@ fun AppManagerView(
     viewModel: AppManagerViewModel,
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     BackHandler(enabled = true) {
         mainViewModel.runNavigationBack()
@@ -153,6 +155,7 @@ fun AppManagerView(
                     adLoading?.adStart ?: true,
                 ),
             interstitialAdManager = mainViewModel.interstitialAdManager,
+            billingViewModel = billingViewModel,
             setAdLoading = {
                 it?.let {
                     mainViewModel.setInterstitialAdStart(it.route, it.adStart)

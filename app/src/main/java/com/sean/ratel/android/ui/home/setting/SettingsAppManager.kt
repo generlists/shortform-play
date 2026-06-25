@@ -92,6 +92,7 @@ fun SettingsAppManagerView(
                         adLoading?.adStart ?: true,
                     ),
                 interstitialAdManager = mainViewModel.interstitialAdManager,
+                billingViewModel = billingViewModel,
                 setAdLoading = {
                     it?.let {
                         mainViewModel.setInterstitialAdStart(it.route, it.adStart)

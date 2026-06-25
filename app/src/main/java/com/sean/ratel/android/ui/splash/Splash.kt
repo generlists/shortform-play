@@ -46,6 +46,7 @@ import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.ShortFormSelectDialog
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_ALERT_BODY_TEXT_COLOR
@@ -78,6 +79,7 @@ fun Splash(
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
+    billingViewModel: BillingViewModel,
     finish: () -> Unit = {},
 ) {
     var step by remember { mutableStateOf(SplashStep.NETWORK) }
@@ -143,6 +145,7 @@ fun Splash(
                     mainViewModel = mainViewModel,
                     adViewModel = adViewModel,
                     splashViewModel = splashViewModel,
+                    billingViewModel = billingViewModel,
                     pass = { pass ->
                         RLog.d("STEP", "move INIT -> DONE")
                         if (pass) step = SplashStep.DONE
@@ -392,10 +395,12 @@ fun InitialDataAndAD(
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
     splashViewModel: SplashViewModel,
+    billingViewModel: BillingViewModel,
     pass: (Boolean) -> Unit,
 ) {
     val locale by splashViewModel.locale.collectAsState(initial = null)
     val hasLoadedOnce by splashViewModel.hasLoadedOnce.collectAsState()
+    val adRemove by billingViewModel.isAdRemoved.collectAsState()
     var showCheck by remember(hasLoadedOnce) { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -411,12 +416,14 @@ fun InitialDataAndAD(
             splashViewModel.mainDataComplete,
             splashViewModel.trendsShortsComplete,
         ) { mainData, trendsShortsData ->
-
             Pair(mainData, trendsShortsData)
         }.collect { combinedResult ->
             val (main, trends) = combinedResult
+
+            RLog.d("SPLASH", "main : $main trends : $trends locale : $locale")
+
             if (authCheck != null && (authCheck ?: 0) > 0) return@collect
-            RLog.d("REQUESTSSSSS", "main : $main trends : $trends locale : $locale")
+
             if (main && trends && locale != null) {
                 pass(true)
             }
@@ -426,7 +433,7 @@ fun InitialDataAndAD(
         }
     }
 
-    if (isAdComplete is AdMobInitState.InitComplete) {
+    if (isAdComplete is AdMobInitState.InitComplete || adRemove) {
         LaunchedEffect(hasLoadedOnce) {
             showCheck = false
             delay(100)

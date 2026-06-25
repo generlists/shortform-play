@@ -2,21 +2,22 @@ package com.sean.ratel.android.ui.home
 
 import android.app.Activity
 import android.content.Context
-import android.icu.util.TimeZone
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.ProductDetails
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.api.ApiResult
 import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.common.STRINGS.APP_NAME
+import com.sean.ratel.android.data.common.STRINGS.INTER_AD_MAX
 import com.sean.ratel.android.data.dto.PromotionResponse
 import com.sean.ratel.android.data.dto.VerifyIAPRequest
 import com.sean.ratel.android.data.local.pref.PromotionPreference
+import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.BillingRepository
 import com.sean.ratel.android.utils.UIUtil.calculateDiscountedPrice
-import com.sean.ratel.android.utils.UIUtil.getCountryCode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -52,6 +53,7 @@ class BillingViewModel
         private val billingManager: BillingManager,
         private val billingRepository: BillingRepository,
         private val promotionPreference: PromotionPreference,
+        private val gaLog: GALog,
         adsSdk: AdsSdk,
     ) : ViewModel() {
         // 광고 제거 여부
@@ -85,12 +87,20 @@ class BillingViewModel
         val toastMessage: SharedFlow<String> = _toastMessage.asSharedFlow()
 
         private val premiumPromotion = MutableStateFlow<PromotionResponse?>(null)
+        private val premiumPromotionError = MutableStateFlow<Throwable?>(null)
 
-        private val _premiumData = MutableStateFlow<UiState<PremiumSheetData>>(UiState.Idle)
-        val premiumData: StateFlow<UiState<PremiumSheetData>> = _premiumData
+        private val _premiumData =
+            MutableSharedFlow<UiState<PremiumSheetData>>(
+                replay = 1,
+                extraBufferCapacity = 1,
+            )
+        val premiumData: SharedFlow<UiState<PremiumSheetData>> = _premiumData.asSharedFlow()
 
         private val _adSaleActive = MutableStateFlow<Boolean>(true)
         val adSaleActive: StateFlow<Boolean> = _adSaleActive
+
+        private val _interstitialAdDisMissCount = MutableStateFlow<Int>(0)
+        val interstitialAdDisMissCount: StateFlow<Int> = _interstitialAdDisMissCount.asStateFlow()
 
         init {
             RLog.d("In App Purchase", "[App] BillingViewModel init!!!!!!!")
@@ -102,8 +112,16 @@ class BillingViewModel
 
                 val products = billingManager.queryProducts()
                 RLog.d("In App Purchase", "[App] 상품 정보 조회 start _isAdRemoved : ${_isAdRemoved.value} , details : $products")
-                _productDetails.value = products.firstOrNull()
+                _productDetails.value = products.second.firstOrNull()
                 // 오퍼 아이디가 없으면 기간이 지났거나 1번 구매한 사용자로 치고 정가로 가격 수정
+                if (products.first != BillingClient.BillingResponseCode.OK) {
+                    _premiumData.tryEmit(UiState.Error(context.getString(R.string.iap_purchase_not_enviroment)))
+                    return@launch
+                }
+                if (premiumPromotionError.value != null) {
+                    _toastMessage.tryEmit(context.getString(R.string.api_server_error))
+                    return@launch
+                }
 
                 combine(_productDetails, premiumPromotion) { product, promotion ->
                     RLog.d("In App Purchase", "[App] product is null: ${product == null} , promotion is null: ${promotion == null}")
@@ -112,6 +130,7 @@ class BillingViewModel
                         Log.d("In App Purchas", "[App] Loading 반환")
                         return@combine UiState.Loading
                     }
+
                     val originalPriceMicros =
                         product.oneTimePurchaseOfferDetails?.priceAmountMicros ?: 4900_00L
                     val discountPercent = promotion.discountPercent ?: 39
@@ -172,7 +191,7 @@ class BillingViewModel
                         },
                     )
                 }.collect { state ->
-                    _premiumData.value = state
+                    _premiumData.tryEmit(state)
 
                     RLog.d("In App Purchase", "[App] state :  $state")
                 }
@@ -194,17 +213,17 @@ class BillingViewModel
                                 return@collect
                             }
 
-//                            verifyIAP(
-//                                VerifyIAPRequest(
-//                                    packageName = event.result.packageName,
-//                                    productId = productId,
-//                                    purchaseToken = event.result.purchaseToken,
-//                                ),
-//                            )
+                            verifyIAP(
+                                VerifyIAPRequest(
+                                    packageName = event.result.packageName,
+                                    productId = productId,
+                                    purchaseToken = event.result.purchaseToken,
+                                ),
+                            )
                             _isAdRemoved.value = billingManager.isAdRemoved()
                             _showPurchaseSheet.value = false
                             Log.e("IAP", "구매가 완료되었습니다 시작!!!!!")
-                            _toastMessage.tryEmit("구매가 완료되었습니다")
+                            _toastMessage.tryEmit(context.getString(R.string.iap_purchase_complete))
                         }
 
                         is BillingEvent.PurchaseRestored -> {
@@ -213,7 +232,7 @@ class BillingViewModel
                             RLog.d("In App Purchase", "[App] billingEvent 수신 PurchaseRestored $purchases")
 
                             if (purchases.isEmpty()) {
-                                _toastMessage.tryEmit("복원할 구매 내역이 없습니다")
+                                _toastMessage.tryEmit(context.getString(R.string.iap_restore_not_founded))
                                 return@collect
                             }
 
@@ -230,24 +249,24 @@ class BillingViewModel
                                 RLog.d("In App Purchase", "billingEvent 수신 productId : $productId")
                                 RLog.d("In App Purchase", "billingEvent 수신 token : $token")
 
-//                                verifyIAP(
-//                                    VerifyIAPRequest(
-//                                        packageName = context.packageName,
-//                                        productId = productId,
-//                                        purchaseToken = token,
-//                                    ),
-//                                )
+                                verifyIAP(
+                                    VerifyIAPRequest(
+                                        packageName = context.packageName,
+                                        productId = productId,
+                                        purchaseToken = token,
+                                    ),
+                                )
                             }
                             _isAdRemoved.value = billingManager.isAdRemoved()
                             _showPurchaseSheet.value = false
-                            _toastMessage.tryEmit("구매가 복원되었습니다")
+                            // _toastMessage.tryEmit(context.getString(R.string.iap_restore_purchase))
                         }
 
                         is BillingEvent.PurchasePending -> {
                             RLog.d("In App Purchase", "[App] billingEvent 수신 PurchasePending: 결제 대기 중입니다. 완료 후 자동 반영됩니다")
                             _isAdRemoved.value = false
 
-                            _toastMessage.tryEmit("결제 대기 중입니다. 완료 후 자동 반영됩니다")
+                            _toastMessage.tryEmit(context.getString(R.string.iap_purchase_ready))
                         }
 
                         is BillingEvent.PurchaseCanceled -> {
@@ -263,43 +282,33 @@ class BillingViewModel
                             RLog.d("In App Purchase", "[App] billingEvent 수신 PurchaseFailed ${event.error}")
                             when (event.error) {
                                 is BillingError.RootedDevice -> {
-                                    _toastMessage.tryEmit("루팅된 기기에서는 구매할 수 없습니다")
+                                    _toastMessage.tryEmit(context.getString(R.string.iap_root_device))
                                 }
 
                                 is BillingError.ItemAlreadyOwned -> {
-                                    _toastMessage.tryEmit("이미 구매하신 상품입니다")
+                                    _toastMessage.tryEmit(context.getString(R.string.iap_allready_purchase))
                                 }
 
                                 else -> {
-                                    _toastMessage.tryEmit("구매에 실패했습니다. 다시 시도해주세요")
+                                    _toastMessage.tryEmit(context.getString(R.string.iap_purchase_failed))
                                 }
                             }
                         }
 
                         is BillingEvent.BillingNotAvailable -> {
                             RLog.d("In App Purchase", "[App] BillingNotAvailable Google Play 서비스를 확인해주세요")
-                            _toastMessage.tryEmit("Google Play 서비스를 확인해주세요")
+                            _toastMessage.tryEmit(context.getString(R.string.iap_google_play_service))
                         }
                     }
                 }
             }
         }
 
-        // 구매 시트 열기
-        fun openPurchaseSheet() {
-            _showPurchaseSheet.value = true
-        }
-
-        // 구매 시트 닫기
-        fun closePurchaseSheet() {
-            _showPurchaseSheet.value = false
-        }
-
         // 구매 실행
         fun purchase(activity: Activity) {
             val details =
                 _productDetails.value ?: run {
-                    _toastMessage.tryEmit("상품 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요")
+                    _toastMessage.tryEmit(context.getString(R.string.iap_product_request_service))
                     return
                 }
             RLog.d("In App Purchase", "[App] purchase start details : $details")
@@ -343,7 +352,10 @@ class BillingViewModel
 
                             is ApiResult.Exception -> {
                                 RLog.d("In App Purchase", "[App] Api Exception")
+
                                 premiumPromotion.value = null
+                                premiumPromotionError.value = response.e
+                                _premiumData.tryEmit(UiState.Error(context.getString(R.string.api_server_error)))
                             }
 
                             else -> {
@@ -379,14 +391,16 @@ class BillingViewModel
                                 } else {
                                     _isAdRemoved.value = false
                                     RLog.e("In App Purchase", "verify fail: ${response.data.error?.code} / ${response.data.error?.message}")
-
+                                    premiumPromotionError.value = Throwable("error")
                                     // premiumManager.setPremium(false)
                                 }
                             }
 
                             is ApiResult.Exception -> {
-                                RLog.d("In App Purchase", "[App] Api Exception")
+                                RLog.d("In App Purchase", "111[App] Api Exception")
                                 premiumPromotion.value = null
+                                premiumPromotionError.value = response.e
+                                _premiumData.tryEmit(UiState.Error(context.getString(R.string.api_server_error)))
                             }
 
                             else -> {
@@ -410,5 +424,30 @@ class BillingViewModel
         suspend fun markDoNotShowAgain(isHide: Boolean) {
             RLog.d("In App Purchase", "[App] save check : $isHide")
             promotionPreference.markDoNotShowAgain(isHide)
+        }
+
+        fun setInterstitialAdDisMissCount(count: Int) {
+            RLog.d("Route!!!!!", "[App]  count : $count , _interstitialAdDisMissCount : ${_interstitialAdDisMissCount.value}")
+
+            if (count >= INTER_AD_MAX) {
+                _interstitialAdDisMissCount.value = 1
+                return
+            }
+
+            _interstitialAdDisMissCount.value = count + 1
+        }
+
+        fun sendGALog(
+            screenName: String,
+            eventName: String,
+            actionName: String,
+            parameter: Map<String, String>,
+        ) {
+            gaLog.sendEvent(
+                screenName,
+                eventName,
+                actionName,
+                parameter,
+            )
         }
     }

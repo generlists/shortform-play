@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-03-31T05:35:59.302542Z">
+        <DropdownSelection timestamp="2026-06-25T08:10:58.358580Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=R3CR10BB52K" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/hyunbungshin/.android/avd/Pixel_9_Pro_XL-TEST.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -15,6 +15,17 @@
       </SelectionState>
       <SelectionState runConfigName="SearchResultPreView">
         <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ShortFormCommonAlertDialogPreView">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2026-05-28T06:02:11.822198Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/hyunbungshin/.android/avd/Pixel_9_Pro_XL-TEST.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
       </SelectionState>
     </selectionStates>
   </component>

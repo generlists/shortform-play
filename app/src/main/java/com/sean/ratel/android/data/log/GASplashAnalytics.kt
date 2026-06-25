@@ -2,6 +2,7 @@ package com.sean.ratel.android.data.log
 
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
+import com.sean.ratel.android.data.log.GAKeys.SETTING_SCREEN
 import com.sean.ratel.android.data.log.GAKeys.SPLASH_SCREEN
 import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
 
@@ -12,6 +13,7 @@ object GASplashAnalytics {
             SPLASH_SCREEN to "splash_screen",
             SEARCH_SCREEN to "search_screen",
             TOPIC_DETAIL to "topic_screen",
+            SETTING_SCREEN to "setting_screen",
         )
 
     object Event {
@@ -36,6 +38,11 @@ object GASplashAnalytics {
         const val SELECT_TOPIC_DETAIL_GROUP_ITEM_CLICK = "select_topic_group_item_click"
         const val SELECT_TOPIC_DETAIL_FILTER_ITEM_CLICK = "select_topic_filter_item_click"
         const val SELECT_TOPIC_DETAIL_SHARE_BTN_CLICK = "select_topic_filter_item_click"
+        const val SELECT_AD_VIEW_POPUP_CLICK = "select_ad_promotion_popup_click"
+        const val SELECT_AD_VIEW_POPUP_SHOW = "select_ad_promotion_popup_show"
+        const val SELECT_MAIN_AD_PROMOTION_ITEM_CLICK = "select_ad_main_promotion_item_click"
+        const val SELECT_SETTING_AD_PROMOTION_POPUP_CLICK = "select_ad_setting_promotion_popup_click"
+        const val SELECT_SETTING_AD_PROMOTION_ITEM_CLICK = "select_ad_setting_promotion_item_click"
     }
 
     object Action {

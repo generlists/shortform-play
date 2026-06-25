@@ -1,10 +1,8 @@
 package com.sean.ratel.android.ui.common
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
-import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
@@ -48,6 +46,28 @@ fun FullScreenToggleView(route: String) {
 @Composable
 fun UpdateStateBar() {
     FullScreenToggleView(Destination.YouTube.route)
+}
+
+@SuppressLint("ContextCastToActivity")
+@Suppress("ktlint:standard:function-naming")
+@Composable
+fun SystemBars(isDarkMode: Boolean) {
+    val activity = LocalContext.current.findActivity()
+
+    DisposableEffect(isDarkMode) {
+        activity?.enableEdgeToEdge(
+            statusBarStyle =
+                SystemBarStyle.dark(
+                    Color.Black.toArgb(),
+                ),
+            navigationBarStyle =
+                SystemBarStyle.dark(
+                    Color.Black.toArgb(),
+                ),
+        )
+
+        onDispose { }
+    }
 }
 
 fun Context.findActivity(): FragmentActivity? {

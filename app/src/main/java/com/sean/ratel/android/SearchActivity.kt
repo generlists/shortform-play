@@ -7,10 +7,9 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.runtime.getValue
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
@@ -30,11 +29,14 @@ class SearchActivity : FragmentActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            installSplashScreen()
+        }
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            enableEdgeToEdge()
+        } else {
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
 
@@ -47,7 +49,9 @@ class SearchActivity : FragmentActivity() {
                 finish = { finish() },
             )
         }
-        mainViewModel.initAdMobSDK(this)
+        if (!billingViewModel.isAdRemoved.value) {
+            mainViewModel.initAdMobSDK(this)
+        }
         searchViewModel.sendGALog(
             screenName = GASplashAnalytics.SCREEN_NAME[SEARCH_SCREEN] ?: "",
             eventName = GASplashAnalytics.Event.SEARCH_VIEW,

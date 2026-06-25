@@ -1,7 +1,6 @@
 package com.sean.ratel.android.ui.ad
 
 import android.app.Activity
-import android.widget.Toast
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -11,7 +10,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -47,21 +45,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.api.UiState
+import com.sean.ratel.android.data.log.GAKeys.AD_PROMOTION_BUTTON_TYPE
+import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdBannerLocation.BOTTOM
 import com.sean.ratel.android.ui.ad.AdBannerLocation.TOP
 import com.sean.ratel.android.ui.common.findActivity
-import com.sean.ratel.android.ui.end.LoadingArea
 import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.PremiumPopup
-import com.sean.ratel.player.ui.ThemeMode
 import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
 import so.smartlab.common.ad.admob.ui.kind.AdaptiveInLineBannerView
 import so.smartlab.common.ad.admob.ui.kind.FixedBannerView
+import so.smartlab.common.iap.ui.model.PremiumSheetData
 import so.smartlab.common.utils.log.RLog
 
 const val TAG = "ADView"
@@ -71,6 +70,7 @@ const val TAG = "ADView"
 fun AdBannerView(
     activity: Activity?,
     currentRoute: String,
+    premiumSheetData: UiState<PremiumSheetData>,
     adBannerLocation: AdBannerLocation = BOTTOM,
     billingViewModel: BillingViewModel,
     homeMainViewModel: MainViewModel = hiltViewModel(),
@@ -83,10 +83,10 @@ fun AdBannerView(
     var adSize by remember { mutableStateOf(64) }
     var initAdMob by remember { mutableStateOf(false) }
     val isRemoveAds by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
-    val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle()
     var onRemoveAdsClick by remember { mutableStateOf(false) }
 
-    RLog.d("KKKKKKK", "currentRoute : $currentRoute , premiumData : $premiumData")
+    // RLog.d("KKKKKKK", "currentRoute : $currentRoute , premiumData : $premiumData")
+    if (isRemoveAds) return
 
     if (adMobInitState == AdMobInitState.InitComplete) {
         initAdMob = true
@@ -94,7 +94,7 @@ fun AdBannerView(
 
     LaunchedEffect(initAdMob, activity) {
         activity?.let {
-            RLog.d("KKKKKKK", "requestBannerAdView : $currentRoute")
+            RLog.d("AdView", "requestBannerAdView : $currentRoute")
             homeMainViewModel.requestBannerAdView(it, admobBannerId = currentRoute)
         }
     }
@@ -132,12 +132,7 @@ fun AdBannerView(
             contentAlignment = alignment,
         ) {
             Column {
-                when (val state = premiumData) {
-                    is UiState.Loading, UiState.Idle -> {
-                        // 로딩 인디케이터
-                        LoadingArea(isLoading = true)
-                    }
-
+                when (val state = premiumSheetData) {
                     is UiState.Success -> {
                         RemoveAdsChip(
                             promotionTitle = state.data.promoTitle,
@@ -145,12 +140,18 @@ fun AdBannerView(
                             discountPercent = state.data.discountPercent ?: "39",
                             onClick = {
                                 onRemoveAdsClick = true
+                                billingViewModel.sendGALog(
+                                    screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                                    eventName = GASplashAnalytics.Event.SELECT_MAIN_AD_PROMOTION_ITEM_CLICK,
+                                    actionName = GASplashAnalytics.Action.CLICK,
+                                    parameter = mapOf(),
+                                )
                             },
                         )
                     }
 
-                    is UiState.Error -> {
-                        Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                    else -> {
+                        Unit
                     }
                 }
                 FixedBannerView(
@@ -163,15 +164,16 @@ fun AdBannerView(
             if (onRemoveAdsClick) {
                 PremiumPopup(
                     billingViewModel,
+                    premiumSheetData,
                     forceDonotMessageRow = true,
                     show = { isShow, promotionButtonType ->
                         onRemoveAdsClick = isShow
-//                        statisticArgs.sendEvent(
-//                            EventAction.ButtonClick,
-//                            EventName.MainAdPurchaseADViewClick,
-//                            Screen.Home,
-//                            mapOf(Parms.AdPromotionButtonType.key to promotionButtonType.name),
-//                        )
+                        billingViewModel.sendGALog(
+                            screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                            eventName = GASplashAnalytics.Event.SELECT_AD_VIEW_POPUP_CLICK,
+                            actionName = GASplashAnalytics.Action.CLICK,
+                            parameter = mapOf(AD_PROMOTION_BUTTON_TYPE to promotionButtonType.name),
+                        )
                     },
                 )
             }
@@ -273,7 +275,12 @@ private fun RemoveAdsChip(
         label = "chipScale",
     )
 
-    Box(Modifier.fillMaxWidth().padding(bottom = 10.dp), contentAlignment = Alignment.CenterEnd) {
+    Box(
+        Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp),
+        contentAlignment = Alignment.CenterEnd,
+    ) {
         Box(
             modifier =
                 Modifier

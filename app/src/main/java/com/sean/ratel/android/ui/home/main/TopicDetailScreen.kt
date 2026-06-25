@@ -71,6 +71,7 @@ import com.sean.ratel.android.ui.ad.AdTarget
 import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.TopicFilterType
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -92,6 +93,7 @@ fun TopicDetailScreen(
     modifier: Modifier,
     topicKey: String,
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     var loading by remember { mutableStateOf(true) }
     val adLoading by mainViewModel.interstitialAdStart.collectAsState(initial = null)
@@ -697,6 +699,7 @@ fun TopicDetailScreen(
                     adLoading?.adStart ?: true,
                 ),
             interstitialAdManager = mainViewModel.interstitialAdManager,
+            billingViewModel = billingViewModel,
             setAdLoading = {
                 it?.let {
                     mainViewModel.setInterstitialAdStart(it.route, it.adStart)

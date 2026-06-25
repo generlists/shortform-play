@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.MAX_RECOMMEND_SIZE
@@ -230,6 +231,7 @@ fun ShortsItemList(
     listState: LazyListState,
 ) {
     val adFixedBannerState by viewModel.fixedBannerState.collectAsState()
+    val isAdRemove by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     var adSize by remember { mutableStateOf(64) }
 
     val isFirstItemVisible by remember {
@@ -258,7 +260,7 @@ fun ShortsItemList(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(bottom = adSize.dp),
+                .padding(bottom = if (!isAdRemove) adSize.dp else 0.dp),
     ) {
         var i = 0
         val targetIndexList = validationIndex(Destination.Home.Main.route, size)

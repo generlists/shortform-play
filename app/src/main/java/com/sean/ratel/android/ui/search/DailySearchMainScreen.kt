@@ -92,7 +92,7 @@ fun SearchFilterScreen(
             if (showFilterSheet) {
                 SearchFilterScreen({
                     showFilterSheet = it
-                }, searchViewModel, mainViewModel,billingViewModel)
+                }, searchViewModel, mainViewModel, billingViewModel)
             }
 
             when (apiState.value) {

@@ -13,10 +13,10 @@ import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
@@ -105,19 +105,16 @@ class MainActivity : FragmentActivity() {
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            installSplashScreen()
+        }
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
             enableEdgeToEdge()
-        }
-
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-//            WindowCompat.setDecorFitsSystemWindows(window, false)
-//        }
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            installSplashScreen()
+        } else {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
         }
 
         adViewModel.setForceClearCache(intent.getBooleanExtra("clear_cache", false))
@@ -125,7 +122,12 @@ class MainActivity : FragmentActivity() {
         googleMobileAdsConsentManager.gatherConsent(this) { error ->
             if (error != null) RLog.d(TAG, "${error.errorCode}: ${error.message}")
 
-            if (googleMobileAdsConsentManager.canRequestAds) mainViewModel.initAdMobSDK(this)
+            if (googleMobileAdsConsentManager.canRequestAds) {
+                RLog.e("SPLASH", "isAdRemove Start22222 ${billingViewModel.isAdRemoved.value}")
+                if (!billingViewModel.isAdRemoved.value) {
+                    mainViewModel.initAdMobSDK(this)
+                }
+            }
 
             if (googleMobileAdsConsentManager.isPrivacyOptionsRequired) {
                 mainViewModel.setPrivacyOptionMenu(

@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.util.Log
 import android.util.Patterns
-import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResult
@@ -36,13 +35,12 @@ import androidx.lifecycle.lifecycleScope
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.premiumDefault
-import com.sean.ratel.android.ui.end.LoadingArea
 import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
-import com.sean.ratel.player.ui.ThemeMode
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import so.smartlab.common.iap.ui.PremiumBottomSheet
+import so.smartlab.common.iap.ui.model.PremiumSheetData
 import so.smartlab.common.utils.log.RLog
 
 object ComposeUtil {
@@ -293,13 +291,14 @@ object ComposeUtil {
     @Suppress("ktlint:standard:function-naming")
     fun PremiumPopup(
         billingViewModel: BillingViewModel,
+        premiumSheetData: UiState<PremiumSheetData>,
         forceDonotMessageRow: Boolean = false,
         show: (Boolean, AdRemoveButtonType) -> Unit,
     ) {
         val context = LocalContext.current
         val activity = context.findActivity()
         val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
-        val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle()
+        val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle(UiState.Idle)
         val isDonotAain by billingViewModel.doNotShowAgain.collectAsStateWithLifecycle()
         val coroutine = rememberCoroutineScope()
 
@@ -308,12 +307,7 @@ object ComposeUtil {
 
         RLog.d("In App Purchase", "premiumData : $premiumData")
 
-        when (val state = premiumData) {
-            is UiState.Loading, UiState.Idle -> {
-                // 로딩 인디케이터
-                LoadingArea(isLoading = true)
-            }
-
+        when (val state = premiumSheetData) {
             is UiState.Success -> {
                 RLog.d(
                     "In App Purchase",
@@ -349,8 +343,10 @@ object ComposeUtil {
                 )
             }
 
-            is UiState.Error -> {
-                Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+            else
+
+            -> {
+                Unit
             }
         }
     }

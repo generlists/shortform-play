@@ -28,7 +28,6 @@ import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.navigation.Destination
 import so.smartlab.common.utils.log.RLog
 import java.text.DecimalFormat
-import java.text.NumberFormat
 import java.util.Locale
 import kotlin.random.Random
 

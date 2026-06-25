@@ -76,6 +76,7 @@ import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.ShortFormBottomSheetDialog
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.home.main.itemview.MainSearchFilterView
 import com.sean.ratel.android.ui.home.main.itemview.TrendsShortsFilterButton
@@ -94,6 +95,7 @@ fun GridItemMoreView(
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     val viewType = mainViewModel.viewType.collectAsState()
     val mainShorts = mainViewModel.mainShorts.collectAsState()
@@ -113,7 +115,7 @@ fun GridItemMoreView(
         }
     }
 
-    GridDisplayUi(viewType.value, adViewModel, mainViewModel, moreViewModel)
+    GridDisplayUi(viewType.value, adViewModel, mainViewModel, moreViewModel, billingViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -123,6 +125,7 @@ fun GridDisplayUi(
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     var filterAction by remember { mutableIntStateOf(0) }
     val initScroll = moreViewModel.initScroll.collectAsState()
@@ -221,7 +224,12 @@ fun GridDisplayUi(
                 )
             }
             if (viewType == ViewType.TrendShortsMore) {
-                Box(Modifier.fillMaxSize().background(Color.Transparent).padding(bottom = 128.dp)) {
+                Box(
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.Transparent)
+                        .padding(bottom = 128.dp),
+                ) {
                     Box(
                         Modifier
                             .fillMaxSize()
@@ -289,6 +297,7 @@ fun GridDisplayUi(
                     adLoading?.adStart ?: true,
                 ),
             interstitialAdManager = mainViewModel.interstitialAdManager,
+            billingViewModel = billingViewModel,
             setAdLoading = {
                 it?.let {
                     mainViewModel.setInterstitialAdStart(it.route, it.adStart)

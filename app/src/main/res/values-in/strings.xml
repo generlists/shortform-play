@@ -225,8 +225,18 @@
     <string name="banner_ad_remove">Hapus Iklan Banner</string>
     <string name="inter_ad_remove">Hapus Iklan Interstisial</string>
     <string name="purchase">Beli</string>
-    <string name="original_price">IDR%d</string>
+    <string name="original_price">IDR%.1f</string>
     <string name="setting_banner_discount">Diskon %1$s%% Sekarang · %2$s</string>
     <string name="response_api_exception">[%s] Terjadi kesalahan yang tidak terduga. Silakan coba lagi nanti.</string>
+    <string name="iap_restore_purchase">Pembelian berhasil dipulihkan.</string>
 
+    <string name="iap_purchase_ready">Pembayaran sedang menunggu. Akan diterapkan secara otomatis setelah selesai.</string>
+    <string name="iap_root_device">Pembelian tidak tersedia pada perangkat yang telah di-root.</string>
+    <string name="iap_allready_purchase">Anda sudah membeli produk ini.</string>
+    <string name="iap_purchase_failed">Pembelian gagal. Silakan coba lagi.</string>
+    <string name="iap_google_play_service">Silakan periksa Google Play Services.</string>
+    <string name="iap_product_request_service">Memuat informasi produk. Silakan coba lagi nanti.</string>
+    <string name="iap_restore_not_founded">Tidak ada riwayat pembelian yang dapat dipulihkan.</string>
+    <string name="iap_purchase_complete">Pembelian berhasil diselesaikan.</string>
+    <string name="iap_purchase_not_enviroment">Pembelian dalam aplikasi tidak tersedia di lingkungan ini.</string>
 </resources>

@@ -97,6 +97,7 @@ fun NavGraph(
                 adViewModel = adViewModel,
                 mainViewModel = mainViewModel,
                 pushViewModel = pushViewModel,
+                billingViewModel = billingViewModel,
                 finish = finish,
             )
         }
@@ -179,56 +180,56 @@ fun NavGraph(
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            GridItemMoreView(adViewModel, mainViewModel, viewModel)
+            GridItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.EditorPickMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            GridItemMoreView(adViewModel, mainViewModel, viewModel)
+            GridItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RecommendMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            GridItemMoreView(adViewModel, mainViewModel, viewModel)
+            GridItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RankingChannelMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            ListItemMoreView(adViewModel, mainViewModel, viewModel)
+            ListItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RankingSubscriptionMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            ListItemMoreView(adViewModel, mainViewModel, viewModel)
+            ListItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RankingSubscriptionUpMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            ListItemMoreView(adViewModel, mainViewModel, viewModel)
+            ListItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RecentlyWatchMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            ListItemMoreView(adViewModel, mainViewModel, viewModel)
+            ListItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.TrendShortsMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            GridItemMoreView(adViewModel, mainViewModel, viewModel)
+            GridItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
         }
 
         composable(
@@ -237,7 +238,7 @@ fun NavGraph(
             val appManagerViewModel: AppManagerViewModel =
                 hiltViewModel(key = AppManagerViewModel.TAG)
 
-            AppManagerView(modifier, appManagerViewModel, mainViewModel, adViewModel)
+            AppManagerView(modifier, appManagerViewModel, mainViewModel, adViewModel, billingViewModel)
         }
 
         composable(Destination.SettingAppManagerDetail.route) {
@@ -245,7 +246,7 @@ fun NavGraph(
             SettingsAppManager(viewModel, mainViewModel, billingViewModel)
         }
         composable(Destination.SettingAppLicense.route) {
-            SettingOpenSourceLicensesScreen(modifier)
+            SettingOpenSourceLicensesScreen(modifier, billingViewModel)
         }
         composable(
             Destination.Home.Main.TopicListDetail.route,
@@ -260,7 +261,7 @@ fun NavGraph(
             RLog.d("hbungshin", "111111 topicId : $topicId ,  filterType : $filterType")
 
             topicId?.let { topicId ->
-                TopicDetailScreen(modifier, topicId, mainViewModel)
+                TopicDetailScreen(modifier, topicId, mainViewModel, billingViewModel)
             }
         }
 
@@ -271,7 +272,7 @@ fun NavGraph(
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None },
         ) {
-            NotificationScreen(modifier, mainViewModel, pushViewModel)
+            NotificationScreen(modifier, mainViewModel, pushViewModel, billingViewModel)
         }
     }
 }

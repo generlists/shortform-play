@@ -71,6 +71,7 @@ import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.end.LoadingArea
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.push.item.PushUiItem
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
@@ -90,6 +91,7 @@ fun NotificationScreen(
     modifier: Modifier,
     mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     val notificationData by pushViewModel.notificationPushUiList.collectAsState()
 
@@ -163,6 +165,7 @@ fun NotificationScreen(
                     adLoading?.adStart ?: true,
                 ),
             interstitialAdManager = mainViewModel.interstitialAdManager,
+            billingViewModel = billingViewModel,
             setAdLoading = {
                 it?.let {
                     mainViewModel.setInterstitialAdStart(it.route, it.adStart)

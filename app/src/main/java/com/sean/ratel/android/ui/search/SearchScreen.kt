@@ -113,7 +113,7 @@ fun SearchScreen(
                         .background(APP_BACKGROUND)
                         .padding(paddingValues),
             ) {
-                SearchMain(searchViewModel, adViewModel, mainViewModel,billingViewModel)
+                SearchMain(searchViewModel, adViewModel, mainViewModel, billingViewModel)
             }
         }
     }
@@ -127,6 +127,7 @@ fun SearchScreen(
                     adLoading?.adStart ?: true,
                 ),
             interstitialAdManager = mainViewModel.interstitialAdManager,
+            billingViewModel = billingViewModel,
             setAdLoading = {
                 it?.let {
                     mainViewModel.setInterstitialAdStart(it.route, it.adStart)
@@ -148,7 +149,7 @@ fun SearchMain(
     searchViewModel: SearchViewModel,
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
-    billingViewModel: BillingViewModel
+    billingViewModel: BillingViewModel,
 ) {
     val searchType = rememberSaveable { mutableStateOf(SearchType.VideoSearch) }
     Spacer(Modifier.height(10.dp))
@@ -201,7 +202,7 @@ fun SearchMain(
                         searchViewModel,
                         adViewModel,
                         mainViewModel,
-                        billingViewModel
+                        billingViewModel,
                     )
                 }
             }

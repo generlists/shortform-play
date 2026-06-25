@@ -4,7 +4,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -31,6 +30,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.api.UiState
+import com.sean.ratel.android.data.log.GAKeys.AD_PROMOTION_BUTTON_TYPE
+import com.sean.ratel.android.data.log.GAKeys.SETTING_SCREEN
+import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.findActivity
@@ -78,7 +80,7 @@ fun SettingView(
     val shareLauncher = GetShareLauncher(activity, mainViewModel)
     val userId by viewModel.userId.collectAsState()
 
-    val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle()
+    val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle(UiState.Idle)
     val isRemoveAd by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     var onRemoveAdsClick by remember { mutableStateOf(false) }
 
@@ -132,7 +134,7 @@ fun SettingView(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(bottom = adSize.dp + bottomBarHeight.dp),
+                        .padding(bottom = (if (!isRemoveAd) adSize else 0).dp + bottomBarHeight.dp),
             ) {
                 item {
                     SettingsProfileHeader(
@@ -166,6 +168,12 @@ fun SettingView(
                                     state.data.originalPrice,
                                     onClick = {
                                         onRemoveAdsClick = true
+                                        billingViewModel.sendGALog(
+                                            screenName = GASplashAnalytics.SCREEN_NAME.get(SETTING_SCREEN) ?: "",
+                                            eventName = GASplashAnalytics.Event.SELECT_SETTING_AD_PROMOTION_ITEM_CLICK,
+                                            actionName = GASplashAnalytics.Action.CLICK,
+                                            parameter = mapOf(),
+                                        )
                                     },
                                 )
                             }
@@ -177,15 +185,16 @@ fun SettingView(
                         if (onRemoveAdsClick) {
                             PremiumPopup(
                                 billingViewModel = billingViewModel,
+                                premiumSheetData = premiumData,
                                 forceDonotMessageRow = true,
                                 show = { isShow, promotionButtonType ->
                                     onRemoveAdsClick = isShow
-//                                    statisticArgs.sendEvent(
-//                                        EventAction.ButtonClick,
-//                                        EventName.SettingPromotionButtonClick,
-//                                        Screen.Settings,
-//                                        mapOf(Parms.AdPromotionButtonType.key to promotionButtonType.name),
-//                                    )
+                                    billingViewModel.sendGALog(
+                                        screenName = GASplashAnalytics.SCREEN_NAME.get(SETTING_SCREEN) ?: "",
+                                        eventName = GASplashAnalytics.Event.SELECT_SETTING_AD_PROMOTION_POPUP_CLICK,
+                                        actionName = GASplashAnalytics.Action.CLICK,
+                                        parameter = mapOf(AD_PROMOTION_BUTTON_TYPE to promotionButtonType.name),
+                                    )
                                 },
                             )
                         }
@@ -193,7 +202,7 @@ fun SettingView(
                 }
                 item { SettingsCountry(viewModel) }
                 item { SettingsVideo(viewModel) }
-                item { SettingsApp(mainViewModel,billingViewModel, viewModel) }
+                item { SettingsApp(mainViewModel, billingViewModel, viewModel) }
                 item { SettingsDevOtherApp(viewModel) }
             }
         }

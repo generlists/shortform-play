@@ -69,7 +69,7 @@ utils="0.0.1"
 google-admob="0.0.3"
 push="0.0.2"
 review="0.0.8"
-iap="0.0.6"
+iap="0.0.7"
 
 
 [libraries]

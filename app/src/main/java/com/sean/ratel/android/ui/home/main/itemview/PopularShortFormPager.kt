@@ -102,7 +102,7 @@ fun PopularShortFormPager(
             Modifier.fillMaxSize(),
         ) {
             Spacer(Modifier.height(8.dp))
-            TitleArea(viewModel,billingViewModel, title)
+            TitleArea(viewModel, billingViewModel, title)
             val startIndex = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2) % shortFormSearchList.size
             val listState = rememberLazyListState(startIndex)
 
@@ -149,7 +149,8 @@ fun PopularVideoItem(
                         item?.shortsChannelModel?.channelId,
                         item?.shortsVideoModel?.videoId,
                     )
-                }.padding(vertical = 16.dp)
+                }
+                .padding(vertical = 16.dp)
                 .aspectRatio(9f / 16f),
         shape = RoundedCornerShape(12.dp),
     ) {
