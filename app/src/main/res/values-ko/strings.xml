@@ -206,4 +206,29 @@
     <string name="setting_play_caption">자막 보기</string>
     <string name="setting_play_caption_description">자막이 ON이어도 영상에 자막이 없으면 표시되지 않습니다.</string>
 
+    <string name="promotion_title">\uD83D\uDD25 [광고제거]출시기념 39% 특가! \uD83D\uDD25</string>
+    <string name="promotion_des">광고를 영구 제거하고 오직 나만의 스크랩 영상을 쾌적하게 완성하세요.</string>
+    <string name="promotion_badge">한정 특가</string>
+    <string name="promotion_original_price">정가 %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">할인 가격으로 구매하기</string>
+    <string name="remove_ad">광고 제거</string>
+    <string name="banner_ad_remove">배너 광고 제거</string>
+    <string name="inter_ad_remove">전면 광고 제거</string>
+    <string name="purchase">구매하기</string>
+    <string name="original_price">₩%.1f</string>
+    <string name="setting_banner_discount">지금 %1$s%% 할인 · %2$s</string>
+    <string name="response_api_exception">[%s]예기치 않은 에러가 발생했어요 잠시 후 다시 시도해 주세요.</string>
+
+    <string name="iap_restore_purchase">구매가 복원되었습니다.</string>
+    <string name="iap_purchase_ready">결제 대기 중입니다. 완료 후 자동 반영됩니다.</string>
+    <string name="iap_root_device">루팅된 기기에서는 구매할 수 없습니다.</string>
+    <string name="iap_allready_purchase">이미 구매하신 상품입니다.</string>
+    <string name="iap_purchase_failed">구매에 실패했습니다. 다시 시도해주세요.</string>
+    <string name="iap_google_play_service">Google Play 서비스를 확인해주세요.</string>
+    <string name="iap_product_request_service">상품 정보를 불러오는 중입니다. 잠시 후 다시 시도해주세요.</string>
+    <string name="iap_restore_not_founded">복원할 구매 내역이 없습니다.</string>
+    <string name="iap_purchase_complete">구매가 완료되었습니다.</string>
+    <string name="iap_purchase_not_enviroment">인앱 결제를 사용할 수있는 환경이 아니에요.</string>
+
 </resources>

@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.api.UiState
@@ -29,6 +30,7 @@ import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.end.LoadingArea
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.search.DailyFilterTopBar
 import com.sean.ratel.android.ui.search.DailySearchFilterBottomSheet
@@ -47,6 +49,7 @@ fun SearchFilterScreen(
     searchViewModel: SearchViewModel,
     adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     var showFilterSheet by remember { mutableStateOf(false) }
     val selectedDate by searchViewModel.selectedDate.collectAsState()
@@ -89,7 +92,7 @@ fun SearchFilterScreen(
             if (showFilterSheet) {
                 SearchFilterScreen({
                     showFilterSheet = it
-                }, searchViewModel, mainViewModel)
+                }, searchViewModel, mainViewModel, billingViewModel)
             }
 
             when (apiState.value) {
@@ -134,11 +137,13 @@ fun SearchFilterScreen(
     showFilterSheet: (Boolean) -> Unit,
     searchViewModel: SearchViewModel,
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     val selectedDate by searchViewModel.selectedDate.collectAsState()
     val categories = searchViewModel.youtubeCategory.collectAsState()
     val selectedCategory by searchViewModel.selectedCategory.collectAsState()
     val context = LocalContext.current
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
 
     RLog.d("dailymainscreen", "selectedDate : $selectedDate")
 
@@ -166,7 +171,7 @@ fun SearchFilterScreen(
             onApply = { date, category ->
 
                 RLog.d("deeplink", "date : $date")
-                mainViewModel.setInterstitialAdStart(Destination.Search.route, true)
+                mainViewModel.setInterstitialAdStart(Destination.Search.route, !isAdRemoved)
                 applyDailySearch(context, searchViewModel, showFilterSheet, date, category)
                 gaSend(
                     searchViewModel,

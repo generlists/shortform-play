@@ -5,6 +5,7 @@ import javax.inject.Singleton
 import kotlin.random.Random
 
 @Singleton
+@Deprecated("유료로 인한 삭제")
 class AdPolicyManager
     @Inject
     constructor() {

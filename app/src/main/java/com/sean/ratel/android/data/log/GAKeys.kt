@@ -14,4 +14,6 @@ object GAKeys {
     const val NOTIFICATION_TYPE = "notificationType"
     const val NOTIFICATION_ID = "notificationId"
     const val TOPIC_DETAIL = "main_topic_detail"
+    const val SETTING_SCREEN = "setting_screen"
+    const val AD_PROMOTION_BUTTON_TYPE = "ad_promotion_button_type"
 }

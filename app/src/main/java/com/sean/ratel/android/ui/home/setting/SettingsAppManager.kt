@@ -25,6 +25,7 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.ad.AdTarget
 import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.TopNavigationBar
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
@@ -39,8 +40,9 @@ import com.sean.ratel.android.utils.findActivity
 fun SettingsAppManager(
     viewModel: SettingViewModel?,
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
 ) {
-    SettingsAppManagerView(viewModel, mainViewModel)
+    SettingsAppManagerView(viewModel, mainViewModel, billingViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -48,6 +50,7 @@ fun SettingsAppManager(
 fun SettingsAppManagerView(
     viewModel: SettingViewModel?,
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     val context = LocalContext.current
     val activity = context.findActivity()
@@ -78,8 +81,8 @@ fun SettingsAppManagerView(
                 .padding(innerPadding)
                 .verticalScroll(scrollState),
         ) {
-            SettingsAppDetail(viewModel = viewModel)
-            PhoneAppList(mainViewModel, viewModel)
+            SettingsAppDetail(viewModel = viewModel, billingViewModel = billingViewModel)
+            PhoneAppList(mainViewModel, viewModel, billingViewModel)
         }
         if (adLoading?.route == Destination.SettingAppManagerDetail.route) {
             InterstitialAdPage(
@@ -89,6 +92,7 @@ fun SettingsAppManagerView(
                         adLoading?.adStart ?: true,
                     ),
                 interstitialAdManager = mainViewModel.interstitialAdManager,
+                billingViewModel = billingViewModel,
                 setAdLoading = {
                     it?.let {
                         mainViewModel.setInterstitialAdStart(it.route, it.adStart)
@@ -110,6 +114,6 @@ fun SettingsAppManagerView(
 @Composable
 private fun SettingViewPreView() {
     RatelappTheme {
-        SettingsAppManager(null, hiltViewModel())
+        SettingsAppManager(null, hiltViewModel(), hiltViewModel())
     }
 }

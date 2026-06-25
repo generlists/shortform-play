@@ -39,8 +39,8 @@ android {
         applicationId = "com.sean.ratel.android"
         minSdk = 28
         targetSdk = 36
-        versionCode = 11004
-        versionName = "1.1.0.4"
+        versionCode = 11007
+        versionName = "1.1.0.7"
         testInstrumentationRunner = "com.sean.ratel.android.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -89,7 +89,7 @@ android {
             buildConfigField(
                 "String",
                 "SHORTFORM_PLAY_BASE_URL",
-                "\"${localProperties.getProperty("SHORTFORM_PLAY_BASE_URL")}\"",
+                "\"${localProperties.getProperty("SHORTFORM_PLAY_DEBUG_BASE_URL")}\"",
             )
             buildConfigField(
                 "String",
@@ -158,6 +158,11 @@ android {
                 "admobAppId",
                 "\"${localProperties.getProperty("debug_admobAppId")}\"",
             )
+            buildConfigField(
+                "String",
+                "AD_REMOVE_PRODUCT_ID",
+                "\"${localProperties.getProperty("AD_REMOVE_PRODUCT_ID")}\"",
+            )
 
             manifestPlaceholders["validator"] = "false"
 
@@ -182,7 +187,7 @@ android {
             buildConfigField(
                 "String",
                 "SHORTFORM_PLAY_BASE_URL",
-                "\"${localProperties.getProperty("SHORTFORM_PLAY_BASE_URL")}\"",
+                "\"${localProperties.getProperty("SHORTFORM_PLAY_RELEASE_BASE_URL")}\"",
             )
             buildConfigField(
                 "String",
@@ -252,6 +257,11 @@ android {
                 "admobAppId",
                 "\"${localProperties.getProperty("release_admobAppId")}\"",
             )
+            buildConfigField(
+                "String",
+                "AD_REMOVE_PRODUCT_ID",
+                "\"${localProperties.getProperty("AD_REMOVE_PRODUCT_ID")}\"",
+            )
 
             isMinifyEnabled = true
             proguardFiles(
@@ -308,6 +318,7 @@ dependencies {
     implementation(libs.so.smartlab.sdk.common.push.android)
     implementation(libs.so.smartlab.sdk.common.review.android)
     implementation(libs.so.smartlab.sdk.common.utils.android)
+    implementation(libs.so.smartlab.sdk.common.iap.android)
     // androidx
     // Lifecycle
     implementation(libs.androidx.core.ktx)

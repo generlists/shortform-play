@@ -77,6 +77,13 @@ class SettingViewModel
                 initialValue = null,
             )
 
+        val userId: StateFlow<String?> =
+            settingRepository.userIdFlow.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = null,
+            )
+
         suspend fun setAutoPlay(isAutoPlay: Boolean) {
             settingRepository.setAutoPlay(isAutoPlay)
         }

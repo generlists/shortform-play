@@ -7,11 +7,13 @@ import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.search.SearchScreen
 import com.sean.ratel.android.ui.search.SearchViewModel
@@ -23,14 +25,18 @@ class SearchActivity : FragmentActivity() {
     val searchViewModel by viewModels<SearchViewModel>()
     val adViewModel by viewModels<AdViewModel>()
     val mainViewModel by viewModels<MainViewModel>()
+    val billingViewModel by viewModels<BillingViewModel>()
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            installSplashScreen()
+        }
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            enableEdgeToEdge()
+        } else {
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
 
@@ -39,17 +45,20 @@ class SearchActivity : FragmentActivity() {
                 searchViewModel,
                 adViewModel,
                 mainViewModel,
+                billingViewModel,
                 finish = { finish() },
             )
         }
-        mainViewModel.initAdMobSDK(this)
+        if (!billingViewModel.isAdRemoved.value) {
+            mainViewModel.initAdMobSDK(this)
+        }
         searchViewModel.sendGALog(
             screenName = GASplashAnalytics.SCREEN_NAME[SEARCH_SCREEN] ?: "",
             eventName = GASplashAnalytics.Event.SEARCH_VIEW,
             actionName = GASplashAnalytics.Action.VIEW,
             parameter = mapOf(),
         )
-        mainViewModel.setInterstitialAdStart(Destination.Search.route, true)
+        mainViewModel.setInterstitialAdStart(Destination.Search.route, !billingViewModel.isAdRemoved.value)
         deeLink(intent)
     }
 

@@ -207,4 +207,30 @@
     <string name="more_video_comment">ความคิดเห็น</string>
     <string name="setting_play_caption">แสดงคำบรรยาย</string>
     <string name="setting_play_caption_description">แม้จะเปิดใช้งาน แต่จะไม่แสดงหากวิดีโอไม่มีคำบรรยาย</string>
+
+    <!-- Thai -->
+    <string name="promotion_title">🔥 ลบโฆษณา ลดพิเศษฉลองเปิดตัว 39%! 🔥</string>
+    <string name="promotion_des">ลบโฆษณาถาวร และสร้างวิดีโอสะสมของคุณได้อย่างราบรื่นไม่มีสะดุด</string>
+    <string name="promotion_badge">โปรโมชั่นพิเศษ</string>
+    <string name="promotion_original_price">ราคาปกติ %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">ซื้อในราคาส่วนลด</string>
+    <string name="remove_ad">ลบโฆษณา</string>
+    <string name="banner_ad_remove">ลบโฆษณาแบนเนอร์</string>
+    <string name="inter_ad_remove">ลบโฆษณาคั่นหน้า</string>
+    <string name="purchase">ซื้อ</string>
+    <string name="original_price">THB%.1f</string>
+    <string name="setting_banner_discount">ลด %1$s%% ตอนนี้ · %2$s</string>
+    <string name="response_api_exception">[%s] เกิดข้อผิดพลาดที่ไม่คาดคิด โปรดลองอีกครั้งในภายหลัง</string>
+
+    <string name="iap_restore_purchase">กู้คืนการซื้อเรียบร้อยแล้ว</string>
+    <string name="iap_purchase_ready">กำลังรอการชำระเงิน ระบบจะดำเนินการให้อัตโนมัติเมื่อเสร็จสิ้น</string>
+    <string name="iap_root_device">ไม่สามารถซื้อสินค้าได้บนอุปกรณ์ที่รูทแล้ว</string>
+    <string name="iap_allready_purchase">คุณได้ซื้อสินค้านี้แล้ว</string>
+    <string name="iap_purchase_failed">การซื้อไม่สำเร็จ กรุณาลองอีกครั้ง</string>
+    <string name="iap_google_play_service">กรุณาตรวจสอบบริการ Google Play</string>
+    <string name="iap_product_request_service">กำลังโหลดข้อมูลสินค้า กรุณาลองใหม่อีกครั้งในภายหลัง</string>
+    <string name="iap_restore_not_founded">ไม่พบประวัติการซื้อที่สามารถกู้คืนได้</string>
+    <string name="iap_purchase_complete">การซื้อเสร็จสมบูรณ์</string>
+    <string name="iap_purchase_not_enviroment">ไม่สามารถใช้การซื้อในแอปได้ในสภาพแวดล้อมนี้</string>
 </resources>

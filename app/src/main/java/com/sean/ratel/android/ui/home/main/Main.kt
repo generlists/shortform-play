@@ -23,6 +23,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.MAX_RECOMMEND_SIZE
@@ -36,6 +37,7 @@ import com.sean.ratel.android.data.dto.TopFiveList
 import com.sean.ratel.android.data.dto.TopicList
 import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.main.itemview.AutoScrollImagePager
 import com.sean.ratel.android.ui.home.main.itemview.EditorPickHorizontalList
 import com.sean.ratel.android.ui.home.main.itemview.HomeRecommendList
@@ -58,6 +60,7 @@ fun Main(
     mainVideoViewModel: MainVideoViewModel,
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
+    billingViewModel: BillingViewModel,
 ) {
     BackHandler(enabled = true) {
         mainVideoViewModel.navigator.finish()
@@ -154,6 +157,7 @@ fun Main(
             reCommendData.value,
             mainViewModel,
             adViewModel,
+            billingViewModel,
             listState,
         )
     }
@@ -178,6 +182,7 @@ fun MainShortFormView(
     recommendShortFormData: RecommendList,
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
+    billingViewModel: BillingViewModel,
     listState: LazyListState,
 ) {
     Column(
@@ -201,6 +206,7 @@ fun MainShortFormView(
                 channelSubscriptionUpData,
                 recommendShortFormData,
                 mainViewModel,
+                billingViewModel,
                 listState,
             )
         }
@@ -221,9 +227,11 @@ fun ShortsItemList(
     channelSubscriptionUpData: ChannelSubscriptionUpList,
     recommendShortFormData: RecommendList,
     viewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     listState: LazyListState,
 ) {
     val adFixedBannerState by viewModel.fixedBannerState.collectAsState()
+    val isAdRemove by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     var adSize by remember { mutableStateOf(64) }
 
     val isFirstItemVisible by remember {
@@ -252,7 +260,7 @@ fun ShortsItemList(
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(bottom = adSize.dp),
+                .padding(bottom = if (!isAdRemove) adSize.dp else 0.dp),
     ) {
         var i = 0
         val targetIndexList = validationIndex(Destination.Home.Main.route, size)
@@ -265,32 +273,33 @@ fun ShortsItemList(
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TOPIC_LIST_ORDER))) {
-                    TopicCardPager(viewModel, topicList)
+                    TopicCardPager(viewModel, billingViewModel, topicList)
                     Spacer(Modifier.height(32.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECENTLY_WATCH_ORDER))) {
-                    RecentVideoWatchList(viewModel)
+                    RecentVideoWatchList(viewModel, billingViewModel)
                     Spacer(Modifier.height(32.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TRENDS_SHORTS_ORDER))) {
-                    TrendShortsList(viewModel, trendShortsData)
+                    TrendShortsList(viewModel, billingViewModel, trendShortsData)
                     Spacer(Modifier.height(32.dp))
                 }
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.POPULAR_ORDER))) {
-                    PopularShortFormPager(viewModel, shortFormSearchData)
+                    PopularShortFormPager(viewModel, billingViewModel, shortFormSearchData)
                     Spacer(Modifier.height(32.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.EDITOR_PICK_ORDER))) {
-                    EditorPickHorizontalList(viewModel, editorPickData)
+                    EditorPickHorizontalList(viewModel, billingViewModel, editorPickData)
                     Spacer(Modifier.height(32.dp))
                 }
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.DAILY_RANKING_ORDER))) {
                     RankingHorizontalScrollView(
                         3,
                         viewModel,
+                        billingViewModel,
                         channelSearchData,
                         channelSubscriptionData,
                         channelSubscriptionUpData,
@@ -300,6 +309,7 @@ fun ShortsItemList(
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.RECOMMEND_SHORTFORM_ORDER))) {
                     HomeRecommendList(
                         mainViewModel = viewModel,
+                        billingViewModel = billingViewModel,
                         recommendList = recommendShortFormData,
                     )
                     Spacer(Modifier.height(32.dp))

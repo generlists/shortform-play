@@ -1,5 +1,6 @@
 package com.sean.ratel.android
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,14 +28,22 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.data.log.GAKeys.AD_PROMOTION_BUTTON_TYPE
+import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
+import com.sean.ratel.android.data.log.GASplashAnalytics
+import com.sean.ratel.android.ui.ad.AdBannerLocation
 import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.FullScreenToggleView
+import com.sean.ratel.android.ui.end.LoadingArea
 import com.sean.ratel.android.ui.end.YouTubeEndMoreView
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.HomeBottomBar
 import com.sean.ratel.android.ui.home.HomeTopBar
 import com.sean.ratel.android.ui.navigation.Destination
@@ -41,9 +51,13 @@ import com.sean.ratel.android.ui.navigation.NavGraph
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
+import com.sean.ratel.android.utils.ComposeUtil.PremiumPopup
 import com.sean.ratel.android.utils.findActivity
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
+import so.smartlab.common.iap.ui.PremiumSheetColors
+import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -51,6 +65,7 @@ fun ShortFormPlayApp(
     mainViewModel: MainViewModel,
     adViewModel: AdViewModel,
     pushViewModel: PushViewModel,
+    billingViewModel: BillingViewModel,
     finish: () -> Unit,
 ) {
     RatelappTheme {
@@ -71,6 +86,15 @@ fun ShortFormPlayApp(
         val activity = context.findActivity()
         val insetPaddingValue = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
 
+        var showPromotionPopup by remember { mutableStateOf(true) }
+        val isSaleActive by billingViewModel.adSaleActive.collectAsStateWithLifecycle()
+        val isDonotAain by billingViewModel.doNotShowAgain.collectAsStateWithLifecycle()
+        val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
+        val toastMessage by billingViewModel.toastMessage.collectAsStateWithLifecycle(initialValue = null)
+        val premiumSheetData by billingViewModel.premiumData.collectAsStateWithLifecycle(initialValue = UiState.Idle)
+        val interstitialDisMissCount by billingViewModel.interstitialAdDisMissCount.collectAsStateWithLifecycle(
+            initialValue = 0,
+        )
         Scaffold(
             contentWindowInsets = WindowInsets.safeDrawing,
             topBar = {
@@ -79,6 +103,7 @@ fun ShortFormPlayApp(
                         modifier = Modifier.padding(top = insetPaddingValue),
                         mainViewModel = mainViewModel,
                         pushViewModel = pushViewModel,
+                        billingViewModel = billingViewModel,
                         isHomeNaviBar = currentRoute,
                         historyBack = {
                             mainViewModel.runNavigationBack(Destination.YouTube.route)
@@ -115,7 +140,29 @@ fun ShortFormPlayApp(
                     finish = finish,
                 )
             }
-            ShadowBottomLayer(route = currentRoute)
+            if (!isAdRemoved) {
+                ShadowBottomLayer(route = currentRoute)
+            }
+
+            when (val state = premiumSheetData) {
+                is UiState.Loading, UiState.Idle -> {
+                    // 로딩 인디케이터
+                    LoadingArea(isLoading = true)
+                }
+
+                is UiState.Error -> {
+                    if (currentRoute != Destination.Splash.route) {
+                        LaunchedEffect(Unit) {
+                            RLog.d("KKKKKKK", "errorMessage : ${state.message}")
+                            Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+
+                else -> {
+                    Unit
+                }
+            }
 
             if ((
                     currentRoute == Destination.Home.Main.route ||
@@ -124,7 +171,7 @@ fun ShortFormPlayApp(
                 adMobInitialComplete is AdMobInitState.InitComplete &&
                 RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
             ) {
-                AdBannerView(activity, currentRoute)
+                AdBannerView(activity, currentRoute, premiumSheetData, AdBannerLocation.BOTTOM, billingViewModel)
             }
 
             FullScreenToggleView(currentRoute)
@@ -160,6 +207,35 @@ fun ShortFormPlayApp(
                     }
                 }
             }
+
+            if (
+                (
+                    currentRoute == Destination.Home.Main.route &&
+                        isSaleActive &&
+                        showPromotionPopup &&
+                        !isDonotAain
+                ) || (interstitialDisMissCount == 3)
+            ) {
+                PremiumPopup(billingViewModel, premiumSheetData, show = { isShow, buttonType ->
+                    RLog.d("In App Purchase", "showPromotionPopup :  $isShow")
+                    showPromotionPopup = isShow
+
+                    billingViewModel.sendGALog(
+                        screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                        eventName = GASplashAnalytics.Event.SELECT_AD_VIEW_POPUP_SHOW,
+                        actionName = GASplashAnalytics.Action.VIEW,
+                        parameter = mapOf(AD_PROMOTION_BUTTON_TYPE to buttonType.name),
+                    )
+                    if (interstitialDisMissCount == 3) billingViewModel.setInterstitialAdDisMissCount(0)
+                })
+            }
+
+            LaunchedEffect(toastMessage) {
+                RLog.e("In App Purchase ", "toastMessage : $toastMessage")
+                toastMessage?.let {
+                    Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 }
@@ -193,3 +269,19 @@ private fun ShadowBottomLayer(route: String) {
         }
     }
 }
+
+@Composable
+fun premiumDefault() =
+    PremiumSheetColors(
+        isDarkTheme = true,
+        sheetBackground = APP_BACKGROUND,
+        titleTextColor = Color.White,
+        subTitleTextColor = Color(0xCCF0F1F4),
+        primaryColor = APP_TEXT_COLOR,
+        buttonColor = APP_TEXT_COLOR,
+        discountBadgeColor = Color(0xFFFF6B35),
+        dragHandleColor = Color(0xFFD1D1D6),
+        dDayBackgroundColor = APP_TEXT_COLOR.copy(alpha = 0.15f),
+        dDayBoarderColor = APP_TEXT_COLOR.copy(alpha = 0.4f),
+        dDayContentColor = APP_TEXT_COLOR,
+    )

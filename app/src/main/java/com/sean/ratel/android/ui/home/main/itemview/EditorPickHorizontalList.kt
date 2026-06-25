@@ -52,6 +52,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.accompanist.drawablepainter.DrawablePainter
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
@@ -61,6 +62,7 @@ import com.sean.ratel.android.data.common.RemoteConfig.MAX_EDITOR_PICK_SIZE
 import com.sean.ratel.android.data.dto.EditorPickList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.Background_op_20
@@ -71,11 +73,12 @@ import com.sean.ratel.android.utils.ComposeUtil.pxToDp
 @Composable
 fun EditorPickHorizontalList(
     viewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     editorPickData: EditorPickList,
 ) {
     var textWidth by remember { mutableStateOf(0f) }
     val context = LocalContext.current
-
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     val pickList = editorPickData.pickList
     val editorList =
         if (pickList.isNotEmpty()) {
@@ -161,7 +164,7 @@ fun EditorPickHorizontalList(
                             onClick = {
                                 viewModel.setInterstitialAdStart(
                                     Destination.Home.Main.EditorPickMore.route,
-                                    true,
+                                    !isAdRemoved,
                                 )
                                 viewModel.goMoreContent(
                                     Destination.Home.Main.EditorPickMore.route,

@@ -1,5 +1,6 @@
 package com.sean.ratel.android.ui.ad
 
+import android.util.Log
 import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.common.RemoteConfig.END_AD_POSITION
 import com.sean.ratel.android.data.common.RemoteConfig.getRemoteConfigIntValue
@@ -21,7 +22,6 @@ class InterstitialAdManager
     @Inject
     constructor(
         val adsSdk: AdsSdk,
-        val adPolicyManager: AdPolicyManager,
     ) {
         private var interstitialCollectJob: Job? = null
         private var showAd = false
@@ -81,7 +81,7 @@ class InterstitialAdManager
             fromSearchComplete: (Boolean) -> Unit,
             showLoading: (Boolean) -> Unit,
         ) {
-            // Log.d("InterstitialAdManager","initAdMobState : $adTriggerState.initAdMobState")
+            Log.d("InterstitialAdManager", "initAdMobState : ${adTriggerState.initAdMobInitState} : $adTriggerState.initAdMobState")
             if (adTriggerState.initAdMobInitState is AdMobInitState.InitComplete) {
                 showAd = true
 
@@ -124,22 +124,12 @@ class InterstitialAdManager
         data class AdTriggerState(
             val selection: Int,
             val fromSearch: Boolean,
-            // val playbackState: YouTubeStreamPlaybackState,
             val totalSize: Int,
             val initAdMobInitState: AdMobInitState,
-            // val shouldTriggerAd: Boolean,
         )
 
         // collect 를 한번만
         fun requestInitInterstitialAdPage(initInterstitialAdState: (AdMobInterstitialAdState?) -> Unit) {
-            val isShow = adPolicyManager.shouldShowAd()
-
-            if (!isShow) {
-                initInterstitialAdState(null)
-
-                return
-            }
-
             interstitialCollectJob?.cancel()
 
             interstitialCollectJob =
@@ -149,7 +139,7 @@ class InterstitialAdManager
                         initInterstitialAdState(event)
 
                         if (event is AdMobInterstitialAdState.AdLoadComplete) {
-                            RLog.d("ADDDDDDDDDDFFF", "show Add")
+                            RLog.d("InterstitialAdManager", "show Add")
                             adsSdk.showInterstitialAds()
                         }
                     }

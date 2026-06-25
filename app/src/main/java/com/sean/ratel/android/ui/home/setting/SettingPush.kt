@@ -68,7 +68,7 @@ fun SettingPush(
 ) {
     val context = LocalContext.current
 
-    var expanded by remember { mutableStateOf(true) }
+    var expanded by remember { mutableStateOf(false) }
     val pushNotification by pushViewModel.hasPermission.collectAsState()
     val hasPermission by pushViewModel.hasPermission.collectAsState()
     val deniedCount by pushViewModel.permissionDeniedCount.collectAsState()

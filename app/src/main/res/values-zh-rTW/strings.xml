@@ -200,4 +200,30 @@
     <string name="more_video_comment">留言數</string>
     <string name="setting_play_caption">顯示字幕</string>
     <string name="setting_play_caption_description">即使已開啟，如果影片沒有字幕也不會顯示。</string>
+
+
+    <string name="promotion_title">🔥【移除廣告】上市紀念 39% 特價！🔥</string>
+    <string name="promotion_des">永久移除廣告，盡情打造專屬於您的影片收藏。</string>
+    <string name="promotion_badge">限時優惠</string>
+    <string name="promotion_original_price">原價 %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">以優惠價格購買</string>
+    <string name="remove_ad">移除廣告</string>
+    <string name="banner_ad_remove">移除橫幅廣告</string>
+    <string name="inter_ad_remove">移除插頁廣告</string>
+    <string name="purchase">購買</string>
+    <string name="original_price">TWD%.1f</string>
+    <string name="setting_banner_discount">立即享 %1$s%% 折扣 · %2$s</string>
+    <string name="response_api_exception">[%s] 發生未預期的錯誤，請稍後再試。</string>
+
+    <string name="iap_restore_purchase">購買已成功恢復。</string>
+    <string name="iap_purchase_ready">付款處理中，完成後將自動套用。</string>
+    <string name="iap_root_device">已 Root 的裝置無法進行購買。</string>
+    <string name="iap_allready_purchase">您已購買過此商品。</string>
+    <string name="iap_purchase_failed">購買失敗，請再試一次。</string>
+    <string name="iap_google_play_service">請確認 Google Play 服務是否正常。</string>
+    <string name="iap_product_request_service">正在載入商品資訊，請稍後再試。</string>
+    <string name="iap_restore_not_founded">找不到可恢復的購買紀錄。</string>
+    <string name="iap_purchase_complete">購買完成。</string>
+    <string name="iap_purchase_not_enviroment">目前環境無法使用應用程式內購買。</string>
 </resources>

@@ -56,12 +56,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortFormVideoSearchList
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.RatelappTheme
@@ -72,6 +74,7 @@ import com.sean.ratel.android.utils.UIUtil.pixelToDp
 @Composable
 fun PopularShortFormPager(
     viewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     videoSearchList: ShortFormVideoSearchList,
 ) {
     if (videoSearchList.searchList.isEmpty()) return
@@ -99,7 +102,7 @@ fun PopularShortFormPager(
             Modifier.fillMaxSize(),
         ) {
             Spacer(Modifier.height(8.dp))
-            TitleArea(viewModel, title)
+            TitleArea(viewModel, billingViewModel, title)
             val startIndex = Int.MAX_VALUE / 2 - (Int.MAX_VALUE / 2) % shortFormSearchList.size
             val listState = rememberLazyListState(startIndex)
 
@@ -146,7 +149,8 @@ fun PopularVideoItem(
                         item?.shortsChannelModel?.channelId,
                         item?.shortsVideoModel?.videoId,
                     )
-                }.padding(vertical = 16.dp)
+                }
+                .padding(vertical = 16.dp)
                 .aspectRatio(9f / 16f),
         shape = RoundedCornerShape(12.dp),
     ) {
@@ -351,9 +355,11 @@ private fun TimeArea(duration: String) {
 @Composable
 private fun TitleArea(
     viewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     title: String,
 ) {
     var textWidth by remember { mutableStateOf(0f) }
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
 
     Box(
         Modifier
@@ -409,7 +415,7 @@ private fun TitleArea(
                     isHome = true,
                     size = 32.dp,
                     onClick = {
-                        viewModel.setInterstitialAdStart(Destination.Home.Main.PoplarShortFormMore.route, true)
+                        viewModel.setInterstitialAdStart(Destination.Home.Main.PoplarShortFormMore.route, !isAdRemoved)
                         viewModel.goMoreContent(
                             Destination.Home.Main.PoplarShortFormMore.route,
                             ViewType.PopularSearchShortForm,

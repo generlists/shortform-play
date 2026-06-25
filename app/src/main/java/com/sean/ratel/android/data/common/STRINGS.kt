@@ -21,6 +21,8 @@ object STRINGS {
 
     const val MAX_ADAPTIVE_BANNER_SIZE = 100
 
+    const val INTER_AD_MAX = 3
+
     val REMAIN_AD_MARGIN = 24.dp
     val REMOTE_CONFIg_INTERVAL = 10L
 
@@ -77,4 +79,6 @@ object STRINGS {
             Pair(context.getString(R.string.select_country_tailand), "TH"),
             Pair(context.getString(R.string.select_country_canada_en), "CA"),
         )
+
+    fun getAvataUrl(userName: String?): String = "https://api.dicebear.com/7.x/adventurer/png?&size=180&seed=$userName"
 }

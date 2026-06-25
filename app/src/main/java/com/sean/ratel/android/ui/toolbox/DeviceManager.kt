@@ -23,6 +23,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -35,9 +36,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
@@ -49,6 +52,7 @@ import com.sean.ratel.android.ui.theme.RatelappTheme
 fun PhoneAppList(
     mainViewModel: MainViewModel,
     viewModel: SettingViewModel?,
+    billingViewModel: BillingViewModel,
 ) {
     Column(
         Modifier
@@ -69,7 +73,7 @@ fun PhoneAppList(
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             ToolBox.entries.forEach { toolBox ->
-                PhoneManagerItem(mainViewModel, viewModel, toolBox)
+                PhoneManagerItem(mainViewModel, viewModel, billingViewModel, toolBox)
             }
         }
     }
@@ -101,8 +105,10 @@ private fun PhoneManagerTitle() {
 private fun PhoneManagerItem(
     mainViewModel: MainViewModel,
     viewModel: SettingViewModel?,
+    billingViewModel: BillingViewModel,
     item: ToolBox,
 ) {
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     Column(
         Modifier
             .wrapContentHeight()
@@ -112,7 +118,7 @@ private fun PhoneManagerItem(
             Modifier
                 .padding(horizontal = 20.dp, vertical = 16.dp)
                 .wrapContentSize()
-                .clickable(onClick = { runDetailPage(item, mainViewModel, viewModel) }),
+                .clickable(onClick = { runDetailPage(item, isAdRemoved, mainViewModel, viewModel) }),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Image(
@@ -166,12 +172,13 @@ private fun PhoneManagerItem(
 
 fun runDetailPage(
     toolBox: ToolBox,
+    isRemoveAd: Boolean,
     mainViewModel: MainViewModel,
     viewModel: SettingViewModel?,
 ) {
     when (toolBox.icon) {
         R.drawable.ic_app_list -> {
-            mainViewModel.setInterstitialAdStart(Destination.AppManager.route, true)
+            mainViewModel.setInterstitialAdStart(Destination.AppManager.route, !isRemoveAd)
             viewModel?.runAppManagerDetail()
             viewModel?.sendGALog(
                 Event.SCREEN_VIEW,
@@ -190,6 +197,6 @@ fun runDetailPage(
 @Composable
 private fun PhoneAppPreView() {
     RatelappTheme {
-        PhoneAppList(hiltViewModel(), hiltViewModel())
+        PhoneAppList(hiltViewModel(), hiltViewModel(), hiltViewModel())
     }
 }

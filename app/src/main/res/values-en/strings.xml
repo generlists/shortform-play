@@ -204,4 +204,30 @@
     <string name="more_video_comment">Comments</string>
     <string name="setting_play_caption">Show captions</string>
     <string name="setting_play_caption_description">Even when ON, captions will not appear if the video has no captions.</string>
+
+    <!-- English -->
+    <string name="promotion_title">🔥 [Ad Removal] Launch Special 39% OFF! 🔥</string>
+    <string name="promotion_des">Remove ads forever and enjoy creating your personal scrap videos without interruptions.</string>
+    <string name="promotion_badge">Limited Offer</string>
+    <string name="promotion_original_price">Regular Price %s</string>
+    <string name="promotion_discount_percent">%s%%</string>
+    <string name="promotion_discount_purchase">Buy at Discounted Price</string>
+    <string name="remove_ad">Remove Ads</string>
+    <string name="banner_ad_remove">Remove Banner Ads</string>
+    <string name="inter_ad_remove">Remove Interstitial Ads</string>
+    <string name="purchase">Purchase</string>
+    <string name="original_price">CAD%.1f</string>
+    <string name="setting_banner_discount">%1$s%% OFF · %2$s</string>
+    <string name="response_api_exception">[%s] An unexpected error occurred. Please try again later.</string>
+
+    <string name="iap_restore_purchase">Purchase has been restored.</string>
+    <string name="iap_purchase_ready">Payment is pending. It will be applied automatically once completed.</string>
+    <string name="iap_root_device">Purchases are not available on rooted devices.</string>
+    <string name="iap_allready_purchase">You have already purchased this item.</string>
+    <string name="iap_purchase_failed">Purchase failed. Please try again.</string>
+    <string name="iap_google_play_service">Please check Google Play Services.</string>
+    <string name="iap_product_request_service">Loading product information. Please try again later.</string>
+    <string name="iap_restore_not_founded">No purchase history found to restore.</string>
+    <string name="iap_purchase_complete">Purchase completed successfully.</string>
+    <string name="iap_purchase_not_enviroment">In-app purchases are not available in this environment.</string>
 </resources>

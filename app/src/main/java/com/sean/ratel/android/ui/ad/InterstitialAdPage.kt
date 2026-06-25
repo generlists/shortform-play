@@ -12,6 +12,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sean.ratel.android.data.api.UiState
+import com.sean.ratel.android.data.common.STRINGS
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.progress.LoadingMainPlaceholder
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import kotlinx.coroutines.flow.StateFlow
@@ -24,6 +28,7 @@ import so.smartlab.common.utils.log.RLog
 fun InterstitialAdPage(
     adTarget: AdTarget?,
     interstitialAdManager: InterstitialAdManager,
+    billingViewModel: BillingViewModel,
     adInitState: StateFlow<AdMobInitState>,
     setAdLoading: (AdTarget?) -> Unit,
     loading: Boolean,
@@ -33,6 +38,12 @@ fun InterstitialAdPage(
 ) {
     val initAdMobState by adInitState.collectAsState()
     var requesting by remember { mutableStateOf<Boolean>(false) }
+    val interstitialDisMissCount by billingViewModel.interstitialAdDisMissCount.collectAsStateWithLifecycle(
+        initialValue = 0,
+    )
+    var onRemoveAdsClick by remember { mutableStateOf(false) }
+    var showPromotionPopup by remember { mutableStateOf(true) }
+    val premiumSheetData by billingViewModel.premiumData.collectAsStateWithLifecycle(initialValue = UiState.Idle)
     RLog.d(
         "InterstitialAdPage",
         " adTarget : $adTarget progressLoading $loading , $initAdMobState",
@@ -57,6 +68,13 @@ fun InterstitialAdPage(
                         RLog.d("Route!!!!!", "2 $it")
                         setLoading(it)
                     }, itemSize)
+                    // 팝업 뜬 카운트
+
+                    RLog.d("Route!!!!!", "21111:  $interstitialDisMissCount")
+                    if (interstitialDisMissCount == STRINGS.INTER_AD_MAX) {
+                        onRemoveAdsClick = true
+                    }
+                    billingViewModel.setInterstitialAdDisMissCount(interstitialDisMissCount)
                 }
                 if (adState is AdMobInterstitialAdState.FullScreenContent && itemSize > 0) {
                     requesting = true

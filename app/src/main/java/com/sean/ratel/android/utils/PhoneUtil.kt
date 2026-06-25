@@ -30,6 +30,9 @@ import com.sean.ratel.android.utils.UIUtil.toBundle
 import so.smartlab.common.utils.log.RLog
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.nio.ByteBuffer
+import java.util.Base64
+import java.util.UUID
 import kotlin.math.ceil
 
 object PhoneUtil {
@@ -297,4 +300,16 @@ object PhoneUtil {
             sw >= 600 -> true
             else -> false
         }
+
+    fun generateShortUUID(): String {
+        val uuid = UUID.randomUUID()
+        val bb = ByteBuffer.wrap(ByteArray(16))
+        bb.putLong(uuid.mostSignificantBits)
+        bb.putLong(uuid.leastSignificantBits)
+
+        return Base64
+            .getUrlEncoder()
+            .withoutPadding()
+            .encodeToString(bb.array())
+    }
 }

@@ -54,6 +54,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
@@ -62,6 +64,7 @@ import com.sean.ratel.android.data.dto.ChannelSubscriptionUpList
 import com.sean.ratel.android.data.dto.ChannelVideoSearchList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
@@ -78,6 +81,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 fun RankingHorizontalScrollView(
     pageSize: Int,
     mainViewModel: MainViewModel,
+    billingViewModel: BillingViewModel,
     channelSearchData: ChannelVideoSearchList,
     channelSubscriptionData: ChannelSubscriptionList,
     channelSubscriptionUpData: ChannelSubscriptionUpList,
@@ -160,6 +164,7 @@ fun RankingHorizontalScrollView(
                 end = 0.dp,
                 top = 0.dp,
                 bottom = 0.dp,
+                billingViewModel = billingViewModel,
             )
         }
 
@@ -191,6 +196,7 @@ fun RankingHorizontalScrollView(
                             0 -> {
                                 PagerList(
                                     mainViewModel,
+                                    billingViewModel,
                                     rankingIndex,
                                     channelSearchTitle,
                                     channelSearchList,
@@ -200,6 +206,7 @@ fun RankingHorizontalScrollView(
                             1 -> {
                                 PagerList(
                                     mainViewModel,
+                                    billingViewModel,
                                     rankingIndex,
                                     channelSubscriptionTitle,
                                     channelSubscriptionList,
@@ -209,6 +216,7 @@ fun RankingHorizontalScrollView(
                             2 -> {
                                 PagerList(
                                     mainViewModel,
+                                    billingViewModel,
                                     rankingIndex,
                                     channelSubscriptionUpTitle,
                                     channelSubscriptionUpList,
@@ -254,9 +262,11 @@ private fun RankingTitleArea(
     end: Dp,
     rankingIndex: Int = 0,
     subTitle: Boolean = false,
+    billingViewModel: BillingViewModel,
 ) {
     var textWidth by remember { mutableStateOf(0f) }
     val context = LocalContext.current
+    val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
 
     Box(
         Modifier
@@ -373,7 +383,7 @@ private fun RankingTitleArea(
                                 }
                             viewModel?.setInterstitialAdStart(
                                 Destination.Home.Main.RankingChannelMore.route,
-                                true,
+                                !isAdRemoved,
                             )
                             viewModel?.goMoreContent(
                                 Destination.Home.Main.RankingChannelMore.route,
@@ -398,6 +408,7 @@ private fun RankingTitleArea(
 @Composable
 private fun PagerList(
     viewModel: MainViewModel?,
+    billingViewModel: BillingViewModel,
     rankingIndex: Int,
     title: String,
     item: List<MainShortsModel>,
@@ -423,6 +434,7 @@ private fun PagerList(
                 0.dp,
                 rankingIndex,
                 subTitle = true,
+                billingViewModel,
             )
             ItemList(viewModel, rankingIndex, item)
         }
@@ -709,6 +721,7 @@ fun RankingPreView() {
             end = 0.dp,
             top = 10.dp,
             bottom = 15.dp,
+            billingViewModel = hiltViewModel(),
         )
         // HorizontalScrollView(imageUrls)
         // PagerList(null, 0, "인기 숏폼", listOf(MainShortsModel()))

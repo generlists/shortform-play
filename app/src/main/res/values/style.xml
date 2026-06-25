@@ -1,46 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- 스플래시 테마 정의 -->
-    <style name="Theme.MyApp.Splash" parent="Theme.MyApp">
-<!--        <item name="android:windowBackground">@drawable/ic_launcher_background</item>-->
+
+    <!-- Launcher 테마: SplashScreen API 사용 (모든 버전 공통) -->
+    <style name="Theme.App.Starting" parent="Theme.SplashScreen">
+        <!-- Android 12+ 필수: 배경 색상 (상태바/네비바도 이 색 따라감) -->
+        <item name="windowSplashScreenBackground">@color/black</item>
+
+        <!-- 아이콘: 당신 앱 아이콘 foreground 추천 (adaptive icon) -->
+        <item name="windowSplashScreenAnimatedIcon">@color/black</item>  <!-- sym_def_app_icon 대신 -->
+
+        <!-- 아이콘 뒤 배경 (투명 원함) -->
+        <item name="windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+
+        <!-- 애니메이션 시간: 0이면 즉시 끝남 → 300~500ms 추천 -->
+        <item name="windowSplashScreenAnimationDuration">2000</item>
+
+        <!-- Splash 끝난 후 실제 앱 테마 -->
+        <item name="postSplashScreenTheme">@style/Theme.App.MyApp</item>
+
+        <!-- 레거시 fallback: Android 11 이하에서 이게 windowBackground로 사용됨 -->
+        <!-- drawable이면 풀 이미지 가능, 여기서는 색상만 -->
+        <item name="android:windowBackground">@color/black</item>
+
+        <!-- 상태바 관련 (12+는 windowSplashScreenBackground 따라가지만 안전하게) -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+
+        <!-- 상태바 아이콘 밝게 (흰색) -->
+        <item name="android:windowLightStatusBar">true</item>
+
+        <!-- 풀스크린 시도지만 12+ 무시됨 -->
+        <item name="android:windowFullscreen">true</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-    <!-- 기본 앱 테마 -->
-    <style name="Theme.MyApp" parent="android:Theme.Material.Light.NoActionBar">
-        <!-- 앱의 기본 테마 속성들 -->
+    <!-- 실제 앱 테마 (Splash 후 적용) -->
+    <style name="Theme.App.MyApp" parent="Theme.Material3.Light.NoActionBar">
+        <item name="android:windowFullscreen">false</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-        <item name="colorPrimary">@color/black</item>
-        <item name="colorPrimaryVariant">@color/black</item>
-        <item name="colorOnPrimary">@android:color/black</item>
-        <item name="android:windowBackground">@android:color/black</item>
-        <item name="android:statusBarColor">@android:color/black</item>
-        <item name="android:navigationBarColor">@android:color/black</item>
-    </style>
-    <style name="Theme.MyApp.AdAttribution">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">left</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">12sp</item>
-        <item name="android:text">AD</item>
-        <item name="android:background">#FFCC66</item>
-        <item name="android:width">15dp</item>
-        <item name="android:height">15dp</item>
-    </style>
-    <style name="OssLicenseDarkBarsTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:statusBarColor">@android:color/black</item>
-        <item name="android:navigationBarColor">@android:color/black</item>
-        <!-- 필요하다면, windowLightStatusBar를 false로 설정(흰색 아이콘): -->
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:windowLightNavigationBar">false</item>
+        <item name="android:statusBarColor">@color/main_background</item>
+        <item name="android:navigationBarColor">@color/main_background</item>
+        <!-- 다른 속성들... -->
     </style>
 
-    <!-- 기본 앱 테마 -->
-<!--    <style name="Theme.MyApp" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
-<!--        &lt;!&ndash; 앱의 기본 테마 속성들 &ndash;&gt;-->
-<!--        <item name="colorPrimary">@color/purple_500</item>-->
-<!--        <item name="colorPrimaryVariant">@color/purple_700</item>-->
-<!--        <item name="colorOnPrimary">@android:color/white</item>-->
-<!--    </style>-->
 </resources>

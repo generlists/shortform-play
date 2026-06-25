@@ -1,5 +1,6 @@
 package com.sean.ratel.android.utils
 
+import android.annotation.SuppressLint
 import android.app.AppOpsManager
 import android.content.Context
 import android.content.res.Configuration
@@ -460,4 +461,26 @@ object UIUtil {
         }
 
     fun Bundle.toStringMap(): Map<String, String> = keySet().associateWith { getString(it).orEmpty() }
+
+    @SuppressLint("DefaultLocale")
+    fun calculateDiscountedPrice(
+        originalPriceMicros: Long,
+        discountPercent: Int,
+    ): String {
+        val discountedMicros = originalPriceMicros * (100 - discountPercent) / 100
+        val discountedPrice = discountedMicros / 1_000_000 // micros → 원
+        return "₩${String.format("%,d", discountedPrice)}"
+    }
+
+    fun formatPrice(locale: Locale): Float =
+        when (locale) {
+            Locale.KOREA -> 4900f
+            Locale.US -> 1.95f
+            Locale.JAPAN -> 342f
+            Locale.TAIWAN -> 67.10f
+            Locale("th", "TH") -> 67.10f
+            Locale("id", "ID") -> 34770f
+            Locale.CANADA -> 2.74f
+            else -> 1.95f
+        }
 }
