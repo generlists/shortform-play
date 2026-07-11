@@ -228,5 +228,10 @@
     <string name="iap_restore_not_founded">No purchase history found to restore.</string>
     <string name="iap_purchase_complete">Purchase completed successfully.</string>
     <string name="iap_purchase_not_enviroment">In-app purchases are not available in this environment.</string>
-
+    <string name="cast_running_text">Casting…</string>
+    <string name="cast_running_cast_device">Connected to %s</string>
+    <string name="cast_play_prev">Previous</string>
+    <string name="cast_play_pause">Pause</string>
+    <string name="cast_play">Play</string>
+    <string name="cast_next">Next</string>
 </resources>

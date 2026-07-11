@@ -242,5 +242,10 @@
     <string name="iap_restore_not_founded">"Aucun historique d'achat à restaurer n'a été trouvé."</string>
     <string name="iap_purchase_complete">Achat effectué avec succès.</string>
     <string name="iap_purchase_not_enviroment">Les achats intégrés ne sont pas disponibles dans cet environnement.</string>
-
+    <string name="cast_running_text">Diffusion en cours…</string>
+    <string name="cast_running_cast_device">Connecté à %s</string>
+    <string name="cast_play_prev">Précédent</string>
+    <string name="cast_play_pause">Pause</string>
+    <string name="cast_play">Lecture</string>
+    <string name="cast_next">Suivant</string>
 </resources>

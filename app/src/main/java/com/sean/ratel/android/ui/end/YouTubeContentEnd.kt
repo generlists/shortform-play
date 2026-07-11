@@ -20,10 +20,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.ui.cast.CastSessionState
+import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import com.sean.ratel.android.ui.end.YouTubeContentEndViewModel.PageScrollState
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -42,6 +45,7 @@ private const val TAG = "YouTubeContentEnd"
 fun YouTubeContentEnd(
     mainViewModel: MainViewModel,
     youTubeContentEndViewModel: YouTubeContentEndViewModel,
+    youTubePlayersManager: YouTubePlayersManager,
 ) {
     val selectedIndex by remember { mainViewModel.selectedIndex }
     val selectedVideoId by remember { mainViewModel.selectVideoId }
@@ -192,7 +196,7 @@ fun YouTubeContentEnd(
     }
     SystemNavigationShowHideScreen()
 
-    DisplayUI(youTubeContentEndViewModel, mainViewModel, searchRequestLoading.value)
+    DisplayUI(youTubeContentEndViewModel, mainViewModel, youTubePlayersManager, searchRequestLoading.value)
 
     if (searchRequestLoading.value) {
         when (apiState.value) {
@@ -231,6 +235,7 @@ fun YouTubeContentEnd(
 fun DisplayUI(
     youTubeContentEndViewModel: YouTubeContentEndViewModel,
     mainViewModel: MainViewModel,
+    youTubePlayersManager: YouTubePlayersManager,
     fromSearch: Boolean,
 ) {
     val popularShorFormList by youTubeContentEndViewModel.popularShortsFormList.collectAsState()
@@ -284,6 +289,7 @@ fun DisplayUI(
                         act,
                         fromSearch,
                         mainViewModel,
+                        youTubePlayersManager,
                         youTubeContentEndViewModel,
                         it,
                     )
@@ -379,13 +385,13 @@ fun FragmentViewPagerWithData(
     fragmentActivity: FragmentActivity,
     fromSearch: Boolean,
     mainViewModel: MainViewModel,
+    youTubePlayersManager: YouTubePlayersManager,
     contentEndViewModel: YouTubeContentEndViewModel,
     // 데이터를 동적으로 전달할 리스트
     contentList: List<MainShortsModel>,
 ) {
     // implementation("androidx.compose.foundation:foundation:1.5.0") 뷰페이저는 인덱스를 잘못가지고 와서 아직 안정성이 떨어짐
-    // 좀더 딥하게 파파야함.
-    FragmentContainer(fragmentActivity, fromSearch, mainViewModel, contentEndViewModel, contentList)
+    FragmentContainer(fragmentActivity, fromSearch, mainViewModel, youTubePlayersManager, contentEndViewModel, contentList)
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -394,6 +400,7 @@ fun FragmentContainer(
     fragmentActivity: FragmentActivity,
     fromSearch: Boolean,
     mainViewModel: MainViewModel,
+    youTubePlayersManager: YouTubePlayersManager,
     youTubeContentEndViewModel: YouTubeContentEndViewModel,
     contentList: List<MainShortsModel>,
 ) {
@@ -402,6 +409,7 @@ fun FragmentContainer(
     val corutineScope = rememberCoroutineScope()
     val endBackButtonAction by mainViewModel.endBack.collectAsState()
     val bottomPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val sessionState by youTubePlayersManager.castEventManager.castSession.collectAsStateWithLifecycle()
 
     val viewPager =
         remember {
@@ -446,8 +454,10 @@ fun FragmentContainer(
                         }
 
                         override fun onPageSelected(position: Int) {
-                            RLog.d(TAG, "position : $position")
+                            RLog.d("PREPARE", "position : $position")
+
                             mainViewModel.setCurrentSelection(position)
+                            youTubePlayersManager.setCurrentPosition(position)
                             // PIP 를 위해 현재 보이는 Fragment 를 넘긴다.
                             activity?.let {
                                 val currentFragment = getEndFragment(activity, this@apply)
@@ -494,6 +504,9 @@ fun FragmentContainer(
                 )
             }
         }
+    viewPager.isUserInputEnabled = sessionState !is CastSessionState.SessionStart
+    // 매니저에 데이터 인입
+    youTubePlayersManager.setVideoList(viewPager2 = viewPager, contentList)
 
     AndroidView(
         modifier =

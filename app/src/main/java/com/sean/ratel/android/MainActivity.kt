@@ -40,6 +40,7 @@ import com.sean.ratel.android.data.log.GAKeys.NOTIFICATION_TYPE
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.ViewType
@@ -103,6 +104,9 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var remoteConfig: FirebaseRemoteConfig
 
+    @Inject
+    lateinit var youTubePlayersManager: YouTubePlayersManager
+
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -145,6 +149,7 @@ class MainActivity : FragmentActivity() {
         }
 
         pipManager.bind(this)
+        youTubePlayersManager.setActivity(this)
 
         setContent {
             ReviewDialog(reviewManager, theme = default())
@@ -153,6 +158,7 @@ class MainActivity : FragmentActivity() {
                 adViewModel = adViewModel,
                 pushViewModel = pushViewModel,
                 billingViewModel = billingViewModel,
+                youTubePlayersManager = youTubePlayersManager,
                 finish = { finish() },
             )
         }

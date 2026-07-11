@@ -1,13 +1,13 @@
 package com.sean.ratel.android.ui.navigation
 
 import android.util.Log
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavHostController
@@ -19,6 +19,7 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import com.sean.ratel.android.ui.end.YouTubeContentEnd
 import com.sean.ratel.android.ui.end.YouTubeContentEndViewModel
 import com.sean.ratel.android.ui.home.BillingViewModel
@@ -50,10 +51,13 @@ fun NavGraph(
     navController: NavHostController,
     startDestination: String = Destination.Splash.route,
     navigator: Navigator,
+    youTubePlayersManager: YouTubePlayersManager,
     finish: () -> Unit = {},
 ) {
     // val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current)
-    val activity = LocalContext.current as MainActivity
+
+    val activity = LocalActivity.current as MainActivity
+
     val mainViewModel: MainViewModel = ViewModelProvider(activity)[MainViewModel::class.java]
     val pushViewModel: PushViewModel = ViewModelProvider(activity)[PushViewModel::class.java]
     val billingViewModel: BillingViewModel = ViewModelProvider(activity)[BillingViewModel::class.java]
@@ -172,7 +176,7 @@ fun NavGraph(
             Log.d("KKKKKK", "YouTube filterType : $filterType")
             Log.d("KKKKKK", "YouTube topicId : $topicId")
 
-            YouTubeContentEnd(mainViewModel, viewModel)
+            YouTubeContentEnd(mainViewModel, viewModel, youTubePlayersManager)
         }
 
         composable(

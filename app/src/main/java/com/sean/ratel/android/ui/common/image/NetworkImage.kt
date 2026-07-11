@@ -21,6 +21,8 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.google.accompanist.drawablepainter.DrawablePainter
 import com.sean.ratel.android.R
 import com.sean.ratel.android.ui.theme.APP_IMAGE_FLOW_BACKGROUND_COLOR
@@ -143,30 +145,8 @@ fun NetworkImage(
             }
 
             is AsyncImagePainter.State.Success -> {
-//                LaunchedEffect(state.result) {
-//                    showRealImage = false
-//                    delay(5000)
-//                    showRealImage = true
-//                    loadComplete()
-//                }
-
-//                if (showRealImage) {
                 SubcomposeAsyncImageContent()
-//                }
-//                else {
-//                    Box(
-//                        modifier = Modifier.background(Color.Red)
-//                            .fillMaxSize(),
-//                        contentAlignment = Alignment.Center
-//                    ) {
-//                        Image(
-//                            painter = painterResource(R.drawable.vertical_background),
-//                            contentDescription = null,
-//                            modifier =modifier,
-//                            contentScale = ContentScale.Fit
-//                        )
-//                    }
-//                }
+
                 loadComplete()
             }
 
@@ -176,4 +156,32 @@ fun NetworkImage(
             }
         }
     }
+}
+
+@Suppress("ktlint:standard:function-naming")
+@Composable
+fun NetworkImage(
+    modifier: Modifier = Modifier,
+    url: String,
+    contentDescription: String? = null,
+    contentScale: ContentScale = ContentScale.Crop,
+    disableCache: Boolean = false,
+) {
+    val request =
+        ImageRequest
+            .Builder(LocalContext.current)
+            .data(url)
+            .apply {
+                if (disableCache) {
+                    memoryCachePolicy(CachePolicy.DISABLED)
+                    diskCachePolicy(CachePolicy.DISABLED)
+                }
+            }.build()
+
+    AsyncImage(
+        model = request,
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+        modifier = modifier,
+    )
 }

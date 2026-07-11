@@ -226,4 +226,10 @@
     <string name="iap_restore_not_founded">找不到可恢復的購買紀錄。</string>
     <string name="iap_purchase_complete">購買完成。</string>
     <string name="iap_purchase_not_enviroment">目前環境無法使用應用程式內購買。</string>
+    <string name="cast_running_text">正在投放</string>
+    <string name="cast_running_cast_device">已連線至 %s</string>
+    <string name="cast_play_prev">上一项</string>
+    <string name="cast_play_pause">暂停</string>
+    <string name="cast_play">播放</string>
+    <string name="cast_next">下一项</string>
 </resources>

@@ -46,7 +46,6 @@ import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.ComposeUtil.PremiumPopup
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.player.ui.ThemeMode
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
@@ -73,8 +72,6 @@ fun SettingView(
     val activity = LocalContext.current.findActivity()
     val context = LocalContext.current
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
-    val adFixedBannerState by mainViewModel.fixedBannerState.collectAsState()
-    var adSize by remember { mutableStateOf(64) }
     val bottomBarHeight = adViewModel.bottomBarHeight.value
     val fromPermissionPage by pushViewModel.fromPermissionPage.collectAsState(initial = false)
     val shareLauncher = GetShareLauncher(activity, mainViewModel)
@@ -83,17 +80,6 @@ fun SettingView(
     val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle(UiState.Idle)
     val isRemoveAd by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     var onRemoveAdsClick by remember { mutableStateOf(false) }
-
-    adSize =
-        when {
-            adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-                (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-            }
-
-            else -> {
-                0
-            }
-        }
 
     BackHandler(enabled = true) {
         mainViewModel.runNavigationBack()
@@ -121,7 +107,7 @@ fun SettingView(
         },
         containerColor = Background,
     ) { innerPadding ->
-        RLog.d("Setting", "$innerPadding $adSize")
+        RLog.d("Setting", "$innerPadding")
 
         Column(
             Modifier
@@ -134,7 +120,7 @@ fun SettingView(
                 modifier =
                     Modifier
                         .fillMaxSize()
-                        .padding(bottom = (if (!isRemoveAd) adSize else 0).dp + bottomBarHeight.dp),
+                        .padding(bottom = bottomBarHeight.dp),
             ) {
                 item {
                     SettingsProfileHeader(

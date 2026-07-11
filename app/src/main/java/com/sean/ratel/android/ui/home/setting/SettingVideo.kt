@@ -1,6 +1,7 @@
 package com.sean.ratel.android.ui.home.setting
 
 import android.content.Intent
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -102,6 +103,7 @@ private fun SettingsVideo(
         wifiOnlySwitchValue = viewModel?.getWifiOnlyPlay() ?: true
         captionEnabledValue = viewModel?.getCaptionEnabled() ?: true
     }
+    Log.d("SSLLGGGGGG", "soundOnOffSwitchValue : $soundOnOffSwitchValue")
     val pipSettingsLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),

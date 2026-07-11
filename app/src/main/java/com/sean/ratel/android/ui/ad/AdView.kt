@@ -60,7 +60,6 @@ import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 import so.smartlab.common.ad.admob.data.model.AdMobInitState
 import so.smartlab.common.ad.admob.ui.kind.AdaptiveInLineBannerView
 import so.smartlab.common.ad.admob.ui.kind.FixedBannerView
-import so.smartlab.common.iap.ui.model.PremiumSheetData
 import so.smartlab.common.utils.log.RLog
 
 const val TAG = "ADView"
@@ -70,10 +69,9 @@ const val TAG = "ADView"
 fun AdBannerView(
     activity: Activity?,
     currentRoute: String,
-    premiumSheetData: UiState<PremiumSheetData>,
     adBannerLocation: AdBannerLocation = BOTTOM,
     billingViewModel: BillingViewModel,
-    homeMainViewModel: MainViewModel = hiltViewModel(),
+    homeMainViewModel: MainViewModel,
     adViewModel: AdViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -84,13 +82,17 @@ fun AdBannerView(
     var initAdMob by remember { mutableStateOf(false) }
     val isRemoveAds by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     var onRemoveAdsClick by remember { mutableStateOf(false) }
+    val premiumSheetData by billingViewModel.premiumData.collectAsStateWithLifecycle(
+        initialValue = UiState.Idle,
+    )
 
-    // RLog.d("KKKKKKK", "currentRoute : $currentRoute , premiumData : $premiumData")
+    //   RLog.d("KKKKKKK", "currentRoute : $currentRoute , initAdMob : $initAdMob")
     if (isRemoveAds) return
 
     if (adMobInitState == AdMobInitState.InitComplete) {
         initAdMob = true
     }
+    RLog.d("AdView", "currentRoute : $currentRoute , initAdMob : $initAdMob")
 
     LaunchedEffect(initAdMob, activity) {
         activity?.let {
@@ -115,20 +117,7 @@ fun AdBannerView(
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize()
-                    .padding(
-                        bottom = (
-                            if (isBottomBar(currentRoute)) {
-                                bottomBarHeight.dp
-                            } else if (currentRoute ==
-                                Destination.Search.route
-                            ) {
-                                0.dp
-                            } else {
-                                adSize.dp
-                            }
-                        ),
-                    ),
+                    .fillMaxSize(),
             contentAlignment = alignment,
         ) {
             Column {

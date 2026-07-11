@@ -36,6 +36,7 @@ object STRINGS {
 
     // ad
     const val TEST_DEVICE_HASHED_ID = "ABCDEF012345"
+    const val CAST_APP_ID = "07130C4B"
 
     @Suppress("ktlint:standard:function-naming")
     fun URL_GOOGLE_PLAY_APP(packageName: String): String = "market://details?id=$packageName"

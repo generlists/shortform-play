@@ -35,11 +35,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -65,8 +69,12 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.databinding.YoutubeVideoEndBinding
 import com.sean.ratel.android.ui.ad.InterstitialAdManager
+import com.sean.ratel.android.ui.cast.CastSessionState
+import com.sean.ratel.android.ui.cast.PlayerState
+import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.UpdateStateBar
+import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.theme.Background_op_20
@@ -85,6 +93,7 @@ import com.sean.ratel.player.core.data.player.youtube.adaptor.YouTubeStreamPlaye
 import com.sean.ratel.player.core.util.launch
 import com.sean.ratel.player.core.util.repeatOnStart
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -139,6 +148,9 @@ class YouTubeEndFragment(
     @Inject
     lateinit var intersitialAdManager: InterstitialAdManager
 
+    @Inject
+    lateinit var youTubePlayersManager: YouTubePlayersManager
+
     constructor() : this(null)
 
     init {
@@ -184,6 +196,7 @@ class YouTubeEndFragment(
                         Unit
                     }
                 }
+                youTubePlayersManager.onLocalPlayState(state)
             }
         }
 
@@ -218,7 +231,7 @@ class YouTubeEndFragment(
             rootHeight=$screenHeight
             rootWidth=$screenWidth
             rect=$rect
-            rectHeight=${ rect.height()}}
+            rectHeight=${rect.height()}}
             hashCode=${this.hashCode()}}
             """.trimIndent(),
         )
@@ -286,8 +299,10 @@ class YouTubeEndFragment(
         RLog.d(TAG, "onPause $createPosition , $youTubeStreamPlayer")
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onResume() {
         super.onResume()
+
         mainShortsModel?.shortsVideoModel?.videoId?.let {
             launch {
                 mainViewModel.pipClick.collect {
@@ -321,7 +336,10 @@ class YouTubeEndFragment(
                 mainViewModel.currentSelection,
                 mainViewModel.adMobinitState,
             ) { selection, admobState ->
-                RLog.d("InterstitialAdManager", "fromSearch : $fromSearch currentSelection : $selection}")
+                RLog.d(
+                    "InterstitialAdManager",
+                    "fromSearch : $fromSearch currentSelection : $selection}",
+                )
                 InterstitialAdManager.AdTriggerState(
                     selection = selection,
                     fromSearch = fromSearch,
@@ -329,7 +347,10 @@ class YouTubeEndFragment(
                     initAdMobInitState = admobState,
                 )
             }.collect { adTriggerState ->
-                RLog.d(TAG, "shouldTriggerAd : ${adTriggerState.fromSearch} , state : $adTriggerState")
+                RLog.d(
+                    TAG,
+                    "shouldTriggerAd : ${adTriggerState.fromSearch} , state : $adTriggerState",
+                )
 
                 intersitialAdManager.launchAdRequest(
                     createPosition,
@@ -425,6 +446,8 @@ class YouTubeEndFragment(
         )
         youTubePlayerView.matchParent()
 
+        youTubePlayersManager.setLocalPlayer(youTubeStreamPlayer)
+
         return binding.root
     }
 
@@ -462,7 +485,11 @@ class YouTubeEndFragment(
             if (currentSelection.value == createPosition) {
                 if (!pipButtonClick.value) {
                     UpdateStateBar()
-                    PlayControllerView(currentSelection.value, mainShortsModel)
+                    PlayControllerView(
+                        youTubePlayersManager,
+                        currentSelection.value,
+                        mainShortsModel,
+                    )
                 }
                 IsNetWorkAvailAble()
                 WifiAlertDiaLog()
@@ -511,6 +538,10 @@ class YouTubeEndFragment(
 
     fun play() {
         youTubeStreamPlayer.start()
+    }
+
+    fun seekTo(mec: Float) {
+        youTubeStreamPlayer.seekTo(mec)
     }
 
     fun release() {
@@ -573,19 +604,20 @@ class YouTubeEndFragment(
         selectPosition: Int,
         state: YouTubeStreamPlaybackState.Prepared,
     ) {
-        youTubeStreamPlayer = state.youTubeStreamPlayer
+        youTubeStreamPlayer = state.youTubePlayer
         mainShortsModel?.shortsVideoModel?.videoId?.let { videoId ->
             RLog.d(
                 "PLAYER",
-                "state :Ii7ASTtlLso  PREPARE $videoId , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
+                "state : PREPARE $videoId , selectPosition : $selectPosition , title : ${mainShortsModel?.shortsVideoModel?.title}",
             )
 
             youTubeStreamPlayer.loadVideo(videoId, 0f)
+            // youTubePlayersManager.castEventManager.setPlayerState(PlayerState.LOCAL)
             if (selectPosition == createPosition) {
-                RLog.d(
-                    "PLAYER",
-                    "state : PREPARE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
-                )
+//                RLog.d(
+//                    "PLAYER",
+//                    "state : PREPARE , videoId : ${mainShortsModel?.shortsVideoModel?.videoId}",
+//                )
                 if (!youtubeContentEndViewModel.getAutoPlay()) {
                     youTubeStreamPlayer.pause()
                 }
@@ -659,6 +691,21 @@ class YouTubeEndFragment(
                     }
                 }
         }
+//        launch {
+//            youTubePlayersManager.castEventManager.playerState.collect {
+//                RLog.d("OOOOOOOOOO", "playerState : $it lastCurrentTime : ${youTubePlayersManager.lastCurrentTime}")
+//                if (youTubePlayersManager.castEventManager.playerState.first() == PlayerState.CAST) {
+//                    mainViewModel.setPIPButtonClickState(false)
+//                    youTubeStreamPlayer.pause()
+//                } else {
+//                    if (youTubePlayersManager.lastCurrentTime > 0) {
+//                        mainViewModel.setPIPButtonClickState(true)
+//                        youTubeStreamPlayer.seekTo(youTubePlayersManager.lastCurrentTime)
+//                        youTubeStreamPlayer.start()
+//                    }
+//                }
+//            }
+//        }
     }
 
     private suspend fun handleEndedState(selectPosition: Int) {
@@ -671,6 +718,7 @@ class YouTubeEndFragment(
     @Suppress("ktlint:standard:function-naming")
     @Composable
     fun PlayControllerView(
+        youTubePlayersManager: YouTubePlayersManager,
         selection: Int,
         mainShortsModel: MainShortsModel?,
     ) {
@@ -678,6 +726,9 @@ class YouTubeEndFragment(
         val isAdLoading by remember { youtubeContentEndViewModel.isAdLoading }
         val isPlaying by remember { youtubeContentEndViewModel.isPlaying }
         val topBarHeight = mainViewModel.topBarHeight.collectAsState(53)
+        val castSessionState by youTubePlayersManager.castEventManager.castSession.collectAsStateWithLifecycle()
+        val isPlayState by youTubePlayersManager.castEventManager.playerState.collectAsStateWithLifecycle(initialValue = PlayerState.LOCAL)
+        val isCastPlayerReady by youTubePlayersManager.isCastPlayerReady.collectAsStateWithLifecycle()
         Scaffold(
             topBar = {},
             containerColor = Color.Transparent,
@@ -717,6 +768,51 @@ class YouTubeEndFragment(
             PlayButton(isPlaying, onPlayChange = {
                 if (it) youTubeStreamPlayer.start()
             })
+        }
+
+        if (isPlayState == PlayerState.CAST &&
+            castSessionState is CastSessionState.SessionStart &&
+            (isCastPlayerReady is YouTubeStreamPlaybackState.IFrameReady || isCastPlayerReady is YouTubeStreamPlaybackState.Ready)
+        ) {
+            CastVideoShadowLayer(youTubePlayersManager)
+        }
+    }
+
+    @Suppress("ktlint:standard:function-naming")
+    @Composable
+    fun CastVideoShadowLayer(manager: YouTubePlayersManager) {
+        val currentVideo by manager.currentVideo.collectAsStateWithLifecycle()
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .background(Color.Gray),
+            contentAlignment = Alignment.Center,
+        ) {
+            RLog.d("YouTubeCast", "thumbail : ${currentVideo?.shortsVideoModel?.thumbNail}")
+            currentVideo?.shortsVideoModel?.thumbNail?.let {
+                NetworkImage(
+                    url = it,
+                    contentDescription = null,
+                    disableCache = false,
+                    modifier = Modifier.fillMaxSize().blur(16.dp),
+                )
+            }
+            Text(
+                text = stringResource(R.string.cast_running_text),
+                color = Color.White,
+                fontFamily = FontFamily.SansSerif,
+                fontStyle = FontStyle.Normal,
+                fontSize = 24.sp,
+                style =
+                    TextStyle(
+                        shadow =
+                            Shadow(
+                                color = Color.Black.copy(alpha = 0.7f),
+                                offset = Offset(0f, 2f),
+                                blurRadius = 6f,
+                            ),
+                    ),
+            )
         }
     }
 
@@ -908,7 +1004,7 @@ class YouTubeEndFragment(
     @Composable
     private fun PlayControllerPreView() {
         RatelappTheme {
-            PlayControllerView(0, null)
+            // PlayControllerView(0, null)
         }
     }
 

@@ -230,5 +230,11 @@
     <string name="iap_restore_not_founded">복원할 구매 내역이 없습니다.</string>
     <string name="iap_purchase_complete">구매가 완료되었습니다.</string>
     <string name="iap_purchase_not_enviroment">인앱 결제를 사용할 수있는 환경이 아니에요.</string>
+    <string name="cast_running_text">캐스트 실행 중</string>
+    <string name="cast_running_cast_device">%s 으로 접속</string>
+    <string name="cast_play_prev">이전</string>
+    <string name="cast_play_pause">일시정지</string>
+    <string name="cast_play">재생</string>
+    <string name="cast_next">다음</string>
 
 </resources>

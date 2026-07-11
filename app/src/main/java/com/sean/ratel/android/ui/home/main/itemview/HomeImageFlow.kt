@@ -108,7 +108,6 @@ fun AutoScrollImagePager(
     val density = LocalDensity.current
     val heightInPx = with(density) { 150.dp.toPx() } // Dp -> Px 변환
 
-    RLog.d("JSPPPP", "autoScroll : $autoScroll")
     // 자동 스크롤 기능
     LaunchedEffect(autoScroll) {
         while (autoScroll) {

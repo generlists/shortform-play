@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.local.pref.SettingPreference
+import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +26,9 @@ class ShortFormPlayApplication : Application() {
 
     @Inject
     lateinit var billingManager: BillingManager
+
+    @Inject
+    lateinit var youTubePlayersManager: YouTubePlayersManager
 
     private val applicationScope =
         CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -46,6 +50,7 @@ class ShortFormPlayApplication : Application() {
             settingPreference.initialize()
         }
         billingManager.initialize(scope = ProcessLifecycleOwner.get().lifecycleScope)
+        youTubePlayersManager.initChromeCast()
     }
 
     fun firebaseRemoteConfig(
@@ -88,5 +93,9 @@ class ShortFormPlayApplication : Application() {
 
                 onComplete()
             }
+    }
+
+    override fun onTerminate() {
+        super.onTerminate()
     }
 }

@@ -233,4 +233,10 @@
     <string name="iap_restore_not_founded">ไม่พบประวัติการซื้อที่สามารถกู้คืนได้</string>
     <string name="iap_purchase_complete">การซื้อเสร็จสมบูรณ์</string>
     <string name="iap_purchase_not_enviroment">ไม่สามารถใช้การซื้อในแอปได้ในสภาพแวดล้อมนี้</string>
+    <string name="cast_running_text">กำลังแคสต์…</string>
+    <string name="cast_running_cast_device">เชื่อมต่อกับ %s</string>
+    <string name="cast_play_prev">ก่อนหน้า</string>
+    <string name="cast_play_pause">หยุดชั่วคราว</string>
+    <string name="cast_play">เล่น</string>
+    <string name="cast_next">ถัดไป</string>
 </resources>

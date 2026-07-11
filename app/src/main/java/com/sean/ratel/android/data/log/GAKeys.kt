@@ -16,4 +16,6 @@ object GAKeys {
     const val TOPIC_DETAIL = "main_topic_detail"
     const val SETTING_SCREEN = "setting_screen"
     const val AD_PROMOTION_BUTTON_TYPE = "ad_promotion_button_type"
+    const val CAST_TYPE = "cast_type"
+    const val PLAY_PAUSE = "play_pause_type"
 }
