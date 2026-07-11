@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -46,17 +47,23 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
+import com.sean.ratel.android.ui.cast.CastSessionState
+import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
+import com.sean.ratel.android.utils.MediaRouteButtonUtils
 import com.sean.ratel.android.utils.PhoneUtil.searchButton
 import com.sean.ratel.android.utils.PhoneUtil.shareAppLinkButton
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
@@ -70,11 +77,14 @@ fun HomeTopBar(
     mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
     billingViewModel: BillingViewModel,
+    playersManager: YouTubePlayersManager,
+    castConnectLoading: Boolean,
     isHomeNaviBar: String,
     historyBack: () -> Unit,
     privacyOptionClick: () -> Unit,
     notificationPage: () -> Unit = {},
     endMoreClick: (MainShortsModel?) -> Unit,
+    castClickRoute: (String) -> Unit,
 ) {
     Box(
         modifier =
@@ -166,16 +176,23 @@ fun HomeTopBar(
                     TitleBox()
                     Spacer(modifier = Modifier.weight(1f))
                     PrivacyOptionMenu(isPrivacy.value, privacyOptionClick)
-                    NotificationIconButton(notificationPage, mainViewModel, pushViewModel, billingViewModel)
-                    SearchIconButton(mainViewModel)
+                    CastButton(isHomeNaviBar, castConnectLoading, castClickRoute)
+                    NotificationIconButton(
+                        notificationPage,
+                        mainViewModel,
+                        pushViewModel,
+                        billingViewModel,
+                    )
+                    SearchIconButton(mainViewModel, playersManager)
                 } else if (isHomeNaviBar == Destination.YouTube.route) {
                     BackButton(
                         modifier = Modifier.align(Alignment.CenterVertically),
                         historyBack,
                     )
                     Spacer(modifier = Modifier.weight(1f))
-                    SearchIconButton(mainViewModel)
-                    PIPButton(mainViewModel)
+                    CastButton(isHomeNaviBar, castConnectLoading, castClickRoute)
+                    SearchIconButton(mainViewModel, playersManager)
+                    PIPButton(mainViewModel, playersManager)
                     MoreInfoButton(mainViewModel = mainViewModel, moreClick = endMoreClick)
                 }
             }
@@ -234,7 +251,10 @@ fun SharerIconButton(mainViewModel: MainViewModel) {
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun SearchIconButton(mainViewModel: MainViewModel?) {
+fun SearchIconButton(
+    mainViewModel: MainViewModel?,
+    playersManager: YouTubePlayersManager,
+) {
     val context = LocalContext.current
     val mainShorts = mainViewModel?.mainShorts?.collectAsState()
     val category =
@@ -252,7 +272,7 @@ fun SearchIconButton(mainViewModel: MainViewModel?) {
                 .size(32.dp)
                 .clickable {
                     searchButton(context, category)
-                    mainViewModel?.sendGALog(
+                    playersManager.sendGALog(
                         screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
                         eventName = GASplashAnalytics.Event.SELECT_SEARCH_BTN_CLICK,
                         actionName = GASplashAnalytics.Action.CLICK,
@@ -308,10 +328,14 @@ fun NotificationIconButton(
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
-fun PIPButton(mainViewModel: MainViewModel?) {
+fun PIPButton(
+    mainViewModel: MainViewModel?,
+    youTubePlayersManager: YouTubePlayersManager,
+) {
     val context = LocalContext.current
     val pipAction = mainViewModel?.pipClick?.collectAsStateWithLifecycle(initialValue = null)
     val pipButtonEnabled = remember { mutableStateOf(false) }
+    val castSessionState by youTubePlayersManager.castEventManager.castSession.collectAsStateWithLifecycle()
     val fragment = mainViewModel?.topPipClick?.collectAsStateWithLifecycle()
     val str = stringResource(R.string.setting_pip_go)
 
@@ -325,7 +349,7 @@ fun PIPButton(mainViewModel: MainViewModel?) {
             .height(64.dp)
             .width(64.dp)
             .clickable(
-                enabled = pipButtonEnabled.value,
+                enabled = pipButtonEnabled.value && castSessionState !is CastSessionState.SessionStart,
                 onClick = {
                     if (!context.hasPipPermission()) {
                         Toast
@@ -403,10 +427,57 @@ fun MoreInfoButton(
 }
 
 @Suppress("ktlint:standard:function-naming")
+@Composable
+fun CastButton(
+    isHomeNaviBar: String,
+    castConnectLoading: Boolean,
+    castClickRoute: (String) -> Unit,
+) {
+    val context = LocalContext.current
+    val activity = context.findActivity() ?: return
+    val medialButton = MediaRouteButtonUtils.initMediaRouteButton(activity)
+    MediaRouteButtonUtils.addMediaRouteButtonToPlayerUi(
+        medialButton,
+        android.R.color.white,
+        null,
+        null,
+    )
+
+    Box(
+        modifier = Modifier.size(48.dp),
+    ) {
+        AndroidView(
+            modifier = Modifier.matchParentSize(),
+            factory = { _ ->
+                medialButton
+            },
+        )
+
+        if (castConnectLoading) {
+            castClickRoute(isHomeNaviBar)
+            CircularProgressIndicator(
+                modifier =
+                    Modifier
+                        .size(12.dp)
+                        .align(Alignment.BottomEnd)
+                        .offset(x = -5.dp, y = -8.dp)
+                        .padding(2.dp),
+                strokeWidth = 2.dp,
+                color = APP_TEXT_COLOR,
+            )
+        }
+    }
+}
+
+@Suppress("ktlint:standard:function-naming")
 @Preview(showBackground = true)
 @Composable
 private fun HomeTopBarPreview() {
+    val mainViewModel: MainViewModel = hiltViewModel<MainViewModel>()
+    val pushViewModel: PushViewModel = hiltViewModel<PushViewModel>()
+    val billingViewModel: BillingViewModel = hiltViewModel<BillingViewModel>()
+
     RatelappTheme {
-        // HomeTopBar(Modifier, null, Destination.Home.Main.route, {}, {})
+        // HomeTopBar(Modifier,mainViewModel ,pushViewModel,billingViewModel, Destination.Home.Main.route, {}, {},{},{})
     }
 }

@@ -43,6 +43,14 @@ object GASplashAnalytics {
         const val SELECT_MAIN_AD_PROMOTION_ITEM_CLICK = "select_ad_main_promotion_item_click"
         const val SELECT_SETTING_AD_PROMOTION_POPUP_CLICK = "select_ad_setting_promotion_popup_click"
         const val SELECT_SETTING_AD_PROMOTION_ITEM_CLICK = "select_ad_setting_promotion_item_click"
+        const val SELECT_BTN_CAST_CLICK = "select_cast_btn_click"
+        const val SELECT_ARROW_CAST_CLICK = "select_arrow_cast_btn_click"
+        const val SELECT_PLAY_PAUSE_CAST_CLICK = "select_play_pause_cast_btn_click"
+        const val SELECT_PREV_CAST_CLICK = "select_prev_cast_btn_click"
+        const val SELECT_NEXT_CAST_CLICK = "select_next_cast_btn_click"
+        const val SELECT_MUTE_CAST_CLICK = "select_mute_cast_btn_click"
+        const val SELECT_SPEED_UP_CAST_CLICK = "select_speed_up_cast_btn_click"
+        const val SELECT_SPEED_DOWN_CAST_CLICK = "select_speed_down_cast_btn_click"
     }
 
     object Action {
@@ -58,6 +66,8 @@ object GASplashAnalytics {
         const val SEARCH_TYPE = GAKeys.SEARCH_TYPE
         const val CATEGORY_NAME = GAKeys.CATEGORY_NAME
         const val NOTIFICATION_TYPE = GAKeys.NOTIFICATION_TYPE
+        const val CAST_VIEW_TYPE = GAKeys.CAST_TYPE
+        const val CAST_PLAYING_TYPE = GAKeys.PLAY_PAUSE
 
 //        const val PAGE_INDEX = GAKeys.PAGE_INDEX
 //        const val ISSUE_KEYWORD = GAKeys.ISSUE_KEYWORD

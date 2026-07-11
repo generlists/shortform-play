@@ -93,4 +93,8 @@ class SettingPreference
             dataStore.data.map { prefs ->
                 prefs[userId]
             }
+
+        val soundOnOffFlow: Flow<Boolean> = dataStore.data.map { it[soundOnOff] ?: false }
+
+        val captionEnabledFlow: Flow<Boolean> = dataStore.data.map { it[captionEnabled] ?: true }
     }

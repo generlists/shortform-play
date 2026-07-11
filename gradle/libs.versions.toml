@@ -43,6 +43,8 @@ google-accompanist-systemuicontroller ="0.30.0"
 google-integrity ="1.5.0"
 installreferrer ="2.2"
 google-media3 = "1.8.0"
+google-cast="22.1.0"
+media-router ="1.8.0"
 
 #firebase
 crashlytics = "3.0.2"
@@ -60,7 +62,7 @@ junitVersion = "1.1.5"
 espresso = "3.5.1"
 
 #player
-shortform-play-core="0.0.6.3-SNAPSHOT"
+shortform-play-core="0.0.7.4-SNAPSHOT"
 shortform-play-utils ="0.0.0.5"
 shortform-play-ui ="0.0.3"
 
@@ -90,6 +92,8 @@ google-media3-exoplayer-hls = { module = "androidx.media3:media3-exoplayer-hls",
 google-media3-database = { module = "androidx.media3:media3-database", version.ref = "google-media3"}
 google-media3-datasource-okhttp = { module = "androidx.media3:media3-datasource-okhttp", version.ref = "google-media3"}
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+google-android-gms-play-service-cast-framework =  {group = "com.google.android.gms",name="play-services-cast-framework", version.ref = "google-cast"}
+androidx-mediarouter = { group = "androidx.mediarouter", name = "mediarouter", version.ref = "media-router" }
 
 
 com-auth-java-jwt = { module = "com.auth0:java-jwt", version.ref = "java-jwt" }

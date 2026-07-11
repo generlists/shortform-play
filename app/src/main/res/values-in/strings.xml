@@ -239,4 +239,10 @@
     <string name="iap_restore_not_founded">Tidak ada riwayat pembelian yang dapat dipulihkan.</string>
     <string name="iap_purchase_complete">Pembelian berhasil diselesaikan.</string>
     <string name="iap_purchase_not_enviroment">Pembelian dalam aplikasi tidak tersedia di lingkungan ini.</string>
+    <string name="cast_running_text">Sedang melakukan casting…</string>
+    <string name="cast_running_cast_device">Terhubung ke %s</string>
+    <string name="cast_play_prev">Sebelumnya</string>
+    <string name="cast_play_pause">Jeda</string>
+    <string name="cast_play">Putar</string>
+    <string name="cast_next">Berikutnya</string>
 </resources>

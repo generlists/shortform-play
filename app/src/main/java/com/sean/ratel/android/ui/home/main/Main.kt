@@ -1,13 +1,13 @@
 package com.sean.ratel.android.ui.home.main
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -36,6 +36,8 @@ import com.sean.ratel.android.data.dto.ShortFormVideoSearchList
 import com.sean.ratel.android.data.dto.TopFiveList
 import com.sean.ratel.android.data.dto.TopicList
 import com.sean.ratel.android.data.dto.TrendsShortFormList
+import com.sean.ratel.android.ui.ad.AdBannerLocation
+import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.main.itemview.AutoScrollImagePager
@@ -49,7 +51,6 @@ import com.sean.ratel.android.ui.home.main.itemview.TrendShortsList
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.utils.UIUtil.validationIndex
 import kotlinx.coroutines.delay
-import so.smartlab.common.ad.admob.data.model.AdMobBannerState
 
 private const val TAG = "MainView"
 
@@ -233,6 +234,7 @@ fun ShortsItemList(
     val adFixedBannerState by viewModel.fixedBannerState.collectAsState()
     val isAdRemove by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     var adSize by remember { mutableStateOf(64) }
+    val activity = LocalActivity.current
 
     val isFirstItemVisible by remember {
         derivedStateOf { listState.firstVisibleItemScrollOffset == 0 }
@@ -245,31 +247,59 @@ fun ShortsItemList(
             viewModel.setIsHomeVisible(false)
         }
     }
-    when {
-        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
-            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
-        }
-
-        else -> {
-            adSize = 0
-        }
-    }
+//    when {
+//        adFixedBannerState is AdMobBannerState.AdLoadComplete -> {
+//            adSize = (adFixedBannerState as AdMobBannerState.AdLoadComplete).adSize.height
+//        }
+//
+//        else -> {
+//            adSize = 0
+//        }
+//    }
     val size = itemSize - 2 + RemoteConfig.getRemoteConfigIntValue(MAX_RECOMMEND_SIZE)
 
     LazyColumn(
         modifier =
             Modifier
-                .fillMaxSize()
-                .padding(bottom = if (!isAdRemove) adSize.dp else 0.dp),
+                .fillMaxSize(),
     ) {
         var i = 0
         val targetIndexList = validationIndex(Destination.Home.Main.route, size)
+//        if ((
+//                    currentRoute == Destination.Home.Main.route ||
+//                            currentRoute == Destination.Setting.route
+//                    ) &&
+//            adMobInitialComplete is AdMobInitState.InitComplete &&
+//            RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
+//        ) {
+//            AdBannerView(
+//                activity,
+//                currentRoute,
+//                premiumSheetData,
+//                AdBannerLocation.BOTTOM,
+//                billingViewModel,
+//            )
+//        }
 
         item {
             while (i < size) {
                 if (i == 0) {
                     AutoScrollImagePager(viewModel, topFiveData)
                     Spacer(Modifier.height(16.dp))
+                }
+                if ((
+                        i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.AD_BANNER_ORDER) &&
+                            RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
+                    )
+                ) {
+                    AdBannerView(
+                        activity,
+                        Destination.Home.Main.route,
+                        AdBannerLocation.BOTTOM,
+                        billingViewModel,
+                        homeMainViewModel = viewModel,
+                    )
+                    Spacer(Modifier.height(32.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TOPIC_LIST_ORDER))) {

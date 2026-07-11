@@ -345,6 +345,8 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.compose.material3.material3)
+    implementation(libs.androidx.mediarouter)
+    implementation(libs.google.android.gms.play.service.cast.framework)
     // Datastore
     implementation(libs.androidx.datastore.preferences)
 
@@ -355,7 +357,6 @@ dependencies {
     implementation(libs.material)
     implementation(libs.com.android.installreferrer)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-
     // hilt
     implementation(libs.google.hilt.android)
     ksp(libs.google.hilt.android.compiler)

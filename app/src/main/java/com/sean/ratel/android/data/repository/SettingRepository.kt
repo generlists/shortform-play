@@ -63,4 +63,6 @@ SettingRepository
         fun getLocale() = settingPreference.getLocale()
 
         val userIdFlow: Flow<String?> = settingPreference.userIdFlow
+        val soundOnOffFlow: Flow<Boolean> = settingPreference.soundOnOffFlow
+        val captionEnabledFlow: Flow<Boolean> = settingPreference.captionEnabledFlow
     }

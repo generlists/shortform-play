@@ -4,12 +4,9 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.statusBars
@@ -22,24 +19,22 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.sean.ratel.android.data.api.UiState
-import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.log.GAKeys.AD_PROMOTION_BUTTON_TYPE
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdBannerLocation
-import com.sean.ratel.android.ui.ad.AdBannerView
+import com.sean.ratel.android.data.log.GASplashAnalytics.Param.CAST_VIEW_TYPE
 import com.sean.ratel.android.ui.ad.AdViewModel
+import com.sean.ratel.android.ui.cast.CastControlBar
+import com.sean.ratel.android.ui.cast.CastSessionState
+import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.end.LoadingArea
 import com.sean.ratel.android.ui.end.YouTubeEndMoreView
@@ -55,7 +50,7 @@ import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.PremiumPopup
 import com.sean.ratel.android.utils.findActivity
-import so.smartlab.common.ad.admob.data.model.AdMobInitState
+import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackState
 import so.smartlab.common.iap.ui.PremiumSheetColors
 import so.smartlab.common.utils.log.RLog
 
@@ -66,6 +61,7 @@ fun ShortFormPlayApp(
     adViewModel: AdViewModel,
     pushViewModel: PushViewModel,
     billingViewModel: BillingViewModel,
+    youTubePlayersManager: YouTubePlayersManager,
     finish: () -> Unit,
 ) {
     RatelappTheme {
@@ -91,10 +87,27 @@ fun ShortFormPlayApp(
         val isDonotAain by billingViewModel.doNotShowAgain.collectAsStateWithLifecycle()
         val isAdRemoved by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
         val toastMessage by billingViewModel.toastMessage.collectAsStateWithLifecycle(initialValue = null)
-        val premiumSheetData by billingViewModel.premiumData.collectAsStateWithLifecycle(initialValue = UiState.Idle)
+        val premiumSheetData by billingViewModel.premiumData.collectAsStateWithLifecycle(
+            initialValue = UiState.Idle,
+        )
         val interstitialDisMissCount by billingViewModel.interstitialAdDisMissCount.collectAsStateWithLifecycle(
             initialValue = 0,
         )
+        val castLoading by youTubePlayersManager.castConnectLoading.collectAsStateWithLifecycle()
+        val castSession by youTubePlayersManager.castEventManager.castSession.collectAsStateWithLifecycle()
+        val settingSoundOff by youTubePlayersManager.getSoundOff().collectAsStateWithLifecycle(initialValue = false)
+        val isMute by youTubePlayersManager.mute.collectAsStateWithLifecycle(initialValue = settingSoundOff)
+        val settingCaptionOnOff by youTubePlayersManager.getCaptionEnabled().collectAsStateWithLifecycle(initialValue = true)
+        val captionOnOff by youTubePlayersManager.captionOnOff.collectAsStateWithLifecycle(initialValue = settingCaptionOnOff)
+        val currentVideo by youTubePlayersManager.currentVideo.collectAsStateWithLifecycle()
+        val castPlayState by youTubePlayersManager.castPlayState.collectAsStateWithLifecycle()
+        val playCaptionRetain by youTubePlayersManager.retainSoundCaption.collectAsStateWithLifecycle()
+
+        RLog.d(
+            "SSLLGGGGGG",
+            "isMute : $isMute, captionOnOff : $captionOnOff settingCaption = $settingCaptionOnOff",
+        )
+
         Scaffold(
             contentWindowInsets = WindowInsets.safeDrawing,
             topBar = {
@@ -104,6 +117,8 @@ fun ShortFormPlayApp(
                         mainViewModel = mainViewModel,
                         pushViewModel = pushViewModel,
                         billingViewModel = billingViewModel,
+                        playersManager = youTubePlayersManager,
+                        castConnectLoading = castLoading,
                         isHomeNaviBar = currentRoute,
                         historyBack = {
                             mainViewModel.runNavigationBack(Destination.YouTube.route)
@@ -113,6 +128,15 @@ fun ShortFormPlayApp(
                         endMoreClick = {
                             endMoreClick = true
                             currentShorts = it
+                        },
+                        castClickRoute = {
+                            youTubePlayersManager.setCurrentRoute(it)
+                            mainViewModel.sendGALog(
+                                screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                                eventName = GASplashAnalytics.Event.SELECT_BTN_CAST_CLICK,
+                                actionName = GASplashAnalytics.Action.CLICK,
+                                mapOf(CAST_VIEW_TYPE to it),
+                            )
                         },
                     )
                 }
@@ -137,11 +161,9 @@ fun ShortFormPlayApp(
                     navController = navController,
                     modifier = Modifier.padding(innerPaddingModifier),
                     navigator = mainViewModel.navigator,
+                    youTubePlayersManager = youTubePlayersManager,
                     finish = finish,
                 )
-            }
-            if (!isAdRemoved) {
-                ShadowBottomLayer(route = currentRoute)
             }
 
             when (val state = premiumSheetData) {
@@ -162,16 +184,6 @@ fun ShortFormPlayApp(
                 else -> {
                     Unit
                 }
-            }
-
-            if ((
-                    currentRoute == Destination.Home.Main.route ||
-                        currentRoute == Destination.Setting.route
-                ) &&
-                adMobInitialComplete is AdMobInitState.InitComplete &&
-                RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
-            ) {
-                AdBannerView(activity, currentRoute, premiumSheetData, AdBannerLocation.BOTTOM, billingViewModel)
             }
 
             FullScreenToggleView(currentRoute)
@@ -226,8 +238,90 @@ fun ShortFormPlayApp(
                         actionName = GASplashAnalytics.Action.VIEW,
                         parameter = mapOf(AD_PROMOTION_BUTTON_TYPE to buttonType.name),
                     )
-                    if (interstitialDisMissCount == 3) billingViewModel.setInterstitialAdDisMissCount(0)
+                    if (interstitialDisMissCount == 3) {
+                        billingViewModel.setInterstitialAdDisMissCount(
+                            0,
+                        )
+                    }
                 })
+            }
+            if (castSession is CastSessionState.SessionStart &&
+                currentVideo != null && currentRoute != Destination.Splash.route
+            ) {
+                if (castPlayState is YouTubeStreamPlaybackState.Playing) {
+                    LaunchedEffect(Unit) {
+                        if (!playCaptionRetain) {
+                            RLog.d("SSLLGGGGGG", "LaunchedEffect   isMute : $isMute , captionOnOff : $captionOnOff")
+                            youTubePlayersManager.setMute(isMute)
+                            youTubePlayersManager.setCaptionOnOff(captionOnOff)
+                            // 캐스트 종료때까지 설정 사운드 유지
+                            youTubePlayersManager.setRetainSound(true)
+                        }
+                    }
+                }
+
+                CastControlBar(
+                    currentRoute = currentRoute,
+                    playerManager = youTubePlayersManager,
+                    adViewModel = adViewModel,
+                    onPlayPause = { isPlaying ->
+                        youTubePlayersManager.castPlayPause(!isPlaying)
+                        youTubePlayersManager.sendGALog(
+                            screenName = GASplashAnalytics.SCREEN_NAME[currentRoute] ?: "",
+                            eventName = GASplashAnalytics.Event.SELECT_PLAY_PAUSE_CAST_CLICK,
+                            actionName = GASplashAnalytics.Action.CLICK,
+                            mapOf(GASplashAnalytics.Param.CAST_PLAYING_TYPE to isPlaying.toString()),
+                        )
+                    },
+                    onPrevious = {
+                        youTubePlayersManager.castPrevPlay()
+                        youTubePlayersManager.sendGALog(
+                            screenName = GASplashAnalytics.SCREEN_NAME[currentRoute] ?: "",
+                            eventName = GASplashAnalytics.Event.SELECT_PREV_CAST_CLICK,
+                            actionName = GASplashAnalytics.Action.CLICK,
+                            mapOf(GASplashAnalytics.Param.CAST_PLAYING_TYPE to "prev"),
+                        )
+                    },
+                    onNext = {
+                        youTubePlayersManager.castNextPlay()
+                        youTubePlayersManager.sendGALog(
+                            screenName = GASplashAnalytics.SCREEN_NAME[currentRoute] ?: "",
+                            eventName = GASplashAnalytics.Event.SELECT_NEXT_CAST_CLICK,
+                            actionName = GASplashAnalytics.Action.CLICK,
+                            mapOf(GASplashAnalytics.Param.CAST_PLAYING_TYPE to "next"),
+                        )
+                    },
+                    onToggleMute = {
+                        youTubePlayersManager.setMute(isMute)
+                        youTubePlayersManager.sendGALog(
+                            screenName = GASplashAnalytics.SCREEN_NAME[currentRoute] ?: "",
+                            eventName = GASplashAnalytics.Event.SELECT_MUTE_CAST_CLICK,
+                            actionName = GASplashAnalytics.Action.CLICK,
+                            mapOf(GASplashAnalytics.Param.CAST_PLAYING_TYPE to isMute.toString()),
+                        )
+                    },
+                    onToggleSubtitle = {
+                        youTubePlayersManager.setCaptionOnOff(!captionOnOff)
+                    },
+                    onSpeedUp = {
+                        youTubePlayersManager.speedUp()
+                        youTubePlayersManager.sendGALog(
+                            screenName = GASplashAnalytics.SCREEN_NAME[currentRoute] ?: "",
+                            eventName = GASplashAnalytics.Event.SELECT_SPEED_UP_CAST_CLICK,
+                            actionName = GASplashAnalytics.Action.CLICK,
+                            mapOf(GASplashAnalytics.Param.CAST_PLAYING_TYPE to "speed_up"),
+                        )
+                    },
+                    onSpeedDown = {
+                        youTubePlayersManager.speedDown()
+                        youTubePlayersManager.sendGALog(
+                            screenName = GASplashAnalytics.SCREEN_NAME[currentRoute] ?: "",
+                            eventName = GASplashAnalytics.Event.SELECT_SPEED_DOWN_CAST_CLICK,
+                            actionName = GASplashAnalytics.Action.CLICK,
+                            mapOf(GASplashAnalytics.Param.CAST_PLAYING_TYPE to "speed_down"),
+                        )
+                    },
+                )
             }
 
             LaunchedEffect(toastMessage) {
@@ -236,36 +330,6 @@ fun ShortFormPlayApp(
                     Toast.makeText(context, toastMessage, Toast.LENGTH_LONG).show()
                 }
             }
-        }
-    }
-}
-
-@Suppress("ktlint:standard:function-naming")
-@Composable
-private fun ShadowBottomLayer(route: String) {
-    if (
-        route == Destination.Home.Main.route ||
-        route == Destination.Home.ShortForm.route ||
-        route == Destination.Setting.route
-    ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            Spacer(
-                Modifier
-                    .fillMaxWidth()
-                    .height(120.dp)
-                    .background(
-                        brush =
-                            Brush.verticalGradient(
-                                colors =
-                                    listOf(
-                                        Color.Transparent,
-                                        Color.White.copy(alpha = 0.3f),
-                                        Color.White.copy(alpha = 0.4f),
-                                        Color.White.copy(alpha = 0.5f),
-                                    ),
-                            ),
-                    ),
-            )
         }
     }
 }
