@@ -215,7 +215,7 @@ fun SettingsProfileHeader(
                         color = MaterialTheme.colorScheme.surfaceContainer,
                     )
                     Text(
-                        text = "@$username",
+                        text = if (username == "guest") "@$username" else username,
                         fontSize = 14.sp,
                         color = MaterialTheme.colorScheme.surfaceContainerLow,
                     )

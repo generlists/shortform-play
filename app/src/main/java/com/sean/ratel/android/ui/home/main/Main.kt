@@ -49,7 +49,6 @@ import com.sean.ratel.android.ui.home.main.itemview.RecentVideoWatchList
 import com.sean.ratel.android.ui.home.main.itemview.TopicCardPager
 import com.sean.ratel.android.ui.home.main.itemview.TrendShortsList
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.android.utils.UIUtil.validationIndex
 import kotlinx.coroutines.delay
 
 private const val TAG = "MainView"
@@ -264,22 +263,6 @@ fun ShortsItemList(
                 .fillMaxSize(),
     ) {
         var i = 0
-        val targetIndexList = validationIndex(Destination.Home.Main.route, size)
-//        if ((
-//                    currentRoute == Destination.Home.Main.route ||
-//                            currentRoute == Destination.Setting.route
-//                    ) &&
-//            adMobInitialComplete is AdMobInitState.InitComplete &&
-//            RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)
-//        ) {
-//            AdBannerView(
-//                activity,
-//                currentRoute,
-//                premiumSheetData,
-//                AdBannerLocation.BOTTOM,
-//                billingViewModel,
-//            )
-//        }
 
         item {
             while (i < size) {
@@ -299,7 +282,7 @@ fun ShortsItemList(
                         billingViewModel,
                         homeMainViewModel = viewModel,
                     )
-                    Spacer(Modifier.height(32.dp))
+                    Spacer(Modifier.height(16.dp))
                 }
 
                 if ((i == RemoteConfig.getRemoteConfigIntValue(RemoteConfig.TOPIC_LIST_ORDER))) {

@@ -2,7 +2,6 @@ package com.sean.ratel.android.ui.home
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.billingclient.api.BillingClient
@@ -127,7 +126,7 @@ class BillingViewModel
                     RLog.d("In App Purchase", "[App] product is null: ${product == null} , promotion is null: ${promotion == null}")
 
                     if (product == null || promotion == null) {
-                        Log.d("In App Purchas", "[App] Loading 반환")
+                        RLog.d("In App Purchas", "[App] Loading 반환")
                         return@combine UiState.Loading
                     }
 
@@ -209,7 +208,7 @@ class BillingViewModel
                             val productId = event.result.productId
 
                             if (productId.isEmpty()) {
-                                Log.e("IAP", "billingEvent 수신 productId is empty → skip verify")
+                                RLog.e("IAP", "billingEvent 수신 productId is empty → skip verify")
                                 return@collect
                             }
 
@@ -222,7 +221,7 @@ class BillingViewModel
                             )
                             _isAdRemoved.value = billingManager.isAdRemoved()
                             _showPurchaseSheet.value = false
-                            Log.e("IAP", "구매가 완료되었습니다 시작!!!!!")
+                            RLog.e("IAP", "구매가 완료되었습니다 시작!!!!!")
                             _toastMessage.tryEmit(context.getString(R.string.iap_purchase_complete))
                         }
 

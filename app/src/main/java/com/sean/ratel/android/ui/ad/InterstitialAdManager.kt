@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.ad
 
-import android.util.Log
 import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.common.RemoteConfig.END_AD_POSITION
 import com.sean.ratel.android.data.common.RemoteConfig.getRemoteConfigIntValue
@@ -81,7 +80,7 @@ class InterstitialAdManager
             fromSearchComplete: (Boolean) -> Unit,
             showLoading: (Boolean) -> Unit,
         ) {
-            Log.d("InterstitialAdManager", "initAdMobState : ${adTriggerState.initAdMobInitState} : $adTriggerState.initAdMobState")
+            RLog.d("InterstitialAdManager", "initAdMobState : ${adTriggerState.initAdMobInitState} : $adTriggerState.initAdMobState")
             if (adTriggerState.initAdMobInitState is AdMobInitState.InitComplete) {
                 showAd = true
 

@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.home.setting
 
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -82,6 +81,7 @@ fun SettingView(
     val userId by viewModel.userId.collectAsState()
 
     val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle(UiState.Idle)
+    val productionDetail by billingViewModel.productDetails.collectAsStateWithLifecycle()
     val isRemoveAd by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     var onRemoveAdsClick by remember { mutableStateOf(false) }
 
@@ -132,14 +132,14 @@ fun SettingView(
                         isAdRemoved = isRemoveAd,
                         currentMode = ThemeMode.DARK,
                         name = userId,
-                        username = "guest",
+                        username = if (!isRemoveAd) "guest" else productionDetail?.oneTimePurchaseOfferDetails?.offerId ?: "",
                         onClick = null,
                     )
                 }
                 item { SettingsService(viewModel, pushViewModel) }
                 item {
                     Spacer(Modifier.height(16.dp))
-                    Log.d("premiumData", "premiumData : $premiumData")
+                    RLog.d("premiumData", "premiumData : $premiumData")
                     if (!isRemoveAd) {
                         when (val state = premiumData) {
                             is UiState.Loading, UiState.Idle -> {
