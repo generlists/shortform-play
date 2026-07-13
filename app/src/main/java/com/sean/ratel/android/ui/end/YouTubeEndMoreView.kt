@@ -1,5 +1,7 @@
 package com.sean.ratel.android.ui.end
 
+import android.content.Intent
+import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -56,6 +58,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.YOUTUBE_APP_BY_CHANNEL_ID
@@ -64,11 +67,13 @@ import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.utils.ComposeUtil.LinkedText
+import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.openBrowsere
 import com.sean.ratel.android.utils.PhoneUtil.searchButton
 import com.sean.ratel.android.utils.PhoneUtil.sendEmail
 import com.sean.ratel.android.utils.TimeUtil.formatLocalizedDate
 import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
+import so.smartlab.common.utils.log.RLog
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -265,6 +270,9 @@ fun YouTubeEndMoreView(
                         currentShortsModel.shortsVideoModel?.categoryName
                     }
 
+                val categoryKey = currentShortsModel.shortsVideoModel?.category
+                val topicKey = currentShortsModel.shortsVideoModel?.topicKey
+
                 categoryName?.let {
                     // 카테고리
                     Row(
@@ -283,7 +291,7 @@ fun YouTubeEndMoreView(
                             color = Color(0xFF555555),
                         )
                         Spacer(modifier = Modifier.weight(1f))
-                        TopicChip(label = categoryName)
+                        TopicChip(label = categoryName, key = categoryKey, onDismiss, mainViewModel)
                     }
                     Spacer(Modifier.height(16.dp))
                 }
@@ -352,6 +360,28 @@ fun YouTubeEndMoreView(
                     )
 
                     Spacer(modifier = Modifier.height(16.dp))
+                    // 토픽
+                    currentShortsModel.shortsVideoModel?.topicName?.let {
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.LocalOffer,
+                                contentDescription = null,
+                                tint = Color.White.copy(alpha = 0.4f),
+                                modifier = Modifier.size(15.dp),
+                            )
+                            Text(
+                                text = stringResource(R.string.more_topic),
+                                fontSize = 12.sp,
+                                color = Color.White.copy(alpha = 0.4f),
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            TopicChip(label = it, topicKey, onDismiss, mainViewModel)
+                        }
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                     // 영상 통계
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -397,28 +427,6 @@ fun YouTubeEndMoreView(
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
-                    }
-
-                    // 토픽
-                    currentShortsModel.shortsVideoModel?.topicName?.let {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.LocalOffer,
-                                contentDescription = null,
-                                tint = Color.White.copy(alpha = 0.4f),
-                                modifier = Modifier.size(15.dp),
-                            )
-                            Text(
-                                text = stringResource(R.string.more_topic),
-                                fontSize = 12.sp,
-                                color = Color.White.copy(alpha = 0.4f),
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            TopicChip(label = it)
-                        }
                     }
                 }
             }
@@ -488,14 +496,32 @@ private fun VideoStatCard(
 
 @Composable
 @Suppress("ktlint:standard:function-naming")
-private fun TopicChip(label: String) {
+private fun TopicChip(
+    label: String,
+    key: String?,
+    onDismiss: () -> Unit,
+    mainViewModel: MainViewModel,
+) {
+    val activity = LocalActivity.current
+    val context = LocalContext.current
+
     Box(
         modifier =
             Modifier
                 .background(
                     APP_TEXT_COLOR.copy(alpha = 0.1f),
                     RoundedCornerShape(999.dp),
-                ).border(
+                ).clickable {
+                    RLog.d("YouTubeEndMoreView", "key : $key")
+                    val versionCode = PhoneUtil.getAppVersionCode(context)
+                    val intent =
+                        Intent(Intent.ACTION_VIEW, "https://shortform-play.ai/shortform?filter=$key&v=$versionCode".toUri()).apply {
+                            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        }
+                    context.startActivity(intent)
+                    onDismiss()
+                }.border(
                     0.5.dp,
                     APP_TEXT_COLOR.copy(alpha = 0.3f),
                     RoundedCornerShape(999.dp),

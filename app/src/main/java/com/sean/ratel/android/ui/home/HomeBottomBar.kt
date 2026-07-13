@@ -62,8 +62,8 @@ enum class HomeTab(
         R.string.video,
         R.drawable.ic_short_video_selected,
         R.drawable.ic_short_video_unselected,
-        Destination.Home.ShortForm.route,
-        Destination.Home.ShortForm.route,
+        Destination.Home.Main.ShortForm.route,
+        Destination.Home.Main.ShortForm.route,
     ),
     SETTINGS(
         R.string.setting,

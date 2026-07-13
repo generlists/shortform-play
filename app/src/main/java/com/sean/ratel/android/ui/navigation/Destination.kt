@@ -71,10 +71,12 @@ object Destination {
                 pathArgNames = listOf("topicId"),
                 queryArgNames = listOf("channelId", "filterType"),
             )
-        }
 
-        data object ShortForm : Screen("home/shortform") {
-            data object YouTube : DynamicScreen("youtube", listOf("jsonList"))
+            data object ShortForm : DynamicScreen(
+                baseRoute = "home/main/shortform",
+                pathArgNames = listOf("filter"),
+                queryArgNames = listOf("filter"),
+            )
         }
     }
 

@@ -59,11 +59,13 @@ fun YouTubeContentEnd(
     val apiState = youTubeContentEndViewModel.uiState.collectAsState()
 
     LaunchedEffect(itemClicked) {
+        if (itemClicked.isNullOrEmpty()) return@LaunchedEffect
+
         youTubeContentEndViewModel.mainShortsData(mainViewModel.mainShorts.value)
         youTubeContentEndViewModel.mainTrendShortsData(mainViewModel.mainTrendShortsList.value)
         youTubeContentEndViewModel.moreTrendShortsData(
             mainViewModel.trendsShorts.value.event_list.values
-                .flatMap { it },
+                .flatten(),
         )
 
         youTubeContentEndViewModel.shortFormVideoData(mainViewModel.shortFormVideoList.value)
@@ -80,6 +82,7 @@ fun YouTubeContentEnd(
             itemClicked == Destination.Home.Main.TrendShortsMore.route ||
             itemClicked == Destination.Home.Main.TopicListDetail.route
         ) {
+            RLog.d("hbungshin", "viewType : ${mainViewModel.viewType.value}")
             when (mainViewModel.viewType.value) {
                 ViewType.ImageFlow -> {
                     youTubeContentEndViewModel.setImageFlowData()
@@ -148,7 +151,7 @@ fun YouTubeContentEnd(
                     Unit
                 }
             }
-        } else if (mainViewModel.itemClicked.value == Destination.Home.ShortForm.route) {
+        } else if (mainViewModel.itemClicked.value == Destination.Home.Main.ShortForm.route) {
             youTubeContentEndViewModel.setShortFormVideoData(selectedIndex)
             RLog.d(TAG, "ShortForm $selectedVideoId ,  size : ${categoryShortsList.size}")
         } else if (mainViewModel.itemClicked.value == Destination.Search.route) {
@@ -255,6 +258,7 @@ fun DisplayUI(
     val topicGroupData by youTubeContentEndViewModel.topicGroupList.collectAsState()
     val context = LocalContext.current
     val activity = context.findFragmentActivity()
+    val viewType = mainViewModel.viewType.collectAsState().value
 
     if ((
             popularShorFormList?.isNotEmpty() == true ||
@@ -276,8 +280,7 @@ fun DisplayUI(
         searchDailyShortsVideo.isNotEmpty()
 
     ) {
-        val endList =
-            getEndData(mainViewModel.viewType.collectAsState().value, youTubeContentEndViewModel)
+        val endList = getEndData(viewType, youTubeContentEndViewModel)
 
         Surface(
             modifier = Modifier.fillMaxSize(),

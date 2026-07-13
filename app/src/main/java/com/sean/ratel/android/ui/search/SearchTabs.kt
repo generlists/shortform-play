@@ -17,8 +17,8 @@ enum class SearchTabs(
     SHORTS(
         R.string.search_type_keyword,
         R.drawable.ic_video_search,
-        Destination.Home.ShortForm.route,
-        Destination.Home.ShortForm.route,
+        Destination.Home.Main.ShortForm.route,
+        Destination.Home.Main.ShortForm.route,
     ),
     ARCHIVE(
         R.string.search_type_daily,
