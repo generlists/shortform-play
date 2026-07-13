@@ -121,28 +121,31 @@ fun AdBannerView(
             contentAlignment = alignment,
         ) {
             Column {
-                when (val state = premiumSheetData) {
-                    is UiState.Success -> {
-                        RemoveAdsChip(
-                            promotionTitle = state.data.promoTitle,
-                            isSaleActive = state.data.isPromotionActive,
-                            discountPercent = state.data.discountPercent ?: "39",
-                            onClick = {
-                                onRemoveAdsClick = true
-                                billingViewModel.sendGALog(
-                                    screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
-                                    eventName = GASplashAnalytics.Event.SELECT_MAIN_AD_PROMOTION_ITEM_CLICK,
-                                    actionName = GASplashAnalytics.Action.CLICK,
-                                    parameter = mapOf(),
-                                )
-                            },
-                        )
-                    }
+                if (currentRoute != Destination.Setting.route) {
+                    when (val state = premiumSheetData) {
+                        is UiState.Success -> {
+                            RemoveAdsChip(
+                                promotionTitle = state.data.promoTitle,
+                                isSaleActive = state.data.isPromotionActive,
+                                discountPercent = state.data.discountPercent ?: "39",
+                                onClick = {
+                                    onRemoveAdsClick = true
+                                    billingViewModel.sendGALog(
+                                        screenName = GASplashAnalytics.SCREEN_NAME.get(MAIN_SCREEN) ?: "",
+                                        eventName = GASplashAnalytics.Event.SELECT_MAIN_AD_PROMOTION_ITEM_CLICK,
+                                        actionName = GASplashAnalytics.Action.CLICK,
+                                        parameter = mapOf(),
+                                    )
+                                },
+                            )
+                        }
 
-                    else -> {
-                        Unit
+                        else -> {
+                            Unit
+                        }
                     }
                 }
+
                 FixedBannerView(
                     Color.Black,
                     Color.Black,
@@ -175,7 +178,7 @@ fun AdBannerView(
 private fun isBottomBar(route: String) =
     (
         route == Destination.Home.Main.route ||
-            route == Destination.Home.ShortForm.route ||
+            route == Destination.Home.Main.ShortForm.route ||
             route == Destination.Setting.route
     )
 

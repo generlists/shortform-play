@@ -80,7 +80,12 @@ class UnifiedLinkHandler
                     }
 
                     SHORTFORM -> {
-                        DeepLinkInfo(SHORTFORM, Destination.Home.ShortForm.route, ViewType.DeepLinkVideo)
+                        val filter = deepLinkUri?.getQueryParameter("filter")
+                        RLog.e(
+                            "deepLink",
+                            "filter : $filter",
+                        )
+                        DeepLinkInfo(SHORTFORM, Destination.Home.Main.ShortForm.route, ViewType.DeepLinkVideo, filter)
                     }
 
                     SETTING -> {
@@ -162,16 +167,22 @@ class UnifiedLinkHandler
                     override fun onInstallReferrerSetupFinished(responseCode: Int) {
                         when (responseCode) {
                             InstallReferrerClient.InstallReferrerResponse.OK -> {
-                                val response = referrerClient.installReferrer
-                                val referrer = response.installReferrer
-                                RLog.d("deepLink", "referrer : $referrer")
-                                if (referrer.contains("path=")) {
-                                    path(referrer)
+                                runCatching {
+                                    val referrer = referrerClient.installReferrer.installReferrer
+                                    RLog.d("deepLink", "referrer : $referrer")
+                                    if (referrer.contains("path=")) {
+                                        path(referrer)
+                                    }
+                                }.onFailure {
+                                    RLog.e("deepLink", "Install Referrer failed", it)
+                                }
+                                runCatching {
+                                    referrerClient.endConnection()
                                 }
                             }
 
                             else -> {
-                                RLog.d("OKJSP", "fail!! referer $path")
+                                RLog.d("UnifiedLinkHandler", "fail!! referer $path")
                                 // 실패 처리
                             }
                         }

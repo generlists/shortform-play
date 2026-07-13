@@ -163,7 +163,7 @@ fun HomeTopBar(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 val isPrivacy = mainViewModel.isPrivacyOptionMenu.collectAsState(false)
-                if (isHomeNaviBar == Destination.Home.Main.route || isHomeNaviBar == Destination.Home.ShortForm.route) {
+                if (isHomeNaviBar == Destination.Home.Main.route || isHomeNaviBar == Destination.Home.Main.ShortForm.route) {
                     Image(
                         painterResource(R.drawable.shortform_play_icon_main),
                         contentDescription = null,

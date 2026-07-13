@@ -1,7 +1,6 @@
 package com.sean.ratel.android.ui.end
 
 import android.app.Activity
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -322,23 +321,33 @@ YouTubeContentEndViewModel
         }
 
         fun setSubscriptionRankingUpData(selectedIndex: Int) {
-            // 리스트가 비어있지 않으면 빈 리스트로 초기화
-            if (_subscriptionRankingUpList.value.isNotEmpty()) {
-                _subscriptionRankingUpList.value = emptyList()
+            try {
+                // 리스트가 비어있지 않으면 빈 리스트로 초기화
+                if (_subscriptionRankingUpList.value.isNotEmpty()) {
+                    _subscriptionRankingUpList.value = emptyList()
+                }
+                val subscriptionUpList =
+                    mainFromShorts.value.first.channelSubscriptionUpList.subscriptionUpList
+
+                if (subscriptionUpList.isEmpty() || selectedIndex > subscriptionUpList.size) {
+                    _subscriptionRankingUpList.value = subscriptionUpList
+                }
+
+                val headVideoList =
+                    subscriptionUpList.subList(
+                        selectedIndex.coerceAtLeast(0),
+                        subscriptionUpList.size,
+                    )
+                val tailVideoList =
+                    subscriptionUpList.subList(
+                        0,
+                        selectedIndex.coerceAtMost(subscriptionUpList.size),
+                    )
+
+                _subscriptionRankingUpList.value = headVideoList + tailVideoList
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
-            val subscriptionUpList =
-                mainFromShorts.value.first.channelSubscriptionUpList.subscriptionUpList
-
-            if (subscriptionUpList.isEmpty() || selectedIndex > subscriptionUpList.size) {
-                _subscriptionRankingUpList.value = subscriptionUpList
-            }
-
-            val headVideoList =
-                subscriptionUpList.subList(selectedIndex.coerceAtLeast(0), subscriptionUpList.size)
-            val tailVideoList =
-                subscriptionUpList.subList(0, selectedIndex.coerceAtMost(subscriptionUpList.size))
-
-            _subscriptionRankingUpList.value = headVideoList + tailVideoList
         }
 
         // 전체 영상이 아니고 현재 보여지는 view 영상을 넘겨준다.
@@ -392,6 +401,7 @@ YouTubeContentEndViewModel
         }
 
         fun setMainTrendShortsData(selectedIndex: Int) {
+            RLog.d("hbungshin", "Main Shorts End  : $selectedIndex")
             val mainTrendShorts = _mainTrendShortsList.value
 
             val headVideoList =
@@ -544,19 +554,20 @@ YouTubeContentEndViewModel
             if (_topicChannelList.value.isNotEmpty()) {
                 _topicChannelList.value = emptyList() // clear 대신 새로운 빈 리스트 할당
             }
-            val result =
-                _mainFromShorts.value.first.topicList.topicList.values.map { topicItem ->
-                    topicItem.popularlist?.topicList?.map { toplist ->
-                        toplist.topicList.map { shortsItem ->
-                            shortsItem.copy(
-                                shortsVideoModel =
-                                    shortsItem.shortsVideoModel?.copy(
-                                        topicName = topicItem.topicName,
-                                    ),
-                            )
-                        }
+
+            _mainFromShorts.value.first.topicList.topicList.values.map { topicItem ->
+                topicItem.popularlist?.topicList?.map { toplist ->
+                    toplist.topicList.map { shortsItem ->
+                        shortsItem.copy(
+                            shortsVideoModel =
+                                shortsItem.shortsVideoModel?.copy(
+                                    topicName = topicItem.topicName,
+                                    topicKey = topicItem.topicId,
+                                ),
+                        )
                     }
                 }
+            }
 
             val topicItem =
                 _mainFromShorts.value.first
@@ -576,6 +587,7 @@ YouTubeContentEndViewModel
                                     shortsVideoModel =
                                         shortsItem.shortsVideoModel?.copy(
                                             topicName = topicItem?.topicName,
+                                            topicKey = topicItem?.topicId,
                                         ),
                                 )
                             },
@@ -595,13 +607,13 @@ YouTubeContentEndViewModel
                     ?.flatMap { it.topicList }
                     ?.filter { it.shortsChannelModel?.channelId != startChannelId } ?: listOf()
 
-            headList?.forEach {
-                Log.d("OKSSSSSSS", "header :${it.shortsVideoModel?.topicName}")
-            }
-
-            tailList.forEach {
-                Log.d("OKSSSSSSS", "tail : ${it.shortsVideoModel?.topicName}")
-            }
+//            headList?.forEach {
+//                RLog.d("OKSSSSSSS", "header :${it.shortsVideoModel?.topicName}")
+//            }
+//
+//            tailList.forEach {
+//                RLog.d("OKSSSSSSS", "tail : ${it.shortsVideoModel?.topicName}")
+//            }
 
             if (headList != null) {
                 _topicChannelList.value = headList + tailList
@@ -640,30 +652,13 @@ YouTubeContentEndViewModel
                                     shortsVideoModel =
                                         shortsItem.shortsVideoModel?.copy(
                                             topicName = topicItem?.topicName,
+                                            topicKey = topicItem?.topicId,
                                         ),
                                 )
                             },
                     )
                 }
-//                when (filterType) {
-//                    TopicFilterType.Popular -> {
-//                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-//                            ?.popularlist
-//                            ?.topicList
-//                    }
 //
-//                    TopicFilterType.Views -> {
-//                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-//                            ?.viewlist
-//                            ?.topicList
-//                    }
-//
-//                    TopicFilterType.Subscriber -> {
-//                        _mainFromShorts.value.first.topicList.topicList[topicKey]
-//                            ?.subscriberlist
-//                            ?.topicList
-//                    }
-//                }
             val groupList = filterList?.flatMap { it.topicList }
             val size = groupList?.size ?: 0
 
@@ -685,6 +680,7 @@ YouTubeContentEndViewModel
                 RLog.e(TAG, "no data found : setChannelRankingData")
             }
         }
+        // Review=====
 
         // 상태 관리
         var consecutiveWatchCount by mutableStateOf(0)

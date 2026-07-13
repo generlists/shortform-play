@@ -129,10 +129,6 @@ class YouTubePlayersManager
             viewPager2: ViewPager2?,
             videoList: List<MainShortsModel>,
         ) {
-            RLog.d(
-                TAG,
-                "[setVideoList] current video title : ${videoList[0].shortsVideoModel?.videoId}",
-            )
             _videoList.value = videoList
             viewPager = viewPager2
         }
@@ -161,6 +157,8 @@ class YouTubePlayersManager
 
         fun setCurrentPosition(selection: Int) {
             RLog.d(TAG, "[setCurrentPosition] selection :$selection")
+            if (_videoList.value.isEmpty()) return
+
             currentIndex.value = selection
             _currentVideo.value = _videoList.value.get(currentIndex.value)
         }

@@ -1,6 +1,5 @@
 package com.sean.ratel.android.ui.navigation
 
-import android.util.Log
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -117,23 +116,33 @@ fun NavGraph(
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
             ) {
+                RLog.d("shortformFilter", "Home")
                 Main(modifier, mainVideoModel, mainViewModel, adViewModel, billingViewModel)
             }
 
             composable(
-                Destination.Home.ShortForm.route,
+                route = Destination.Home.Main.ShortForm.route,
+                arguments = Destination.Home.Main.ShortForm.navArguments,
                 exitTransition = { ExitTransition.None },
                 popEnterTransition = { EnterTransition.None },
                 popExitTransition = { ExitTransition.None },
-            ) {
+            ) { backStackEntry ->
                 val viewModel: ShortFormViewModel = hiltViewModel(key = ShortFormViewModel.TAG)
                 val mainData = splashViewModel.shortformList.collectAsState().value
 
                 LaunchedEffect(mainData.first) {
                     viewModel.mainVideoData(mainData.first)
                 }
-                ShortForm(modifier, mainViewModel, viewModel, adViewModel)
+
+                val filter =
+                    backStackEntry.arguments
+                        ?.getString("filter")
+                        ?.takeUnless { it == "{filter}" }
+
+                RLog.d("NaviGraph", "navi grapth  :filter : $filter")
+                ShortForm(modifier, mainViewModel, viewModel, adViewModel, filter)
             }
+
             composable(
                 Destination.Setting.route,
                 enterTransition = { EnterTransition.None },
@@ -152,7 +161,7 @@ fun NavGraph(
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None },
         ) { backStackEntry ->
-            Log.d("KKKKKK", "YouTube composable ENTERED")
+
             val viewModel: YouTubeContentEndViewModel =
 
                 hiltViewModel(key = YouTubeContentEndViewModel.TAG)
@@ -171,10 +180,6 @@ fun NavGraph(
                 backStackEntry.arguments
 
                     ?.getString(Destination.YouTube.ARG_FILTER_TYPE)
-
-            Log.d("KKKKKK", "YouTube param : $param")
-            Log.d("KKKKKK", "YouTube filterType : $filterType")
-            Log.d("KKKKKK", "YouTube topicId : $topicId")
 
             YouTubeContentEnd(mainViewModel, viewModel, youTubePlayersManager)
         }

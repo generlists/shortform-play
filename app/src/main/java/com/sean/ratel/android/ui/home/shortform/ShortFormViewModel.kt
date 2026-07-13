@@ -110,6 +110,7 @@ class ShortFormViewModel
                                         topicName = topicItem.topicName,
                                         copyCategory = video.categoryName,
                                         categoryName = topicItem.topicName,
+                                        topicKey = topicItem.topicId,
                                     )
                                 },
                         )

@@ -106,6 +106,7 @@ fun ShortForm(
     mainViewModel: MainViewModel,
     viewModel: ShortFormViewModel,
     adViewModel: AdViewModel,
+    filter: String? = null,
 ) {
     BackHandler(enabled = true) {
         mainViewModel.runNavigationBack()
@@ -113,16 +114,16 @@ fun ShortForm(
 
     val data by viewModel.categoryByContents.collectAsState()
 
-    RLog.d("LLLLLLLLLLLLL", "111223444 : ${data.size}")
+    RLog.d("ShortForm", "Size : ${data.size} , filter : $filter")
 
-    ShortFormView(modifier, data, mainViewModel, viewModel, adViewModel)
+    ShortFormView(modifier, filter, data, mainViewModel, viewModel, adViewModel)
     val coroutine = rememberCoroutineScope()
 
     LaunchedEffect(mainViewModel.tabClicked) {
         coroutine.launch {
             mainViewModel.tabClicked.collect { s ->
                 s?.let {
-                    if (s == Destination.Home.ShortForm.route) {
+                    if (s == Destination.Home.Main.ShortForm.route) {
                         viewModel.initData()
                     }
                 }
@@ -135,6 +136,7 @@ fun ShortForm(
 @Composable
 fun ShortFormView(
     modifier: Modifier = Modifier,
+    filter: String?,
     data: Map<String, List<MainShortsModel>>,
     mainViewModel: MainViewModel,
     viewModel: ShortFormViewModel,
@@ -153,7 +155,7 @@ fun ShortFormView(
             modifier = Modifier.fillMaxSize(),
         ) {
             Column(Modifier.fillMaxSize()) {
-                VerticalScrollWithHorizontalItems(data, mainViewModel, viewModel, adViewModel, listState)
+                VerticalScrollWithHorizontalItems(data, filter, mainViewModel, viewModel, adViewModel, listState)
             }
         }
     }
@@ -164,21 +166,22 @@ fun ShortFormView(
 @Composable
 fun VerticalScrollWithHorizontalItems(
     items: Map<String, List<MainShortsModel>>,
+    filterKey: String?,
     mainViewModel: MainViewModel,
     viewModel: ShortFormViewModel,
     adViewModel: AdViewModel?,
     listState: LazyListState,
 ) {
     val categorySize = items.values.size
-    val targetIndexList =
-        remember { validationIndex(Destination.Home.ShortForm.route, categorySize) }
-    var adVisibility by remember { mutableStateOf(false) }
+    val targetIndexList = validationIndex(Destination.Home.Main.ShortForm.route, categorySize)
+
     val bannerVisible =
         remember {
             RemoteConfig.getRemoteConfigBooleanValue(
                 RemoteConfig.BANNER_AD_VISIBILITY,
             )
         }
+    RLog.d("hbungshin", "${validationIndex(Destination.Home.Main.ShortForm.route, categorySize)}")
     val scope = rememberCoroutineScope()
     val adIndexSet = remember(targetIndexList) { targetIndexList.toSet() }
     var tabHeightPx by remember { mutableIntStateOf(0) }
@@ -203,6 +206,7 @@ fun VerticalScrollWithHorizontalItems(
         stickyHeader(key = "category_filter") {
             CategoryFilterRow(
                 categoryMap = items,
+                filterKey = filterKey,
                 adIndexSet = adIndexSet,
                 tabHeight = tabHeightPx,
                 adBannerSize = adBannerSize,
@@ -218,6 +222,7 @@ fun VerticalScrollWithHorizontalItems(
 
         itemsIndexed(list) { index, _ ->
             val shouldShowAd = bannerVisible && adIndexSet.contains(index)
+
             if (shouldShowAd) {
                 adViewModel?.let {
                     AdaptiveBanner(mainViewModel, it, onHeightChanged = {
@@ -394,12 +399,16 @@ fun RowCategoryList(
                         .wrapContentSize()
                         .clickable {
                             RLog.d(
-                                "LLLLLLLLLLLLL",
-                                "hashCode :  ${mainViewModel.hashCode()} , 뮤직 크기 : ${viewModel.categoryByContents.value.get("10")?.size}",
+                                "ShortForm",
+                                "hashCode :  ${mainViewModel.hashCode()} , 뮤직 크기 : ${
+                                    viewModel.categoryByContents.value.get(
+                                        "10",
+                                    )?.size
+                                }",
                             )
                             mainViewModel.shortFormVideoData(viewModel.categoryByContents.value)
                             mainViewModel.goEndContent(
-                                Destination.Home.ShortForm.route,
+                                Destination.Home.Main.ShortForm.route,
                                 ViewType.ShortFormVideo,
                                 index,
                                 categoryTitleKey,

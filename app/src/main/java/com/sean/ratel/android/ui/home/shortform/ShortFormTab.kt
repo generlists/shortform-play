@@ -16,8 +16,8 @@ enum class ShortFormTab(
     SHORTS(
         R.string.shorts,
         R.drawable.ic_youtube_shorts_logo_white,
-        Destination.Home.ShortForm.route,
-        Destination.Home.ShortForm.route,
+        Destination.Home.Main.ShortForm.route,
+        Destination.Home.Main.ShortForm.route,
     ),
 //    RILS(
 //        R.string.video,

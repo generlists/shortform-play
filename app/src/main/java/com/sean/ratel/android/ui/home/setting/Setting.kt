@@ -30,14 +30,18 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.api.UiState
+import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.log.GAKeys.AD_PROMOTION_BUTTON_TYPE
 import com.sean.ratel.android.data.log.GAKeys.SETTING_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
+import com.sean.ratel.android.ui.ad.AdBannerLocation
+import com.sean.ratel.android.ui.ad.AdBannerView
 import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.findActivity
 import com.sean.ratel.android.ui.end.LoadingArea
 import com.sean.ratel.android.ui.home.BillingViewModel
+import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background
@@ -184,6 +188,12 @@ fun SettingView(
                                 },
                             )
                         }
+                    }
+                }
+                item {
+                    if (RemoteConfig.getRemoteConfigBooleanValue(RemoteConfig.BANNER_AD_VISIBILITY)) {
+                        Spacer(Modifier.height(32.dp))
+                        AdBannerView(activity, Destination.Setting.route, AdBannerLocation.BOTTOM, billingViewModel, mainViewModel)
                     }
                 }
                 item { SettingsCountry(viewModel) }

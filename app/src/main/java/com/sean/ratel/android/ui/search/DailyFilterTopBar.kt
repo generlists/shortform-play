@@ -53,13 +53,17 @@ fun DailyFilterTopBar(
     uiState: UiState<List<MainShortsModel>>,
     filterClick: (Boolean) -> Unit,
 ) {
+    val isLoading = uiState is UiState.Loading
+
     // 날짜 선택 카드
     Column {
         Row(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp, top = 16.dp)
+                    .clickable(!isLoading) {
+                        filterClick(true)
+                    }.padding(start = 16.dp, end = 16.dp, top = 16.dp)
                     .clip(RoundedCornerShape(14.dp))
                     .background(MaterialTheme.colorScheme.outlineVariant)
                     .border(
@@ -106,7 +110,7 @@ fun DailyFilterTopBar(
                     color = APP_SEARCH_FILTER_UNSELECT,
                 )
             }
-            // filterClick(true)
+
             // 필터 아이콘
             Icon(
                 Icons.Default.FilterList,

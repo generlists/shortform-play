@@ -369,7 +369,7 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun setUnifiedLinkHandler(intent: Intent?) {
-        RLog.d("deepLink", "setUnifiedLinkHandler $intent")
+        RLog.d("deeplink", "setUnifiedLinkHandler $intent")
         if (intent?.data == null) return
 
         launch {
@@ -382,10 +382,11 @@ class MainActivity : FragmentActivity() {
                 val param2 = appLinkInfo.extraParam2
                 val param3 = appLinkInfo.extraParam3
                 val param4 = appLinkInfo.extraParam4
+
                 when (deepLinkType) {
-                    HOME, SETTING, SHORTFORM, APP_MANAGER -> {
+                    HOME, SETTING, APP_MANAGER -> {
                         RLog.d(
-                            "deepLink",
+                            "deeplink",
                             "HOME route : $route, videoId : $param1 , viewType : $viewType",
                         )
 
@@ -395,9 +396,24 @@ class MainActivity : FragmentActivity() {
                         }
                     }
 
+                    SHORTFORM -> {
+                        param1?.let { param1 ->
+
+                            val createdRoute =
+                                Destination.Home.Main.ShortForm.createRoute(
+                                    pathArgs = listOf(param1),
+                                    queryArgs =
+                                        mapOf(
+                                            "filter" to param1,
+                                        ),
+                                )
+                            mainViewModel.navigator.navigateTo(createdRoute, false)
+                        }
+                    }
+
                     YOUTUBE -> {
                         RLog.d(
-                            "deepLink",
+                            "deeplink",
                             "YOUTUBE route : $route, videoId : $param1 , viewType : $viewType",
                         )
                         param1?.let {
@@ -422,7 +438,7 @@ class MainActivity : FragmentActivity() {
 
                     SHARE -> {
                         RLog.d(
-                            "YouTubeContentEnd",
+                            "deeplink",
                             "SHARE route : $route, videoId : $param1 , viewType : $viewType",
                         )
                         mainViewModel.goEndContent(
@@ -440,7 +456,7 @@ class MainActivity : FragmentActivity() {
                 mainShorts.second
                     .takeIf { it > 0 }
                     ?.run {
-                        RLog.d("deepLink", "$this")
+                        RLog.d("deeplink", "intent, $intent")
                         mainViewModel.setSearchCategoryShortFormVieo()
                         unifiedLinkHandler.goDeepLinKPage(this@MainActivity, intent)
                     }
@@ -452,11 +468,11 @@ class MainActivity : FragmentActivity() {
         launch {
             val deepLineUrl = intent.data
             val value = mainViewModel.getInstallRerere()
-            RLog.d("deepLink", "deepLineUrl : $deepLineUrl")
+            RLog.d("deeplink", "deepLineUrl : $deepLineUrl")
             if (deepLineUrl == null) {
-                RLog.d("deepLink", "value : $value")
+                RLog.d("deeplink", "value : $value")
                 value?.let {
-                    RLog.d("deepLink", "value : $it")
+                    RLog.d("deeplink", "value : $it")
                     setUnifiedLinkHandler(intent)
                 } ?: run {
                     unifiedLinkHandler.setReferer(this@MainActivity, {

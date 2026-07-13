@@ -18,6 +18,7 @@ import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.SearchResultModel
 import com.sean.ratel.android.data.dto.SearchShortsResponse
+import com.sean.ratel.android.data.dto.TopicItem
 import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.log.GASplashAnalytics.Event.SELECT_SEARCH_DAILY_ITEM_CLICK
@@ -492,6 +493,7 @@ class SearchViewModel
             region: String,
         ) {
             var startTime = System.currentTimeMillis()
+            RLog.d("SearchViewModel", "date : $date ,  region : $region")
 
             viewModelScope.launch {
                 youtubeApiRepository
@@ -537,7 +539,7 @@ class SearchViewModel
                             }
 
                             is ApiResult.Exception -> {
-                                RLog.d(TAG, "message : ${response.e.message}")
+                                RLog.d("SearchViewModel", "message : ${response.e.message}")
                                 _dailyUiState.value =
                                     response.e.message?.let { UiState.Error(it) }
                                         ?: UiState.Error("")
@@ -558,6 +560,10 @@ class SearchViewModel
                 (shortformList as MainShortFormList)
                     .topFiveList.fiveList.values
                     .flatten() +
+                    shortformList.trendShortsList.event_list.values
+                        .flatten() +
+                    getTopicVideoList(shortformList.topicList.topicList)
+                        .flatten() +
 
                     shortformList.shortformVideoList.videoSearchList.searchList +
                     shortformList.shortformVideoList.videoLikeList.likeList +
@@ -569,17 +575,18 @@ class SearchViewModel
                     shortformList.editorPickList.pickList +
                     shortformList.channelSubscriptionList.subscriptionList +
                     shortformList.channelSubscriptionUpList.subscriptionUpList +
-                    shortformList.shortformRecommendList.recommendList +
-                    shortformList.trendShortsList.event_list.values
-                        .flatten()
+                    shortformList.shortformRecommendList.recommendList
                         .distinctBy { it.shortsVideoModel?.videoId }
 
-            RLog.d(
-                "SearchViewModel",
-                "_selectedCategory category name : ${_selectedCategory.value.categoryName}" +
-                    "  , categoryName : ${_selectedCategory.value.categoryName} " +
-                    "dailyShortFormList size ${dailyShortFormList.size}",
-            )
+//            dailyShortFormList.forEach {
+//                RLog.d(
+//                    "BBBBDDDD",
+//                    "category Key : ${_selectedCategory.value.categoryKey}" +
+//                        "  topicId : ${it.shortsVideoModel?.topicKey} " +
+//                        "   dailyShortFormList size ${dailyShortFormList.size}",
+//                )
+//            }
+
             val dailySearchShorts =
                 if (_selectedCategory.value.categoryKey == "0") {
                     dailyShortFormList
@@ -587,12 +594,21 @@ class SearchViewModel
                         .shuffled()
                 } else {
                     dailyShortFormList
-                        .filter { it.shortsVideoModel?.category == _selectedCategory.value.categoryKey }
-                        .toMutableList()
+                        .filter {
+                            it.shortsVideoModel?.category == _selectedCategory.value.categoryKey ||
+                                it.shortsVideoModel?.topicKey == _selectedCategory.value.categoryKey
+                        }.toMutableList()
                         .shuffled()
                 }
 
-            RLog.d("SearchViewModel", "dailySearchShorts  size ${dailySearchShorts.size}")
+//            RLog.d(
+//                "CATEGORYKKKKKK",
+//                dailyShortFormList.joinToString("\n") {
+//                    "category=${it.shortsVideoModel?.category}, selected=${_selectedCategory.value.categoryKey} , topicKey=${it.shortsVideoModel?.topicKey}"
+//                },
+//            )
+
+//            RLog.e("SearchViewModel", "dailySearchShorts  size ${dailySearchShorts.size}")
 
             val list =
                 dailySearchShorts
@@ -615,6 +631,28 @@ class SearchViewModel
                 "_dailySearchShortformList  size ${_dailyCurrentSearchShortformList.value.size}",
             )
         }
+
+        private fun getTopicVideoList(topicList: Map<String, TopicItem>): Collection<List<MainShortsModel>> =
+            topicList
+                .mapValues { (_, topicItem) ->
+                    listOfNotNull(topicItem.popularlist, topicItem.viewlist, topicItem.subscriberlist)
+                        .flatMap { it.topicList }
+                        .flatMap { it.topicList }
+                        .map {
+                            it.copy(
+                                shortsVideoModel =
+                                    it.shortsVideoModel?.let { video ->
+                                        RLog.e("KKKKKMM", "topicId : ${topicItem.topicId}")
+                                        video.copy(
+                                            topicName = topicItem.topicName,
+                                            copyCategory = video.categoryName,
+                                            categoryName = topicItem.topicName,
+                                            topicKey = topicItem.topicId,
+                                        )
+                                    },
+                            )
+                        }
+                }.values
 
         fun setDailySearchDataLegacy(shortformList: DailySearchList) {
             val dailyShortFormList =
@@ -719,7 +757,7 @@ class SearchViewModel
             viewModelScope.launch {
                 val instant = Instant.ofEpochMilli(millis)
                 val date = instant.atZone(ZoneId.systemDefault()).toLocalDate()
-                RLog.d("KKKKKK", "date : $date")
+                RLog.d("onDateSelected", "date : $date , categoryName : $categoryName")
                 _selectedDate.value = date.toString().replace("-", "")
                 _selectedCategory.value = categoryName
 
