@@ -1,7 +1,6 @@
 package com.sean.ratel.android.ui.home.setting
 
 import android.content.Intent
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -45,6 +44,7 @@ import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.UIUtil.hasPipPermission
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
@@ -103,7 +103,7 @@ private fun SettingsVideo(
         wifiOnlySwitchValue = viewModel?.getWifiOnlyPlay() ?: true
         captionEnabledValue = viewModel?.getCaptionEnabled() ?: true
     }
-    Log.d("SSLLGGGGGG", "soundOnOffSwitchValue : $soundOnOffSwitchValue")
+    RLog.d("Setting", "soundOnOffSwitchValue : $soundOnOffSwitchValue")
     val pipSettingsLauncher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.StartActivityForResult(),

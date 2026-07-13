@@ -3,7 +3,6 @@ package com.sean.ratel.android.ui.cast.notifications
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
-import android.util.Log
 import coil.ImageLoader
 import coil.request.ImageRequest
 import com.sean.ratel.android.data.dto.MainShortsModel
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
+import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,9 +49,9 @@ class CastNotificationManager
                     TransferData(session, video, playEvent, isFirst, isLast)
                 }.collect { transferData ->
 
-                    Log.d("CastNotificationManager", "session : ${transferData.session}")
-                    Log.d("CastNotificationManager", "video : ${transferData.currentVideo?.shortsVideoModel?.title}")
-                    Log.d("CastNotificationManager", "playEvent : ${transferData.playEvent}")
+                    RLog.d("CastNotificationManager", "session : ${transferData.session}")
+                    RLog.d("CastNotificationManager", "video : ${transferData.currentVideo?.shortsVideoModel?.title}")
+                    RLog.d("CastNotificationManager", "playEvent : ${transferData.playEvent}")
                     if (transferData.currentVideo == null && transferData.session is CastSessionState.SessionStart) {
                         _state.value =
                             _state.value.copy(

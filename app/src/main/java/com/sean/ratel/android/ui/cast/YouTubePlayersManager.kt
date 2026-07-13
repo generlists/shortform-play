@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
@@ -190,10 +191,16 @@ class YouTubePlayersManager
                 onPlayerState(activity)
                 _castConnectLoading.value = false
 
-                ContextCompat.startForegroundService(
-                    context,
-                    Intent(activity, CastForegroundService::class.java),
-                )
+                if (ProcessLifecycleOwner
+                        .get()
+                        .lifecycle.currentState
+                        .isAtLeast(Lifecycle.State.STARTED)
+                ) {
+                    ContextCompat.startForegroundService(
+                        context,
+                        Intent(activity, CastForegroundService::class.java),
+                    )
+                }
 
                 if (currentRoute.value == Destination.YouTube.route) {
                     _currentVideo.value = _videoList.value[currentIndex.value]

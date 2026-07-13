@@ -3,7 +3,6 @@ package com.sean.ratel.android.ui.end
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
@@ -100,6 +99,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import so.smartlab.common.ad.admob.data.model.AdMobInitState
 import so.smartlab.common.utils.log.RLog
 import javax.inject.Inject
 
@@ -335,7 +335,8 @@ class YouTubeEndFragment(
             combine(
                 mainViewModel.currentSelection,
                 mainViewModel.adMobinitState,
-            ) { selection, admobState ->
+                billingViewModel.isAdRemoved,
+            ) { selection, admobState, isRemoveAd ->
                 RLog.d(
                     "InterstitialAdManager",
                     "fromSearch : $fromSearch currentSelection : $selection}",
@@ -344,7 +345,7 @@ class YouTubeEndFragment(
                     selection = selection,
                     fromSearch = fromSearch,
                     totalSize = totalSize,
-                    initAdMobInitState = admobState,
+                    initAdMobInitState = if (!isRemoveAd) admobState else AdMobInitState.Idle,
                 )
             }.collect { adTriggerState ->
                 RLog.d(
@@ -358,12 +359,12 @@ class YouTubeEndFragment(
                     youTubeStreamPlayer,
                     fromSearchComplete = {
                         fromSearch = it
-                        Log.d("InterstitialAdPage", "fromSearch : $it")
+                        RLog.d("InterstitialAdPage", "fromSearch : $it")
                         billingViewModel.setInterstitialAdDisMissCount(interstitialAdDisMissCount)
                     },
                     showLoading = {
                         showLoading(it)
-                        Log.d("InterstitialAdPage", "showLoading : $it")
+                        RLog.d("InterstitialAdPage", "showLoading : $it")
                     },
                 )
             }
@@ -861,7 +862,7 @@ class YouTubeEndFragment(
                     enableCaption = { enabled ->
 
                         if (captionAvailable == YouTubeStreamPlaybackCaptionState.UNSUPPORTED) return@RightContentArea
-                        Log.d("CCAAMMMM", "callback enabled : $enabled")
+                        RLog.d("Fragment", "callback enabled : $enabled")
                         if (enabled) {
                             youTubeStreamPlayer.enableCaptions(Locale.current.language)
                         } else {

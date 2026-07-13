@@ -2,7 +2,6 @@ package com.sean.ratel.android.utils
 
 import android.app.Activity
 import android.content.Intent
-import android.util.Log
 import android.util.Patterns
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -118,7 +117,7 @@ object ComposeUtil {
             return rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.StartActivityForResult(),
             ) { result ->
-                Log.d("shareAppLinkButton", "result : $result")
+                RLog.d("shareAppLinkButton", "result : $result")
                 if (result.resultCode == Activity.RESULT_OK) {
                     lifecycleOwner.lifecycleScope.launch {
                         delay(500)
@@ -144,7 +143,7 @@ object ComposeUtil {
             return rememberLauncherForActivityResult(
                 contract = ActivityResultContracts.StartActivityForResult(),
             ) { result ->
-                Log.d("shareAppLinkButton", "result : $result")
+                RLog.d("shareAppLinkButton", "result : $result")
                 if (result.resultCode == Activity.RESULT_OK) {
                     lifecycleOwner.lifecycleScope.launch {
                         delay(500)
