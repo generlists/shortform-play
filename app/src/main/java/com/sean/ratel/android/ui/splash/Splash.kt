@@ -54,6 +54,7 @@ import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.PhoneUtil
 import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
 import com.sean.ratel.android.utils.PhoneUtil.qnaResource
+import com.sean.ratel.android.utils.TimeUtil
 import com.sean.ratel.android.utils.TimeUtil.localeFormatTimestamp
 import com.sean.ratel.android.utils.UIUtil.getCountryCode
 import kotlinx.coroutines.delay
@@ -480,17 +481,17 @@ fun InitialDataAndAD(
             LaunchedEffect(locale) {
                 if (locale == null) return@LaunchedEffect
                 delay(100)
-                RLog.d("REQUESTSSSSS", "!!!!!!!start locale : $locale")
+                RLog.d("SPLASH", "[Splash.kt] start locale : $locale ,  requestType : ${TimeUtil.getRequestType()}")
 
                 splashViewModel.requestYouTubeVideos(
-                    SplashViewModel.RequestType.TODAY,
+                    TimeUtil.getRequestType(),
                     FirebaseStorage.getInstance(),
                     getCountryCode(locale),
                     forceRefresh,
                 )
 
                 splashViewModel.requestYouTubeTrendShorts(
-                    SplashViewModel.RequestType.TODAY,
+                    TimeUtil.getRequestType(),
                     FirebaseStorage.getInstance(),
                     getCountryCode(locale),
                     forceRefresh,

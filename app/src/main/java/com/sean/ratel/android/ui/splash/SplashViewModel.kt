@@ -189,22 +189,28 @@ class SplashViewModel
             val currentDate = getCurrentDate()
             val startTime = System.currentTimeMillis()
             val downloadKey =
-                if (requestType == RequestType.TODAY) {
+                if (requestType == RequestType.PUBLISHED) {
                     String.format(UPLOAD_URL, currentDate, countryCode)
                 } else {
                     String.format(DEFAULT_URL, countryCode)
                 }
 
+            val downloadUrl = getDownloadUrl(storage.reference.child(downloadKey), countryCode).toString()
+
+            RLog.d(
+                "SPLASH",
+                "[SplashViewModel],requestType : $requestType  , downloadKey : $downloadKey downloadUrl : $downloadUrl",
+            )
             youTubeRepository
                 .requestYouTubeVideos(
                     requestType,
-                    getDownloadUrl(storage.reference.child(downloadKey), countryCode).toString(),
+                    downloadUrl,
                     countryCode,
                     forceRefresh,
                 ).collect { response ->
                     RLog.d(
-                        "REQUESTSSSSS",
-                        "countryCode : $countryCode  $shortformList" +
+                        "SPLASH",
+                        "[SplashViewModel] requestType : $requestType ,  countryCode : $countryCode  $shortformList" +
                             " itemSize : ${response.shortformList.shortformVideoList.videoLikeList.likeList.size}",
                     )
 
@@ -232,7 +238,7 @@ class SplashViewModel
             val currentDate = getCurrentDate()
             val startTime = System.currentTimeMillis()
             val downloadKey =
-                if (requestType == RequestType.TODAY) {
+                if (requestType == RequestType.PUBLISHED) {
                     String.format(TRENDS_SHORTS_UPLOAD_URL, currentDate, countryCode)
                 } else {
                     TRENDS_SHORTS_DEFAULT_URL
@@ -273,6 +279,7 @@ class SplashViewModel
                     .addOnSuccessListener { url ->
                         continuation.resume(url)
                     }.addOnFailureListener { exception ->
+                        RLog.e("SPLASH", "exception : $exception")
                         if (_retryCount.value <= 3) {
                             viewModelScope.launch {
                                 requestYouTubeVideos(
@@ -370,7 +377,7 @@ class SplashViewModel
         }
 
         enum class RequestType {
-            TODAY,
+            PUBLISHED,
             DEFAULT,
         }
     }
