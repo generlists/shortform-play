@@ -62,12 +62,12 @@ junitVersion = "1.1.5"
 espresso = "3.5.1"
 
 #player
-shortform-play-core="0.0.7.4-SNAPSHOT"
+shortform-play-core="0.0.8.1"
 shortform-play-utils ="0.0.0.5"
 shortform-play-ui ="0.0.3"
 
 #common lib
-utils="0.0.1"
+utils="0.0.5"
 google-admob="0.0.3"
 push="0.0.2"
 review="0.0.8"

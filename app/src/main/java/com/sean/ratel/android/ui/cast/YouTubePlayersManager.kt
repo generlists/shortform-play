@@ -21,12 +21,12 @@ import com.sean.ratel.android.ui.cast.notifications.CastForegroundService
 import com.sean.ratel.android.ui.cast.notifications.CastNotificationAction.ACTION_STOP_CAST
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.navigation.Destination
-import com.sean.ratel.player.core.com.sean.ratel.player.core.data.player.youtube.YouTubeCastPlayerAdapterImpl
-import com.sean.ratel.player.core.com.sean.ratel.player.core.data.player.youtube.YouTubeCastPlayerImpl
 import com.sean.ratel.player.core.data.domain.YouTubeStreamPlayer
 import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackRate
 import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackState
 import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlayerError
+import com.sean.ratel.player.core.data.player.youtube.YouTubeCastPlayerAdapterImpl
+import com.sean.ratel.player.core.data.player.youtube.YouTubeCastPlayerImpl
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay

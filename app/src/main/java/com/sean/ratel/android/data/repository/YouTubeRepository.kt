@@ -64,7 +64,7 @@ class YouTubeRepository
                     val currentDate = getCurrentDate()
 
                     val key =
-                        if (requestType == SplashViewModel.RequestType.TODAY) {
+                        if (requestType == SplashViewModel.RequestType.PUBLISHED) {
                             String.format(JSON_SAVE_KEY, currentDate, countryCode)
                         } else {
                             String.format(DEFAULT_URL, countryCode)
@@ -72,7 +72,9 @@ class YouTubeRepository
                     val mainShortsListResponse = shortsJson.getShortsList(key)
                     RLog.d(
                         "SPLASH",
-                        "start key : $key ,$url ,  countryCode : $countryCode, " +
+                        "[YouTubeRepository.kt] start requestType : $requestType , " +
+                            "key : $key , currentDate : $currentDate , " +
+                            "countryCode : $countryCode, " +
                             " size  : ${
                                 mainShortsListResponse?.shortformList?.topFiveList?.fiveList?.size
                             }",
@@ -108,7 +110,7 @@ class YouTubeRepository
                     val currentDate = getCurrentDate()
 
                     val key =
-                        if (requestType == SplashViewModel.RequestType.TODAY) {
+                        if (requestType == SplashViewModel.RequestType.PUBLISHED) {
                             String.format(JSON_TRENDS_SAVE_KEY, currentDate, countryCode)
                         } else {
                             String.format(DEFAULT_TRENDS_URL, countryCode)

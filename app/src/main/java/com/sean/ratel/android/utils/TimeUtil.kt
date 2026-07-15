@@ -1,12 +1,13 @@
 package com.sean.ratel.android.utils
 
 import android.annotation.SuppressLint
+import com.sean.ratel.android.ui.splash.SplashViewModel
 import so.smartlab.common.utils.log.RLog
 import java.text.SimpleDateFormat
 import java.time.Instant
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Date
@@ -70,9 +71,26 @@ object TimeUtil {
     }
 
     fun getCurrentDate(): String {
-        val currentDate = LocalDate.now()
-        val formatter = DateTimeFormatter.ofPattern("yyyyMMdd")
-        return currentDate.format(formatter)
+        val zone = ZoneId.systemDefault()
+        val now = ZonedDateTime.now(zone)
+
+        val uploadCompleteTime =
+            when (Locale.getDefault().country) {
+                "KR", "JP" -> now.withHour(19).withMinute(50)
+                "ID" -> now.withHour(18).withMinute(45)
+                "TH", "TW" -> now.withHour(20).withMinute(50)
+                "US", "CA" -> now.withHour(22).withMinute(50)
+                else -> now
+            }
+
+        val date =
+            if (now.isBefore(uploadCompleteTime)) {
+                now.minusDays(1).toLocalDate()
+            } else {
+                now.toLocalDate()
+            }
+
+        return date.format(DateTimeFormatter.BASIC_ISO_DATE)
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -388,4 +406,6 @@ object TimeUtil {
 
         return dateTime.format(formatter)
     }
+
+    fun getRequestType(): SplashViewModel.RequestType = SplashViewModel.RequestType.PUBLISHED
 }
