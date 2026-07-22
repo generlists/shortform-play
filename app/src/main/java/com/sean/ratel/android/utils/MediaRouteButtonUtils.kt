@@ -8,14 +8,18 @@ import androidx.mediarouter.R
 import androidx.mediarouter.app.MediaRouteButton
 import com.google.android.gms.cast.framework.CastButtonFactory
 import com.sean.ratel.android.ui.cast.MediaRouteButtonContainer
+import so.smartlab.common.utils.log.RLog
 
 object MediaRouteButtonUtils {
-    fun initMediaRouteButton(context: Context): MediaRouteButton {
-        val mediaRouteButton = MediaRouteButton(context)
-        CastButtonFactory.setUpMediaRouteButton(context, mediaRouteButton)
-
-        return mediaRouteButton
-    }
+    fun initMediaRouteButton(context: Context): MediaRouteButton? =
+        try {
+            val button = MediaRouteButton(context)
+            CastButtonFactory.setUpMediaRouteButton(context, button)
+            button
+        } catch (e: IllegalArgumentException) {
+            RLog.e("MediaRouteButtonUtils", "Failed to create MediaRouteButton", e)
+            null
+        }
 
     fun addMediaRouteButtonToPlayerUi(
         mediaRouteButton: MediaRouteButton,
@@ -34,16 +38,16 @@ object MediaRouteButtonUtils {
         mediaRouterButton: MediaRouteButton,
         color: Int,
     ) {
-        val castContext = ContextThemeWrapper(mediaRouterButton.context, R.style.Theme_MediaRouter)
+        val castContext = ContextThemeWrapper(mediaRouterButton.context, androidx.mediarouter.R.style.Theme_MediaRouter)
         val styledAttributes =
             castContext.obtainStyledAttributes(
                 null,
-                R.styleable.MediaRouteButton,
-                R.attr.mediaRouteButtonStyle,
+                androidx.mediarouter.R.styleable.MediaRouteButton,
+                androidx.mediarouter.R.attr.mediaRouteButtonStyle,
                 0,
             )
         val drawable =
-            styledAttributes.getDrawable(R.styleable.MediaRouteButton_externalRouteEnabledDrawable)
+            styledAttributes.getDrawable(androidx.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable)
 
         styledAttributes.recycle()
         drawable?.let {

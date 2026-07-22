@@ -68,7 +68,7 @@ shortform-play-ui ="0.0.3"
 
 #common lib
 utils="0.0.5"
-google-admob="0.0.3"
+google-admob="0.0.4"
 push="0.0.2"
 review="0.0.8"
 iap="0.0.7"
