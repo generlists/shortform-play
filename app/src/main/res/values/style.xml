@@ -41,7 +41,7 @@
         <item name="windowNoTitle">true</item>
         <item name="android:statusBarColor">@color/main_background</item>
         <item name="android:navigationBarColor">@color/main_background</item>
-        <item name="mediaRouteTheme">@style/ThemeOverlay.AppCompat.Dark</item>
+<!--        <item name="mediaRouteTheme">@style/ThemeOverlay.AppCompat.Dark</item>-->
         <!-- 다른 속성들... -->
     </style>
 

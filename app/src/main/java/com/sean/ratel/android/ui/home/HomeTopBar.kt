@@ -435,7 +435,8 @@ fun CastButton(
 ) {
     val context = LocalContext.current
     val activity = context.findActivity() ?: return
-    val medialButton = MediaRouteButtonUtils.initMediaRouteButton(activity)
+    val medialButton = MediaRouteButtonUtils.initMediaRouteButton(activity) ?: return
+
     MediaRouteButtonUtils.addMediaRouteButtonToPlayerUi(
         medialButton,
         android.R.color.white,
