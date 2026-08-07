@@ -39,7 +39,6 @@ import com.sean.ratel.android.data.log.GAKeys.NOTIFICATION_ID
 import com.sean.ratel.android.data.log.GAKeys.NOTIFICATION_TYPE
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
 import com.sean.ratel.android.ui.home.BillingViewModel
@@ -84,7 +83,6 @@ class MainActivity : FragmentActivity() {
     lateinit var pipManager: PIPManager
 
     val mainViewModel by viewModels<MainViewModel>()
-    val adViewModel by viewModels<AdViewModel>()
     val pushViewModel by viewModels<PushViewModel>()
     val billingViewModel by viewModels<BillingViewModel>()
 
@@ -121,7 +119,7 @@ class MainActivity : FragmentActivity() {
             WindowCompat.setDecorFitsSystemWindows(window, false)
         }
 
-        adViewModel.setForceClearCache(intent.getBooleanExtra("clear_cache", false))
+        mainViewModel.setForceClearCache(intent.getBooleanExtra("clear_cache", false))
 
         googleMobileAdsConsentManager.gatherConsent(this) { error ->
             if (error != null) RLog.d(TAG, "${error.errorCode}: ${error.message}")
@@ -155,7 +153,6 @@ class MainActivity : FragmentActivity() {
             ReviewDialog(reviewManager, theme = default())
             ShortFormPlayApp(
                 mainViewModel = mainViewModel,
-                adViewModel = adViewModel,
                 pushViewModel = pushViewModel,
                 billingViewModel = billingViewModel,
                 youTubePlayersManager = youTubePlayersManager,

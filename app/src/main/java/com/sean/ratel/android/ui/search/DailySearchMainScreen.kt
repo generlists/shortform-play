@@ -28,7 +28,6 @@ import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GAKeys.CATEGORY_NAME
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.end.LoadingArea
 import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
@@ -47,7 +46,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun SearchFilterScreen(
     searchViewModel: SearchViewModel,
-    adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     billingViewModel: BillingViewModel,
 ) {
@@ -102,7 +100,7 @@ fun SearchFilterScreen(
 
                 is UiState.Success<*> -> {
                     RLog.d("SearchViewModel", "apiState : Success")
-                    DailySearchResultScreen(adViewModel, searchViewModel)
+                    DailySearchResultScreen(mainViewModel, searchViewModel)
                     mainViewModel.setSearchCategoryDailyShortFormVieo(dailySearchAll.value)
                     LoadingArea(false)
                     gaSend(searchViewModel, GASplashAnalytics.Event.SELECT_SEARCH_DAILY_RESULT, GASplashAnalytics.Action.VIEW)

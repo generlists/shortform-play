@@ -35,7 +35,6 @@ import com.sean.ratel.android.data.log.GAKeys.SETTING_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdBannerLocation
 import com.sean.ratel.android.ui.ad.AdBannerView
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.findActivity
 import com.sean.ratel.android.ui.end.LoadingArea
@@ -56,11 +55,10 @@ import so.smartlab.common.utils.log.RLog
 fun Setting(
     viewModel: SettingViewModel,
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     pushViewModel: PushViewModel,
     billingViewModel: BillingViewModel,
 ) {
-    SettingView(viewModel, mainViewModel, adViewModel, pushViewModel, billingViewModel)
+    SettingView(viewModel, mainViewModel, pushViewModel, billingViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
@@ -68,14 +66,13 @@ fun Setting(
 fun SettingView(
     viewModel: SettingViewModel,
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     pushViewModel: PushViewModel,
     billingViewModel: BillingViewModel,
 ) {
     val activity = LocalContext.current.findActivity()
     val context = LocalContext.current
     val insetPaddingValue = WindowInsets.statusBars.asPaddingValues()
-    val bottomBarHeight = adViewModel.bottomBarHeight.value
+    val bottomBarHeight = mainViewModel.bottomBarHeight.value
     val fromPermissionPage by pushViewModel.fromPermissionPage.collectAsState(initial = false)
     val shareLauncher = GetShareLauncher(activity, mainViewModel)
     val userId by viewModel.userId.collectAsState()

@@ -27,7 +27,6 @@ import com.sean.ratel.android.data.api.UiState
 import com.sean.ratel.android.data.dto.SearchShortsResponse
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.end.LoadingArea
 import com.sean.ratel.android.ui.home.BillingViewModel
@@ -43,7 +42,6 @@ import so.smartlab.common.utils.log.RLog
 fun SearchComposeUi(
     mainViewModel: MainViewModel,
     searchViewModel: SearchViewModel,
-    adViewModel: AdViewModel,
     billingViewModel: BillingViewModel,
     finish: () -> Unit,
 ) {
@@ -230,7 +228,7 @@ fun SearchComposeUi(
 
                     // 검색 결과 화면
                     SearchUiState.Result -> {
-                        KeyWordSearchListScreen(query.value, adViewModel, searchViewModel)
+                        KeyWordSearchListScreen(query.value, mainViewModel, searchViewModel)
                         searchViewModel.sendGALog(
                             screenName = GASplashAnalytics.SCREEN_NAME.get(SEARCH_SCREEN) ?: "",
                             eventName = GASplashAnalytics.Event.SEARCH_MORE_VIEW,

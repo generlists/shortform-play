@@ -38,7 +38,6 @@ import com.sean.ratel.android.data.dto.TopicList
 import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.ui.ad.AdBannerLocation
 import com.sean.ratel.android.ui.ad.AdBannerView
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.home.main.itemview.AutoScrollImagePager
 import com.sean.ratel.android.ui.home.main.itemview.EditorPickHorizontalList
@@ -59,7 +58,6 @@ fun Main(
     modifier: Modifier,
     mainVideoViewModel: MainVideoViewModel,
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     billingViewModel: BillingViewModel,
 ) {
     BackHandler(enabled = true) {
@@ -156,7 +154,6 @@ fun Main(
             channelSubscriptionUpData.value,
             reCommendData.value,
             mainViewModel,
-            adViewModel,
             billingViewModel,
             listState,
         )
@@ -181,7 +178,6 @@ fun MainShortFormView(
     channelSubscriptionUpData: ChannelSubscriptionUpList,
     recommendShortFormData: RecommendList,
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     billingViewModel: BillingViewModel,
     listState: LazyListState,
 ) {

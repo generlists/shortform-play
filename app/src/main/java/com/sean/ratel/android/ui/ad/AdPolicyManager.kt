@@ -5,7 +5,6 @@ import javax.inject.Singleton
 import kotlin.random.Random
 
 @Singleton
-@Deprecated("유료로 인한 삭제")
 class AdPolicyManager
     @Inject
     constructor() {
@@ -33,7 +32,7 @@ class AdPolicyManager
                 lastAdAction = actionCount
             }
 
-            // 10번마다 광고 카운트 초기화
+            // 8번마다 광고 카운트 초기화
             if (actionCount % SEED_AD_COUNT == 0) {
                 adCount = 0
             }
@@ -42,7 +41,7 @@ class AdPolicyManager
         }
 
         companion object {
-            private val SEED_AD_COUNT = 10
+            private val SEED_AD_COUNT = 8
             private val MAX_AD_SHOW_COUNT = 5
         }
     }

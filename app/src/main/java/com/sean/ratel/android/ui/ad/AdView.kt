@@ -72,12 +72,11 @@ fun AdBannerView(
     adBannerLocation: AdBannerLocation = BOTTOM,
     billingViewModel: BillingViewModel,
     homeMainViewModel: MainViewModel,
-    adViewModel: AdViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val adMobInitState by homeMainViewModel.adMobinitState.collectAsState()
     val adFixedBannerState by homeMainViewModel.fixedBannerState.collectAsState()
-    var bottomBarHeight = adViewModel.bottomBarHeight.value
+    var bottomBarHeight = homeMainViewModel.bottomBarHeight.value
     var adSize by remember { mutableStateOf(64) }
     var initAdMob by remember { mutableStateOf(false) }
     val isRemoveAds by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
@@ -186,7 +185,6 @@ private fun isBottomBar(route: String) =
 @Composable
 fun AdaptiveBanner(
     homeMainViewModel: MainViewModel = hiltViewModel(),
-    adViewModel: AdViewModel,
     onHeightChanged: (Int) -> Unit = {},
 ) {
     RLog.d(TAG, "InLineAdaptiveBanner")

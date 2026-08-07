@@ -17,7 +17,6 @@ import com.sean.ratel.android.MainActivity
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.data.log.GAKeys.TOPIC_DETAIL
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.cast.YouTubePlayersManager
 import com.sean.ratel.android.ui.end.YouTubeContentEnd
 import com.sean.ratel.android.ui.end.YouTubeContentEndViewModel
@@ -61,7 +60,6 @@ fun NavGraph(
     val pushViewModel: PushViewModel = ViewModelProvider(activity)[PushViewModel::class.java]
     val billingViewModel: BillingViewModel = ViewModelProvider(activity)[BillingViewModel::class.java]
 
-    val adViewModel: AdViewModel = ViewModelProvider(activity)[AdViewModel::class.java]
     val mainVideoModel: MainVideoViewModel =
         ViewModelProvider(activity)[MainVideoViewModel::class.java]
     val splashViewModel: SplashViewModel = hiltViewModel(key = SplashViewModel.TAG)
@@ -97,7 +95,6 @@ fun NavGraph(
         composable(Destination.Splash.route) {
             Splash(
                 splashViewModel = splashViewModel,
-                adViewModel = adViewModel,
                 mainViewModel = mainViewModel,
                 pushViewModel = pushViewModel,
                 billingViewModel = billingViewModel,
@@ -117,7 +114,7 @@ fun NavGraph(
                 popExitTransition = { ExitTransition.None },
             ) {
                 RLog.d("shortformFilter", "Home")
-                Main(modifier, mainVideoModel, mainViewModel, adViewModel, billingViewModel)
+                Main(modifier, mainVideoModel, mainViewModel, billingViewModel)
             }
 
             composable(
@@ -140,7 +137,7 @@ fun NavGraph(
                         ?.takeUnless { it == "{filter}" }
 
                 RLog.d("NaviGraph", "navi grapth  :filter : $filter")
-                ShortForm(modifier, mainViewModel, viewModel, adViewModel, filter)
+                ShortForm(modifier, mainViewModel, viewModel, filter)
             }
 
             composable(
@@ -148,7 +145,7 @@ fun NavGraph(
                 enterTransition = { EnterTransition.None },
             ) {
                 val viewModel: SettingViewModel = hiltViewModel(key = SettingViewModel.TAG)
-                Setting(viewModel, mainViewModel, adViewModel, pushViewModel, billingViewModel)
+                Setting(viewModel, mainViewModel, pushViewModel, billingViewModel)
             }
         }
         // End
@@ -189,56 +186,56 @@ fun NavGraph(
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            GridItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
+            GridItemMoreView(mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.EditorPickMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            GridItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
+            GridItemMoreView(mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RecommendMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            GridItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
+            GridItemMoreView(mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RankingChannelMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            ListItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
+            ListItemMoreView(mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RankingSubscriptionMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            ListItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
+            ListItemMoreView(mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RankingSubscriptionUpMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            ListItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
+            ListItemMoreView(mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.RecentlyWatchMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            ListItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
+            ListItemMoreView(mainViewModel, viewModel, billingViewModel)
         }
         composable(
             Destination.Home.Main.TrendShortsMore.route,
             enterTransition = { EnterTransition.None },
         ) {
             val viewModel: MainMoreViewModel = hiltViewModel(key = MainMoreViewModel.TAG)
-            GridItemMoreView(adViewModel, mainViewModel, viewModel, billingViewModel)
+            GridItemMoreView(mainViewModel, viewModel, billingViewModel)
         }
 
         composable(
@@ -247,7 +244,7 @@ fun NavGraph(
             val appManagerViewModel: AppManagerViewModel =
                 hiltViewModel(key = AppManagerViewModel.TAG)
 
-            AppManagerView(modifier, appManagerViewModel, mainViewModel, adViewModel, billingViewModel)
+            AppManagerView(modifier, appManagerViewModel, mainViewModel, billingViewModel)
         }
 
         composable(Destination.SettingAppManagerDetail.route) {

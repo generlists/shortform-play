@@ -12,7 +12,6 @@ import androidx.core.view.WindowCompat
 import androidx.fragment.app.FragmentActivity
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.home.BillingViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.search.SearchScreen
@@ -23,7 +22,6 @@ import so.smartlab.common.utils.log.RLog
 @AndroidEntryPoint
 class SearchActivity : FragmentActivity() {
     val searchViewModel by viewModels<SearchViewModel>()
-    val adViewModel by viewModels<AdViewModel>()
     val mainViewModel by viewModels<MainViewModel>()
     val billingViewModel by viewModels<BillingViewModel>()
 
@@ -43,7 +41,6 @@ class SearchActivity : FragmentActivity() {
         setContent {
             SearchScreen(
                 searchViewModel,
-                adViewModel,
                 mainViewModel,
                 billingViewModel,
                 finish = { finish() },

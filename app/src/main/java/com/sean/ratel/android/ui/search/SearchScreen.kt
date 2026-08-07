@@ -47,7 +47,6 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.ad.AdTarget
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.FullScreenToggleView
 import com.sean.ratel.android.ui.common.TopNavigationBar
@@ -68,7 +67,6 @@ private const val TAG = "ShortForm"
 @Composable
 fun SearchScreen(
     searchViewModel: SearchViewModel,
-    adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     billingViewModel: BillingViewModel,
     finish: () -> Unit,
@@ -113,7 +111,7 @@ fun SearchScreen(
                         .background(APP_BACKGROUND)
                         .padding(paddingValues),
             ) {
-                SearchMain(searchViewModel, adViewModel, mainViewModel, billingViewModel)
+                SearchMain(searchViewModel, mainViewModel, billingViewModel)
             }
         }
     }
@@ -147,7 +145,6 @@ fun SearchScreen(
 @Composable
 fun SearchMain(
     searchViewModel: SearchViewModel,
-    adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     billingViewModel: BillingViewModel,
 ) {
@@ -191,7 +188,6 @@ fun SearchMain(
                     SearchComposeUi(
                         mainViewModel,
                         searchViewModel,
-                        adViewModel,
                         billingViewModel,
                         {},
                     )
@@ -200,7 +196,6 @@ fun SearchMain(
                 SearchType.ArchiveSearch -> {
                     SearchFilterScreen(
                         searchViewModel,
-                        adViewModel,
                         mainViewModel,
                         billingViewModel,
                     )

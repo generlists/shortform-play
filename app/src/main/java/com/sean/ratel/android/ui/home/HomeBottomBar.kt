@@ -38,7 +38,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.RatelappTheme
@@ -79,7 +78,6 @@ enum class HomeTab(
 fun HomeBottomBar(
     navController: NavController,
     viewModel: MainViewModel,
-    adViewModel: AdViewModel,
 ) {
     val tabs = remember { HomeTab.entries.toTypedArray().asList() }
     val routes = remember { HomeTab.entries.map { it.route } }
@@ -138,7 +136,7 @@ fun HomeBottomBar(
                 //  if(it.route == Destination.Home.Main.route) viewModel.setTabClicked(true)
             }
         },
-        adViewModel = adViewModel,
+        mainViewModel = viewModel,
     )
 }
 
@@ -149,7 +147,7 @@ private fun HomeBottomBarView(
     routes: List<String>,
     currentRoute: String,
     tabClick: (HomeTab) -> Unit,
-    adViewModel: AdViewModel,
+    mainViewModel: MainViewModel,
 ) {
     val density = LocalDensity.current
     if (currentRoute in routes) {
@@ -173,7 +171,7 @@ private fun HomeBottomBarView(
                                     .toDp()
                                     .value
                             }
-                        adViewModel.setBottomBarHeight(bottomVarHeight.toInt())
+                        mainViewModel.setBottomBarHeight(bottomVarHeight.toInt())
                     },
                 containerColor = APP_BACKGROUND,
             ) {

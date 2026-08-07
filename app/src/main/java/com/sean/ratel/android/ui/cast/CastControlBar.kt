@@ -52,9 +52,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
@@ -68,7 +68,7 @@ import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybac
 @Suppress("ktlint:standard:function-naming")
 fun CastControlBar(
     currentRoute: String,
-    adViewModel: AdViewModel,
+    mainViewModel: MainViewModel,
     playerManager: YouTubePlayersManager,
     onPlayPause: (Boolean) -> Unit,
     onPrevious: () -> Unit,
@@ -78,7 +78,7 @@ fun CastControlBar(
     onSpeedUp: () -> Unit,
     onSpeedDown: () -> Unit,
 ) {
-    val bottomBarHeight = adViewModel.bottomBarHeight.value
+    val bottomBarHeight = mainViewModel.bottomBarHeight.value
 
     val castSessionState by playerManager.castEventManager.castSession.collectAsStateWithLifecycle(
         initialValue = CastSessionState.SessionUnKnown,
