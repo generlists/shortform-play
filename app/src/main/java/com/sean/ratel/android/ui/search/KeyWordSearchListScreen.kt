@@ -78,7 +78,6 @@ import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.SearchResultModel
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -95,17 +94,17 @@ import kotlin.random.Random
 @Composable
 fun KeyWordSearchListScreen(
     query: String,
-    adViewModel: AdViewModel,
+    mainViewModel: MainViewModel,
     searchViewModel: SearchViewModel,
 ) {
-    KeyWordSearchDisplayUi(query, adViewModel, searchViewModel)
+    KeyWordSearchDisplayUi(query, mainViewModel, searchViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun KeyWordSearchDisplayUi(
     query: String,
-    adViewModel: AdViewModel,
+    mainViewModel: MainViewModel,
     searchViewModel: SearchViewModel,
 ) {
     val currentData = searchViewModel.shortsSearchList.collectAsState()
@@ -113,7 +112,7 @@ fun KeyWordSearchDisplayUi(
     Scaffold(
         containerColor = APP_BACKGROUND,
     ) { innerPadding ->
-        val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
+        val bottomBarHeight = rememberSaveable { mainViewModel.bottomBarHeight.value }
 
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = remember { mutableStateOf(0) }

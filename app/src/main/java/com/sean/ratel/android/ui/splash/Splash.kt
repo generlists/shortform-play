@@ -43,7 +43,6 @@ import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
 import com.sean.ratel.android.data.common.STRINGS.getShortFormCountry
 import com.sean.ratel.android.data.log.GAKeys.SPLASH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.ShortFormSelectDialog
 import com.sean.ratel.android.ui.home.BillingViewModel
@@ -77,7 +76,6 @@ enum class SplashStep {
 @Composable
 fun Splash(
     splashViewModel: SplashViewModel,
-    adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     pushViewModel: PushViewModel,
     billingViewModel: BillingViewModel,
@@ -144,7 +142,6 @@ fun Splash(
                 RLog.d("STEP", "pass : INIT")
                 InitialDataAndAD(
                     mainViewModel = mainViewModel,
-                    adViewModel = adViewModel,
                     splashViewModel = splashViewModel,
                     billingViewModel = billingViewModel,
                     pass = { pass ->
@@ -158,7 +155,7 @@ fun Splash(
                 LaunchedEffect(Unit) {
                     delay(500)
                     RLog.d("STEP", "move DONE -> GO HOME ")
-                    adViewModel.goMainHome()
+                    mainViewModel.goMainHome()
                 }
             }
         }
@@ -394,7 +391,6 @@ private fun ServerMaintainAlert(
 @Composable
 fun InitialDataAndAD(
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     splashViewModel: SplashViewModel,
     billingViewModel: BillingViewModel,
     pass: (Boolean) -> Unit,
@@ -407,7 +403,7 @@ fun InitialDataAndAD(
     val coroutineScope = rememberCoroutineScope()
     val isAdComplete by mainViewModel.adMobinitState.collectAsState()
     val options = getShortFormCountry(LocalContext.current)
-    val forceRefresh by adViewModel.forceClearCache.collectAsState()
+    val forceRefresh by mainViewModel.forceClearCache.collectAsState()
     val authCheck by splashViewModel.authCheck.collectAsState()
     var mainTrendComplete by remember { mutableStateOf(false) }
 

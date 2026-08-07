@@ -73,7 +73,6 @@ import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.ui.ad.AdTarget
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.TopNavigationBar
 import com.sean.ratel.android.ui.common.image.NetworkImage
@@ -97,7 +96,6 @@ import so.smartlab.common.utils.log.RLog
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun ListItemMoreView(
-    adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
     billingViewModel: BillingViewModel,
@@ -115,14 +113,13 @@ fun ListItemMoreView(
         )
     }
 
-    ListItemDisplayUi(viewType.value, adViewModel, mainViewModel, moreViewModel, billingViewModel)
+    ListItemDisplayUi(viewType.value, mainViewModel, moreViewModel, billingViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun ListItemDisplayUi(
     viewType: ViewType,
-    adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
     billingViewModel: BillingViewModel,
@@ -165,7 +162,7 @@ fun ListItemDisplayUi(
         containerColor = APP_BACKGROUND,
     ) { innerPadding ->
 
-        val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
+        val bottomBarHeight = rememberSaveable { mainViewModel.bottomBarHeight.value }
 
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = rememberSaveable { mutableStateOf(0) }
@@ -239,7 +236,6 @@ fun ListItemDisplayUi(
                             currentData,
                             moreViewModel,
                             mainViewModel,
-                            adViewModel,
                             loading = { load ->
                                 moreLoading = load
                             },
@@ -259,7 +255,6 @@ fun ListItemDisplayUi(
                             currentData,
                             moreViewModel,
                             mainViewModel,
-                            adViewModel,
                             loading = { load ->
                                 moreLoading = load
                             },
@@ -423,7 +418,6 @@ fun ListItemList(
     items: List<MainShortsModel>,
     moreViewModel: MainMoreViewModel,
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,
 ) {
@@ -755,7 +749,6 @@ fun RecentlyWatchItemList(
     items: List<MainShortsModel>?,
     moreViewModel: MainMoreViewModel,
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,
 ) {

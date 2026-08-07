@@ -77,7 +77,6 @@ import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.YouTubeUtils.getCategoryName
 import com.sean.ratel.android.data.dto.MainShortsModel
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.AdaptiveBanner
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.common.preview.ShortsVideoParameterProvider
@@ -105,7 +104,6 @@ fun ShortForm(
     modifier: Modifier,
     mainViewModel: MainViewModel,
     viewModel: ShortFormViewModel,
-    adViewModel: AdViewModel,
     filter: String? = null,
 ) {
     BackHandler(enabled = true) {
@@ -116,7 +114,7 @@ fun ShortForm(
 
     RLog.d("ShortForm", "Size : ${data.size} , filter : $filter")
 
-    ShortFormView(modifier, filter, data, mainViewModel, viewModel, adViewModel)
+    ShortFormView(modifier, filter, data, mainViewModel, viewModel)
     val coroutine = rememberCoroutineScope()
 
     LaunchedEffect(mainViewModel.tabClicked) {
@@ -140,7 +138,6 @@ fun ShortFormView(
     data: Map<String, List<MainShortsModel>>,
     mainViewModel: MainViewModel,
     viewModel: ShortFormViewModel,
-    adViewModel: AdViewModel,
 ) {
     // val bottomBarHeight = remember { adViewModel.bottomBarHeight.value } //구글정책상 수정
     val listState = rememberLazyListState()
@@ -155,7 +152,7 @@ fun ShortFormView(
             modifier = Modifier.fillMaxSize(),
         ) {
             Column(Modifier.fillMaxSize()) {
-                VerticalScrollWithHorizontalItems(data, filter, mainViewModel, viewModel, adViewModel, listState)
+                VerticalScrollWithHorizontalItems(data, filter, mainViewModel, viewModel, listState)
             }
         }
     }
@@ -169,7 +166,6 @@ fun VerticalScrollWithHorizontalItems(
     filterKey: String?,
     mainViewModel: MainViewModel,
     viewModel: ShortFormViewModel,
-    adViewModel: AdViewModel?,
     listState: LazyListState,
 ) {
     val categorySize = items.values.size
@@ -224,8 +220,8 @@ fun VerticalScrollWithHorizontalItems(
             val shouldShowAd = bannerVisible && adIndexSet.contains(index)
 
             if (shouldShowAd) {
-                adViewModel?.let {
-                    AdaptiveBanner(mainViewModel, it, onHeightChanged = {
+                mainViewModel.let {
+                    AdaptiveBanner(mainViewModel, onHeightChanged = {
                         adBannerSize = it
                     })
                 }

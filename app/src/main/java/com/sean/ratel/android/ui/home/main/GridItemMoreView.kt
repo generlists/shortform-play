@@ -71,7 +71,6 @@ import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsChannelModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
 import com.sean.ratel.android.ui.ad.AdTarget
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.ShortFormBottomSheetDialog
 import com.sean.ratel.android.ui.common.TopNavigationBar
@@ -92,7 +91,6 @@ import so.smartlab.common.utils.log.RLog
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun GridItemMoreView(
-    adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
     billingViewModel: BillingViewModel,
@@ -115,14 +113,13 @@ fun GridItemMoreView(
         }
     }
 
-    GridDisplayUi(viewType.value, adViewModel, mainViewModel, moreViewModel, billingViewModel)
+    GridDisplayUi(viewType.value, mainViewModel, moreViewModel, billingViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun GridDisplayUi(
     viewType: ViewType,
-    adViewModel: AdViewModel,
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
     billingViewModel: BillingViewModel,
@@ -174,7 +171,7 @@ fun GridDisplayUi(
         },
         containerColor = APP_BACKGROUND,
     ) { innerPadding ->
-        val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
+        val bottomBarHeight = rememberSaveable { mainViewModel.bottomBarHeight.value }
 
         var moreLoading by remember { mutableStateOf(false) }
         val scrollPosition = remember { mutableStateOf(0) }
@@ -216,7 +213,6 @@ fun GridDisplayUi(
                     currentData.value,
                     mainViewModel,
                     moreViewModel,
-                    adViewModel,
                     loading = { load ->
                         moreLoading = load
                     },
@@ -433,7 +429,6 @@ fun GridItemView(
     data: List<MainShortsModel>,
     mainViewModel: MainViewModel,
     moreViewModel: MainMoreViewModel,
-    adViewModel: AdViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,
 ) {

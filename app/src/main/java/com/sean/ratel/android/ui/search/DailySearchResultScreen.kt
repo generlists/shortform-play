@@ -72,7 +72,6 @@ import com.sean.ratel.android.data.dto.ShortsVideoModel
 import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
@@ -86,16 +85,16 @@ import so.smartlab.common.utils.log.RLog
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun DailySearchResultScreen(
-    adViewModel: AdViewModel,
+    mainViewModel: MainViewModel,
     searchViewModel: SearchViewModel,
 ) {
-    KeyWordSearchDisplayUi(adViewModel, searchViewModel)
+    KeyWordSearchDisplayUi(mainViewModel, searchViewModel)
 }
 
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun KeyWordSearchDisplayUi(
-    adViewModel: AdViewModel,
+    mainViewModel: MainViewModel,
     searchViewModel: SearchViewModel,
 ) {
     val currentData = searchViewModel.dailyCurrentSearchShortformList.collectAsState()
@@ -117,7 +116,7 @@ fun KeyWordSearchDisplayUi(
         Scaffold(
             containerColor = APP_BACKGROUND,
         ) { innerPadding ->
-            val bottomBarHeight = rememberSaveable { adViewModel.bottomBarHeight.value }
+            val bottomBarHeight = rememberSaveable { mainViewModel.bottomBarHeight.value }
 
             var moreLoading by remember { mutableStateOf(false) }
             val scrollPosition = remember { mutableStateOf(0) }
@@ -143,7 +142,6 @@ fun KeyWordSearchDisplayUi(
                 ) {
                     DailySearchGridItemView(
                         currentData.value,
-                        adViewModel,
                         searchViewModel,
                         loading = { load ->
                             moreLoading = load
@@ -194,7 +192,6 @@ fun KeyWordSearchDisplayUi(
 @Composable
 fun DailySearchGridItemView(
     data: List<MainShortsModel>,
-    adViewModel: AdViewModel,
     searchViewModel: SearchViewModel,
     loading: (Boolean) -> Unit,
     listState: LazyListState,

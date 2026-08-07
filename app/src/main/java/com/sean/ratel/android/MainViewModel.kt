@@ -181,6 +181,20 @@ class MainViewModel
         private val _currentMainShorts = MutableStateFlow<MainShortsModel?>(null)
         val currentMainShorts: MutableStateFlow<MainShortsModel?> = _currentMainShorts
 
+        private val _bottomBarHeight = mutableStateOf(56)
+        val bottomBarHeight = _bottomBarHeight
+
+        fun setBottomBarHeight(height: Int) {
+            _bottomBarHeight.value = height
+        }
+
+        private val _forceClearCache = MutableStateFlow(false)
+        val forceClearCache: StateFlow<Boolean> = _forceClearCache
+
+        fun setForceClearCache(forceClearCache: Boolean) {
+            _forceClearCache.value = forceClearCache
+        }
+
         fun setMainShortsModel(mainShortsModel: MainShortsModel?) {
             _currentMainShorts.value = mainShortsModel
         }

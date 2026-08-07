@@ -31,7 +31,6 @@ import com.sean.ratel.android.data.log.GAKeys.AD_PROMOTION_BUTTON_TYPE
 import com.sean.ratel.android.data.log.GAKeys.MAIN_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.data.log.GASplashAnalytics.Param.CAST_VIEW_TYPE
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.cast.CastControlBar
 import com.sean.ratel.android.ui.cast.CastSessionState
 import com.sean.ratel.android.ui.cast.YouTubePlayersManager
@@ -58,7 +57,6 @@ import so.smartlab.common.utils.log.RLog
 @Composable
 fun ShortFormPlayApp(
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     pushViewModel: PushViewModel,
     billingViewModel: BillingViewModel,
     youTubePlayersManager: YouTubePlayersManager,
@@ -145,7 +143,6 @@ fun ShortFormPlayApp(
                 HomeBottomBar(
                     navController = navController,
                     mainViewModel,
-                    adViewModel,
                 )
             },
             floatingActionButtonPosition = FabPosition.End,
@@ -263,7 +260,7 @@ fun ShortFormPlayApp(
                 CastControlBar(
                     currentRoute = currentRoute,
                     playerManager = youTubePlayersManager,
-                    adViewModel = adViewModel,
+                    mainViewModel = mainViewModel,
                     onPlayPause = { isPlaying ->
                         youTubePlayersManager.castPlayPause(!isPlaying)
                         youTubePlayersManager.sendGALog(

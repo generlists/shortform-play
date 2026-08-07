@@ -58,7 +58,6 @@ import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_PACKAGE_NAME
 import com.sean.ratel.android.data.domain.model.toolbox.AppManagerInfo
 import com.sean.ratel.android.ui.ad.AdTarget
-import com.sean.ratel.android.ui.ad.AdViewModel
 import com.sean.ratel.android.ui.ad.InterstitialAdPage
 import com.sean.ratel.android.ui.common.DropDownMenuComposable
 import com.sean.ratel.android.ui.common.TopNavigationBar
@@ -79,7 +78,6 @@ fun AppManagerView(
     modifier: Modifier,
     viewModel: AppManagerViewModel,
     mainViewModel: MainViewModel,
-    adViewModel: AdViewModel,
     billingViewModel: BillingViewModel,
 ) {
     BackHandler(enabled = true) {
