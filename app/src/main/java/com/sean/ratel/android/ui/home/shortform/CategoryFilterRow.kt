@@ -100,7 +100,7 @@ fun CategoryFilterRow(
                             }
                         }.padding(horizontal = 16.dp, vertical = 8.dp),
             ) {
-                if (categoryList.isNotEmpty()) {
+                if (categoryList.isNotEmpty() && categoryList[index].size > 0) {
                     Text(
                         text = categoryList[index][0].shortsVideoModel?.categoryName ?: stringResource(R.string.etc),
                         fontSize = 12.sp,
