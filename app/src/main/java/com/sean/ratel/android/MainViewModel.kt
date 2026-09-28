@@ -7,7 +7,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.navigation.ActivityNavigator
 import androidx.viewpager2.widget.ViewPager2
 import coil.ImageLoader
 import com.sean.ratel.android.data.common.RemoteConfig
