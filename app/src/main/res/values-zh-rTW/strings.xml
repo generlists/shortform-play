@@ -75,6 +75,7 @@
     <string name="pip_memory_error">記憶體不足錯誤</string>
     <string name="setting_dev_other_app">這位開發者的其他應用程式</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+    <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
 
     <!--App Manager -->
     <string name="app_manager">應用管理員</string>

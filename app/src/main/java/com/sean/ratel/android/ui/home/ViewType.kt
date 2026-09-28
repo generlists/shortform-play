@@ -31,5 +31,6 @@ enum class ViewType {
     SearchShortsVideo,
     SearchShortsDaily,
     DeepLinkVideo,
+    SettingView,
     UNKWNONTYPE,
 }

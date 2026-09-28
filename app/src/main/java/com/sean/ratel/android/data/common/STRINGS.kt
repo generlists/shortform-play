@@ -47,6 +47,7 @@ object STRINGS {
     const val APP_NAME: String = "shortform-play"
     const val URL_MY_PACKAGE_NAME: String = "com.sean.ratel.android"
     const val URL_MY_OTHER_PACKAGE_NAME: String = "so.smartlab.video.scrap.pro"
+    const val URL_MY_OTHER_PACKAGE_NAME_YOUNGJUSO: String = "so.smartlab.youngjuso.android"
 
     const val SERVICE_START_DATE = "20241029"
     const val SERVICE_RENEWAL_START_DATE = "20241207"

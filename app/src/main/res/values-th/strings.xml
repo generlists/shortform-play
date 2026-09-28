@@ -80,6 +80,7 @@
     <string name="pip_memory_error">หน่วยความจำต่ำ</string>
     <string name="setting_dev_other_app">แอปอื่นๆ จากนักพัฒนารายนี้</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+    <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
 
     <!-- ผู้จัดการแอป -->
     <string name="app_manager">ตัวจัดการแอป</string>

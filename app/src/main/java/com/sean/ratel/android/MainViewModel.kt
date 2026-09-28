@@ -454,7 +454,9 @@ class MainViewModel
                 return
             }
 
-            if (_viewType.value == ViewType.DeepLinkVideo) {
+            if (_viewType.value == ViewType.DeepLinkVideo ||
+                route == Destination.Home.Main.route
+            ) {
                 goMainHome()
             } else {
                 navigator.navigateBack(
