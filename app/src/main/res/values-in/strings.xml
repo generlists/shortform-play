@@ -82,6 +82,7 @@
     <string name="pip_memory_error">Memori rendah</string>
     <string name="setting_dev_other_app">Aplikasi lain dari developer ini</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+    <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
 
     <!-- Pengelola Aplikasi -->
     <string name="app_manager">Pengelola Aplikasi</string>

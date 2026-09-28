@@ -75,6 +75,7 @@
     <string name="pip_memory_error">low memory error</string>
     <string name="setting_dev_other_app">More apps by this developer</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+    <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
 
     <!--App Manager -->
     <string name="app_manager">App Manager</string>

@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_OTHER_PACKAGE_NAME
+import com.sean.ratel.android.data.common.STRINGS.URL_MY_OTHER_PACKAGE_NAME_YOUNGJUSO
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_10
 import com.sean.ratel.android.ui.theme.RatelappTheme
@@ -88,6 +89,12 @@ fun SettingGridRow(
             SettingGridItem(
                 R.drawable.ic_scrap_pro,
                 stringResource(R.string.setting_dev_other_app_name),
+                URL_MY_OTHER_PACKAGE_NAME,
+            ),
+            SettingGridItem(
+                R.drawable.ic_youngjuso,
+                stringResource(R.string.setting_dev_other_app_name_youngjuso),
+                URL_MY_OTHER_PACKAGE_NAME_YOUNGJUSO,
             ),
         ),
 ) {
@@ -112,7 +119,7 @@ fun SettingGridRow(
                         PhoneUtil.runAppStore(
                             context,
                             URL_GOOGLE_PLAY_APP(
-                                URL_MY_OTHER_PACKAGE_NAME,
+                                gridList[index].packageName,
                             ),
                         )
                     },
@@ -172,6 +179,7 @@ fun SettingGridRow(
 data class SettingGridItem(
     val icon: Int,
     val appName: String,
+    val packageName: String,
 )
 
 @Suppress("ktlint:standard:function-naming")

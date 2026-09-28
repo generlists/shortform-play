@@ -93,7 +93,7 @@ fun SettingView(
                 titleResourceId = R.string.setting,
                 historyBack = {
                     mainViewModel.runNavigationBack(
-                        null,
+                        route = Destination.Home.Main.route,
                         false,
                         if (!fromPermissionPage) null else activity,
                     )

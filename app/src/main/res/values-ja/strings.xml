@@ -74,6 +74,7 @@
     <string name="pip_memory_error">メモリ不足エラー</string>
     <string name="setting_dev_other_app">この開発者の他のアプリ</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+    <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
 
     <!-- アプリマネージャー -->
     <string name="app_manager">アプリマネージャー</string>

@@ -80,6 +80,7 @@
     <string name="pip_memory_error">erreur de mémoire faible</string>
     <string name="setting_dev_other_app">Autres applications de ce développeur</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
+    <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
 
     <!-- Gestion d'application -->
     <string name="app_manager">Gestionnaire d’applis</string>
