@@ -50,7 +50,12 @@ class ShortFormPlayApplication : Application() {
             settingPreference.initialize()
         }
         billingManager.initialize(scope = ProcessLifecycleOwner.get().lifecycleScope)
-        youTubePlayersManager.initChromeCast()
+        // 일부 기기 크래시 방어
+        try {
+            youTubePlayersManager.initChromeCast()
+        } catch (e: Exception) {
+            RLog.e("Cast initialization failed", "$e")
+        }
     }
 
     fun firebaseRemoteConfig(
