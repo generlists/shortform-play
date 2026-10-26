@@ -1,6 +1,7 @@
 package com.sean.ratel.android.data.repository
 
 import android.content.Context
+import com.google.firebase.storage.FirebaseStorage
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
@@ -20,6 +21,7 @@ import com.sean.ratel.android.data.dto.SearchShortsResponse
 import com.sean.ratel.android.data.dto.SearchShortsSuggestResponse
 import com.sean.ratel.android.data.dto.SessionResetRes
 import com.sean.ratel.android.data.dto.TrendShortsResponse
+import com.sean.ratel.android.data.dto.TrendsShortFormList
 import com.sean.ratel.android.data.dto.YouTubeCategory
 import com.sean.ratel.android.data.local.pref.ShortsJsonPreference
 import com.sean.ratel.android.data.local.pref.YouTubeSearchPreference
@@ -27,14 +29,18 @@ import com.sean.ratel.android.ui.splash.SplashViewModel
 import com.sean.ratel.android.utils.NetworkHelper
 import com.sean.ratel.android.utils.TimeUtil.getCurrentDate
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import retrofit2.HttpException
 import so.smartlab.common.utils.log.RLog
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 // repository 패턴에서 인터페이스가 없는듯?
 @Singleton
@@ -118,19 +124,64 @@ class YouTubeRepository
 
                     val trendsShortsListResponse = shortsJson.getTrendShortsList(key)
 
-                    trendsShortsListResponse?.shortformList?.let {
+                    if (trendsShortsListResponse.isValidTrends()) {
                         trendShortsVideosCache = trendsShortsListResponse
-                        emit(trendsShortsListResponse)
-                    } ?: run {
-                        val response = firebaseApi.requestYouTubeTrendShorts(url)
+                        emit(trendsShortsListResponse!!)
+                    } else {
+                        val response =
+                            try {
+                                firebaseApi.requestYouTubeTrendShorts(url)
+                            } catch (e: CancellationException) {
+                                throw e
+                            } catch (e: Exception) {
+                                RLog.e("SPLASH", "[YouTubeRepository.kt] trends request error : $e")
+                                null
+                            }
 
-                        shortsJson.clearDataByKeyPattern(JSON_TRENDS_REMOVE_KEY)
-                        shortsJson.setTrendsShortsList(key, response)
-                        trendShortsVideosCache = response
-                        emit(response)
+                        if (response.isValidTrends()) {
+                            shortsJson.clearDataByKeyPattern(JSON_TRENDS_REMOVE_KEY)
+                            shortsJson.setTrendsShortsList(key, response!!)
+                            trendShortsVideosCache = response
+                            emit(response)
+                        } else {
+                            // 당일 트레일러가 없거나 비어 있으면 디폴트(shorts_trailer_default.json)로 대체, 빈 응답은 캐시하지 않음
+                            RLog.e("SPLASH", "[YouTubeRepository.kt] trends empty, fallback to default key : $key")
+                            val defaultResponse = requestDefaultTrendShorts()
+                            trendShortsVideosCache = defaultResponse
+                            emit(defaultResponse)
+                        }
                     }
                 }
             }
+
+        private suspend fun requestDefaultTrendShorts(): TrendShortsResponse {
+            shortsJson.getTrendShortsList(DEFAULT_TRENDS_URL)?.let {
+                if (it.isValidTrends()) return it
+            }
+            val defaultUrl = getStorageDownloadUrl(DEFAULT_TRENDS_URL)
+            val response = firebaseApi.requestYouTubeTrendShorts(defaultUrl)
+            if (response.isValidTrends()) {
+                shortsJson.setTrendsShortsList(DEFAULT_TRENDS_URL, response)
+            }
+            return response
+        }
+
+        private suspend fun getStorageDownloadUrl(path: String): String =
+            suspendCancellableCoroutine { continuation ->
+                FirebaseStorage
+                    .getInstance()
+                    .reference
+                    .child(path)
+                    .downloadUrl
+                    .addOnSuccessListener { continuation.resume(it.toString()) }
+                    .addOnFailureListener { continuation.resumeWithException(it) }
+            }
+
+        // Gson 은 Kotlin non-null 을 보장하지 않으므로 shortformList 가 null 일 수 있다
+        private fun TrendShortsResponse?.isValidTrends(): Boolean {
+            val shortformList: TrendsShortFormList? = this?.shortformList
+            return !shortformList?.event_list.isNullOrEmpty()
+        }
 
         suspend fun requestYoutubeSuggestList(
             query: String,
