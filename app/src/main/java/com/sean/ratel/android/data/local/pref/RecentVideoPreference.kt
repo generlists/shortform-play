@@ -9,6 +9,8 @@ import com.google.gson.reflect.TypeToken
 import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.MAX_RECENTLY_SAVE_SIZE
 import com.sean.ratel.android.data.dto.MainShortsModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -22,6 +24,25 @@ class RecentVideoPreference
     ) {
         private val recentlyVideoKey = stringPreferencesKey("recent_video_list")
         val gson = Gson()
+
+        /** 시청 기록의 영상 id 모음(이미 본 영상 숨기기용). 기록이 바뀔 때마다 새로 내보낸다. */
+        val watchedVideoIds: Flow<Set<String>> =
+            dataStore.data
+                .map { preferences -> parseVideoIds(preferences[recentlyVideoKey]) }
+                .distinctUntilChanged()
+
+        private fun parseVideoIds(jsonString: String?): Set<String> {
+            if (jsonString.isNullOrEmpty()) return emptySet()
+            return try {
+                val type = object : TypeToken<List<MainShortsModel>>() {}.type
+                gson
+                    .fromJson<List<MainShortsModel>>(jsonString, type)
+                    .mapNotNull { it.shortsVideoModel?.videoId }
+                    .toSet()
+            } catch (e: Exception) {
+                emptySet()
+            }
+        }
 
         private suspend fun setRecentVideo(videoList: List<MainShortsModel>) {
             val jsonString = gson.toJson(videoList)

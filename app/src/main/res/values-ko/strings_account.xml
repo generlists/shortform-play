@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="my_title">마이</string>
+
+    <string name="my_signin_title">로그인이 필요해요</string>
+    <string name="my_signin_desc">로그인하고 나만의 필터를 만들면 다른 기기에서도 쓸 수 있어요.</string>
+    <string name="my_signin_google">Google로 계속하기</string>
+    <string name="my_signin_busy">로그인 중…</string>
+
+    <string name="my_filter_title">내 필터</string>
+    <string name="my_filter_status_on">적용 중</string>
+    <string name="my_filter_status_off">아직 없어요</string>
+    <string name="my_filter_desc_off">보기 싫은 주제와 키워드를 빼고 볼 수 있어요. 만들기 전에는 지금과 똑같이 보여요.</string>
+    <string name="my_filter_make">필터 만들기</string>
+    <string name="my_filter_make_signin">로그인하고 필터 만들기</string>
+    <string name="my_filter_manage">필터 관리</string>
+    <string name="my_filter_hidden">지금 %1$d개를 빼고 보여드려요</string>
+    <string name="my_filter_topics_label">빼는 주제</string>
+    <string name="my_filter_keywords_label">빼는 키워드</string>
+
+    <string name="my_logout">로그아웃</string>
+    <string name="my_delete_account">계정 삭제</string>
+    <string name="my_delete_title">계정을 삭제할까요?</string>
+    <string name="my_delete_body">계정과 서버에 저장된 내 필터가 삭제돼요. 되돌릴 수 없어요.</string>
+    <string name="my_delete_confirm">삭제</string>
+    <string name="my_cancel">취소</string>
+
+    <string name="filter_edit_title">내 필터</string>
+    <string name="filter_edit_back">뒤로</string>
+    <string name="filter_edit_topics">빼고 싶은 주제</string>
+    <string name="filter_edit_topics_desc">여러 개 골라도 돼요. 주제마다 관련 단어가 자동으로 적용돼요.</string>
+    <string name="filter_edit_keywords">빼고 싶은 키워드</string>
+    <string name="filter_edit_keywords_desc">제목, 설명, 채널명, 카테고리에 들어 있으면 빼요.</string>
+    <string name="filter_edit_keyword_hint">예: 직캠, 리액션</string>
+    <string name="filter_edit_add">추가</string>
+    <string name="filter_edit_options">옵션</string>
+    <string name="filter_edit_hide_disliked">싫어요한 영상 숨기기</string>
+    <string name="filter_edit_hide_watched">이미 본 영상 숨기기</string>
+    <string name="filter_edit_channels">차단한 채널</string>
+    <string name="filter_edit_channels_desc">채널은 영상 화면에서 차단할 수 있어요.</string>
+    <string name="filter_edit_remove">삭제</string>
+    <string name="filter_edit_save">저장</string>
+    <string name="filter_edit_save_signin">로그인하고 저장</string>
+
+    <string name="my_msg_signed_in">로그인했어요</string>
+    <string name="my_msg_no_account">이 기기에 Google 계정이 없어요</string>
+    <string name="my_msg_signin_failed">로그인하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="my_msg_signed_out">로그아웃했어요</string>
+    <string name="my_msg_deleted">계정을 삭제했어요</string>
+    <string name="my_msg_delete_failed">계정을 삭제하지 못했어요. 다시 시도해 주세요.</string>
+    <string name="filter_msg_saved">필터를 저장했어요</string>
+    <string name="filter_msg_pending">이 기기에는 저장했어요. 서버에 연결되면 다시 올릴게요.</string>
+    <string name="filter_msg_need_signin">먼저 로그인해 주세요</string>
+
+    <string name="search_filter_hidden">필터로 %1$d개를 숨겼어요</string>
+    <string name="search_filter_show">보기</string>
+    <string name="search_filter_overlap">검색어가 숨겨 둔 항목과 겹쳐서 이 결과에는 필터를 적용하지 않았어요.</string>
+    <string name="search_filter_all_hidden">모두 필터에 걸려서 전체 결과를 보여드려요.</string>
+    <string name="search_filter_revealed">숨긴 영상까지 모두 보는 중이에요</string>
+    <string name="search_filter_hide_again">다시 숨기기</string>
+
+    <string name="end_not_interested">관심없음</string>
+    <string name="not_interested_dislike">이 영상 싫어요</string>
+    <string name="not_interested_undislike">싫어요 취소</string>
+    <string name="not_interested_title">이 영상이 별로인가요?</string>
+    <string name="not_interested_hint">보고 싶지 않은 것을 골라 주세요. 내 필터에 추가돼요.</string>
+    <string name="not_interested_channel">이 채널 차단</string>
+    <string name="not_interested_topics">이 주제 빼기</string>
+    <string name="not_interested_keywords">이 키워드 빼기</string>
+    <string name="not_interested_apply">내 필터에 추가</string>
+    <string name="not_interested_apply_signin">로그인하고 추가</string>
+
+    <!-- 온보딩(처음 실행) -->
+    <string name="onb_skip">건너뛰기</string>
+    <string name="onb_back">이전</string>
+    <string name="onb_intro_title">안 보고 싶은 건\n빼고 볼까요?</string>
+    <string name="onb_intro_desc">관련 영상이 자꾸 나와서 불편했다면, 싫은 것만 알려 주세요. 나머진 그대로예요.</string>
+    <string name="onb_intro_example_hidden">빠져요</string>
+    <string name="onb_intro_example_kept">그대로</string>
+    <string name="onb_intro_example_1">남돌 직캠 · 무대 풀버전</string>
+    <string name="onb_intro_example_2">고양이 브이로그 · 나른한 오후</string>
+    <string name="onb_intro_example_3">정치 토론 하이라이트</string>
+    <string name="onb_intro_point_1">빼고 싶은 주제와 키워드를 골라요</string>
+    <string name="onb_intro_point_2">어떤 영상이 빠지는지 미리 확인해요</string>
+    <string name="onb_intro_point_3">로그인하면 기기를 바꿔도 같은 필터로 봐요</string>
+    <string name="onb_intro_start">시작하기</string>
+    <string name="onb_intro_later">나중에 할게요</string>
+    <string name="onb_topics_title">어떤 주제를\n빼고 싶으세요?</string>
+    <string name="onb_topics_desc">여러 개 골라도 돼요. 나중에 언제든 바꿀 수 있어요.</string>
+    <string name="onb_topics_country_note">%1$s 영상 기준이에요. 국가는 설정에서 바꿀 수 있어요.</string>
+    <string name="onb_topics_next">다음</string>
+    <string name="onb_topics_next_count">다음 · %1$d개 선택</string>
+    <string name="onb_keywords_title">이런 단어가 들어간\n영상도 뺄까요?</string>
+    <string name="onb_keywords_desc">제목, 설명, 채널명, 카테고리에서 찾아서 빼요.</string>
+    <string name="onb_keywords_hint">예: 직캠, 리액션</string>
+    <string name="onb_keywords_suggest">지금 많이 나오는 단어</string>
+    <string name="onb_keywords_next">어떻게 바뀌는지 보기</string>
+    <string name="onb_preview_title">이렇게 바뀌어요</string>
+    <string name="onb_preview_desc">지금 목록에 필터를 적용해 본 결과예요.</string>
+    <string name="onb_preview_count">%1$d개</string>
+    <string name="onb_preview_total">가 빠져요 (전체 %1$d개 중)</string>
+    <string name="onb_preview_samples">빠지는 영상</string>
+    <string name="onb_preview_none">지금 목록에는 걸리는 영상이 없어요. 새로 들어오는 영상에는 그대로 적용돼요.</string>
+    <string name="onb_preview_reason_topic">주제 · %1$s</string>
+    <string name="onb_preview_reason_keyword">키워드 · %1$s</string>
+    <string name="onb_preview_reason_channel">채널</string>
+    <string name="onb_preview_keep">빼지 않기</string>
+    <string name="onb_preview_hide_again">다시 빼기</string>
+    <string name="onb_preview_note">잘못 빠진 영상은 나중에 내 필터에서 확인하고 되돌릴 수 있어요.</string>
+    <string name="onb_preview_save">저장하고 적용하기</string>
+    <string name="onb_preview_start_without">필터 없이 시작하기</string>
+    <string name="onb_login_title">필터를 저장하려면\n로그인해 주세요</string>
+    <string name="onb_login_desc">필터는 내 계정에 저장돼요. 기기를 바꿔도 같은 필터로 볼 수 있어요.</string>
+    <string name="onb_login_without">로그인 없이 계속</string>
+    <string name="onb_login_without_note">이 경우 필터는 적용되지 않아요</string>
+
+    <!-- 숨긴 영상 -->
+    <string name="my_filter_hidden_view">숨긴 영상 보기</string>
+    <string name="hidden_title">숨긴 영상</string>
+    <string name="hidden_desc">지금 내 필터로 숨겨진 영상이에요. 빼지 않기를 누르면 다시 보여요.</string>
+    <string name="hidden_empty">지금 목록에서 내 필터로 숨겨진 영상이 없어요.</string>
+    <string name="hidden_section_hidden">숨겨진 영상 · %1$d개</string>
+    <string name="hidden_section_kept">빼지 않기로 둔 영상 · %1$d개</string>
+    <string name="hidden_reason_disliked">싫어요</string>
+    <string name="hidden_reason_watched">본 영상</string>
+
+    <string name="splash_tagline">안 보고 싶은 건 빼고 보세요</string>
+    <string name="splash_app_name_short">숏폼</string>
+    <string name="splash_app_name_play">플레이</string>
+    <string-array name="splash_taglines">
+        <item>안 보고 싶은 건 빼고 보세요</item>
+        <item>오늘의 쇼츠, 한곳에서</item>
+        <item>넘길 때마다 새로운 재미</item>
+        <item>내 취향대로 쇼츠 보기</item>
+        <item>잠깐의 재미, 숏폼 플레이</item>
+    </string-array>
+
+    <!-- 주간 시청 리포트(마이 탭, 기기에만 저장) -->
+    <string name="report_title">이번 주 시청</string>
+    <string name="report_empty">아직 기록이 없어요. 오늘부터 최근 7일 동안 본 시간과 많이 본 채널이 여기에 쌓여요. 기록은 이 기기에만 저장돼요.</string>
+    <string name="report_time_under_minute">1분 미만</string>
+    <string name="report_time_minutes">%1$d분</string>
+    <string name="report_time_hours">%1$d시간 %2$d분</string>
+    <string name="report_top_channels">많이 본 채널</string>
+    <string name="report_channel_count">%1$d개</string>
+
+    <!-- 하루 시청 한도(옵트인, 기본 꺼짐) -->
+    <string name="limit_title">하루 시청 한도</string>
+    <string name="limit_desc">한도에 닿으면 “계속 볼까요?”라고 물어봐요. 기본은 꺼져 있고, 설정과 기록은 이 기기에만 저장돼요.</string>
+    <string name="limit_today">오늘 %1$s · 영상 %2$d개</string>
+    <string name="limit_mode_off">사용 안 함</string>
+    <string name="limit_mode_time">시간</string>
+    <string name="limit_mode_videos">영상 수</string>
+    <string name="limit_option_hours">%1$d시간</string>
+    <string name="limit_videos_option">%1$d개</string>
+    <string name="limit_prompt_time_title">오늘 %1$s 봤어요</string>
+    <string name="limit_prompt_videos_title">오늘 영상 %1$d개를 봤어요</string>
+    <string name="limit_prompt_body">계속 볼까요? 잠깐 쉬었다 봐도 좋아요.</string>
+    <string name="limit_prompt_continue">계속 보기</string>
+    <string name="limit_prompt_stop">그만 보기</string>
+
+    <!-- 주간 리포트 개편(시안 04) · 한도 진행 · 이번 주 빼고 보여드린 수 -->
+    <string name="report_vs_more">지난주 대비 +%1$d분</string>
+    <string name="report_vs_less">지난주 대비 -%1$d분</string>
+    <string name="report_vs_same">지난주와 같아요</string>
+    <string name="report_videos_count">%1$d개</string>
+    <string name="report_videos_label">본 쇼츠</string>
+    <string name="my_filter_hidden_week">이번 주 %1$d개를 뺐어요</string>
+    <string name="limit_progress_videos">오늘의 쇼츠 %1$d / %2$d</string>
+    <string name="limit_progress_time">오늘 %1$s / %2$s</string>
+    <string name="report_time_label">시청 시간</string>
+
+    <!-- 홈: 필터 적용 중 바 · 빼고 보여드린 수 · 비로그인 배너(시안 B1·A1) -->
+    <string name="home_filter_bar">내 필터 적용 중 · 주제 %1$d · 키워드 %2$d</string>
+    <string name="home_filter_manage">관리</string>
+    <string name="home_filter_note">지금 목록에서 %1$d개를 뺐어요</string>
+    <string name="home_filter_note_view">숨긴 영상 보기</string>
+    <string name="home_banner_title">안 보고 싶은 건 빼고 볼 수 있어요</string>
+    <string name="home_banner_desc">주제나 키워드를 골라 두면 홈과 숏폼에서 빼드려요.</string>
+    <string name="home_banner_create">내 필터 만들기</string>
+    <string name="home_banner_short">안 보고 싶은 건 빼고 보기</string>
+    <string name="home_banner_later">나중에</string>
+
+    <!-- 보관함(3차): 폴더, 저장 -->
+    <string name="end_save">저장</string>
+    <string name="library_folders_title">내 폴더</string>
+    <string name="library_new_folder">+ 새 폴더</string>
+    <string name="library_system_likes">좋아요</string>
+    <string name="library_system_watch_later">나중에 볼 영상</string>
+    <string name="library_count">%1$d개</string>
+    <string name="library_recent">최근 본 영상</string>
+    <string name="library_empty_folder">아직 담은 영상이 없어요. 재생 화면의 저장 버튼으로 담아 보세요.</string>
+    <string name="library_menu_rename">이름 바꾸기</string>
+    <string name="library_menu_delete">폴더 삭제</string>
+    <string name="library_delete_title">폴더를 삭제할까요?</string>
+    <string name="library_delete_body">폴더와 담아 둔 영상 목록이 삭제돼요. 영상 자체는 지워지지 않아요.</string>
+    <string name="library_name_new_title">새 폴더</string>
+    <string name="library_name_rename_title">이름 바꾸기</string>
+    <string name="library_name_hint">폴더 이름</string>
+    <string name="library_confirm">확인</string>
+    <string name="library_remove">삭제</string>
+    <string name="library_save_title">폴더에 저장</string>
+    <string name="library_back">뒤로</string>
+    <string name="library_menu">더보기</string>
+    <string name="library_msg_item_limit">영상은 최대 %1$d개까지 담을 수 있어요.</string>
+    <string name="library_msg_folder_limit">폴더는 최대 %1$d개까지 만들 수 있어요.</string>
+    <string name="library_msg_name_taken">같은 이름의 폴더가 있어요.</string>
+    <string name="library_msg_name_invalid">폴더 이름은 1~%1$d자로 입력해 주세요.</string>
+    <string name="end_chip_sound_on">소리 켜짐</string>
+    <string name="end_chip_sound_off">소리 꺼짐</string>
+    <string name="end_chip_caption">자막</string>
+</resources>

@@ -49,7 +49,8 @@
     <string name="setting_service">Gestion des services</string>
     <string name="setting_notice">Annonce</string>
     <string name="setting_qna">Nous contacter</string>
-    <string name="setting_private_policy">Conditions &amp; Politique de confidentialité</string>
+    <string name="setting_terms_of_service">Conditions d\'utilisation</string>
+    <string name="setting_private_policy">Politique de confidentialité</string>
 
     <string name="setting_play">Fonction vidéo</string>
     <string name="setting_play_continue">Lecture continue</string>
@@ -81,6 +82,7 @@
     <string name="setting_dev_other_app">Autres applications de ce développeur</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
     <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
+    <string name="setting_dev_other_app_name_ipo_money">IPO Money</string>
 
     <!-- Gestion d'application -->
     <string name="app_manager">Gestionnaire d’applis</string>

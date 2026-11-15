@@ -43,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.common.STRINGS.URL_GOOGLE_PLAY_APP
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_OTHER_PACKAGE_NAME
+import com.sean.ratel.android.data.common.STRINGS.URL_MY_OTHER_PACKAGE_NAME_IPO_MONEY
 import com.sean.ratel.android.data.common.STRINGS.URL_MY_OTHER_PACKAGE_NAME_YOUNGJUSO
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.Background_op_10
@@ -95,6 +96,11 @@ fun SettingGridRow(
                 R.drawable.ic_youngjuso,
                 stringResource(R.string.setting_dev_other_app_name_youngjuso),
                 URL_MY_OTHER_PACKAGE_NAME_YOUNGJUSO,
+            ),
+            SettingGridItem(
+                R.drawable.ic_ipo_money,
+                stringResource(R.string.setting_dev_other_app_name_ipo_money),
+                URL_MY_OTHER_PACKAGE_NAME_IPO_MONEY,
             ),
         ),
 ) {

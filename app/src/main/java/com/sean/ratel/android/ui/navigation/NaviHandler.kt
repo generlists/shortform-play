@@ -31,8 +31,15 @@ internal fun NavHandler(
                             popUpTo(route) { inclusive = true }
                         }
                     }
-                } else {
+                } else if (navController.previousBackStackEntry != null) {
                     navController.navigateUp()
+                } else {
+                    // 탭으로 옮겨 온 화면(설정·숏폼)은 뒤가 비어 있다. 이때 navigateUp() 은 앱을 새 작업으로 다시 시작해서
+                    // 스플래시를 건너뛴 채 홈이 열리고 홈 데이터가 비어 버린다 → 홈 탭으로 돌아간다
+                    navController.navigate(Destination.Home.Main.route) {
+                        launchSingleTop = true
+                        restoreState = true
+                    }
                 }
             }.launchIn(this)
 

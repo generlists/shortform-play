@@ -20,6 +20,11 @@ import com.sean.ratel.android.data.dto.SearchResultModel
 import com.sean.ratel.android.data.dto.SearchShortsResponse
 import com.sean.ratel.android.data.dto.TopicItem
 import com.sean.ratel.android.data.dto.YouTubeCategory
+import com.sean.ratel.android.data.filter.CompiledFilter
+import com.sean.ratel.android.data.filter.FilterRepository
+import com.sean.ratel.android.data.filter.SearchFilterInfo
+import com.sean.ratel.android.data.filter.SearchFilterMode
+import com.sean.ratel.android.data.filter.SearchFilterPolicy
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.log.GASplashAnalytics.Event.SELECT_SEARCH_DAILY_ITEM_CLICK
 import com.sean.ratel.android.data.log.GASplashAnalytics.Event.SELECT_SEARCH_ITEM_CLICK
@@ -33,11 +38,14 @@ import com.sean.ratel.android.utils.UIUtil.localeFromCountryCode
 import com.sean.ratel.android.utils.UIUtil.toStringMap
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
@@ -61,10 +69,29 @@ class SearchViewModel
         val gaLog: GALog,
         val youtubeApiRepository: YouTubeRepository,
         val settingRespository: SettingRepository,
+        private val filterRepository: FilterRepository,
     ) : ViewModel() {
+        // 서버에서 받은 결과 원본. 다음 페이지 요청(마지막 영상 id)과 개수 계산은 항상 원본을 쓴다
         private val _shortsSearchList = MutableStateFlow(emptyList<SearchResultModel>())
 
-        val shortsSearchList: StateFlow<List<SearchResultModel>> = _shortsSearchList
+        // 화면이 그리는 목록 — 내 제외 필터를 적용한 결과(SearchFilterPolicy 규칙). 필터가 없으면 원본과 같다
+        private val visibleSearchList = MutableStateFlow(emptyList<SearchResultModel>())
+        val shortsSearchList: StateFlow<List<SearchResultModel>> = visibleSearchList
+
+        private val _searchFilterInfo = MutableStateFlow(SearchFilterInfo())
+        val searchFilterInfo: StateFlow<SearchFilterInfo> = _searchFilterInfo
+
+        /** 원본 결과 개수. 페이지가 도착했는지(전부 숨겨져 화면 목록은 그대로여도) 화면이 알 수 있게 한다. */
+        private val _rawResultCount = MutableStateFlow(0)
+        val rawResultCount: StateFlow<Int> = _rawResultCount
+
+        @Volatile
+        private var compiledFilter: CompiledFilter = CompiledFilter.NoOp
+        private var currentQueryText = ""
+        private var pendingDeepLinkQuery: String? = null
+        private var deepLinkSearch = false
+        private var revealHidden = false
+        private var fillStreak = 0
 
         private val _dailySearchShortformList = MutableStateFlow<List<MainShortsModel>>(emptyList())
         val dailySearchShortformList: StateFlow<List<MainShortsModel>> = _dailySearchShortformList
@@ -154,6 +181,50 @@ class SearchViewModel
             requestSaveSuggestResultList()
             requestLocale()
             requestYouTubeCategory()
+            observeFilter()
+        }
+
+        @OptIn(ExperimentalCoroutinesApi::class)
+        private fun observeFilter() {
+            viewModelScope.launch {
+                settingRespository
+                    .getLocale()
+                    .distinctUntilChanged()
+                    .flatMapLatest { filterRepository.compiled(it) }
+                    .collect {
+                        compiledFilter = it
+                        publishSearchList()
+                    }
+            }
+        }
+
+        /** 원본 결과에 필터 규칙을 적용해 화면 목록과 안내 상태를 만든다. */
+        private fun publishSearchList() {
+            val raw = _shortsSearchList.value
+            val view = SearchFilterPolicy.keyword(raw, compiledFilter, currentQueryText, deepLinkSearch, revealHidden)
+            visibleSearchList.value = view.visible
+            _searchFilterInfo.value = SearchFilterInfo(view.mode, view.hiddenCount)
+            _rawResultCount.value = raw.size
+        }
+
+        /** "숨긴 영상 N개 보기" / "다시 숨기기". */
+        fun setRevealHidden(reveal: Boolean) {
+            revealHidden = reveal
+            publishSearchList()
+        }
+
+        /**
+         * 걸러서 화면 목록이 짧아졌을 때 다음 페이지를 자동으로 더 받아도 되는지.
+         * 페이지를 받아도 보이는 영상이 늘지 않는 일이 연속 3번이면 멈춘다(사용자가 다시 스크롤하면 재개).
+         */
+        fun canAutoFill(): Boolean =
+            fillStreak < MAX_FILL_STREAK &&
+                _searchFilterInfo.value.let {
+                    it.mode == SearchFilterMode.FILTERED && it.hiddenCount > 0
+                }
+
+        fun resetFillStreak() {
+            fillStreak = 0
         }
 
         fun requestYouTubeSearchResult(
@@ -195,7 +266,14 @@ class SearchViewModel
                             }
 
                             is ApiResult.Success -> {
+                                // 새 검색: 검색어와 웹 링크 여부를 정하고 필터를 적용해 화면 목록을 만든다
+                                currentQueryText = query.split("+").firstOrNull()?.trim() ?: query.trim()
+                                deepLinkSearch = pendingDeepLinkQuery?.trim().equals(currentQueryText, ignoreCase = true)
+                                if (!deepLinkSearch) pendingDeepLinkQuery = null
+                                revealHidden = false
+                                fillStreak = 0
                                 _shortsSearchList.value = response.data.results
+                                publishSearchList()
                                 _hasNext.value = response.data.hasNext
                                 _searchDataComplete.value = true
                                 _searchLoading.value = false
@@ -309,6 +387,8 @@ class SearchViewModel
 
         fun setDeepLinkQuery(query: String?) {
             _deepLinkQuery.value = query
+            // 화면이 곧바로 null 로 비우므로, 웹 링크로 온 검색어를 따로 기억해서 결과가 오면 필터 없이 보여 준다
+            if (query != null) pendingDeepLinkQuery = query
         }
 
         fun setDeepLinkTab(
@@ -368,9 +448,13 @@ class SearchViewModel
                             is ApiResult.Success -> {
                                 _hasNext.value = response.data.hasNext
                                 if (hasNext.value) {
+                                    val visibleBefore = visibleSearchList.value.size
                                     val currentList = _shortsSearchList.value.toMutableList()
                                     currentList.addAll(response.data.results)
                                     _shortsSearchList.value = currentList // ← 새로운 객체로 교체해야 emit됨
+                                    publishSearchList()
+                                    // 페이지를 받았는데 보이는 영상이 늘지 않았다(전부 필터에 걸림) — 자동 이어받기 횟수를 센다
+                                    fillStreak = if (visibleSearchList.value.size > visibleBefore) 0 else fillStreak + 1
                                     _uiState.value = UiState.Success(response.data)
 
                                     complete(true)
@@ -610,15 +694,16 @@ class SearchViewModel
 
 //            RLog.e("SearchViewModel", "dailySearchShorts  size ${dailySearchShorts.size}")
 
+            val visibleDaily = filterDaily(dailySearchShorts)
             val list =
-                dailySearchShorts
+                visibleDaily
                     .filter { it.shortsVideoModel != null }
                     .distinctBy { it.shortsVideoModel!!.videoId }
                     .chunked(INIT_MAX_SIZE)
                     .mapIndexed { i, chunk -> i to chunk }
                     .toMap()
 
-            _dailySearchShortformList.value = dailySearchShorts
+            _dailySearchShortformList.value = visibleDaily
             val finalShuffledChunk = list[0]
 
             finalShuffledChunk?.let {
@@ -631,6 +716,13 @@ class SearchViewModel
                 "_dailySearchShortformList  size ${_dailyCurrentSearchShortformList.value.size}",
             )
         }
+
+        /**
+         * 일간 검색 목록에 내 제외 필터를 한 번 적용한다. 목록 위치 번호가 끝 화면과 이어지므로 화면용·끝 화면용 목록을
+         * 모두 이 결과에서 만든다. 웹 링크로 들어온 경우(_deepLinkTab)는 적용하지 않고, 전부 걸리면 원본을 쓴다.
+         */
+        private fun filterDaily(items: List<MainShortsModel>): List<MainShortsModel> =
+            SearchFilterPolicy.daily(items, compiledFilter, _deepLinkTab.value != null).visible
 
         private fun getTopicVideoList(topicList: Map<String, TopicItem>): Collection<List<MainShortsModel>> =
             topicList
@@ -678,15 +770,16 @@ class SearchViewModel
 
             RLog.d("SearchViewModel", "dailySearchShorts  size ${dailySearchShorts.size}")
 
+            val visibleDaily = filterDaily(dailySearchShorts)
             val list =
-                dailySearchShorts
+                visibleDaily
                     .filter { it.shortsVideoModel != null }
                     .distinctBy { it.shortsVideoModel!!.videoId }
                     .chunked(INIT_MAX_SIZE)
                     .mapIndexed { i, chunk -> i to chunk }
                     .toMap()
 
-            _dailySearchShortformList.value = dailySearchShorts
+            _dailySearchShortformList.value = visibleDaily
             val finalShuffledChunk = list[0]
 
             finalShuffledChunk?.let {
@@ -797,5 +890,6 @@ class SearchViewModel
         companion object {
             private const val TAG = "SearchViewModel"
             private const val INIT_MAX_SIZE = 30
+            private const val MAX_FILL_STREAK = 3
         }
     }

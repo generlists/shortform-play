@@ -6,7 +6,9 @@ import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.data.api.AuthApi
 import com.sean.ratel.android.data.api.Networking
 import com.sean.ratel.android.data.api.interceptor.AuthInterceptor
+import com.sean.ratel.android.data.api.interceptor.FirebaseTokenInterceptor
 import com.sean.ratel.android.data.api.youtube.FireBaseApi
+import com.sean.ratel.android.data.api.youtube.ShortFormPlayV2Api
 import com.sean.ratel.android.data.api.youtube.YouTubeSearchApi
 import com.sean.ratel.android.data.common.STRINGS.REMOTE_CONFIg_INTERVAL
 import com.sean.ratel.android.di.qualifier.AuthOKttpClient
@@ -34,7 +36,10 @@ object NetworkModule {
     @Provides
     @Singleton
     @AuthOKttpClient
-    fun provideAuthOkHttpClient(authInterceptor: AuthInterceptor): OkHttpClient = Networking.createAuthOkHttpClient(authInterceptor)
+    fun provideAuthOkHttpClient(
+        authInterceptor: AuthInterceptor,
+        firebaseTokenInterceptor: FirebaseTokenInterceptor,
+    ): OkHttpClient = Networking.createAuthOkHttpClient(authInterceptor, firebaseTokenInterceptor)
 
     @Provides
     @Singleton
@@ -58,6 +63,18 @@ object NetworkModule {
             baseUrl,
             okHttpClient,
             YouTubeSearchApi::class.java,
+        )
+
+    @Provides
+    @Singleton
+    fun provideShortFormPlayV2Api(
+        @ShortFormPlayBaseUrl baseUrl: String,
+        @AuthOKttpClient okHttpClient: OkHttpClient,
+    ): ShortFormPlayV2Api =
+        Networking.createService(
+            baseUrl,
+            okHttpClient,
+            ShortFormPlayV2Api::class.java,
         )
 
     @Provides

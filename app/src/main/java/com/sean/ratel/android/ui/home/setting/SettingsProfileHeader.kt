@@ -62,6 +62,7 @@ fun SettingsProfileHeader(
     name: String?,
     username: String,
     onClick: (() -> Unit)? = null,
+    avatarUrl: String? = null,
 ) {
     val hasAdRemove = isAdRemoved
     val hasAny = hasAdRemove
@@ -188,7 +189,7 @@ fun SettingsProfileHeader(
                         contentAlignment = Alignment.Center,
                     ) {
                         NetworkImage(
-                            url = getAvataUrl(name),
+                            url = avatarUrl ?: getAvataUrl(name),
                             contentDescription = null,
                             modifier =
                                 Modifier

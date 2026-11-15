@@ -39,8 +39,8 @@ android {
         applicationId = "com.sean.ratel.android"
         minSdk = 28
         targetSdk = 36
-        versionCode = 11202
-        versionName = "1.1.2.2"
+        versionCode = 12000
+        versionName = "1.2.0"
         testInstrumentationRunner = "com.sean.ratel.android.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
@@ -145,16 +145,6 @@ android {
             )
             buildConfigField(
                 "String",
-                "REGAL_URL",
-                "\"${localProperties.getProperty("REGAL_URL")}\"",
-            )
-            buildConfigField(
-                "String",
-                "REGAL_URL_EN",
-                "\"${localProperties.getProperty("REGAL_URL_EN")}\"",
-            )
-            buildConfigField(
-                "String",
                 "admobAppId",
                 "\"${localProperties.getProperty("debug_admobAppId")}\"",
             )
@@ -241,16 +231,6 @@ android {
                 "String",
                 "NOTICES_URL_ID",
                 "\"${localProperties.getProperty("NOTICES_URL_ID")}\"",
-            )
-            buildConfigField(
-                "String",
-                "REGAL_URL",
-                "\"${localProperties.getProperty("REGAL_URL")}\"",
-            )
-            buildConfigField(
-                "String",
-                "REGAL_URL_EN",
-                "\"${localProperties.getProperty("REGAL_URL_EN")}\"",
             )
             buildConfigField(
                 "String",
@@ -393,6 +373,10 @@ dependencies {
     implementation(libs.firebase.auth.ktx)
     // Firebase Authentication
     implementation(libs.firebase.auth)
+    // Google 로그인 (Credential Manager)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.google.googleid)
     implementation(libs.firebase.storage)
     // Analytics
     implementation(libs.firebase.analytics)

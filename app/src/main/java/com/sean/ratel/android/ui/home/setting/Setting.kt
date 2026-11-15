@@ -47,7 +47,6 @@ import com.sean.ratel.android.ui.theme.RatelappTheme
 import com.sean.ratel.android.utils.ComposeUtil.GetShareLauncher
 import com.sean.ratel.android.utils.ComposeUtil.PremiumPopup
 import com.sean.ratel.android.utils.PhoneUtil
-import com.sean.ratel.player.ui.ThemeMode
 import so.smartlab.common.utils.log.RLog
 
 @Suppress("ktlint:standard:function-naming")
@@ -75,10 +74,8 @@ fun SettingView(
     val bottomBarHeight = mainViewModel.bottomBarHeight.value
     val fromPermissionPage by pushViewModel.fromPermissionPage.collectAsState(initial = false)
     val shareLauncher = GetShareLauncher(activity, mainViewModel)
-    val userId by viewModel.userId.collectAsState()
 
     val premiumData by billingViewModel.premiumData.collectAsStateWithLifecycle(UiState.Idle)
-    val productionDetail by billingViewModel.productDetails.collectAsStateWithLifecycle()
     val isRemoveAd by billingViewModel.isAdRemoved.collectAsStateWithLifecycle()
     var onRemoveAdsClick by remember { mutableStateOf(false) }
 
@@ -123,16 +120,6 @@ fun SettingView(
                         .fillMaxSize()
                         .padding(bottom = bottomBarHeight.dp),
             ) {
-                item {
-                    SettingsProfileHeader(
-                        mainViewModel = mainViewModel,
-                        isAdRemoved = isRemoveAd,
-                        currentMode = ThemeMode.DARK,
-                        name = userId,
-                        username = if (!isRemoveAd) "guest" else productionDetail?.oneTimePurchaseOfferDetails?.offerId ?: "",
-                        onClick = null,
-                    )
-                }
                 item { SettingsService(viewModel, pushViewModel) }
                 item {
                     Spacer(Modifier.height(16.dp))

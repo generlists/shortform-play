@@ -317,9 +317,9 @@ fun NotificationIconButton(
                         Modifier
                             .align(Alignment.TopEnd)
                             .offset(x = 0.dp, y = 2.dp)
-                            .size(6.dp)
+                            .size(7.dp)
                             .clip(CircleShape)
-                            .background(Color.Red),
+                            .background(APP_TEXT_COLOR),
                 )
             }
         }

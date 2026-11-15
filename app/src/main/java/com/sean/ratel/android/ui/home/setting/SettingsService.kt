@@ -68,6 +68,7 @@ fun SettingsService(
         ) {
             SettingsService(SettingsItems.SERVICE_TITLE_NOTICE, viewModel)
             SettingsService(SettingsItems.SERVICE_TITLE_QNA, viewModel)
+            SettingsService(SettingsItems.SERVICE_TITLE_TERMS, viewModel)
             SettingsService(SettingsItems.SERVICE_TITLE_REGAL, viewModel)
             SettingPush(SettingsItems.SERVICE_PUSH, pushViewModel)
         }
@@ -178,18 +179,19 @@ private fun runLinkItem(
             )
         }
 
-        SettingsItems.SERVICE_TITLE_REGAL -> {
-            val country = Locale.getDefault().country
-            viewModel?.runAppLink(
-                context,
-                if (country == "US") {
-                    STRINGS.REGAL_URL_EN
-                } else if (country == "KR") {
-                    STRINGS.REGAL_URL
-                } else {
-                    STRINGS.REGAL_URL_EN
-                },
+        SettingsItems.SERVICE_TITLE_TERMS -> {
+            // 한국은 한글판, 그 밖의 국가는 영문판
+            val korea = Locale.getDefault().country == "KR"
+            viewModel?.runAppLink(context, if (korea) STRINGS.TERMS_URL else STRINGS.TERMS_URL_EN)
+            viewModel?.sendGALog(
+                Event.SCREEN_VIEW,
+                Destination.Terms.route,
             )
+        }
+
+        SettingsItems.SERVICE_TITLE_REGAL -> {
+            val korea = Locale.getDefault().country == "KR"
+            viewModel?.runAppLink(context, if (korea) STRINGS.PRIVACY_URL else STRINGS.PRIVACY_URL_EN)
             viewModel?.sendGALog(
                 Event.SCREEN_VIEW,
                 Destination.Regal.route,

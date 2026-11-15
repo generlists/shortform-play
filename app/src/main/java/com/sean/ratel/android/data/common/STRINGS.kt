@@ -13,9 +13,14 @@ object STRINGS {
 
     const val NOTICES_URL_ID = BuildConfig.NOTICES_URL_ID
 
-    const val REGAL_URL = BuildConfig.REGAL_URL
+    // 서비스 이용약관 · 개인정보 처리방침 (스마트랩 홈페이지). 한국은 한글판, 그 밖의 국가는 영문판을 연다
+    const val TERMS_URL = "https://smartlab.so/shortform_play_terms"
 
-    const val REGAL_URL_EN = BuildConfig.REGAL_URL_EN
+    const val TERMS_URL_EN = "https://smartlab.so/shortform_play_terms_en"
+
+    const val PRIVACY_URL = "https://smartlab.so/shortform_play_privacy"
+
+    const val PRIVACY_URL_EN = "https://smartlab.so/shortform_play_privacy_en"
 
     const val FEEDBACK_TITLE = "[숏폼플레이 문의]"
 
@@ -48,6 +53,7 @@ object STRINGS {
     const val URL_MY_PACKAGE_NAME: String = "com.sean.ratel.android"
     const val URL_MY_OTHER_PACKAGE_NAME: String = "so.smartlab.video.scrap.pro"
     const val URL_MY_OTHER_PACKAGE_NAME_YOUNGJUSO: String = "so.smartlab.youngjuso.android"
+    const val URL_MY_OTHER_PACKAGE_NAME_IPO_MONEY: String = "so.smartlab.ipo.money.android"
 
     const val SERVICE_START_DATE = "20241029"
     const val SERVICE_RENEWAL_START_DATE = "20241207"

@@ -49,7 +49,8 @@
     <string name="setting_service">การจัดการบริการ</string>
     <string name="setting_notice">ประกาศ</string>
     <string name="setting_qna">ติดต่อเรา</string>
-    <string name="setting_private_policy">ข้อกำหนดและนโยบายความเป็นส่วนตัว</string>
+    <string name="setting_terms_of_service">ข้อกำหนดการให้บริการ</string>
+    <string name="setting_private_policy">นโยบายความเป็นส่วนตัว</string>
 
     <string name="setting_play">ฟังก์ชันวิดีโอ</string>
     <string name="setting_play_continue">เล่นต่อเนื่อง</string>
@@ -81,6 +82,7 @@
     <string name="setting_dev_other_app">แอปอื่นๆ จากนักพัฒนารายนี้</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
     <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
+    <string name="setting_dev_other_app_name_ipo_money">IPO Money</string>
 
     <!-- ผู้จัดการแอป -->
     <string name="app_manager">ตัวจัดการแอป</string>

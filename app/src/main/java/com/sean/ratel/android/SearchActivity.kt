@@ -2,8 +2,10 @@ package com.sean.ratel.android
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -32,11 +34,12 @@ class SearchActivity : FragmentActivity() {
         }
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            enableEdgeToEdge()
-        } else {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
+        // 모든 버전에서 enableEdgeToEdge 를 쓴다(Play 권장). 앱 화면은 검은 배경이라 막대는 투명 + 밝은 아이콘으로 맞춘다
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
+        )
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
             SearchScreen(

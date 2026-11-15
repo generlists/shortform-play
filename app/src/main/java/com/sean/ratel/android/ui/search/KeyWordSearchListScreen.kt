@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -38,6 +39,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -76,12 +78,15 @@ import com.sean.ratel.android.data.common.RemoteConfig
 import com.sean.ratel.android.data.common.RemoteConfig.RANDOM_GA_END_SIZE
 import com.sean.ratel.android.data.common.STRINGS.REMAIN_AD_MARGIN
 import com.sean.ratel.android.data.dto.SearchResultModel
+import com.sean.ratel.android.data.filter.SearchFilterInfo
+import com.sean.ratel.android.data.filter.SearchFilterMode
 import com.sean.ratel.android.data.log.GAKeys.SEARCH_SCREEN
 import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.common.image.NetworkImage
 import com.sean.ratel.android.ui.home.ViewType
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_SUBTITLE_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.Background_op_20
 import com.sean.ratel.android.ui.theme.RatelappTheme
@@ -108,6 +113,7 @@ fun KeyWordSearchDisplayUi(
     searchViewModel: SearchViewModel,
 ) {
     val currentData = searchViewModel.shortsSearchList.collectAsState()
+    val filterInfo = searchViewModel.searchFilterInfo.collectAsState()
 
     Scaffold(
         containerColor = APP_BACKGROUND,
@@ -136,15 +142,24 @@ fun KeyWordSearchDisplayUi(
                         top = 0.dp,
                     ),
             ) {
-                KeyWordSearchGridItemView(
-                    query,
-                    currentData.value,
-                    searchViewModel,
-                    loading = { load ->
-                        moreLoading = load
-                    },
-                    listState,
-                )
+                Column(Modifier.fillMaxSize()) {
+                    SearchFilterBar(
+                        info = filterInfo.value,
+                        onReveal = { searchViewModel.setRevealHidden(true) },
+                        onHide = { searchViewModel.setRevealHidden(false) },
+                    )
+                    Box(Modifier.weight(1f)) {
+                        KeyWordSearchGridItemView(
+                            query,
+                            currentData.value,
+                            searchViewModel,
+                            loading = { load ->
+                                moreLoading = load
+                            },
+                            listState,
+                        )
+                    }
+                }
             }
         }
 
@@ -236,7 +251,23 @@ fun KeyWordSearchGridItemList(
             )
         } , index.value : ${index.value}",
     )
+    // 페이지가 하나 끝날 때마다(moreIndex 가 올라갈 때) 아직 바닥인데 전부 필터에 걸려 목록이 그대로이면 다음 페이지를 이어서 받는다
+    LaunchedEffect(index.value) {
+        if (isAtBottom && searchViewModel.canAutoFill() &&
+            searchViewModel.maxMoreIndex(SearchType.VideoSearch) > index.value && searchViewModel.hasNext.value
+        ) {
+            loading(true)
+            searchViewModel.moreContent(context, index.value + 1, query, complete = {
+                coroutine.launch {
+                    loading(false)
+                    searchViewModel.setMorEVent(index.value + 1)
+                }
+            })
+        }
+    }
+
     LaunchedEffect(isAtBottom) {
+        if (!isAtBottom) searchViewModel.resetFillStreak()
         if (isAtBottom) {
             //   RLog.d("KKKKKKKKK", "isAtBottom : $isAtBottom , maxMoreIndex : ${searchViewModel.maxMoreIndex()} , index.value : ${index.value},  hasNext : ${searchViewModel.hasNext.value}")
             if (searchViewModel.maxMoreIndex(SearchType.VideoSearch) > index.value && searchViewModel.hasNext.value) {
@@ -675,5 +706,45 @@ fun SearchResultPreView() {
                 "11개월 전",
             )
         // KeyWordSearchGridItemList(listOf(s1),null,null,{},LazyListState(),{})
+    }
+}
+
+/** 필터 때문에 결과가 달라졌을 때 알려 주고 되돌릴 수 있게 하는 얇은 바. */
+@Suppress("ktlint:standard:function-naming")
+@Composable
+private fun SearchFilterBar(
+    info: SearchFilterInfo,
+    onReveal: () -> Unit,
+    onHide: () -> Unit,
+) {
+    val (text, action, onAction) =
+        when {
+            info.mode == SearchFilterMode.FILTERED && info.hiddenCount > 0 ->
+                Triple(
+                    stringResource(R.string.search_filter_hidden, info.hiddenCount),
+                    stringResource(R.string.search_filter_show),
+                    onReveal,
+                )
+
+            info.mode == SearchFilterMode.REVEALED ->
+                Triple(stringResource(R.string.search_filter_revealed), stringResource(R.string.search_filter_hide_again), onHide)
+
+            info.mode == SearchFilterMode.QUERY_OVERLAP -> Triple(stringResource(R.string.search_filter_overlap), null, null)
+            info.mode == SearchFilterMode.ALL_HIDDEN -> Triple(stringResource(R.string.search_filter_all_hidden), null, null)
+            else -> return
+        }
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .background(Color(0xFF121212))
+            .padding(horizontal = 16.dp, vertical = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text, color = APP_SUBTITLE_TEXT_COLOR, fontSize = 13.sp, modifier = Modifier.weight(1f))
+        if (action != null && onAction != null) {
+            TextButton(onClick = onAction, modifier = Modifier.heightIn(min = 44.dp)) {
+                Text(action, color = APP_TEXT_COLOR, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            }
+        }
     }
 }

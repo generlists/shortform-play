@@ -1,6 +1,8 @@
 package com.sean.ratel.android.data.common
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import com.google.android.play.core.integrity.IntegrityManagerFactory
 import com.google.android.play.core.integrity.StandardIntegrityException
@@ -113,12 +115,7 @@ class IntegrityManager
 
                             is ApiResult.Exception -> {
                                 RLog.e(TAG, "기타 네트워크 예외: ${callResult.e.localizedMessage}")
-                                Toast
-                                    .makeText(
-                                        appContext,
-                                        "기타 네트워크 예외: ${callResult.e.localizedMessage}",
-                                        Toast.LENGTH_LONG,
-                                    ).show()
+                                showToast("기타 네트워크 예외: ${callResult.e.localizedMessage}")
                             }
 
                             else -> {
@@ -133,10 +130,18 @@ class IntegrityManager
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
-                Toast.makeText(appContext, "예외: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                showToast("예외: ${e.localizedMessage}")
             }
 
             return null
+        }
+
+        /**
+         * 이 함수는 OkHttp 스레드(AuthInterceptor)에서도 불린다. Looper 가 없는 스레드에서 Toast 를 만들면 앱이 죽으므로
+         * 항상 메인 스레드로 넘겨서 띄운다.
+         */
+        private fun showToast(message: String) {
+            Handler(Looper.getMainLooper()).post { Toast.makeText(appContext, message, Toast.LENGTH_LONG).show() }
         }
 
         // hilt 순환참조로 따로 추가

@@ -18,6 +18,11 @@ enum class SettingsItems(
         R.string.setting_qna,
         null,
     ),
+    SERVICE_TITLE_TERMS(
+        null,
+        R.string.setting_terms_of_service,
+        null,
+    ),
     SERVICE_TITLE_REGAL(
         null,
         R.string.setting_private_policy,

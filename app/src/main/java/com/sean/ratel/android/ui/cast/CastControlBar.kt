@@ -100,7 +100,11 @@ fun CastControlBar(
     var showControls by rememberSaveable { mutableStateOf(true) }
     val bottomPadding =
         when (currentRoute) {
-            Destination.Home.Main.route, Destination.Home.Main.ShortForm.route, Destination.Setting.route -> {
+            Destination.Home.Main.route,
+            Destination.Home.Main.ShortForm.route,
+            Destination.My.route,
+            Destination.Setting.route,
+            -> {
                 bottomBarHeight.dp
             }
 

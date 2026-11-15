@@ -1,8 +1,11 @@
 package com.sean.ratel.android.ui.home
 
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.DrawableRes
 import androidx.annotation.Keep
 import androidx.annotation.StringRes
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -14,6 +17,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsBottomHeight
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -33,13 +37,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.google.firebase.analytics.FirebaseAnalytics.Event
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
+import com.sean.ratel.android.ui.my.AccountViewModel
 import com.sean.ratel.android.ui.navigation.Destination
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
+import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
 import com.sean.ratel.android.ui.theme.RatelappTheme
 
 @Keep
@@ -63,6 +71,13 @@ enum class HomeTab(
         R.drawable.ic_short_video_unselected,
         Destination.Home.Main.ShortForm.route,
         Destination.Home.Main.ShortForm.route,
+    ),
+    MY(
+        R.string.my,
+        R.drawable.ic_my_selected,
+        R.drawable.ic_my_unselected,
+        Destination.My.route,
+        Destination.My.route,
     ),
     SETTINGS(
         R.string.setting,
@@ -91,6 +106,11 @@ fun HomeBottomBar(
             currentRoute != Destination.AppManager.route &&
             currentRoute != Destination.Notices.route &&
             currentRoute != Destination.Setting.route &&
+            currentRoute != Destination.My.route &&
+            currentRoute != Destination.FilterEdit.route &&
+            currentRoute != Destination.HiddenVideos.route &&
+            currentRoute != Destination.LibraryFolder.route &&
+            currentRoute != Destination.Onboarding.route &&
             currentRoute != Destination.SettingAppManagerDetail.route &&
             currentRoute != Destination.SettingAppLicense.route &&
             currentRoute != Destination.Home.Main.PoplarShortFormMore.route &&
@@ -107,9 +127,17 @@ fun HomeBottomBar(
             pipClick.value?.first == false,
     )
 
+    // 마이 탭 점 배지(시안 A1·A2·B3): 내 필터가 아직 없는 동안
+    val activity = LocalActivity.current
+    val accountViewModel =
+        remember(activity) { (activity as? ComponentActivity)?.let { ViewModelProvider(it)[AccountViewModel::class.java] } }
+    val filterState = accountViewModel?.filterState?.collectAsStateWithLifecycle()?.value
+    val showMyDot = filterState != null && !filterState.filter.hasRules
+
     HomeBottomBarView(
         tabs = tabs,
         routes = routes,
+        showMyDot = showMyDot,
         currentRoute = currentRoute,
         tabClick = {
             if (it.route != currentRoute) {
@@ -145,6 +173,7 @@ fun HomeBottomBar(
 private fun HomeBottomBarView(
     tabs: List<HomeTab>,
     routes: List<String>,
+    showMyDot: Boolean,
     currentRoute: String,
     tabClick: (HomeTab) -> Unit,
     mainViewModel: MainViewModel,
@@ -186,14 +215,24 @@ private fun HomeBottomBarView(
                         val selected = currentRoute == tab.route
                         BottomNavigationItem(
                             icon = {
-                                Icon(
-                                    painter =
-                                        painterResource(
-                                            if (selected) tab.selectedIcon else tab.unselectedIcon,
-                                        ),
-                                    contentDescription = stringResource(id = tab.title),
-                                    modifier = Modifier.size(26.dp),
-                                )
+                                Box {
+                                    Icon(
+                                        painter =
+                                            painterResource(
+                                                if (selected) tab.selectedIcon else tab.unselectedIcon,
+                                            ),
+                                        contentDescription = stringResource(id = tab.title),
+                                        modifier = Modifier.size(26.dp),
+                                    )
+                                    if (tab == HomeTab.MY && showMyDot) {
+                                        Box(
+                                            Modifier
+                                                .align(Alignment.TopEnd)
+                                                .size(7.dp)
+                                                .background(APP_TEXT_COLOR, CircleShape),
+                                        )
+                                    }
+                                }
                             },
                             label = {
                                 Text(
