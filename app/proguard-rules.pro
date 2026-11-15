@@ -31,7 +31,7 @@
 -keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
 ##---------------End: proguard configuration for Gson  ----------
 
--dontoptimize
+# (R8 최적화를 켠다 — DEX 코드 최적화 비율 경고. 리플렉션으로 읽는 모델은 @Keep 으로 보존)
 
 # Retrofit,Network 라이브러리 관련 클래스 보존
 -keep class retrofit2.** { *; }

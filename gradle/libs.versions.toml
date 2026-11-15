@@ -14,7 +14,7 @@ material = "1.13.0"
 compose = "2024.09.00"
 coreKtx = "1.17.0"
 android-splash = "1.0.1"
-activity = "1.9.0"
+activity = "1.10.1"
 fragmentktx ="1.6.1"
 datastore = "1.1.1"
 materialcompose = "1.6.0"
@@ -26,7 +26,7 @@ navigation = "2.7.7"
 okhttp3 = "4.9.3"
 retrofit2 = "2.9.0"
 coil = "2.7.0"
-lottie = "6.3.0"
+lottie = "6.6.9"
 
 #google
 google-play-service="4.4.4"
@@ -50,6 +50,10 @@ media-router ="1.8.0"
 crashlytics = "3.0.2"
 firebase = "33.2.0"
 firbasektx ="22.1.0"
+
+#credential manager (Google 로그인)
+androidx-credentials = "1.6.0"
+google-googleid = "1.2.0"
 
 #Util
 java-jwt="4.4.0"
@@ -154,6 +158,9 @@ com-android-installreferrer = { module = "com.android.installreferrer:installref
 #admob
 google-play-service-ads = { module = "com.google.android.gms:play-services-ads", version.ref = "google-ad"}
 google-play-service-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "google-auth"}
+androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "androidx-credentials"}
+androidx-credentials-play-services-auth = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "androidx-credentials"}
+google-googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "google-googleid"}
 
 
 #license

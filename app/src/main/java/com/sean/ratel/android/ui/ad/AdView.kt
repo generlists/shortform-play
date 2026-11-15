@@ -120,7 +120,7 @@ fun AdBannerView(
             contentAlignment = alignment,
         ) {
             Column {
-                if (currentRoute != Destination.Setting.route) {
+                if (currentRoute != Destination.Setting.route && currentRoute != Destination.My.route) {
                     when (val state = premiumSheetData) {
                         is UiState.Success -> {
                             RemoveAdsChip(
@@ -178,6 +178,7 @@ private fun isBottomBar(route: String) =
     (
         route == Destination.Home.Main.route ||
             route == Destination.Home.Main.ShortForm.route ||
+            route == Destination.My.route ||
             route == Destination.Setting.route
     )
 

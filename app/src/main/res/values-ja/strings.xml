@@ -48,7 +48,8 @@
     <string name="setting_service">サービス管理</string>
     <string name="setting_notice">お知らせ</string>
     <string name="setting_qna">お問い合わせ</string>
-    <string name="setting_private_policy">利用規約とプライバシーポリシー</string>
+    <string name="setting_terms_of_service">利用規約</string>
+    <string name="setting_private_policy">プライバシーポリシー</string>
     <string name="setting_play">動画機能</string>
     <string name="setting_play_continue">連続再生</string>
     <string name="setting_play_clipping_dscription">1つの動画が終了した後、同じ動画を繰り返し再生します。</string>
@@ -75,6 +76,7 @@
     <string name="setting_dev_other_app">この開発者の他のアプリ</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
     <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
+    <string name="setting_dev_other_app_name_ipo_money">IPO Money</string>
 
     <!-- アプリマネージャー -->
     <string name="app_manager">アプリマネージャー</string>

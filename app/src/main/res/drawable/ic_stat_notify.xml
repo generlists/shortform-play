@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 상태 표시줄 알림 아이콘(단색): 세로 화면 + 재생 모양 뚫림, 뒤 화면 -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path android:fillColor="#FFFFFF" android:fillAlpha="0.55" android:pathData="M11.500,3.500H17A2,2 0,0 1,19,5.500V15A2,2 0,0 1,17,17H15.500V7.500A3.500,3.500 0,0 0,12,4V3.500Z" />
+    <path android:fillColor="#FFFFFF" android:fillType="evenOdd" android:pathData="M8,6H12A3,3 0,0 1,15,9V19A3,3 0,0 1,12,22H8A3,3 0,0 1,5,19V9A3,3 0,0 1,8,6ZM8.600,10.500L12.200,14L8.600,17.500Z" />
+</vector>

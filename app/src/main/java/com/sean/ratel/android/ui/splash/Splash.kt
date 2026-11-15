@@ -7,15 +7,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -25,13 +18,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.storage.FirebaseStorage
 import com.sean.ratel.android.MainViewModel
@@ -46,12 +36,9 @@ import com.sean.ratel.android.data.log.GASplashAnalytics
 import com.sean.ratel.android.ui.common.ShortFormCommonAlertDialog
 import com.sean.ratel.android.ui.common.ShortFormSelectDialog
 import com.sean.ratel.android.ui.home.BillingViewModel
-import com.sean.ratel.android.ui.progress.LottieLoader
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.theme.APP_ALERT_BODY_TEXT_COLOR
-import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.utils.PhoneUtil
-import com.sean.ratel.android.utils.PhoneUtil.StatusBarHeight
 import com.sean.ratel.android.utils.PhoneUtil.qnaResource
 import com.sean.ratel.android.utils.TimeUtil
 import com.sean.ratel.android.utils.TimeUtil.localeFormatTimestamp
@@ -155,7 +142,7 @@ fun Splash(
                 LaunchedEffect(Unit) {
                     delay(500)
                     RLog.d("STEP", "move DONE -> GO HOME ")
-                    mainViewModel.goMainHome()
+                    mainViewModel.goHomeAfterSplash()
                 }
             }
         }
@@ -163,7 +150,7 @@ fun Splash(
             visible = step != SplashStep.DONE,
             exit = fadeOut(animationSpec = tween(durationMillis = 500)),
         ) {
-            SplashView()
+            SplashView(step)
         }
     }
 }
@@ -227,41 +214,6 @@ private fun NotificationPermission(
 
             pushViewModel.refreshPermission()
         }
-    }
-}
-
-@Suppress("ktlint:standard:function-naming")
-@Composable
-private fun SplashView() {
-    val statusBarPadding = StatusBarHeight()
-
-    Box(
-        Modifier
-            .fillMaxSize()
-            .background(APP_BACKGROUND)
-            .offset(y = -statusBarPadding),
-        contentAlignment = Alignment.Center,
-    ) {
-        LottieLoader(
-            Modifier
-                .wrapContentSize()
-                .width(240.dp)
-                .height(240.dp),
-            rawRes = R.raw.splash,
-            forever = true,
-        )
-    }
-    Box(
-        Modifier
-            .fillMaxSize()
-            .padding(bottom = 30.dp),
-        contentAlignment = Alignment.BottomCenter,
-    ) {
-        Image(
-            painterResource(R.drawable.splash_text),
-            contentDescription = "splash",
-            modifier = Modifier.wrapContentSize(),
-        )
     }
 }
 

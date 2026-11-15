@@ -7,6 +7,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -113,11 +114,12 @@ class MainActivity : FragmentActivity() {
         if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) window.decorView
         super.onCreate(savedInstanceState)
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            enableEdgeToEdge()
-        } else {
-            WindowCompat.setDecorFitsSystemWindows(window, false)
-        }
+        // 모든 버전에서 enableEdgeToEdge 를 쓴다(Play 권장). 앱 화면은 검은 배경이라 막대는 투명 + 밝은 아이콘으로 맞춘다
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(android.graphics.Color.TRANSPARENT),
+        )
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         mainViewModel.setForceClearCache(intent.getBooleanExtra("clear_cache", false))
 
@@ -368,6 +370,8 @@ class MainActivity : FragmentActivity() {
     private fun setUnifiedLinkHandler(intent: Intent?) {
         RLog.d("deeplink", "setUnifiedLinkHandler $intent")
         if (intent?.data == null) return
+        // 링크로 열렸으면 처음 실행이어도 온보딩을 건너뛴다
+        mainViewModel.launchedFromLink = true
 
         launch {
             // 이벤트 등록

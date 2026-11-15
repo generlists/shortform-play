@@ -33,6 +33,13 @@ import com.sean.ratel.android.ui.home.setting.SettingViewModel
 import com.sean.ratel.android.ui.home.setting.SettingsAppManager
 import com.sean.ratel.android.ui.home.shortform.ShortForm
 import com.sean.ratel.android.ui.home.shortform.ShortFormViewModel
+import com.sean.ratel.android.ui.my.AccountViewModel
+import com.sean.ratel.android.ui.my.FilterEditScreen
+import com.sean.ratel.android.ui.my.HiddenVideosScreen
+import com.sean.ratel.android.ui.my.LibraryFolderScreen
+import com.sean.ratel.android.ui.my.LibraryViewModel
+import com.sean.ratel.android.ui.my.MyScreen
+import com.sean.ratel.android.ui.onboarding.OnboardingScreen
 import com.sean.ratel.android.ui.push.NotificationScreen
 import com.sean.ratel.android.ui.push.PushViewModel
 import com.sean.ratel.android.ui.splash.Splash
@@ -58,7 +65,11 @@ fun NavGraph(
 
     val mainViewModel: MainViewModel = ViewModelProvider(activity)[MainViewModel::class.java]
     val pushViewModel: PushViewModel = ViewModelProvider(activity)[PushViewModel::class.java]
+    // 마이 탭과 필터 편집 화면이 같은 상태(로그인, 편집 중인 필터)를 쓴다
+    val accountViewModel: AccountViewModel = ViewModelProvider(activity)[AccountViewModel::class.java]
     val billingViewModel: BillingViewModel = ViewModelProvider(activity)[BillingViewModel::class.java]
+    // 보관함(폴더 화면과 재생 화면의 저장 시트가 같은 상태를 쓴다)
+    val libraryViewModel: LibraryViewModel = ViewModelProvider(activity)[LibraryViewModel::class.java]
 
     val mainVideoModel: MainVideoViewModel =
         ViewModelProvider(activity)[MainVideoViewModel::class.java]
@@ -125,7 +136,8 @@ fun NavGraph(
                 popExitTransition = { ExitTransition.None },
             ) { backStackEntry ->
                 val viewModel: ShortFormViewModel = hiltViewModel(key = ShortFormViewModel.TAG)
-                val mainData = splashViewModel.shortformList.collectAsState().value
+                // 내 제외 필터가 적용된 홈 데이터(MainViewModel). splashViewModel.shortformList 는 원본이라 필터가 빠진다
+                val mainData = mainViewModel.mainShorts.collectAsState().value
 
                 LaunchedEffect(mainData.first) {
                     viewModel.mainVideoData(mainData.first)
@@ -138,6 +150,16 @@ fun NavGraph(
 
                 RLog.d("NaviGraph", "navi grapth  :filter : $filter")
                 ShortForm(modifier, mainViewModel, viewModel, filter)
+            }
+
+            composable(
+                Destination.My.route,
+                enterTransition = { EnterTransition.None },
+                exitTransition = { ExitTransition.None },
+                popEnterTransition = { EnterTransition.None },
+                popExitTransition = { ExitTransition.None },
+            ) {
+                MyScreen(accountViewModel, mainViewModel, billingViewModel)
             }
 
             composable(
@@ -245,6 +267,26 @@ fun NavGraph(
                 hiltViewModel(key = AppManagerViewModel.TAG)
 
             AppManagerView(modifier, appManagerViewModel, mainViewModel, billingViewModel)
+        }
+
+        composable(Destination.FilterEdit.route) {
+            FilterEditScreen(accountViewModel, mainViewModel)
+        }
+
+        composable(
+            Destination.LibraryFolder.route,
+            arguments = Destination.LibraryFolder.navArguments,
+        ) { backStackEntry ->
+            val folderId = backStackEntry.arguments?.getString(Destination.LibraryFolder.ARG_FOLDER_ID).orEmpty()
+            LibraryFolderScreen(folderId, libraryViewModel, mainViewModel)
+        }
+
+        composable(Destination.HiddenVideos.route) {
+            HiddenVideosScreen(accountViewModel, mainViewModel)
+        }
+
+        composable(Destination.Onboarding.route) {
+            OnboardingScreen(accountViewModel, mainViewModel)
         }
 
         composable(Destination.SettingAppManagerDetail.route) {

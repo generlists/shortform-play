@@ -375,6 +375,15 @@ YouTubeContentEndViewModel
             }
         }
 
+        /** 보관함 폴더에서 재생: 폴더의 영상들을 "최근 본 영상" 재생과 같은 목록(watchList)으로 [selectedIndex] 부터 이어서 보여 준다. */
+        fun setLibraryData(
+            videos: List<MainShortsModel>,
+            selectedIndex: Int,
+        ) {
+            _recentlyWatchList.value = videos
+            setWatchData(selectedIndex)
+        }
+
         fun setWatchData(selectedIndex: Int) {
             // 리스트가 비어있지 않으면 빈 리스트로 초기화
             if (_watchList.value.isNotEmpty()) {

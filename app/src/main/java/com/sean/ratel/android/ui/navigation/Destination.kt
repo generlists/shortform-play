@@ -30,6 +30,26 @@ object Destination {
 
     data object Setting : Screen("home/setting")
 
+    /** 하단 "마이" 탭 — 로그인, 내 필터 요약. */
+    data object My : Screen("home/my")
+
+    /** 내 필터 만들기·관리 (마이에서 들어간다). */
+    data object FilterEdit : Screen("home/my/filter")
+
+    /** 내 보관함의 폴더 하나(마이에서 들어간다). 경로 인자 folderId. */
+    data object LibraryFolder : DynamicScreen(
+        baseRoute = "home/my/library",
+        pathArgNames = listOf("folderId"),
+    ) {
+        const val ARG_FOLDER_ID = "folderId" // pathArgNames 와 같은 값(상위 생성자 인자에서는 이 상수를 쓸 수 없다)
+    }
+
+    /** 지금 필터로 숨겨진 영상과 "빼지 않기" 관리 (마이에서 들어간다). */
+    data object HiddenVideos : Screen("home/my/hidden")
+
+    /** 처음 실행 때 한 번 보여주는 필터 온보딩(스플래시 다음). */
+    data object Onboarding : Screen("onboarding")
+
     data object SettingAppManagerDetail : Screen("home/setting/appManager/detail")
 
     data object SettingAppRate : Screen("home/setting/appManager/rate")
@@ -43,6 +63,8 @@ object Destination {
     data object Notices : Screen("setting/notice")
 
     data object QNA : Screen("home/qna")
+
+    data object Terms : Screen("setting/terms")
 
     data object Regal : Screen("setting/regal")
 

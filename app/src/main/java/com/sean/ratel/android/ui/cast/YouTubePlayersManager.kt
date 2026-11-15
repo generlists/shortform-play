@@ -312,6 +312,19 @@ class YouTubePlayersManager
             }
         }
 
+        /** 지금 보고 있는 영상을 멈춘다/이어서 재생한다(시청 한도 "계속 볼까요?"에서 쓴다). */
+        fun pauseCurrent() {
+            val fragment = activityRef?.get()?.let { getEndFragment(it) }
+            RLog.d(TAG, "[pauseCurrent] fragment : $fragment")
+            fragment?.pause()
+        }
+
+        fun resumeCurrent() {
+            val fragment = activityRef?.get()?.let { getEndFragment(it) }
+            RLog.d(TAG, "[resumeCurrent] fragment : $fragment")
+            fragment?.play()
+        }
+
         private fun getEndFragment(context: Context): YouTubeEndFragment? {
             val fragmentManager =
                 (context as FragmentActivity).supportFragmentManager

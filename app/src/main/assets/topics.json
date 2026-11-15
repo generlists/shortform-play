@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "id": "male_idol",
+      "names": { "ko": "남자 아이돌", "en": "Boy bands", "ja": "男性アイドル" },
+      "terms": {
+        "ko": ["남자 아이돌", "남돌", "보이그룹", "방탄소년단", "세븐틴", "스트레이 키즈", "스트레이키즈", "엔하이픈", "투모로우바이투게더", "투바투", "엑소", "샤이니", "에이티즈", "더보이즈", "제로베이스원", "엔시티"],
+        "en": ["boy band", "boy group", "bts", "stray kids", "enhypen", "exo", "shinee", "bigbang", "ateez", "nct", "riize", "zerobaseone"],
+        "ja": ["男性アイドル", "ボーイズグループ", "防弾少年団"]
+      }
+    },
+    {
+      "id": "female_idol",
+      "names": { "ko": "여자 아이돌", "en": "Girl groups", "ja": "女性アイドル" },
+      "terms": {
+        "ko": ["여자 아이돌", "여돌", "걸그룹", "블랙핑크", "뉴진스", "르세라핌", "트와이스", "레드벨벳", "에이핑크", "마마무"],
+        "en": ["girl group", "blackpink", "newjeans", "le sserafim", "aespa", "red velvet", "itzy", "mamamoo"],
+        "ja": ["女性アイドル", "ガールズグループ"]
+      }
+    },
+    {
+      "id": "kpop_fancam",
+      "names": { "ko": "직캠·팬캠", "en": "Fancams", "ja": "ファンカム" },
+      "terms": {
+        "ko": ["직캠", "팬캠", "음악중심", "뮤직뱅크", "엠카운트다운", "인기가요", "컴백 무대"],
+        "en": ["fancam", "focus cam", "comeback stage"],
+        "ja": ["ファンカム"]
+      }
+    },
+    {
+      "id": "mukbang",
+      "names": { "ko": "먹방", "en": "Mukbang", "ja": "モッパン", "th": "มุกบัง", "id": "Mukbang" },
+      "terms": {
+        "ko": ["먹방", "리얼사운드", "대식가", "푸드파이트"],
+        "en": ["mukbang", "eating show", "eating challenge", "food challenge"],
+        "ja": ["モッパン", "大食い"],
+        "th": ["มุกบัง"],
+        "id": ["mukbang", "makan besar"]
+      }
+    },
+    {
+      "id": "politics",
+      "names": { "ko": "정치", "en": "Politics", "ja": "政治" },
+      "terms": {
+        "ko": ["정치", "정치인", "국회", "대통령", "대선", "총선", "여당", "야당", "탄핵"],
+        "en": ["politics", "politician", "election", "parliament", "impeachment"],
+        "ja": ["政治", "選挙", "国会", "大統領"]
+      }
+    },
+    {
+      "id": "game",
+      "names": { "ko": "게임", "en": "Gaming", "ja": "ゲーム" },
+      "terms": {
+        "ko": ["게임", "리그오브레전드", "배틀그라운드", "마인크래프트", "로블록스", "오버워치"],
+        "en": ["gaming", "gameplay", "minecraft", "roblox", "fortnite", "league of legends"],
+        "ja": ["ゲーム実況", "マインクラフト"]
+      }
+    },
+    {
+      "id": "drama_summary",
+      "names": { "ko": "드라마·영화 요약", "en": "Movie recaps", "ja": "映画あらすじ" },
+      "terms": {
+        "ko": ["드라마 요약", "영화 요약", "결말 포함", "줄거리", "몰아보기", "결말"],
+        "en": ["movie recap", "recap", "movie explained", "ending explained", "full movie"],
+        "ja": ["ネタバレ", "あらすじ", "映画紹介"]
+      }
+    },
+    {
+      "id": "reaction",
+      "names": { "ko": "리액션", "en": "Reactions", "ja": "リアクション" },
+      "terms": {
+        "ko": ["리액션", "해외 반응", "외국인 반응", "해외반응"],
+        "en": ["reaction", "reacts", "reacting", "first time watching"],
+        "ja": ["リアクション", "海外の反応"]
+      }
+    },
+    {
+      "id": "celeb_gossip",
+      "names": { "ko": "연예 가십", "en": "Celebrity gossip", "ja": "芸能ゴシップ" },
+      "terms": {
+        "ko": ["열애설", "결별", "이혼", "논란", "폭로", "사생활"],
+        "en": ["dating rumor", "scandal", "breakup", "divorce", "gossip"],
+        "ja": ["熱愛", "破局", "離婚", "炎上"]
+      }
+    },
+    {
+      "id": "news",
+      "names": { "ko": "뉴스", "en": "News", "ja": "ニュース" },
+      "terms": {
+        "ko": ["뉴스", "속보", "단독 보도", "기자회견"],
+        "en": ["breaking news", "news", "headlines"],
+        "ja": ["ニュース", "速報"]
+      }
+    }
+  ]
+}

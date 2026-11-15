@@ -3,6 +3,7 @@ package com.sean.ratel.android.ui.end
 import android.view.View
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -80,7 +82,8 @@ fun YouTubeContentEnd(
             itemClicked == Destination.Home.Main.RankingSubscriptionUpMore.route ||
             itemClicked == Destination.Home.Main.RecentlyWatchMore.route ||
             itemClicked == Destination.Home.Main.TrendShortsMore.route ||
-            itemClicked == Destination.Home.Main.TopicListDetail.route
+            itemClicked == Destination.Home.Main.TopicListDetail.route ||
+            itemClicked == Destination.LibraryFolder.route
         ) {
             RLog.d("hbungshin", "viewType : ${mainViewModel.viewType.value}")
             when (mainViewModel.viewType.value) {
@@ -129,6 +132,10 @@ fun YouTubeContentEnd(
 
                 ViewType.RecentlyWatch -> {
                     youTubeContentEndViewModel.setWatchData(selectedIndex)
+                }
+
+                ViewType.Library -> {
+                    youTubeContentEndViewModel.setLibraryData(mainViewModel.libraryPlaylist.value, selectedIndex)
                 }
 
                 ViewType.MainTrendShorts -> {
@@ -199,7 +206,14 @@ fun YouTubeContentEnd(
     }
     SystemNavigationShowHideScreen()
 
-    DisplayUI(youTubeContentEndViewModel, mainViewModel, youTubePlayersManager, searchRequestLoading.value)
+    Box(Modifier.fillMaxSize()) {
+        DisplayUI(youTubeContentEndViewModel, mainViewModel, youTubePlayersManager, searchRequestLoading.value)
+        // 하루 시청 한도(기본 꺼짐)를 켰으면 상단에 "오늘의 쇼츠 7 / 20" 진행 표시
+        WatchLimitProgress(Modifier.align(Alignment.TopCenter))
+    }
+
+    // 하루 시청 한도에 닿으면 "계속 볼까요?"
+    WatchLimitPrompt(mainViewModel, youTubePlayersManager)
 
     if (searchRequestLoading.value) {
         when (apiState.value) {
@@ -349,7 +363,7 @@ private fun getEndData(
             youTubeContentEndViewModel.shortFormVideoList.value
         }
 
-        ViewType.RecentlyWatch -> {
+        ViewType.RecentlyWatch, ViewType.Library -> {
             youTubeContentEndViewModel.watchList.value
         }
 

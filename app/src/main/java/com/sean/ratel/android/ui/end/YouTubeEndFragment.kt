@@ -66,6 +66,7 @@ import com.sean.ratel.android.BuildConfig
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
 import com.sean.ratel.android.data.dto.MainShortsModel
+import com.sean.ratel.android.data.watch.WatchRecorder
 import com.sean.ratel.android.databinding.YoutubeVideoEndBinding
 import com.sean.ratel.android.ui.ad.InterstitialAdManager
 import com.sean.ratel.android.ui.cast.CastSessionState
@@ -151,6 +152,10 @@ class YouTubeEndFragment(
     @Inject
     lateinit var youTubePlayersManager: YouTubePlayersManager
 
+    // 재생 시간을 기기에 하루 합계로 쌓는다(주간 리포트용). 서버로 보내지 않는다
+    @Inject
+    lateinit var watchRecorder: WatchRecorder
+
     constructor() : this(null)
 
     init {
@@ -163,6 +168,11 @@ class YouTubeEndFragment(
                 Pair(playbackState, currentSelection)
             }.collect { combinedResult ->
                 val (state, currentSelection) = combinedResult
+                // 이 화면의 영상이 선택돼 있고 실제로 재생 중일 때만 시청 시간으로 센다
+                watchRecorder.update(
+                    mainShortsModel,
+                    playing = state == YouTubeStreamPlaybackState.Playing && currentSelection == createPosition,
+                )
                 when (state) {
 
                     is YouTubeStreamPlaybackState.Prepared -> {
@@ -205,6 +215,7 @@ class YouTubeEndFragment(
             youTubeStreamPlayer.currentTime.collect { currentTime ->
                 if (currentTime > 0f) {
                     mainViewModel.recentVideo(mainShortsModel, currentTime)
+                    watchRecorder.tick()
                 }
             }
         }
@@ -325,6 +336,8 @@ class YouTubeEndFragment(
 
     override fun onStop() {
         super.onStop()
+        // 화면이 가려지면(앱을 나가거나 잠금) 재생 시간 세기를 멈춘다
+        watchRecorder.stop(mainShortsModel)
         lifecycleScope.launch {
             mainViewModel.setRecentVideo()
         }
@@ -849,27 +862,7 @@ class YouTubeEndFragment(
                     .padding(bottom = topBarHeight.value.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                RightContentArea(
-                    youtubeContentEndViewModel,
-                    mainShortsModel,
-                    onSoundChange = { sound ->
-                        youTubeStreamPlayer.setMute(!sound)
-                    },
-                    speedChange = {
-                        youTubeStreamPlayer.setPlaybackRate(it)
-                    },
-                    availableCaption = availableCaption,
-                    enableCaption = { enabled ->
-
-                        if (captionAvailable == YouTubeStreamPlaybackCaptionState.UNSUPPORTED) return@RightContentArea
-                        RLog.d("Fragment", "callback enabled : $enabled")
-                        if (enabled) {
-                            youTubeStreamPlayer.enableCaptions(Locale.current.language)
-                        } else {
-                            youTubeStreamPlayer.disableCaptions()
-                        }
-                    },
-                )
+                RightContentArea(youtubeContentEndViewModel, mainShortsModel)
             }
             Column(
                 Modifier
@@ -877,6 +870,23 @@ class YouTubeEndFragment(
                     .wrapContentHeight()
                     .align(Alignment.BottomEnd),
             ) {
+                EndToolRow(
+                    youTubeContentEndViewModel = youtubeContentEndViewModel,
+                    mainShortsModel = mainShortsModel,
+                    availableCaption = availableCaption,
+                    onSoundChange = { sound -> youTubeStreamPlayer.setMute(!sound) },
+                    speedChange = { youTubeStreamPlayer.setPlaybackRate(it) },
+                    enableCaption = { enabled ->
+                        if (captionAvailable != YouTubeStreamPlaybackCaptionState.UNSUPPORTED) {
+                            if (enabled) {
+                                youTubeStreamPlayer.enableCaptions(Locale.current.language)
+                            } else {
+                                youTubeStreamPlayer.disableCaptions()
+                            }
+                        }
+                    },
+                    modifier = Modifier.padding(bottom = 8.dp),
+                )
                 EndBottomContents(mainShortsModel)
                 BottomSeekBarArea()
             }

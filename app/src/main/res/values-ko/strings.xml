@@ -49,7 +49,8 @@
     <string name="setting_service">서비스 관리</string>
     <string name="setting_notice">공지사항</string>
     <string name="setting_qna">문의하기</string>
-    <string name="setting_private_policy">약관 및 개인정보 처리 방침</string>
+    <string name="setting_terms_of_service">서비스 이용약관</string>
+    <string name="setting_private_policy">개인정보 처리방침</string>
     <string name="setting_play">동영상 기능</string>
     <string name="setting_play_continue">연속 재생</string>
     <string name="setting_play_clipping_dscription">한 영상이 끝난 후 현재 영상을 반복합니다.</string>
@@ -76,6 +77,7 @@
     <string name="setting_dev_other_app">개발자 다른 앱</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
     <string name="setting_dev_other_app_name_youngjuso">영주소</string>
+    <string name="setting_dev_other_app_name_ipo_money">공모주머니</string>
 
     <!--App Manager -->
     <string name="app_manager">앱 매니저</string>

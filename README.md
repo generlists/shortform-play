@@ -128,8 +128,6 @@ Follow these steps to set up Firebase and download the google-services.json file
   MY_EMAIL_ACCOUNT=your_email@example.com](mailto:MY_EMAIL_ACCOUNT=your_email@example.com)
   NOTICE_URL=https://example.com/notice
   NOTICE_URL_EN=https://example.com/notice_en
-  REGAL_URL=https://example.com/privacy
-  REGAL_URL_EN=https://example.com/privacy_en
 ```
 
 - Upload the provided file to Firebase Storage Root Directory:

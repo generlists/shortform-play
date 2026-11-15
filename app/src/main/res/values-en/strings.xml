@@ -49,7 +49,8 @@
     <string name="setting_service">Service Management</string>
     <string name="setting_notice">Announcement</string>
     <string name="setting_qna">Contact us</string>
-    <string name="setting_private_policy">Terms and Privacy Policy</string>
+    <string name="setting_terms_of_service">Terms of Service</string>
+    <string name="setting_private_policy">Privacy Policy</string>
     <string name="setting_play">Video Function</string>
     <string name="setting_play_continue">Continuous Play</string>
     <string name="setting_play_clipping_dscription">Repeats the current video after one video ends.</string>
@@ -76,6 +77,7 @@
     <string name="setting_dev_other_app">More apps by this developer</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
     <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
+    <string name="setting_dev_other_app_name_ipo_money">IPO Money</string>
 
     <!--App Manager -->
     <string name="app_manager">App Manager</string>

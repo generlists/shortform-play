@@ -14,11 +14,23 @@ import com.sean.ratel.android.data.common.RemoteConfig.RANDOM_GA_END_SIZE
 import com.sean.ratel.android.data.dto.MainShortFormList
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.TrendsShortFormList
+import com.sean.ratel.android.data.filter.CompiledFilter
+import com.sean.ratel.android.data.filter.FilterRepository
+import com.sean.ratel.android.data.filter.FilterSyncRepository
+import com.sean.ratel.android.data.filter.HiddenSample
+import com.sean.ratel.android.data.filter.allVideos
+import com.sean.ratel.android.data.filter.channelNames
+import com.sean.ratel.android.data.filter.filterList
+import com.sean.ratel.android.data.filter.filterMain
+import com.sean.ratel.android.data.filter.filterTrends
+import com.sean.ratel.android.data.filter.preview
+import com.sean.ratel.android.data.library.LibrarySyncRepository
 import com.sean.ratel.android.data.log.GALog
 import com.sean.ratel.android.data.repository.InstallRefererRepository
 import com.sean.ratel.android.data.repository.RecentVideoRepository
 import com.sean.ratel.android.data.repository.SearchResultDataRepository
 import com.sean.ratel.android.data.repository.SettingRepository
+import com.sean.ratel.android.data.watch.WatchRecorder
 import com.sean.ratel.android.ui.ad.AdTarget
 import com.sean.ratel.android.ui.ad.InterstitialAdManager
 import com.sean.ratel.android.ui.end.YouTubeEndFragment
@@ -32,6 +44,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +54,9 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import so.smartlab.common.ad.admob.AdsSdk
@@ -66,6 +82,10 @@ class MainViewModel
         private val searchResultsRepository: SearchResultDataRepository,
         private val googleMobileAdsConsentManager: GoogleMobileAdsConsentManager,
         private val settingRepository: SettingRepository,
+        private val filterRepository: FilterRepository,
+        private val filterSyncRepository: FilterSyncRepository,
+        private val watchRecorder: WatchRecorder,
+        private val librarySyncRepository: LibrarySyncRepository,
         val interstitialAdManager: InterstitialAdManager,
         val adsSdk: AdsSdk,
         val pushSDK: PushSDK,
@@ -98,6 +118,74 @@ class MainViewModel
 
         private val _mainTrendShortsList = MutableStateFlow(emptyList<MainShortsModel>())
         val mainTrendShortsList: StateFlow<List<MainShortsModel>> = _mainTrendShortsList
+
+        // 내 제외 필터 — 서버에서 받은 원본을 보관하고, 필터가 바뀔 때마다 다시 걸러서 위 상태(_mainShorts 등)에 반영한다.
+        // 필터가 없으면(기본) 원본이 그대로 들어가므로 기존 동작과 같다.
+        private var rawMainShorts: Pair<MainShortFormList, Int>? = null
+        private var rawTrendsShorts = TrendsShortFormList()
+        private var rawMainTrendShortsList = emptyList<MainShortsModel>()
+
+        @Volatile
+        private var compiledFilter: CompiledFilter = CompiledFilter.NoOp
+
+        private val _hiddenCount = MutableStateFlow(0)
+
+        private val _hiddenSamples = MutableStateFlow(emptyList<HiddenSample>())
+
+        /** 지금 필터로 빠진 영상과 이유("숨긴 영상" 화면용). 필터가 바뀌면 같이 바뀐다. */
+        val hiddenSamples: StateFlow<List<HiddenSample>> = _hiddenSamples
+
+        /** 홈 데이터에 나온 채널 id → 이름. */
+        fun channelNames(): Map<String, String> = rawMain().channelNames()
+
+        /** 이 id 들의 영상(홈 데이터에 있는 것만). "빼지 않은 영상" 목록용. */
+        fun videosById(ids: Collection<String>): List<MainShortsModel> {
+            if (ids.isEmpty()) return emptyList()
+            val wanted = ids.toSet()
+            return rawMain().allVideos().filter { it.shortsVideoModel?.videoId in wanted }
+        }
+
+        /** 필터로 빠진 영상 수 ("N개를 빼고 보여드렸어요" 표시용). */
+        val hiddenCount: StateFlow<Int> = _hiddenCount
+
+        init {
+            observeFilter()
+            // 로그인 상태를 지켜보며 내 필터를 서버와 맞춘다(로그인하지 않으면 기기의 필터도 없다)
+            filterSyncRepository.start(viewModelScope)
+            // 내 보관함(좋아요·폴더)도 로그인 상태를 지켜보며 서버와 맞춘다. 이 기기의 예전 좋아요는 처음 한 번 "좋아요" 폴더로 옮긴다
+            librarySyncRepository.start(viewModelScope)
+        }
+
+        @OptIn(ExperimentalCoroutinesApi::class)
+        private fun observeFilter() {
+            viewModelScope.launch {
+                // 국가(언어)가 바뀌거나 필터가 바뀌면 다시 컴파일된 필터가 온다
+                settingRepository
+                    .getLocale()
+                    .distinctUntilChanged()
+                    .flatMapLatest { filterRepository.compiled(it) }
+                    .collect {
+                        compiledFilter = it
+                        applyFilter()
+                    }
+            }
+        }
+
+        private fun applyFilter() {
+            val raw = rawMainShorts ?: return
+            val filter = compiledFilter
+            val main = filter.filterMain(raw.first)
+            val trends = filter.filterTrends(rawTrendsShorts)
+            val trendList = filter.filterList(rawMainTrendShortsList)
+            _mainShorts.value = raw.copy(first = main.value)
+            _trendsShorts.value = trends.value
+            _mainTrendShortsList.value = trendList.value
+            val hiddenIds = main.hiddenIds + trends.hiddenIds + trendList.hiddenIds
+            _hiddenCount.value = hiddenIds.size
+            // 마이 탭의 "이번 주에 N개를 빼고 보여드렸어요"용으로 하루 합계를 쌓는다(영상 id 는 오늘 분만 중복 제거에 쓰고 버린다)
+            watchRecorder.recordHidden(hiddenIds)
+            _hiddenSamples.value = filter.preview(raw.first).hidden
+        }
 
         private val _isHomeVisible = MutableStateFlow(true)
         val isHomeVisible: StateFlow<Boolean> = _isHomeVisible
@@ -273,6 +361,24 @@ class MainViewModel
             _selectedIndex.value = selectedIndex
         }
 
+        // 보관함 폴더에서 재생할 목록(재생 화면이 이 목록을 선택한 위치부터 이어서 재생한다)
+        private val _libraryPlaylist = MutableStateFlow(emptyList<MainShortsModel>())
+        val libraryPlaylist: StateFlow<List<MainShortsModel>> = _libraryPlaylist
+
+        /** 보관함 폴더의 영상들을 [index] 번째부터 재생한다. */
+        fun playLibrary(
+            videos: List<MainShortsModel>,
+            index: Int,
+        ) {
+            if (videos.isEmpty()) return
+            _libraryPlaylist.value = videos
+            goEndContent(
+                route = Destination.LibraryFolder.route,
+                viewType = ViewType.Library,
+                selectedIndex = index.coerceIn(0, videos.lastIndex),
+            )
+        }
+
         fun goEndContent() {
             navigator.navigateTo(Destination.YouTube.dynamicRoute(_selectedIndex.toString()), false)
         }
@@ -338,6 +444,7 @@ class MainViewModel
                 ViewType.SubscriptionRanking,
                 ViewType.SubscriptionRankingUp,
                 ViewType.RecentlyWatch,
+                ViewType.Library,
                 ViewType.MainTrendShorts,
                 ViewType.TrendShortsMore,
                 -> {
@@ -414,9 +521,10 @@ class MainViewModel
             trendsShorts: TrendsShortFormList,
             mainTrendShortsList: List<MainShortsModel>,
         ) {
-            _mainShorts.value = mainShorts
-            _trendsShorts.value = trendsShorts
-            _mainTrendShortsList.value = mainTrendShortsList
+            rawMainShorts = mainShorts
+            rawTrendsShorts = trendsShorts
+            rawMainTrendShortsList = mainTrendShortsList
+            applyFilter()
         }
 
         fun shortFormVideoData(items: Map<String, List<MainShortsModel>>) {
@@ -475,6 +583,33 @@ class MainViewModel
         fun goMainHome() {
             navigator.navigateTo(Destination.Home.Main.route)
         }
+
+        /** 링크(web to app)로 열렸는지. 그때는 온보딩을 보여주지 않는다 — 사용자가 보려던 화면이 먼저다. */
+        @Volatile
+        var launchedFromLink: Boolean = false
+
+        /**
+         * 스플래시가 끝났을 때. 처음 실행(온보딩을 본 적 없고 필터도 없음)이면 온보딩으로, 아니면 홈으로.
+         * 온보딩은 끝나면 자신을 빼고 홈으로 간다([goHomeFromOnboarding]).
+         */
+        fun goHomeAfterSplash() {
+            viewModelScope.launch {
+                val seen = filterRepository.onboardingSeen.first()
+                val hasFilter = filterRepository.state.first().filter.hasRules
+                if (!seen && !hasFilter && !launchedFromLink) {
+                    navigator.navigateTo(Destination.Onboarding.route)
+                } else {
+                    goMainHome()
+                }
+            }
+        }
+
+        fun goHomeFromOnboarding() {
+            navigator.navigateTo(Destination.Home.Main.route, popBackstack = true)
+        }
+
+        /** 서버에서 받은 홈 데이터 원본(필터 적용 전). 온보딩 미리보기가 "몇 개가 빠지는지" 셀 때 쓴다. */
+        fun rawMain(): MainShortFormList = rawMainShorts?.first ?: _mainShorts.value.first
 
         fun sendGALog(
             event: String,

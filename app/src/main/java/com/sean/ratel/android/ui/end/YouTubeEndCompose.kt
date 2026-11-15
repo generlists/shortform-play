@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.result.ActivityResult
 import androidx.compose.foundation.Canvas
@@ -76,6 +77,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sean.ratel.android.MainViewModel
 import com.sean.ratel.android.R
@@ -83,7 +85,10 @@ import com.sean.ratel.android.data.common.STRINGS.YOUTUBE_APP_BY_CHANNEL_ID
 import com.sean.ratel.android.data.common.YouTubeUtils
 import com.sean.ratel.android.data.dto.MainShortsModel
 import com.sean.ratel.android.data.dto.ShortsVideoModel
+import com.sean.ratel.android.data.library.LIKES_FOLDER_ID
+import com.sean.ratel.android.data.log.GAAccountAnalytics
 import com.sean.ratel.android.ui.common.image.NetworkImage
+import com.sean.ratel.android.ui.my.LibraryViewModel
 import com.sean.ratel.android.ui.progress.LoadingPlaceholder
 import com.sean.ratel.android.ui.theme.APP_BACKGROUND
 import com.sean.ratel.android.ui.theme.APP_TEXT_COLOR
@@ -97,8 +102,8 @@ import com.sean.ratel.android.utils.UIUtil.formatNumberByLocale
 import com.sean.ratel.android.utils.findActivity
 import com.sean.ratel.player.core.com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackCaptionState
 import com.sean.ratel.player.core.data.domain.model.youtube.YouTubeStreamPlaybackRate
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
-import so.smartlab.common.utils.log.RLog
 import java.util.Locale
 
 @Suppress("ktlint:standard:function-naming")
@@ -357,15 +362,22 @@ fun PlayButton(
     }
 }
 
+private fun likeEvent(liked: Boolean) = if (liked) GAAccountAnalytics.Event.VIDEO_LIKE else GAAccountAnalytics.Event.VIDEO_LIKE_CANCEL
+
+/** 재생 화면 오른쪽 레일에 남기는 버튼(반응 4개). */
+private val RAIL_MENU =
+    listOf(
+        YouTubeEndContentRightMenu.Like,
+        YouTubeEndContentRightMenu.Comment,
+        YouTubeEndContentRightMenu.Save,
+        YouTubeEndContentRightMenu.Share,
+    )
+
 @Suppress("ktlint:standard:function-naming")
 @Composable
 fun RightContentArea(
     youTubeContentEndViewModel: YouTubeContentEndViewModel,
     mainShortsModel: MainShortsModel?,
-    onSoundChange: (Boolean) -> Unit,
-    speedChange: (YouTubeStreamPlaybackRate) -> Unit,
-    availableCaption: Boolean,
-    enableCaption: (Boolean) -> Unit,
     mainViewModel: MainViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -373,39 +385,25 @@ fun RightContentArea(
     val shareLauncher = GetShareLauncher(activity, mainViewModel)
     val commentLauncher = GetCommentLauncher(activity, mainViewModel)
 
-    val rightMenu = remember { YouTubeEndContentRightMenu.entries.toTypedArray().asList() }
+    // 오른쪽 레일은 "반응" 4개만. 관심없음·소리·속도·자막은 왼쪽 아래 EndToolRow 로 옮겼다
+    val rightMenu = remember { RAIL_MENU }
     val videoModel = remember { mainShortsModel?.shortsVideoModel }
 
     var like by remember { mutableStateOf(false) }
-    var disLike by remember { mutableStateOf(false) }
-    var sound by remember { mutableStateOf(false) }
-    var speedClick by remember { mutableStateOf(false) }
-    val currentRate by youTubeContentEndViewModel.currentPlaySpeed.collectAsStateWithLifecycle()
-
-    val captionAvailable =
-        when {
-            !availableCaption -> {
-                YouTubeStreamPlaybackCaptionState.UNSUPPORTED
-            }
-
-            else -> {
-                YouTubeStreamPlaybackCaptionState.ENABLED
-            }
-        }
-
-    var caption by remember(availableCaption) { mutableStateOf(availableCaption) }
-
+    var saveClick by remember { mutableStateOf(false) }
+    // 보관함: 이 영상이 사용자 폴더에 담겨 있으면 저장 아이콘을 채운다(좋아요 폴더는 좋아요 버튼이 따로 있어 제외)
+    val libraryViewModel =
+        remember(activity) { (activity as? ComponentActivity)?.let { ViewModelProvider(it)[LibraryViewModel::class.java] } }
+    val savedIds by (
+        libraryViewModel?.savedFolderIds(mainShortsModel?.shortsVideoModel?.videoId.orEmpty()) ?: flowOf(emptySet())
+    ).collectAsStateWithLifecycle(initialValue = emptySet())
+    val saved = savedIds.any { it != LIKES_FOLDER_ID }
     val coroutine = rememberCoroutineScope()
-    RLog.d("CCAAMMMM", "availableCaption : $captionAvailable , caption : $caption")
 
-    LaunchedEffect(like || disLike) {
+    LaunchedEffect(like) {
         like =
             youTubeContentEndViewModel.getLikeDisLikeVideo("like${mainShortsModel?.shortsVideoModel?.videoId}")
                 ?: false
-        disLike =
-            youTubeContentEndViewModel.getLikeDisLikeVideo("disLike${mainShortsModel?.shortsVideoModel?.videoId}")
-                ?: false
-        sound = youTubeContentEndViewModel.getSoundOff() ?: false
     }
 
     Box(
@@ -434,8 +432,8 @@ fun RightContentArea(
 
                 Box(
                     Modifier
-                        .width(55.dp)
-                        .height(55.dp)
+                        .width(46.dp)
+                        .height(46.dp)
                         .clickable { }
                         .background(Background_op_20, shape = RoundedCornerShape(60.dp)),
                     contentAlignment = Alignment.TopCenter,
@@ -446,6 +444,10 @@ fun RightContentArea(
                             modifier =
                                 Modifier
                                     .clickable {
+                                        if (item == YouTubeEndContentRightMenu.Save) {
+                                            saveClick = true
+                                            return@clickable
+                                        }
                                         coroutine.launch {
                                             toggleRightEvent(
                                                 context,
@@ -453,26 +455,19 @@ fun RightContentArea(
                                                 mainShortsModel,
                                                 item,
                                                 like,
-                                                disLike,
-                                                sound,
-                                                caption,
-                                                onChanged = { pLike, pDisLike, pSound, pSpeedClick, pCaption ->
-                                                    RLog.d(
-                                                        "Comppose",
-                                                        "pLike : $pLike , " +
-                                                            "pDisLike : $pDisLike" +
-                                                            " pSound : $pSound , " +
-                                                            "sound : $sound " +
-                                                            "pCaption : $pCaption",
-                                                    )
+                                                false,
+                                                false,
+                                                false,
+                                                onChanged = { pLike, _, _, _, _ ->
+                                                    if (pLike != like) {
+                                                        mainViewModel.sendGALog(
+                                                            GAAccountAnalytics.Screen.PLAYER,
+                                                            likeEvent(pLike),
+                                                            GAAccountAnalytics.Action.CLICK,
+                                                            emptyMap(),
+                                                        )
+                                                    }
                                                     like = pLike
-                                                    disLike = pDisLike
-                                                    sound = pSound
-                                                    speedClick = pSpeedClick
-                                                    caption = pCaption
-                                                    enableCaption(pCaption)
-
-                                                    onSoundChange(sound)
                                                     if (like) {
                                                         activity?.let {
                                                             youTubeContentEndViewModel.onLikeClicked(
@@ -487,22 +482,32 @@ fun RightContentArea(
                                         }
                                     }.fillMaxWidth()
                                     .align(Alignment.Center)
-                                    .padding(top = 5.dp, bottom = 3.dp),
+                                    .padding(top = 4.dp, bottom = 2.dp),
                             horizontalAlignment = Alignment.CenterHorizontally,
                         ) {
                             Image(
-                                painter = setImageView(item, like, disLike, sound, caption, captionAvailable),
+                                painter =
+                                    setImageView(
+                                        item,
+                                        like,
+                                        false,
+                                        false,
+                                        false,
+                                        YouTubeStreamPlaybackCaptionState.UNSUPPORTED,
+                                        saved,
+                                    ),
                                 contentDescription = null,
                                 modifier =
                                     Modifier
-                                        .width(24.dp)
-                                        .height(24.dp),
+                                        .width(22.dp)
+                                        .height(22.dp),
                             )
 
                             Text(
-                                text = disPlayRightMenu(videoModel, item, sound, currentRate) ?: "",
+                                text = disPlayRightMenu(videoModel, item, like) ?: "",
                                 modifier = Modifier,
                                 fontSize = 10.sp,
+                                maxLines = 1,
                                 color = if (LocalInspectionMode.current) Color.Black else Color.White,
                                 fontStyle = FontStyle.Normal,
                                 fontWeight = FontWeight.SemiBold,
@@ -514,18 +519,18 @@ fun RightContentArea(
 
                 Spacer(
                     Modifier
-                        .height(10.dp)
+                        .height(8.dp)
                         .wrapContentWidth(),
                 )
             }
         }
     }
-    if (speedClick) {
-        PlaybackRateBottomSheet(currentRate, onRateSelected = {
-            speedChange(it)
-        }, onDismiss = {
-            speedClick = false
-        })
+    if (saveClick && libraryViewModel != null) {
+        SaveToFolderSheet(
+            video = mainShortsModel,
+            libraryViewModel = libraryViewModel,
+            onDismiss = { saveClick = false },
+        )
     }
 }
 
@@ -597,15 +602,15 @@ private fun disPlayViewCount(viewCount: String): String =
 private fun disPlayRightMenu(
     videoModel: ShortsVideoModel?,
     item: YouTubeEndContentRightMenu,
-    sound: Boolean,
-    currentSpeed: YouTubeStreamPlaybackRate,
+    liked: Boolean = false,
 ): String? {
     val locale = Locale.getDefault()
 
     return when (item) {
         YouTubeEndContentRightMenu.Like -> {
             val likeCount = videoModel?.likeCount ?: stringResource(R.string.end_lkie)
-            formatNumberByLocale(likeCount.toLongOrNull() ?: 0, locale)
+            // 앱의 좋아요는 YouTube 에 보내지 않으므로 서버가 준 숫자에 내 좋아요 1을 더해 보여 준다
+            formatNumberByLocale((likeCount.toLongOrNull() ?: 0) + if (liked) 1 else 0, locale)
         }
 
         YouTubeEndContentRightMenu.Comment -> {
@@ -617,29 +622,20 @@ private fun disPlayRightMenu(
             stringResource(R.string.end_dislike)
         }
 
+        YouTubeEndContentRightMenu.NotInterested -> {
+            stringResource(R.string.end_not_interested)
+        }
+
+        YouTubeEndContentRightMenu.Save -> {
+            stringResource(R.string.end_save)
+        }
+
         YouTubeEndContentRightMenu.Share -> {
             stringResource(R.string.end_share)
         }
 
-        YouTubeEndContentRightMenu.Sound -> {
-            if (sound) {
-                stringResource(R.string.end_sound_off)
-            } else {
-                stringResource(
-                    R.string.end_sound_on,
-                )
-            }
-        }
-
-        YouTubeEndContentRightMenu.SPEED -> {
-            "${currentSpeed.rate}X"
-        }
-
-        YouTubeEndContentRightMenu.CAPTION -> {
-            stringResource(
-                R.string.setting_play_caption,
-            )
-        }
+        // 소리·속도·자막은 EndToolRow 에서 보여 준다
+        else -> null
     }
 }
 
@@ -689,6 +685,11 @@ private suspend fun toggleRightEvent(
             onChanged(like, disLike, !sound, false, caption)
         }
 
+        // 시트를 띄우는 일은 RightContentArea 가 한다(여기서는 할 일이 없다)
+        YouTubeEndContentRightMenu.NotInterested -> Unit
+
+        YouTubeEndContentRightMenu.Save -> Unit
+
         YouTubeEndContentRightMenu.Comment -> {
             mainShortsModel?.shortsVideoModel?.videoId?.let {
                 YouTubeUtils.goYouTubeAppByVideoId(
@@ -723,8 +724,13 @@ private fun setImageView(
     sound: Boolean,
     caption: Boolean,
     availableCaption: YouTubeStreamPlaybackCaptionState,
+    saved: Boolean = false,
 ): Painter {
     when (item) {
+        YouTubeEndContentRightMenu.Save -> {
+            return if (saved) painterResource(item.selectedResourceId) else painterResource(item.unSelectedResourceId)
+        }
+
         YouTubeEndContentRightMenu.Like -> {
             return if (like) painterResource(item.selectedResourceId) else painterResource(item.unSelectedResourceId)
         }
@@ -907,6 +913,6 @@ fun SubscribeButton(
 private fun PlayControllerRightMenuPreView() {
     RatelappTheme {
         val youTubeContentEndViewModel: YouTubeContentEndViewModel = hiltViewModel()
-        RightContentArea(youTubeContentEndViewModel, null, {}, {}, false, {})
+        RightContentArea(youTubeContentEndViewModel, null)
     }
 }

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 마이 탭(로그인·내 필터). 번역이 없는 언어는 영어로 보인다 — 번역을 추가하면 values-xx/strings_account.xml 로 둔다. -->
+<resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="MissingTranslation">
+    <string name="my_title">My</string>
+
+    <string name="my_signin_title">Sign in</string>
+    <string name="my_signin_desc">Sign in to create your own filter and use it on your other devices.</string>
+    <string name="my_signin_google">Continue with Google</string>
+    <string name="my_signin_busy">Signing in…</string>
+
+    <string name="my_filter_title">My filter</string>
+    <string name="my_filter_status_on">Active</string>
+    <string name="my_filter_status_off">Not set</string>
+    <string name="my_filter_desc_off">Hide the topics and words you don\'t want to see. Until you create one, everything looks the same as before.</string>
+    <string name="my_filter_make">Create filter</string>
+    <string name="my_filter_make_signin">Sign in and create filter</string>
+    <string name="my_filter_manage">Manage filter</string>
+    <string name="my_filter_hidden">%1$d videos hidden right now</string>
+    <string name="my_filter_topics_label">Hidden topics</string>
+    <string name="my_filter_keywords_label">Hidden words</string>
+
+    <string name="my_logout">Sign out</string>
+    <string name="my_delete_account">Delete account</string>
+    <string name="my_delete_title">Delete your account?</string>
+    <string name="my_delete_body">Your account and the filter saved on our server will be deleted. This can\'t be undone.</string>
+    <string name="my_delete_confirm">Delete</string>
+    <string name="my_cancel">Cancel</string>
+
+    <string name="filter_edit_title">My filter</string>
+    <string name="filter_edit_back">Back</string>
+    <string name="filter_edit_topics">Topics to hide</string>
+    <string name="filter_edit_topics_desc">You can pick several. The words for each topic are applied automatically.</string>
+    <string name="filter_edit_keywords">Words to hide</string>
+    <string name="filter_edit_keywords_desc">Videos with these words in the title, description, channel name or category are hidden.</string>
+    <string name="filter_edit_keyword_hint">e.g. fancam, reaction</string>
+    <string name="filter_edit_add">Add</string>
+    <string name="filter_edit_options">Options</string>
+    <string name="filter_edit_hide_disliked">Hide videos I disliked</string>
+    <string name="filter_edit_hide_watched">Hide videos I already watched</string>
+    <string name="filter_edit_channels">Blocked channels</string>
+    <string name="filter_edit_channels_desc">You can block a channel from the video screen.</string>
+    <string name="filter_edit_remove">Remove</string>
+    <string name="filter_edit_save">Save</string>
+    <string name="filter_edit_save_signin">Sign in and save</string>
+
+    <string name="my_msg_signed_in">Signed in</string>
+    <string name="my_msg_no_account">There is no Google account on this device</string>
+    <string name="my_msg_signin_failed">Couldn\'t sign in. Please try again.</string>
+    <string name="my_msg_signed_out">Signed out</string>
+    <string name="my_msg_deleted">Your account was deleted</string>
+    <string name="my_msg_delete_failed">Couldn\'t delete your account. Please try again.</string>
+    <string name="filter_msg_saved">Filter saved</string>
+    <string name="filter_msg_pending">Saved on this device. It will sync when the server is reachable.</string>
+    <string name="filter_msg_need_signin">Please sign in first</string>
+
+    <string name="search_filter_hidden">%1$d videos hidden by your filter</string>
+    <string name="search_filter_show">Show</string>
+    <string name="search_filter_overlap">Your search matches something you hid, so the filter is off for these results.</string>
+    <string name="search_filter_all_hidden">Everything matched your filter, so we\'re showing all results.</string>
+    <string name="search_filter_revealed">Showing hidden videos too</string>
+    <string name="search_filter_hide_again">Hide again</string>
+
+    <string name="end_not_interested">Not interested</string>
+    <string name="not_interested_dislike">Dislike this video</string>
+    <string name="not_interested_undislike">Remove dislike</string>
+    <string name="not_interested_title">Not into this video?</string>
+    <string name="not_interested_hint">Pick what you don\'t want to see. It\'s added to your filter.</string>
+    <string name="not_interested_channel">Block this channel</string>
+    <string name="not_interested_topics">Hide these topics</string>
+    <string name="not_interested_keywords">Hide these words</string>
+    <string name="not_interested_apply">Add to my filter</string>
+    <string name="not_interested_apply_signin">Sign in and add</string>
+
+    <!-- 온보딩(처음 실행) -->
+    <string name="onb_skip">Skip</string>
+    <string name="onb_back">Back</string>
+    <string name="onb_intro_title">Want to leave out\nwhat you don\'t like?</string>
+    <string name="onb_intro_desc">Tired of the same kind of videos showing up? Just tell us what you don\'t want. Everything else stays.</string>
+    <string name="onb_intro_example_hidden">Hidden</string>
+    <string name="onb_intro_example_kept">Kept</string>
+    <string name="onb_intro_example_1">Boy band fancam · full stage</string>
+    <string name="onb_intro_example_2">Cat vlog · lazy afternoon</string>
+    <string name="onb_intro_example_3">Politics talk show highlights</string>
+    <string name="onb_intro_point_1">Pick the topics and words you want out</string>
+    <string name="onb_intro_point_2">See which videos disappear before you save</string>
+    <string name="onb_intro_point_3">Sign in to keep the same filter on every device</string>
+    <string name="onb_intro_start">Get started</string>
+    <string name="onb_intro_later">Maybe later</string>
+    <string name="onb_topics_title">Which topics\ndo you want out?</string>
+    <string name="onb_topics_desc">Pick as many as you like. You can change this anytime.</string>
+    <string name="onb_topics_country_note">Based on videos for %1$s. Change the country in Settings.</string>
+    <string name="onb_topics_next">Next</string>
+    <string name="onb_topics_next_count">Next · %1$d selected</string>
+    <string name="onb_keywords_title">Any words to\nleave out too?</string>
+    <string name="onb_keywords_desc">We look in titles, descriptions, channel names and categories.</string>
+    <string name="onb_keywords_hint">e.g. fancam, reaction</string>
+    <string name="onb_keywords_suggest">Words showing up a lot right now</string>
+    <string name="onb_keywords_next">See what changes</string>
+    <string name="onb_preview_title">Here\'s what changes</string>
+    <string name="onb_preview_desc">We applied your filter to today\'s list.</string>
+    <string name="onb_preview_count">%1$d hidden</string>
+    <string name="onb_preview_total">out of %1$d videos</string>
+    <string name="onb_preview_samples">Videos that will be hidden</string>
+    <string name="onb_preview_none">Nothing in today\'s list matches yet. Your filter still applies to new videos.</string>
+    <string name="onb_preview_reason_topic">Topic · %1$s</string>
+    <string name="onb_preview_reason_keyword">Word · %1$s</string>
+    <string name="onb_preview_reason_channel">Channel</string>
+    <string name="onb_preview_keep">Keep</string>
+    <string name="onb_preview_hide_again">Hide</string>
+    <string name="onb_preview_note">Hidden by mistake? You can review hidden videos in My filter later.</string>
+    <string name="onb_preview_save">Save and apply</string>
+    <string name="onb_preview_start_without">Start without a filter</string>
+    <string name="onb_login_title">Sign in to save\nyour filter</string>
+    <string name="onb_login_desc">Your filter is saved to your account, so you get the same one on every device.</string>
+    <string name="onb_login_without">Continue without signing in</string>
+    <string name="onb_login_without_note">Your filter won\'t be applied</string>
+
+    <!-- 숨긴 영상 -->
+    <string name="my_filter_hidden_view">View hidden videos</string>
+    <string name="hidden_title">Hidden videos</string>
+    <string name="hidden_desc">These are hidden by your filter right now. Tap Keep to show one again.</string>
+    <string name="hidden_empty">Nothing in the current list is hidden by your filter.</string>
+    <string name="hidden_section_hidden">Hidden · %1$d</string>
+    <string name="hidden_section_kept">Kept despite the filter · %1$d</string>
+    <string name="hidden_reason_disliked">Disliked</string>
+    <string name="hidden_reason_watched">Watched</string>
+
+    <string name="splash_tagline">Skip what you don\'t want to watch.</string>
+    <string name="splash_app_name_short">ShortForm</string>
+    <string name="splash_app_name_play">Play</string>
+    <string-array name="splash_taglines">
+        <item>Leave out what you don\'t want to watch</item>
+        <item>Today\'s shorts, all in one place</item>
+        <item>Something new with every swipe</item>
+        <item>Shorts, your way</item>
+        <item>A quick break with ShortForm Play</item>
+    </string-array>
+
+    <!-- 주간 시청 리포트(마이 탭, 기기에만 저장) -->
+    <string name="report_title">This week\'s watching</string>
+    <string name="report_empty">Nothing yet. Your watching time and favorite channels from the last 7 days show up here, starting today. It\'s kept on this device only.</string>
+    <string name="report_time_under_minute">Under 1 min</string>
+    <string name="report_time_minutes">%1$d min</string>
+    <string name="report_time_hours">%1$dh %2$dm</string>
+    <string name="report_top_channels">Most watched channels</string>
+    <string name="report_channel_count">%1$d videos</string>
+
+    <!-- 하루 시청 한도(옵트인, 기본 꺼짐) -->
+    <string name="limit_title">Daily watch limit</string>
+    <string name="limit_desc">When you reach your limit, we\'ll ask if you want to keep watching. It\'s off by default and stays on this device.</string>
+    <string name="limit_today">Today: %1$s · %2$d videos</string>
+    <string name="limit_mode_off">Off</string>
+    <string name="limit_mode_time">By time</string>
+    <string name="limit_mode_videos">By videos</string>
+    <string name="limit_option_hours">%1$dh</string>
+    <string name="limit_videos_option">%1$d videos</string>
+    <string name="limit_prompt_time_title">You\'ve watched %1$s today</string>
+    <string name="limit_prompt_videos_title">You\'ve watched %1$d videos today</string>
+    <string name="limit_prompt_body">Keep watching? A short break is fine too.</string>
+    <string name="limit_prompt_continue">Keep watching</string>
+    <string name="limit_prompt_stop">Stop for now</string>
+
+    <!-- 주간 리포트 개편(시안 04) · 한도 진행 · 이번 주 빼고 보여드린 수 -->
+    <string name="report_vs_more">+%1$d min vs last week</string>
+    <string name="report_vs_less">-%1$d min vs last week</string>
+    <string name="report_vs_same">Same as last week</string>
+    <string name="report_videos_count">%1$d videos</string>
+    <string name="report_videos_label">Shorts watched</string>
+    <string name="my_filter_hidden_week">%1$d videos left out this week</string>
+    <string name="limit_progress_videos">Today\'s Shorts %1$d / %2$d</string>
+    <string name="limit_progress_time">Today %1$s / %2$s</string>
+    <string name="report_time_label">Watch time</string>
+
+    <!-- 홈: 필터 적용 중 바 · 빼고 보여드린 수 · 비로그인 배너(시안 B1·A1) -->
+    <string name="home_filter_bar">My filter on · %1$d topics · %2$d words</string>
+    <string name="home_filter_manage">Manage</string>
+    <string name="home_filter_note">%1$d videos left out of the current list</string>
+    <string name="home_filter_note_view">View hidden videos</string>
+    <string name="home_banner_title">Skip what you don\'t want to watch</string>
+    <string name="home_banner_desc">Pick topics or words and we\'ll leave them out of Home and Shorts.</string>
+    <string name="home_banner_create">Create my filter</string>
+    <string name="home_banner_short">Leave out what you don\'t want</string>
+    <string name="home_banner_later">Later</string>
+
+    <!-- 보관함(3차): 폴더, 저장 -->
+    <string name="end_save">Save</string>
+    <string name="library_folders_title">My folders</string>
+    <string name="library_new_folder">+ New folder</string>
+    <string name="library_system_likes">Likes</string>
+    <string name="library_system_watch_later">Watch later</string>
+    <string name="library_count">%1$d videos</string>
+    <string name="library_recent">Recently watched</string>
+    <string name="library_empty_folder">Nothing here yet. Tap Save on the player to add videos.</string>
+    <string name="library_menu_rename">Rename</string>
+    <string name="library_menu_delete">Delete folder</string>
+    <string name="library_delete_title">Delete this folder?</string>
+    <string name="library_delete_body">The folder and its list of saved videos will be deleted. The videos themselves are not affected.</string>
+    <string name="library_name_new_title">New folder</string>
+    <string name="library_name_rename_title">Rename folder</string>
+    <string name="library_name_hint">Folder name</string>
+    <string name="library_confirm">OK</string>
+    <string name="library_remove">Remove</string>
+    <string name="library_save_title">Save to folder</string>
+    <string name="library_back">Back</string>
+    <string name="library_menu">More</string>
+    <string name="library_msg_item_limit">You can save up to %1$d videos.</string>
+    <string name="library_msg_folder_limit">You can create up to %1$d folders.</string>
+    <string name="library_msg_name_taken">A folder with this name already exists.</string>
+    <string name="library_msg_name_invalid">Use 1 to %1$d characters for the folder name.</string>
+    <string name="end_chip_sound_on">Sound on</string>
+    <string name="end_chip_sound_off">Muted</string>
+    <string name="end_chip_caption">CC</string>
+</resources>

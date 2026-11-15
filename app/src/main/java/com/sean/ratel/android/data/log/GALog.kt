@@ -55,6 +55,7 @@ class GALog
             actionName: String,
             parameters: Map<String, Any>? = null,
         ) {
+            RLog.d("hbungshin", "event : $eventName , screen $screenName , action $actionName , params $parameters")
             val eventParams =
                 mutableMapOf<String, Any>(
                     GAKeys.SCREEN to screenName,

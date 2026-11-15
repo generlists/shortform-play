@@ -49,7 +49,8 @@
     <string name="setting_service">服務管理</string>
     <string name="setting_notice">公告</string>
     <string name="setting_qna">聯絡我們</string>
-    <string name="setting_private_policy">使用條款與隱私政策</string>
+    <string name="setting_terms_of_service">服務條款</string>
+    <string name="setting_private_policy">隱私政策</string>
     <string name="setting_play">影片功能</string>
     <string name="setting_play_continue">連續播放</string>
     <string name="setting_play_clipping_dscription">影片結束後會自動重播。</string>
@@ -76,6 +77,7 @@
     <string name="setting_dev_other_app">這位開發者的其他應用程式</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
     <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
+    <string name="setting_dev_other_app_name_ipo_money">IPO Money</string>
 
     <!--App Manager -->
     <string name="app_manager">應用管理員</string>

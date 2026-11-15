@@ -78,17 +78,13 @@ class PushNotificationManager
             data: Map<String, String>,
         ) {
             val pendingIntent = createPendingIntent(context, data["id"], data["type"], data["linkUrl"])
-            val appIconBitmap =
-                BitmapFactory.decodeResource(
-                    context.resources,
-                    R.drawable.shortform_play_icon_main,
-                )
+            val appIconBitmap = decodeSampledResource(context, R.drawable.shortform_play_icon_main, LARGE_ICON_SIZE_PX)
             val forceUpdate = data["force"]
 
             val builder =
                 NotificationCompat
                     .Builder(context, APP_UPDATE)
-                    .setSmallIcon(R.drawable.ic_notification)
+                    .setSmallIcon(R.drawable.ic_stat_notify)
                     .setContentTitle(if (forceUpdate.toBoolean()) "[업데이트 필수]" + "${data["title"]}" else "${data["title"]}")
                     .setContentText(data["body"])
                     .setLargeIcon(appIconBitmap)
@@ -122,7 +118,7 @@ class PushNotificationManager
                     val builder =
                         NotificationCompat
                             .Builder(context, VIDEO_UPLOAD)
-                            .setSmallIcon(R.mipmap.ic_launcher_round)
+                            .setSmallIcon(R.drawable.ic_stat_notify)
                             .setContentTitle(data["title"])
                             .setContentText(data["body"])
                             .setLargeIcon(bigImage)
@@ -230,7 +226,7 @@ class PushNotificationManager
                     val builder =
                         NotificationCompat
                             .Builder(context, RECOMMEND)
-                            .setSmallIcon(R.mipmap.ic_launcher_round)
+                            .setSmallIcon(R.drawable.ic_stat_notify)
                             .setContentTitle(data["title"])
                             .setContentText(data["body"])
                             .setLargeIcon(bigImage)
@@ -311,3 +307,20 @@ class PushNotificationManager
             return (result.drawable as? BitmapDrawable)?.bitmap
         }
     }
+
+/** 알림 큰 아이콘 목표 크기(px). 원본이 더 크면 줄여서 읽는다. */
+private const val LARGE_ICON_SIZE_PX = 192
+
+/** 리소스 이미지를 목표 크기에 맞춰 줄여서(inSampleSize) 읽는다 — 원본 해상도 전체를 메모리에 올리지 않는다. */
+private fun decodeSampledResource(
+    context: Context,
+    resId: Int,
+    targetPx: Int,
+): Bitmap? {
+    val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+    BitmapFactory.decodeResource(context.resources, resId, bounds)
+    var sample = 1
+    while (bounds.outWidth / (sample * 2) >= targetPx && bounds.outHeight / (sample * 2) >= targetPx) sample *= 2
+    val options = BitmapFactory.Options().apply { inSampleSize = sample }
+    return BitmapFactory.decodeResource(context.resources, resId, options)
+}

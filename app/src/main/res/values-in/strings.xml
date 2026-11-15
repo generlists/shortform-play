@@ -51,7 +51,8 @@
     <string name="setting_service">Manajemen Layanan</string>
     <string name="setting_notice">Pengumuman</string>
     <string name="setting_qna">Hubungi Kami</string>
-    <string name="setting_private_policy">Syarat &amp; Kebijakan Privasi</string>
+    <string name="setting_terms_of_service">Ketentuan Layanan</string>
+    <string name="setting_private_policy">Kebijakan Privasi</string>
 
     <string name="setting_play">Fungsi Video</string>
     <string name="setting_play_continue">Putar Berkelanjutan</string>
@@ -83,6 +84,7 @@
     <string name="setting_dev_other_app">Aplikasi lain dari developer ini</string>
     <string name="setting_dev_other_app_name">Video Scrap</string>
     <string name="setting_dev_other_app_name_youngjuso">YoungJuSo</string>
+    <string name="setting_dev_other_app_name_ipo_money">IPO Money</string>
 
     <!-- Pengelola Aplikasi -->
     <string name="app_manager">Pengelola Aplikasi</string>
