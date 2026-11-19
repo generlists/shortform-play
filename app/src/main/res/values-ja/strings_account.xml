@@ -28,6 +28,7 @@
     <string name="filter_edit_topics_desc">複数選べます。各テーマのワードは自動で適用されます。</string>
     <string name="filter_edit_keywords">非表示にするワード</string>
     <string name="filter_edit_keywords_desc">タイトル・説明・チャンネル名・カテゴリにこれらのワードを含む動画を非表示にします。</string>
+    <string name="filter_keyword_lang_note">動画で使われている言語で入力した場合のみ外れます。入力した言葉を他の言語に変換して外す機能は、今後対応予定です。</string>
     <string name="filter_edit_keyword_hint">例：ファンカム、リアクション</string>
     <string name="filter_edit_add">追加</string>
     <string name="filter_edit_options">オプション</string>

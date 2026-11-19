@@ -28,6 +28,7 @@
     <string name="filter_edit_topics_desc">Vous pouvez en choisir plusieurs. Les mots de chaque sujet sont appliqués automatiquement.</string>
     <string name="filter_edit_keywords">Mots à masquer</string>
     <string name="filter_edit_keywords_desc">Les vidéos contenant ces mots dans le titre, la description, le nom de la chaîne ou la catégorie sont masquées.</string>
+    <string name="filter_keyword_lang_note">Seuls les mots écrits dans la langue de la vidéo sont écartés. La traduction automatique de vos mots viendra plus tard.</string>
     <string name="filter_edit_keyword_hint">p. ex. fancam, réaction</string>
     <string name="filter_edit_add">Ajouter</string>
     <string name="filter_edit_options">Options</string>

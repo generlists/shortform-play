@@ -32,6 +32,7 @@
     <string name="filter_edit_topics_desc">You can pick several. The words for each topic are applied automatically.</string>
     <string name="filter_edit_keywords">Words to hide</string>
     <string name="filter_edit_keywords_desc">Videos with these words in the title, description, channel name or category are hidden.</string>
+    <string name="filter_keyword_lang_note">Words only match in the language the video uses. Automatic translation of your words is coming later.</string>
     <string name="filter_edit_keyword_hint">e.g. fancam, reaction</string>
     <string name="filter_edit_add">Add</string>
     <string name="filter_edit_options">Options</string>
