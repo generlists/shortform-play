@@ -31,6 +31,7 @@
     <string name="filter_edit_topics_desc">여러 개 골라도 돼요. 주제마다 관련 단어가 자동으로 적용돼요.</string>
     <string name="filter_edit_keywords">빼고 싶은 키워드</string>
     <string name="filter_edit_keywords_desc">제목, 설명, 채널명, 카테고리에 들어 있으면 빼요.</string>
+    <string name="filter_keyword_lang_note">영상 제목에 쓰인 언어로 입력해야 빼져요. 입력한 말을 다른 언어로 바꿔서 빼는 기능은 추후 반영할게요.</string>
     <string name="filter_edit_keyword_hint">예: 직캠, 리액션</string>
     <string name="filter_edit_add">추가</string>
     <string name="filter_edit_options">옵션</string>

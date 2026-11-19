@@ -28,6 +28,7 @@
     <string name="filter_edit_topics_desc">可複選。每個主題的相關字詞會自動套用。</string>
     <string name="filter_edit_keywords">要隱藏的字詞</string>
     <string name="filter_edit_keywords_desc">標題、說明、頻道名稱或分類含有這些字詞的影片會被隱藏。</string>
+    <string name="filter_keyword_lang_note">必須以影片使用的語言輸入才能排除。將輸入的字詞轉換成其他語言來排除的功能，之後會推出。</string>
     <string name="filter_edit_keyword_hint">例如：飯拍、反應影片</string>
     <string name="filter_edit_add">新增</string>
     <string name="filter_edit_options">選項</string>

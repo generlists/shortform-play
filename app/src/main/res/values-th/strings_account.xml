@@ -28,6 +28,7 @@
     <string name="filter_edit_topics_desc">เลือกได้หลายหัวข้อ คำที่เกี่ยวข้องกับแต่ละหัวข้อจะถูกใช้โดยอัตโนมัติ</string>
     <string name="filter_edit_keywords">คำที่จะซ่อน</string>
     <string name="filter_edit_keywords_desc">วิดีโอที่มีคำเหล่านี้ในชื่อ คำอธิบาย ชื่อช่อง หรือหมวดหมู่จะถูกซ่อน</string>
+    <string name="filter_keyword_lang_note">ต้องพิมพ์เป็นภาษาที่ใช้ในวิดีโอจึงจะตัดออกได้ ส่วนการแปลคำที่พิมพ์เป็นภาษาอื่นเพื่อตัดออกจะเพิ่มในภายหลัง</string>
     <string name="filter_edit_keyword_hint">เช่น แฟนแคม, รีแอ็กชัน</string>
     <string name="filter_edit_add">เพิ่ม</string>
     <string name="filter_edit_options">ตัวเลือก</string>

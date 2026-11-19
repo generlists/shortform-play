@@ -28,6 +28,7 @@
     <string name="filter_edit_topics_desc">Anda dapat memilih beberapa. Kata untuk setiap topik diterapkan secara otomatis.</string>
     <string name="filter_edit_keywords">Kata yang ingin disembunyikan</string>
     <string name="filter_edit_keywords_desc">Video dengan kata-kata ini di judul, deskripsi, nama saluran, atau kategori akan disembunyikan.</string>
+    <string name="filter_keyword_lang_note">Hanya berfungsi jika diketik dalam bahasa yang dipakai video. Fitur menerjemahkan kata Anda ke bahasa lain akan hadir nanti.</string>
     <string name="filter_edit_keyword_hint">mis. fancam, reaksi</string>
     <string name="filter_edit_add">Tambah</string>
     <string name="filter_edit_options">Opsi</string>

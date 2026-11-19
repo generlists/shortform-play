@@ -504,6 +504,12 @@ private fun KeywordsStep(
             modifier = Modifier.heightIn(min = 56.dp),
         ) { Text(stringResource(R.string.filter_edit_add), fontWeight = FontWeight.Bold) }
     }
+    Text(
+        stringResource(R.string.filter_keyword_lang_note),
+        color = APP_SUBTITLE_TEXT_COLOR,
+        fontSize = 12.sp,
+        lineHeight = 18.sp,
+    )
     if (keywords.isNotEmpty()) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             keywords.forEach { keyword -> RemovableChip(keyword, removeText) { onRemove(keyword) } }
